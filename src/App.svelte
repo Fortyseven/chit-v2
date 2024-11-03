@@ -15,7 +15,8 @@
     import "$stores/appState.svelte.js"
 
     import llm from '$lib/llm/ollama.svelte.js'
-    import ChatLog from "./app/Chat/ChatLog.svelte"
+    import ChatLogRegular from "./app/Chat/ChatLogRegular.svelte"
+    import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import { appState } from "./stores/appState.svelte"
     import { convos } from "./stores/chatState.svelte.js"
 </script>
@@ -47,22 +48,14 @@
     {/snippet}
 
 
-    <div class="page h-full">
-        <div class="h-full overflow-y-auto flex-col">
-            <ChatLog></ChatLog>
+    <div class="page h-full w-full relative">
+        <div class="h-full overflow-y-auto flex-col pb-24">
+            <ChatLogRegular></ChatLogRegular>
+        </div>
+        <div class="input-bar" >
+            <InputBar></InputBar>
         </div>
 
-        <div class="input-group input-group-divider grid-cols-[auto_1fr_auto] rounded-container-token absolute bottom-0">
-	        <button class="input-group-shim">+</button>
-	        <textarea
-                class="bg-transparent border-0 ring-0"
-                name="prompt"
-                id="prompt"
-                placeholder="Write a message..."
-                rows="1">
-            </textarea>
-            <button class="variant-filled-primary">Send</button>
-        </div>
     </div>
 </AppShell>
 
@@ -70,5 +63,10 @@
     :global(.app-rail button) {
         border-radius: 0;
         background: transparent;
+    }
+
+    .input-bar {
+        position: sticky;
+        bottom: 0;
     }
 </style>
