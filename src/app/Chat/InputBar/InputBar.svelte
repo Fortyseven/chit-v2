@@ -1,5 +1,6 @@
 <div
-    class="input-group input-group-divider grid-cols-[auto_1fr_auto] rounded-container-token absolute bottom-0 p-4"
+    id="InputBox"
+    class="input-group"
 >
     <button class="input-group-shim">+</button>
     <textarea
@@ -8,14 +9,45 @@
         id="prompt"
         placeholder="Write a message..."
         rows="1"
-    >
-    </textarea>
+    ></textarea>
     <button class="variant-filled-primary">Send</button>
 </div>
 
 <style lang="scss">
-    .input-group {
+    #InputBox {
         display: grid;
         gap: 1em;
+        padding: 1rem;
+        bottom: 0px;
+        position: absolute;
+        border-radius: var(--theme-rounded-container);
+         grid-template-columns: auto 1fr auto;
+
+        textarea {
+            background-color: rgb(var(--color-surface-800));
+            border-bottom: 1px solid rgb(var(--color-surface-400));
+            border-radius: var(--theme-rounded-container);
+            border-top: 1px solid rgb(var(--color-surface-800));
+            border: none;
+            color: var(--primary-fg);
+            flex: auto;
+            font-family: inherit;
+            font-size: 1.2em;
+            outline-style: none;
+            padding: 0.5em;
+            width: 100%;
+
+            &:disabled {
+                opacity: 0.5;
+            }
+
+            &.overflow {
+                color: #f44;
+            }
+
+            &::placeholder {
+                color: rgb(var(--color-surface-500));
+            }
+        }
     }
-    </style>
+</style>
