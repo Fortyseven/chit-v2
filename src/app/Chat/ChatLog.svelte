@@ -2,8 +2,8 @@
     // @ts-nocheck
 
     import { Avatar } from "@skeletonlabs/skeleton"
+    import { appState } from "../../stores/appState.svelte.js"
     import { convos } from "../../stores/chatState.svelte.js"
-    import { currentConvo } from "../Convos/ConvoPanel.svelte.js"
 
     $inspect(convos)
 </script>
@@ -11,7 +11,7 @@
 <div class="bg-surface-900 h-full">
 {#if convos?.entries}
     <div class="flex flex-col gap-4 w-full max-w-[800px] m-auto ">
-        {#each convos.entries[$currentConvo].chatState.timeline as timeline_entry, i}
+        {#each convos.entries[appState.currentConvoIndex].chatState.timeline as timeline_entry, i}
             {#if timeline_entry.role === "assistant"}
                 <div class="flex gap-4 place-items-center bg-primary-900 rounded-xl w-[90%] shadow-2xl">
                     <div

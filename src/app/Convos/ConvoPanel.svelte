@@ -4,18 +4,24 @@
     import { AppRail, AppRailTile } from "@skeletonlabs/skeleton"
 
     import { fly, slide } from "svelte/transition"
+    import { appState } from "../../stores/appState.svelte.js"
     import { convos } from "../../stores/chatState.svelte.js"
-    import { conversationList, currentConvo } from "./ConvoPanel.svelte.js"
 
     let mobileToggleOpen = $state(false)
 
-    function changeConvo(i) {
-        currentConvo.set(i)
+    function changeConvo(convoIndex) {
+        appState.currentConvoIndex = convoIndex
     }
 
-    function deleteConvo(i) {
+    function deleteConvo(convoIndex) {
         if (confirm("Are you sure you want to delete this conversation?")) {
-            convos.rm(i)
+
+            // so we don't try to render a convo that soon won't exist
+            if(convoIndex === appState.currentConvoIndex) {
+                appState.currentConvoIndex = 0
+            }
+
+            convos.rm(convoIndex)
         }
     }
 </script>

@@ -10,6 +10,7 @@ export const appState = $state({
         system: false,
     },
     selectedPresetIndex: undefined,
+    currentConvoIndex: 0,
 })
 
 // these are for persistent application state, such as user settings

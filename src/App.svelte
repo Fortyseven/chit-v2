@@ -11,12 +11,12 @@
 
     import ConvoPanel from "$app/Convos/ConvoPanel.svelte"
 
-    import { conversationList, currentConvo } from "./app/Convos/ConvoPanel.svelte.js"
 
     import "$stores/appState.svelte.js"
 
     import llm from '$lib/llm/ollama.svelte.js'
     import ChatLog from "./app/Chat/ChatLog.svelte"
+    import { appState } from "./stores/appState.svelte"
     import { convos } from "./stores/chatState.svelte.js"
 </script>
 
@@ -29,7 +29,7 @@
             {/snippet}
 
             <div class="text-lg text-primary-500 font-bold text-nowrap text-ellipsis overflow-hidden w-3/4 md:w-full md:text-2xl">
-                {convos.entries[$currentConvo].title}
+                {convos.entries[appState.currentConvoIndex].title}
             </div>
 
             {#snippet trail()}
