@@ -15,7 +15,7 @@ export const appState = $state({
 // these are for persistent application state, such as user settings
 // on the Config page
 
-export var configValues = persisted("config", {
+export var configPersistState = persisted("config", {
     apiEndpoint: DEFAULT_OL_ENDPOINT,
     constrainChatWidth: false,
     useSfx: true,

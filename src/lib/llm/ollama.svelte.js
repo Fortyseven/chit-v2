@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { configValues } from "$stores/appState.svelte"
+import { configPersistState } from "$stores/appState.svelte"
 import { Ollama } from "ollama"
 import { writable } from "svelte/store"
 
@@ -14,15 +14,15 @@ class LLMInterface {
     async instantiateOL() {
         try {
             // only reinstantiate if the host has changed
-            if (this.ol_instance_host !== configValues?.apiEndpoint) {
+            if (this.ol_instance_host !== configPersistState?.apiEndpoint) {
                 console.log(
                     "🤖 Updating Ollama instance host to ",
-                    configValues.apiEndpoint
+                    configPersistState.apiEndpoint
                 )
                 this.ol_instance = new Ollama({
-                    host: configValues.apiEndpoint,
+                    host: configPersistState.apiEndpoint,
                 })
-                this.ol_instance_host = configValues.apiEndpoint
+                this.ol_instance_host = configPersistState.apiEndpoint
                 await this.refreshModelList()
             }
         } catch (e) {
