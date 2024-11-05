@@ -1,3 +1,6 @@
+import { derived, get, writable } from "svelte/store"
+import app from "../main"
+import { currentConvoIndex } from "./appState.svelte"
 import { ChatSession } from "./ChatState/ChatSession.svelte"
 
 class Convos {
@@ -15,4 +18,17 @@ class Convos {
     }
 }
 
-export const convos = $state(new Convos())
+export const convos = writable(new Convos())
+
+// const currentConvoDerived = $derived(convos.entries[get(currentConvoIndex)])
+
+// export function currentConvo() {
+//     return currentConvoDerived
+// }
+
+export const currentConvo = derived(
+    [convos, currentConvoIndex],
+    ([$convos, $currentConvoIndex]) => {
+        return $convos.entries[$currentConvoIndex]
+    }
+)

@@ -6,7 +6,7 @@
         AppRail,
         AppRailAnchor,
         AppRailTile,
-        AppShell,
+        AppShell
     } from "@skeletonlabs/skeleton"
 
     import ConvoPanel from "$app/Convos/ConvoPanel.svelte"
@@ -15,49 +15,56 @@
     import "$stores/appState.svelte.js"
 
     import llm from '$lib/llm/ollama.svelte.js'
+    import API from "./app/API.svelte"
     import ChatLogRegular from "./app/Chat/ChatLogRegular.svelte"
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
-    import { appState } from "./stores/appState.svelte"
-    import { convos } from "./stores/chatState.svelte.js"
+    import EventRepeater from "./app/EventRepeater.svelte"
+// import { currentConvoIndex } from "./stores/appState.svelte"
+    import { convos, currentConvo } from "./stores/chatState.svelte.js"
+    import ChatKnobs from "./stores/ChatState/ChatKnobs.svelte"
 </script>
 
+<EventRepeater>
+    <API>
+        <AppShell class="h-full">
+            {#snippet header()}
+                <AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
+                    {#snippet lead()}
+                        <!-- <button class="btn variant-filled-secondary">Menu</button> -->
+                    {/snippet}
 
-<AppShell class="h-full">
-    {#snippet header()}
-        <AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
-            {#snippet lead()}
-                <button class="btn variant-filled-secondary">Menu</button>
+                    <div class="text-lg text-primary-500 font-bold text-nowrap text-ellipsis overflow-hidden w-3/4 md:w-full md:text-2xl">
+                        {$currentConvo.title}
+                    </div>
+
+                    {#snippet trail()}
+                    <!-- Bar -->
+                    {/snippet}
+                </AppBar>
             {/snippet}
 
-            <div class="text-lg text-primary-500 font-bold text-nowrap text-ellipsis overflow-hidden w-3/4 md:w-full md:text-2xl">
-                {convos.entries[appState.currentConvoIndex].title}
+            {#snippet sidebarLeft()}
+                <ConvoPanel/>
+            {/snippet}
+
+            {#snippet pageHeader()}
+                <ChatKnobs></ChatKnobs>
+            {/snippet}
+
+
+            <div class="page h-full w-full relative">
+                <div class="h-full overflow-y-auto flex-col pb-24">
+                    <ChatLogRegular></ChatLogRegular>
+                </div>
+                <div class="input-bar" >
+                    <InputBar></InputBar>
+                </div>
+
             </div>
+        </AppShell>
+    </API>
+</EventRepeater>
 
-            {#snippet trail()}
-            <!-- Bar -->
-            {/snippet}
-        </AppBar>
-    {/snippet}
-
-    {#snippet sidebarLeft()}
-        <ConvoPanel/>
-    {/snippet}
-
-    {#snippet pageHeader()}
-        [I am a page header.]
-    {/snippet}
-
-
-    <div class="page h-full w-full relative">
-        <div class="h-full overflow-y-auto flex-col pb-24">
-            <ChatLogRegular></ChatLogRegular>
-        </div>
-        <div class="input-bar" >
-            <InputBar></InputBar>
-        </div>
-
-    </div>
-</AppShell>
 
 <style lang="scss">
     :global(.app-rail button) {

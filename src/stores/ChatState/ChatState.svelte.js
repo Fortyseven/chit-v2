@@ -46,5 +46,26 @@ export class ChatState {
                 suffix
         )
         this.pushAssistantMessage("Cool cool " + suffix)
+        this.pushUserMessage("Hello! " + suffix)
+        this.pushAssistantMessage("What is up, my dude? " + suffix)
+        this.pushUserMessage(
+            "Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling,  " +
+                suffix
+        )
+        this.pushAssistantMessage("Cool cool " + suffix)
+        this.pushUserMessage("Hello! " + suffix)
+        this.pushAssistantMessage("What is up, my dude? " + suffix)
+        this.pushUserMessage(
+            "Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling,  " +
+                suffix
+        )
+        this.pushAssistantMessage("Cool cool " + suffix)
+        this.pushUserMessage("Hello! " + suffix)
+        this.pushAssistantMessage("What is up, my dude? " + suffix)
+        this.pushUserMessage(
+            "Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling, Not much, just chilling,  " +
+                suffix
+        )
+        this.pushAssistantMessage("Cool cool " + suffix)
     }
 }

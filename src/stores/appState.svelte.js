@@ -1,23 +1,12 @@
-import { persisted } from "svelte-persisted-store"
-import { DEFAULT_OL_ENDPOINT } from "../lib/llm/ollama.svelte"
-
 // these are for non-persistent application state, such as toggles, etc.
 
-export const appState = $state({
-    lock: {
-        knobs: false,
-        model: false,
-        system: false,
-    },
-    selectedPresetIndex: undefined,
-    currentConvoIndex: 0,
+import { writable } from "svelte/store"
+
+export const knobLock = $state({
+    knobs: false,
+    model: false,
+    system: false,
 })
 
-// these are for persistent application state, such as user settings
-// on the Config page
-
-export var configPersistState = persisted("config", {
-    apiEndpoint: DEFAULT_OL_ENDPOINT,
-    constrainChatWidth: false,
-    useSfx: true,
-})
+export const currentConvoIndex = writable(0)
+export const selectedPresetIndex = writable(undefined)

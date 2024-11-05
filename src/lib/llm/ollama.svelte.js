@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { configPersistState } from "$stores/appState.svelte"
 import { Ollama } from "ollama"
 import { writable } from "svelte/store"
+import { convos } from "../../stores/chatState.svelte"
 
-export const DEFAULT_OL_ENDPOINT = "http://localhost:11434"
+import { configPersistState } from "../../stores/configPersistState.svelte"
 
 class LLMInterface {
     models = $state([])
@@ -11,7 +11,12 @@ class LLMInterface {
     ol_instance_host = $state(undefined)
 
     // Connects to the Ollama server using the current host endpoint
-    async instantiateOL() {
+    /**
+     *
+     * @param {Convos} convos
+     */
+    async instantiateOL(convos) {
+        // convos.q
         try {
             // only reinstantiate if the host has changed
             if (this.ol_instance_host !== configPersistState?.apiEndpoint) {
@@ -41,7 +46,7 @@ class LLMInterface {
 }
 
 var llm = new LLMInterface()
-await llm.instantiateOL()
+await llm.instantiateOL(convos)
 
 export default llm
 

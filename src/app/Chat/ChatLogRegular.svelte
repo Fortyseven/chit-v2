@@ -1,19 +1,11 @@
 <script>
-    // @ts-nocheck
-
-    import { Avatar } from "@skeletonlabs/skeleton"
-    import { appState } from "../../stores/appState.svelte.js"
-    import { convos } from "../../stores/chatState.svelte.js"
-
-    $inspect(convos)
+    import { currentConvo } from "../../stores/chatState.svelte.js"
 </script>
 
 <div class="bg-surface-900 h-full">
-    {#if convos?.entries}
-        <div
-            class="chatlog"
-        >
-            {#each convos.entries[appState.currentConvoIndex].chatState.timeline as timeline_entry, i}
+    {#if $currentConvo?.chatState.timeline}
+        <div class="chatlog">
+            {#each $currentConvo.chatState.timeline as timeline_entry, i}
                 {#if timeline_entry.role === "user"}
                     <div class="response user">
                         {timeline_entry.text}
@@ -43,20 +35,22 @@
         box-shadow: 0 0.25em 0.25em 0 #000;
         text-align: start;
         padding: 0.5em;
+        font-size: 1.1em;
 
         &.user {
-            flex: auto;
+            box-shadow: none;
             color: var(--color-primary-500);
+            flex: auto;
+            font-size: 1em;
             font-style: italic;
             line-height: 1.35em;
-            width: 100%;
             overflow: scroll;
-            box-shadow: none;;
+            width: 100%;
             &::before {
                 content: "> ";
                 font-weight: bold;
             }
-            font-size: 0.9em;
+            opacity: 0.75;
         }
 
         &.bot {
@@ -66,7 +60,7 @@
                 rgba(0, 0, 0, 0.73) 100%
             );
             border-bottom: 1px solid #fff1;
-            border-top-left-radius: unset;
+            // border-top-left-radius: unset;
             color: white;
         }
     }

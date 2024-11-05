@@ -1,7 +1,14 @@
-<div
-    id="InputBox"
-    class="input-group"
->
+<script>
+    let inputBoxEl = undefined
+
+    $effect(() => {
+        if (inputBoxEl) {
+            inputBoxEl.focus()
+        }
+    })
+</script>
+
+<div id="InputBox" class="input-group">
     <button class="input-group-shim">+</button>
     <textarea
         class="bg-transparent border-0 ring-0"
@@ -9,6 +16,7 @@
         id="prompt"
         placeholder="Write a message..."
         rows="1"
+        bind:this={inputBoxEl}
     ></textarea>
     <button class="variant-filled-primary">Send</button>
 </div>
@@ -21,7 +29,7 @@
         bottom: 0px;
         position: absolute;
         border-radius: var(--theme-rounded-container);
-         grid-template-columns: auto 1fr auto;
+        grid-template-columns: auto 1fr auto;
 
         textarea {
             background-color: rgb(var(--color-surface-800));
