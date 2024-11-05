@@ -1,4 +1,6 @@
 import { skeleton } from "@skeletonlabs/tw-plugin"
+import {chit_theme} from './src/theme/chit-theme'
+
 import { join } from "path"
 
 const config = {
@@ -17,7 +19,12 @@ const config = {
 
     plugins: [
         skeleton({
-            themes: { preset: ["vintage"] },
+            themes: {
+                // preset: ["vintage"],
+                custom: [
+                    chit_theme
+                ]
+            },
         }),
     ],
 }

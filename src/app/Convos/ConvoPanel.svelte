@@ -26,7 +26,7 @@
     }
 </script>
 
-<AppRail class="app-rail h-full w-full p-4 hidden sm:grid">
+<AppRail class="convo-panel app-rail h-full w-full p-4 hidden sm:grid">
     {#snippet lead()}
 
         <div class="flex flex-col gap-2 shadow-lg" in:fly={{x:200, duration: 2000 }}>
@@ -68,6 +68,9 @@
 </AppRail>
 
 <style lang="scss">
+    :global(.convo-panel.app-rail) {
+        background-color: rgb(var(--color-surface-900));
+    }
     button {
         border-radius: 8px;
         background: transparent;
