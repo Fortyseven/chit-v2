@@ -28,7 +28,9 @@
     <API>
         <AppShell class="h-full">
             {#snippet header()}
-                <AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
+                <AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end"
+                        background="bg-surface-700"
+                >
                     {#snippet lead()}
                         <!-- <button class="btn variant-filled-secondary">Menu</button> -->
                     {/snippet}

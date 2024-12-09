@@ -15,9 +15,8 @@
 
     function deleteConvo(convoIndex) {
         if (confirm("Are you sure you want to delete this conversation?")) {
-
             // so we don't try to render a convo that soon won't exist
-            if(convoIndex === $currentConvoIndex) {
+            if (convoIndex === $currentConvoIndex) {
                 $currentConvoIndex = 0
             }
 
@@ -28,10 +27,12 @@
 
 <AppRail class="convo-panel app-rail h-full w-full p-4 hidden sm:grid">
     {#snippet lead()}
-
-        <div class="flex flex-col gap-2 shadow-lg" in:fly={{x:200, duration: 2000 }}>
-            {#each convos.entries as conversation, i}
-                <div class="flex flex-row justify-between" >
+        <div
+            class="flex flex-col gap-2 shadow-lg"
+            in:fly={{ x: 200, duration: 2000 }}
+        >
+            {#each $convos.entries as conversation, i}
+                <div class="flex flex-row justify-between">
                     <button
                         type="button"
                         class="btn variant-filled-surface flex-auto"
@@ -50,11 +51,9 @@
                 </div>
             {/each}
         </div>
-
     {/snippet}
 
     {#snippet trail()}
-
         <div class="flex flex-row justify-between">
             <button type="button" class="btn variant-filled-primary flex-none">
                 *
@@ -63,14 +62,14 @@
                 New Conversation +
             </button>
         </div>
-
     {/snippet}
 </AppRail>
 
 <style lang="scss">
     :global(.convo-panel.app-rail) {
-        background-color: rgb(var(--color-surface-900));
+        background-color: rgb(var(--color-surface-800));
     }
+
     button {
         border-radius: 8px;
         background: transparent;

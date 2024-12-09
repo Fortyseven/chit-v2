@@ -3,16 +3,16 @@
 </script>
 
 <div class="bg-surface-900 h-full">
-    {#if $currentConvo?.chatState.timeline}
+    {#if $currentConvo.chatState.timeline}
         <div class="chatlog">
             {#each $currentConvo.chatState.timeline as timeline_entry, i}
                 {#if timeline_entry.role === "user"}
                     <div class="response user">
-                        {timeline_entry.text}
+                        {timeline_entry.content}
                     </div>
                 {:else}
                     <div class="response bot">
-                        {timeline_entry.text}
+                        {timeline_entry.content}
                     </div>
                 {/if}
             {/each}
@@ -39,7 +39,7 @@
 
         &.user {
             box-shadow: none;
-            color: var(--color-primary-500);
+            color: rgb(var(--color-surface-300));
             flex: auto;
             font-size: 1em;
             font-style: italic;
@@ -61,7 +61,7 @@
             );
             border-bottom: 1px solid #fff1;
             // border-top-left-radius: unset;
-            color: white;
+            color: rgb(var(--color-primary-300));
         }
     }
 </style>

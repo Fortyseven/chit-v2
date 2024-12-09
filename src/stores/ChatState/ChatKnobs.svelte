@@ -25,8 +25,8 @@
     // })
 </script>
 <div id="ChatKnobs">
-    <div>
-    <Accordion>
+    <div class="left-system">
+        <Accordion>
             <AccordionItem open>
                 {#snippet summary()}
                     System Prompt
@@ -38,14 +38,14 @@
                     name="prompt"
                     id="prompt"
                     placeholder="Write a message..."
-                    rows="1"
+                    rows="10"
                 ></textarea>
                 {/snippet}
             </AccordionItem>
-    </Accordion>
+        </Accordion>
     </div>
     <div>
-    <Accordion >
+        <Accordion>
             <AccordionItem open>
                 {#snippet summary()}
                     Chat Settings
@@ -53,23 +53,22 @@
 
                 {#snippet content()}
                     {#if $currentConvo.chatState.knobs}
-                    <ul>
-                    {Object.keys($currentConvo.chatState.knobs)}
-                        {#each Object.keys($currentConvo.chatState.knobs).filter( (e) => advancedValues.includes(e) ) as key}
-                            <li>
-                                <label>{key}</label>
-                                <input
-                                    bind:value={$currentConvo.chatState.knobs[key]}
-                                    on:blur={() => onBlurValue(key)}
-                                />
-                            </li>
-                        {/each}
-                    </ul>
-                {/if}
-
+                        <ul>
+                            {Object.keys($currentConvo.chatState.knobs)}
+                            {#each Object.keys($currentConvo.chatState.knobs).filter( (e) => advancedValues.includes(e) ) as key}
+                                <li>
+                                    <label>{key}</label>
+                                    <input
+                                        bind:value={$currentConvo.chatState.knobs[key]}
+                                        on:blur={() => onBlurValue(key)}
+                                    />
+                                </li>
+                            {/each}
+                        </ul>
+                    {/if}
                 {/snippet}
             </AccordionItem>
-    </Accordion>
+        </Accordion>
     </div>
 </div>
 
@@ -80,24 +79,43 @@
         // max-width: 1024px;
         margin: auto;
         flex-wrap: wrap;
+        background: rgb(var(--color-surface-800));
+
+        .left-system  {
+
+            padding: 1em 0.25em !important;
+            width: 100%;
+
+            textarea {
+                padding: 0.5em;
+            }
+        }
 
         > div {
+            box-shadow: 0px 0px 10px #0006 !important;
+            z-index: 10;
             flex: 1 1 512px;
+            padding: 1em;
+            width: 100%;;
 
             .system-prompt {
-                background-color: rgb(var(--color-surface-800));
+                background-color: rgb(var(--color-surface-900));
+                color: rgb(var(--color-primary-500));
                 border-bottom: 1px solid rgb(var(--color-surface-400));
                 border-radius: var(--theme-rounded-container);
                 border-top: 1px solid rgb(var(--color-surface-800));
-                border: none;
-                color: var(--primary-fg);
+                // border: none;
                 flex: auto;
                 font-family: inherit;
-                font-size: 1.2em;
+                font-size: 1em;
                 outline-style: none;
-                padding: 0.5em;
                 width: 100%;
 
+                textarea {
+                    border: 1px solid green !important;
+                    padding: 0.5em !important;
+                    margin: 0!important;
+                }
                 &:disabled {
                     opacity: 0.5;
                 }
