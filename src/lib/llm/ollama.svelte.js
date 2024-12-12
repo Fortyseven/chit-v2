@@ -50,6 +50,7 @@ class LLMInterface {
     async refreshModelList() {
         try {
             this.models = await this.ol_instance.list()
+            this.models = this.models.models
         } catch (e) {
             console.error("Error refreshing model list:", e)
         }
