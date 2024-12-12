@@ -10,8 +10,6 @@ export class ChatState {
     timeline = $state([])
     model = $state("llama3.2:latest")
 
-    fuck = $state(undefined)
-
     pushUserMessage = (message) => {
         this.timeline.push(ChatMessageEntry("user", message))
         // console.log(`*** USER pushed ${message}`, this.timeline)
