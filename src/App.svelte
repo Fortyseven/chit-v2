@@ -19,7 +19,8 @@
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import EventRepeater from "./app/EventRepeater.svelte"
     // import { currentConvoIndex } from "./stores/appState.svelte"
-    import ChatKnobs from "./app/Chat/ChatKnobs.svelte"
+
+    import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
     import { convos, currentConvo } from "./stores/chatState.svelte.js"
 </script>
 
