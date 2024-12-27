@@ -1,8 +1,10 @@
 <script>
-    import { currentConvo } from "../../stores/chatState.svelte.js"
+    import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
+
+    import { currentConvo } from "../../../stores/chatState.svelte.js"
 </script>
 
-<div class="bg-surface-900 h-full">
+<div class="bg-surface-900 h-full background-grid">
     {#if $currentConvo.chatState.timeline}
         <div class="chatlog">
             {#each $currentConvo.chatState.timeline as timeline_entry, i}
@@ -11,9 +13,8 @@
                         {timeline_entry.content}
                     </div>
                 {:else}
-                    <div class="response bot">
-                        {timeline_entry.content}
-                    </div>
+                    <ChatLogRegular_Assistant line={timeline_entry.content}
+                    ></ChatLogRegular_Assistant>
                 {/if}
             {/each}
         </div>
