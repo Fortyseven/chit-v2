@@ -1,4 +1,6 @@
 <script>
+    // @ts-nocheck
+
     import {
         arrow,
         autoUpdate,
@@ -24,26 +26,28 @@
         placement: "bottom",
     }
 
-    let sys_prompt = $state($currentConvo.chatState.system_prompt)
+    // let sys_prompt =
 </script>
 
-<div>
+<div class="flex md:px-4">
     <button
-        class="variant-ghost-primary [&>*]:pointer-events-none text-ellipsis overflow-hidden w-[150px] h-11"
-        use:popup={popupSystemPrompt}>{sys_prompt || "System Prompt"}</button
+        class="variant-ghost-primary [&>*]:pointer-events-none text-ellipsis text-nowrap overflow-hidden h-11 w-full max-w-xs"
+        use:popup={popupSystemPrompt}
     >
+        {$currentConvo.chatState.system_prompt || "System Prompt"}
+    </button>
     <div
         class="card w-full shadow-2xl flex flex-wrap sm:flex-nowrap gap-4 hidden"
         data-popup="popupSystemPrompt"
     >
-        <div class="arrow">|</div>
+        <div class="arrow">&uparrow;</div>
         <textarea
             class="system-prompt w-full p-2"
             name="prompt"
             id="prompt"
             placeholder="Write a system prompt..."
             rows="10"
-            bind:value={sys_prompt}
+            bind:value={$currentConvo.chatState.system_prompt}
         ></textarea>
     </div>
 </div>

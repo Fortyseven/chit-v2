@@ -33,38 +33,37 @@
     let chat_state = $state($currentConvo.chatState)
 </script>
 
-<div id="ChatKnobs" class="sticky top-0 z-50">
-    <Accordion>
-        <AccordionItem open>
-            {#snippet summary()}
-                Chat Settings
-            {/snippet}
+<div id="ChatKnobs" class="flex flex-wrap h-full">
+    <!-- <Accordion>
+        <AccordionItem open> -->
+    <!-- {#snippet summary()}
+        Chat Settings
+    {/snippet} -->
 
-            {#snippet content()}
-                <div class="flex gap-1 xs:gap-2">
-                    <SystemPrompt></SystemPrompt>
-                    <ModelSelect></ModelSelect>
-                </div>
-                <div>
-                    {#if $currentConvo.chatState.knobs}
-                        <ul>
-                            {Object.keys($currentConvo.chatState.knobs)}
-                            {#each Object.keys($currentConvo.chatState.knobs).filter( (e) => advancedValues.includes(e), ) as key}
-                                <li>
-                                    <label>{key}</label>
-                                    <input
-                                        bind:value={$currentConvo.chatState
-                                            .knobs[key]}
-                                        on:blur={() => onBlurValue(key)}
-                                    />
-                                </li>
-                            {/each}
-                        </ul>
-                    {/if}
-                </div>
-            {/snippet}
-        </AccordionItem>
-    </Accordion>
+    <!-- {#snippet content()} -->
+    <div class="flex flex-wrap gap-1 h-24 w-full place-content-start">
+        <SystemPrompt></SystemPrompt>
+        <ModelSelect></ModelSelect>
+    </div>
+    <div>
+        {#if $currentConvo.chatState.knobs}
+            <ul>
+                {Object.keys($currentConvo.chatState.knobs)}
+                {#each Object.keys($currentConvo.chatState.knobs).filter( (e) => advancedValues.includes(e), ) as key}
+                    <li>
+                        <label>{key}</label>
+                        <input
+                            bind:value={$currentConvo.chatState.knobs[key]}
+                            on:blur={() => onBlurValue(key)}
+                        />
+                    </li>
+                {/each}
+            </ul>
+        {/if}
+    </div>
+    <!-- {/snippet} -->
+    <!-- </AccordionItem>
+    </Accordion> -->
 </div>
 
 <style lang="scss">

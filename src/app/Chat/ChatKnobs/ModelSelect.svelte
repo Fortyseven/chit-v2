@@ -25,9 +25,9 @@
     }
 </script>
 
-<div class="">
+<div class="place-content-center">
     <button
-        class=" variant-ghost-secondary [&>*]:pointer-events-none whitespace-nowrap !text-ellipsis overflow-hidden w-[150px]"
+        class="variant-ghost-secondary [&>*]:pointer-events-none whitespace-nowrap !text-ellipsis overflow-hidden h-11 w-full max-w-xs"
         use:popup={popupModelSelect}
         >{chat_state.model || "Select Model"}</button
     >
@@ -35,7 +35,7 @@
         class="card w-full shadow-2xl flex flex-wrap sm:flex-nowrap gap-4 hidden"
         data-popup="popupModelSelect"
     >
-        <div class="arrow">|</div>
+        <div class="arrow">&uparrow;</div>
         <select
             bind:value={chat_state.model}
             name="system"
