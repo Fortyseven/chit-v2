@@ -1,12 +1,23 @@
-import { derived, get, writable } from "svelte/store"
-// import app from "../main"
 import { persisted } from "svelte-persisted-store"
-// import { currentChatSessionIndex } from "./appState.svelte"
+import { derived, get, writable } from "svelte/store"
 import { ChatSession } from "./ChatState/ChatSession.svelte"
+
+// ------------------------------------------
 
 const chatSessions = writable({
     sessions: [new ChatSession(), new ChatSession()],
 })
+
+const currentChatSessionIndex = writable(0)
+
+const currentChatSession = derived(
+    [chatSessions, currentChatSessionIndex],
+    ([$chatSessions, $currentChatSessionIndex]) => {
+        return $chatSessions.sessions[$currentChatSessionIndex]
+    }
+)
+
+// ------------------------------------------
 
 function chatSessionCreate() {
     chatSessions.update((convos) => {
@@ -21,19 +32,9 @@ function chatSessionDelete(index) {
         return convos
     })
 }
-
-const currentChatSessionIndex = writable(0)
-
-const setChatSessionIndex = (index) => {
+function setChatSessionIndex(index) {
     currentChatSessionIndex.set(index)
 }
-
-const currentChatSession = derived(
-    [chatSessions, currentChatSessionIndex],
-    ([$chatSessions, $currentChatSessionIndex]) => {
-        return $chatSessions.sessions[$currentChatSessionIndex]
-    }
-)
 
 export {
     chatSessionCreate,
