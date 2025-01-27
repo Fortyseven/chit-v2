@@ -8,5 +8,5 @@ export const knobLock = $state({
     system: false,
 })
 
-export const currentConvoIndex = writable(0)
+// export const currentChatSessionIndex = writable(0)
 export const selectedPresetIndex = writable(undefined)

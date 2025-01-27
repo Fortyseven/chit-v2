@@ -19,7 +19,7 @@
      */
 
     /** @type {Props} */
-    let { children } = $props();
+    let { children } = $props()
 
     /* ----------------------------------------------------------*/
 
@@ -46,12 +46,9 @@
 
     function _getChatParamObject() {
         // const chat_parameters = $chatState.values;
-
         // //FIXME:
         // delete chat_parameters.stop;
-
         // let new_chat_parameters = {};
-
         // for (const key of Object.keys(chat_parameters)) {
         //     if (
         //         chat_parameters[key] !== undefined &&
@@ -64,7 +61,6 @@
         //         }
         //     }
         // }
-
         // return new_chat_parameters;
     }
 
@@ -73,19 +69,16 @@
     async function runInference({
         user_message = null,
         continue_chat = false,
-        pasted_image = undefined
+        pasted_image = undefined,
     }) {
         // if (!$chatState?.model_name) {
         //     throw new Error('No model selected');
         // }
-
         // let should_continue_assistant_chat = false;
-
         // if (continue_chat) {
         //     // was last chat message's role an 'assistant' type?
         //     const last_message_role =
         //         $chatTimeline[$chatTimeline.length - 1].role;
-
         //     if (last_message_role === 'assistant') {
         //         should_continue_assistant_chat = true;
         //         $pendingContinuedAssistantChat = true;
@@ -96,7 +89,6 @@
         //         // return;
         //     }
         // }
-
         // // if we don't have a message, it's for use when there's already
         // // a user message in the timeline, so skip adding it again
         // if (user_message !== null && !should_continue_assistant_chat) {
@@ -105,21 +97,17 @@
         //         content: user_message,
         //         images: []
         //     };
-
         //     if (pasted_image) {
         //         let img64 = await convertBlobUrlToBase64(pasted_image);
         //         msg_packet.images.push(img64);
         //     }
-
         //     chatTimeline.update((timeline) => {
         //         timeline.push(JSON.parse(JSON.stringify(msg_packet)));
         //         return timeline;
         //     });
         // }
-
         // try {
         //     // sets the pending message index to expect for the response
-
         //     const body = {
         //         // model: $chatState.model_name,
         //         stream: true,
@@ -131,10 +119,8 @@
         //             // TODO: let's get this into the preset manager
         //         }
         //     };
-
         //     const sys_prompt =
         //         $chatState?.system_prompt && $systemPromptTemplated;
-
         //     if (sys_prompt) {
         //         body.messages = [
         //             {
@@ -144,53 +130,42 @@
         //             ...body.messages
         //         ];
         //     }
-
         //     _clearPendingResponse();
         //     $wasAborted = false;
-
         //     console.log('runInference REQUEST body: ', body);
-
         //     try {
         //         $responseInProgress = true;
-
         //         let stream = await ollama().chat({
         //             stream: true,
         //             model: $chatState.model_name,
         //             messages: body.messages,
         //             options: body.options
         //         });
-
         //         if (stream.status >= 300) {
         //             console.error('Error connecting to server: ' + stream.body);
         //             $errorMessage = stream.statusText;
         //             return;
         //         }
-
         //         for await (const chunk of stream) {
         //             $pendingResponse.content += chunk.message.content;
         //         }
-
         //         // we're going to sneak back in the original image since the
         //         // one we sent to the server was base64 encoded, etc. This way
         //         // we can keep the original image for restoration onBack
         //         if (pasted_image) {
         //             chatTimeline.update((timeline) => {
         //                 const last_message = timeline.pop();
-
         //                 if (last_message) {
         //                     // we're saving the original blob for reference
         //                     // in case the user goes 'back'
         //                     last_message.image_blob = pasted_image;
-
         //                     timeline.push(last_message);
-
         //                     return timeline;
         //                 }
         //             });
         //         }
         //     } catch (err) {
         //         console.log('🛑🛑🛑 runInference error: ', err);
-
         //         if (err.name === 'AbortError') {
         //             console.log('runInference aborted');
         //             $wasAborted = true;
@@ -199,15 +174,12 @@
         //     } finally {
         //         $responseInProgress = false;
         //     }
-
         //     let pending = $pendingResponse;
-
         //     if ($chatState.values.num_predict > -1) {
         //         // strip incomplete sentence from end of last message if we're restricting
         //         // the number of tokens returned
         //         pending.content = stripIncompleteSentence(pending.content);
         //     }
-
         //     $completedResponse = pending;
         // } catch (err) {
         //     if (err.name !== 'AbortError') {
@@ -233,6 +205,6 @@
     // });
 </script>
 
-<div id="API" class="h-full w-full">
+<!-- <div id="API" class="h-full w-full">
     {@render children?.()}
-</div>
+</div> -->

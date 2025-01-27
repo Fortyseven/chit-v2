@@ -92,3 +92,9 @@ button:focus-visible {
         background-color: #f9f9f9;
     }
 }
+
+.background-grid {
+    background-image: linear-gradient(#222 1px, transparent 1px),
+        linear-gradient(90deg, #222 1px, transparent 1px);
+    background-size: 1rem 1rem;
+}

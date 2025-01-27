@@ -9,11 +9,11 @@
     } from "@floating-ui/dom"
     import { popup, storePopup } from "@skeletonlabs/skeleton"
     import llm from "../../../lib/llm/ollama.svelte"
-    import { currentConvo } from "../../../stores/chatState.svelte"
+    import { currentChatSession } from "../../../stores/chatState.svelte"
 
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 
-    let chat_state = $state($currentConvo.chatState)
+    let chat_state = $state($currentChatSession.chatState)
 
     const popupModelSelect = {
         // Represents the type of event that opens/closed the popup

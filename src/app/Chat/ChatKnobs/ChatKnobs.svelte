@@ -1,7 +1,7 @@
 <script>
     import { Accordion, AccordionItem } from "@skeletonlabs/skeleton"
 
-    import { currentConvo } from "../../../stores/chatState.svelte"
+    import { currentChatSession } from "../../../stores/chatState.svelte"
     import ModelSelect from "./ModelSelect.svelte"
     import SystemPrompt from "./SystemPrompt.svelte"
 
@@ -17,12 +17,12 @@
     ]
 
     function onBlurValue(key) {
-        $currentConvo.chatState.knobs[key] = Number(
-            $currentConvo.chatState.knobs[key],
+        $currentChatSession.chatState.knobs[key] = Number(
+            $currentChatSession.chatState.knobs[key],
         )
     }
 
-    // let foo = $state($currentConvo.chatState.knobs)
+    // let foo = $state($currentChatSession.chatState.knobs)
 
     // $effect(() => {
     //     console.log(foo)
@@ -30,7 +30,7 @@
 
     // $inspect(llm.models)
 
-    let chat_state = $state($currentConvo.chatState)
+    let chat_state = $state($currentChatSession.chatState)
 </script>
 
 <div id="ChatKnobs" class="flex flex-wrap h-full">
@@ -46,14 +46,16 @@
         <ModelSelect></ModelSelect>
     </div>
     <div>
-        {#if $currentConvo.chatState.knobs}
+        {#if $currentChatSession.chatState.knobs}
             <ul>
-                {Object.keys($currentConvo.chatState.knobs)}
-                {#each Object.keys($currentConvo.chatState.knobs).filter( (e) => advancedValues.includes(e), ) as key}
+                {Object.keys($currentChatSession.chatState.knobs)}
+                {#each Object.keys($currentChatSession.chatState.knobs).filter( (e) => advancedValues.includes(e), ) as key}
                     <li>
                         <label>{key}</label>
                         <input
-                            bind:value={$currentConvo.chatState.knobs[key]}
+                            bind:value={$currentChatSession.chatState.knobs[
+                                key
+                            ]}
                             on:blur={() => onBlurValue(key)}
                         />
                     </li>

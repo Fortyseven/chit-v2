@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.6.12",
+    "@mozilla/readability": "^0.5.0",
     "autoprefixer": "^10.4.20",
+    "markdown-it": "^14.1.0",
     "ollama": "^0.5.11",
     "postcss": "^8.4.47",
     "postcss-load-config": "^6.0.1",

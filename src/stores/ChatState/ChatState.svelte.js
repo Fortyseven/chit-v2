@@ -1,12 +1,11 @@
-import { get, writable } from "svelte/store"
 import { ChatKnobsState } from "./ChatKnobsState.svelte.js"
 import { ChatMessageEntry } from "./ChatMessageEntry.svelte.js"
 
 export class ChatState {
     knobs = new ChatKnobsState()
 
-    system_prompt = writable("")
-    variables = writable({})
+    system_prompt = $state("WRITE EVERYTHING IN UPPERCASE")
+    variables = $state({})
     timeline = $state([])
     model = $state("llama3.2:latest")
 

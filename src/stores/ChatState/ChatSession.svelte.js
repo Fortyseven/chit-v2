@@ -26,28 +26,27 @@ export class ChatSession {
             const llm_resp = await llm.updateSession(this)
 
             if (this._regen_title) {
-                const resp = await llm.ol_instance.chat({
-                    model: this.chatState.model,
-                    messages: [
-                        {
-                            role: "system",
-                            content:
-                                "You will be provided with the content of a user conversation. Provide a short one-sentence summary of this chat so far, for use as a title.",
-                        },
-                        // TODO: Add system prompt here?
-                        {
-                            role: "user",
-                            content: user_message,
-                        },
-                    ],
-                    format: zodToJsonSchema(SummaryTitle),
-                })
-
-                this.title = SummaryTitle.parse(
-                    JSON.parse(resp.message.content)
-                ).title
-
-                this._regen_title = false
+                // TODO: fix this
+                // const resp = await llm.ol_instance.chat({
+                //     model: this.chatState.model,
+                //     messages: [
+                //         {
+                //             role: "system",
+                //             content:
+                //                 "You will be provided with the content of a user conversation. Provide a short one-sentence summary of this chat so far, for use as a title.",
+                //         },
+                //         // TODO: Add system prompt here?
+                //         {
+                //             role: "user",
+                //             content: user_message,
+                //         },
+                //     ],
+                //     format: zodToJsonSchema(SummaryTitle),
+                // })
+                // // this.title = SummaryTitle.parse(
+                // //     JSON.parse(resp.message.content)
+                // // ).title
+                // this._regen_title = false
             }
 
             return llm_resp

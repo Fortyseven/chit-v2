@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Ollama } from "ollama"
 import { get, writable } from "svelte/store"
-import { convos } from "../../stores/chatState.svelte"
+import { chatSessions } from "../../stores/chatState.svelte"
 
 import { ChatSession } from "../../stores/ChatState/ChatSession.svelte"
 import { configPersistState } from "../../stores/configPersistState.svelte"
@@ -61,14 +61,25 @@ class LLMInterface {
      * @param {ChatSession} chat_session
      */
     async updateSession(chat_session) {
-        console.log(
-            "🤖📡 Submitting chat session:",
-            chat_session.chatState.timeline
-        )
+        console.log(chat_session.chatState)
+        let messages = [...chat_session.chatState.timeline]
+
+        if (chat_session.chatState.system_prompt) {
+            messages = [
+                {
+                    role: "system",
+                    content: chat_session.chatState.system_prompt,
+                },
+                ...messages,
+            ]
+        }
+
+        console.log("🤖📡 Submitting chat session:", messages)
+
         // debugger
         var response = await this.ol_instance.chat({
             model: chat_session.chatState.model,
-            messages: chat_session.chatState.timeline,
+            messages,
         })
         console.log("🤖📡 Ollama response:", response)
         chat_session.chatState.pushAssistantMessage(response.message.content)

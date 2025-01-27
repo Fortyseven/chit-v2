@@ -1,13 +1,13 @@
 <script>
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
 
-    import { currentConvo } from "../../../stores/chatState.svelte.js"
+    import { currentChatSession } from "../../../stores/chatState.svelte.js"
 </script>
 
-<div class="bg-surface-900 h-full background-grid">
-    {#if $currentConvo.chatState.timeline}
+<div class="bg-surface-900 h-full background-grid bg-fixed">
+    {#if $currentChatSession.chatState.timeline}
         <div class="chatlog">
-            {#each $currentConvo.chatState.timeline as timeline_entry, i}
+            {#each $currentChatSession.chatState.timeline as timeline_entry, i}
                 {#if timeline_entry.role === "user"}
                     <div class="response user">
                         {timeline_entry.content}
@@ -30,19 +30,21 @@
         max-width: 1024px;
         margin: auto;
         padding-inline: 1em;
+        font-size: 1.1em;
     }
     .response {
         border-radius: 0.5em;
         box-shadow: 0 0.25em 0.25em 0 #000;
         text-align: start;
         padding: 0.5em;
-        font-size: 1.1em;
+        // font-size: 1.2em;
+        // font-size: 2em;
 
         &.user {
             box-shadow: none;
             color: rgb(var(--color-surface-300));
             flex: auto;
-            font-size: 1em;
+            // font-size: 1em;
             font-style: italic;
             line-height: 1.35em;
             overflow: scroll;
@@ -54,15 +56,16 @@
             opacity: 0.75;
         }
 
-        &.bot {
-            background-image: linear-gradient(
-                140deg,
-                #ffffff0e 0%,
-                rgba(0, 0, 0, 0.73) 100%
-            );
-            border-bottom: 1px solid #fff1;
-            // border-top-left-radius: unset;
-            color: rgb(var(--color-primary-300));
-        }
+        // &.bot {
+        //     // background-image: linear-gradient(
+        //     //     140deg,
+        //     //     #ffffff0e 0%,
+        //     //     rgba(0, 0, 0, 0.73) 100%
+        //     // );
+        //     border-bottom: 1px solid #fff1;
+        //     // border-top-left-radius: unset;
+        //     color: rgb(var(--color-primary-300));
+        //     backdrop-filter: blur(3px) brightness(120%);
+        // }
     }
 </style>

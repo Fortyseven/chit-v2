@@ -1,5 +1,5 @@
 <script>
-    import { currentConvo } from "../../../stores/chatState.svelte"
+    import { currentChatSession } from "../../../stores/chatState.svelte"
 
     let inputBoxEl = undefined
 
@@ -20,7 +20,7 @@
                 return
             }
 
-            await $currentConvo.submitUserMessage(message)
+            await $currentChatSession.submitUserMessage(message)
         } catch (e) {
             inputBoxEl.value = presubmit_message
             console.error(e)

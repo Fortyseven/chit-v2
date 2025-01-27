@@ -1,6 +1,6 @@
 <script>
     import MarkdownIt from "markdown-it"
-    import { currentConvo } from "../../../stores/chatState.svelte.js"
+    import { currentChatSession } from "../../../stores/chatState.svelte.js"
     import { hljs } from "../../../vendor/highlight.min"
 
     const md = MarkdownIt({
@@ -34,18 +34,20 @@
         border-radius: 0.5em;
         box-shadow: 0 0.25em 0.25em 0 #000;
         text-align: start;
-        padding: 0.5em;
-        font-size: 1.2em;
+        padding: 1em;
+        // font-size: 1.2em;
 
         &.bot {
             background-image: linear-gradient(
                 140deg,
-                #3335 0%,
+                #3330 0%,
                 rgba(0, 0, 0, 0.8) 100%
             );
             border-bottom: 1px solid #fff1;
+            border-top: 1px solid #fff2;
             // border-top-left-radius: unset;
             color: rgb(var(--color-primary-300));
+            backdrop-filter: blur(2px) brightness(140%);
         }
     }
 </style>

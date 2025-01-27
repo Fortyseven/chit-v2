@@ -12,10 +12,10 @@
     import { popup, storePopup } from "@skeletonlabs/skeleton"
 
     import llm from "../../../lib/llm/ollama.svelte"
-    import { currentConvo } from "../../../stores/chatState.svelte"
+    import { currentChatSession } from "../../../stores/chatState.svelte"
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 
-    let chat_state = $state($currentConvo.chatState)
+    let chat_state = $state($currentChatSession.chatState)
 
     const popupSystemPrompt = {
         // Represents the type of event that opens/closed the popup
@@ -34,7 +34,7 @@
         class="variant-ghost-primary [&>*]:pointer-events-none text-ellipsis text-nowrap overflow-hidden h-11 w-full max-w-xs"
         use:popup={popupSystemPrompt}
     >
-        {$currentConvo.chatState.system_prompt || "System Prompt"}
+        {$currentChatSession.chatState.system_prompt || "System Prompt"}
     </button>
     <div
         class="card w-full shadow-2xl flex flex-wrap sm:flex-nowrap gap-4 hidden"
@@ -47,7 +47,7 @@
             id="prompt"
             placeholder="Write a system prompt..."
             rows="10"
-            bind:value={$currentConvo.chatState.system_prompt}
+            bind:value={$currentChatSession.chatState.system_prompt}
         ></textarea>
     </div>
 </div>

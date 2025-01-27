@@ -1,37 +1,45 @@
 import { derived, get, writable } from "svelte/store"
 // import app from "../main"
 import { persisted } from "svelte-persisted-store"
-import { currentConvoIndex } from "./appState.svelte"
+// import { currentChatSessionIndex } from "./appState.svelte"
 import { ChatSession } from "./ChatState/ChatSession.svelte"
 
-class Convos {
-    // entries = $state([new ChatSession(), new ChatSession()]) // TODO: remove dummy data
+const chatSessions = writable({
+    sessions: [new ChatSession(), new ChatSession()],
+})
 
-    entries = [new ChatSession(), new ChatSession()]
-
-    /**
-     * @param {number} index
-     */
-    rm(index) {
-        this.entries.splice(index, 1)
-    }
-
-    constructor() {
-        console.log("created convos")
-    }
+function chatSessionCreate() {
+    chatSessions.update((convos) => {
+        convos.sessions.push(new ChatSession())
+        return convos
+    })
 }
 
-export const convos = persisted("convos", new Convos())
+function chatSessionDelete(index) {
+    chatSessions.update((convos) => {
+        convos.sessions.splice(index, 1)
+        return convos
+    })
+}
 
-// const currentConvoDerived = $derived(convos.entries[get(currentConvoIndex)])
+const currentChatSessionIndex = writable(0)
 
-// export function currentConvo() {
-//     return currentConvoDerived
-// }
+const setChatSessionIndex = (index) => {
+    currentChatSessionIndex.set(index)
+}
 
-export const currentConvo = derived(
-    [convos, currentConvoIndex],
-    ([$convos, $currentConvoIndex]) => {
-        return $convos.entries[$currentConvoIndex]
+const currentChatSession = derived(
+    [chatSessions, currentChatSessionIndex],
+    ([$chatSessions, $currentChatSessionIndex]) => {
+        return $chatSessions.sessions[$currentChatSessionIndex]
     }
 )
+
+export {
+    chatSessionCreate,
+    chatSessionDelete,
+    chatSessions,
+    currentChatSession,
+    currentChatSessionIndex,
+    setChatSessionIndex,
+}

@@ -2,12 +2,12 @@
 
 ## Top level
 
-### /src/stores/appState
+### /src/stores/appState.svelte
 - `/appState` non-persistent application state (e.g. locks, selected presets, etc)
 
 - `/configPersistState` contains app state that needs to persist between reloads, such as configuration settings (API endpoint, etc)
 
-### /src/stores/chatState
+### /src/stores/chatState.svelte
 
 - `/convos` - reactive $state containing an instance of `Convos` class
 
