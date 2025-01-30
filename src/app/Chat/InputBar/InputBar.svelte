@@ -25,6 +25,7 @@
 
             await $currentChatSession.submitUserMessage(message)
         } catch (e) {
+            // restore the message if it fails
             inputBoxEl.value = presubmit_message
             console.error(e)
         } finally {
@@ -58,6 +59,11 @@
         class="variant-filled-primary"
         onclick={() => submit_user_message(inputBoxEl.value)}>Send</button
     >
+    <button
+        class="variant-filled-primary"
+        onclick={() => console.log($currentChatSession.conversation.timeline)}
+        >D</button
+    >
 </div>
 
 <style lang="scss">
@@ -68,7 +74,7 @@
         bottom: 0px;
         position: absolute;
         border-radius: var(--theme-rounded-container);
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: auto 1fr auto auto;
 
         textarea {
             background-color: rgb(var(--color-surface-800));
