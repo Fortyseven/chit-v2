@@ -13,7 +13,8 @@
 
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 
-    let chat_state = $state($currentChatSession.conversation)
+    // let chat_state = $state($currentChatSession.conversation)
+    let chat_state = $currentChatSession.conversation
 
     const popupModelSelect = {
         // Represents the type of event that opens/closed the popup

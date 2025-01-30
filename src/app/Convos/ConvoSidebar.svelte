@@ -13,7 +13,8 @@
 
     import BtnNewSession from "./BtnNewSession.svelte"
 
-    let mobileToggleOpen = $state(false)
+    // let mobileToggleOpen = $state(false)
+    let mobileToggleOpen = false
     console.log($chatSessions)
 
     function changeConvo(convoIndex) {

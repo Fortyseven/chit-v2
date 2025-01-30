@@ -1,15 +1,16 @@
 <script>
-    import { createEventDispatcher, onMount, setContext } from 'svelte'
-    import { writable } from 'svelte/store'
+    import { createEventDispatcher, onMount, setContext } from "svelte"
+    import { writable } from "svelte/store"
     /**
      * @typedef {Object} Props
      * @property {import('svelte').Snippet} [children]
      */
 
     /** @type {Props} */
-    let { children } = $props();
+    // let { children } = $props();
 
-    let el = $state(undefined);
+    // let el = $state(undefined)
+    let el = undefined
 
     // const eventBusStore = writable(undefined);
     // setContext('event-bus', eventBusStore);
@@ -30,9 +31,9 @@
     onMount(() => {
         // console.log('EventRepeater onMount', el);
         // window.addEventListener('message', repeatEvent);
-    });
+    })
 </script>
 
 <div id="EventRepeater" bind:this={el} class="h-full w-full">
-    {@render children?.()}
+    <!-- {@render children?.()} -->
 </div>

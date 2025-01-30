@@ -16,13 +16,11 @@
         },
     })
 
-    let { line = { role: "assistant", content: "🍆" } } = $props()
+    export let line = { role: "assistant", content: "🍆" }
 
     console.log("line", line)
 
-    let processedContent = $state()
-
-    processedContent = md.render(line.trim() || "???").trim()
+    let processedContent = md.render(line?.trim() || "???").trim()
 </script>
 
 <div class="response bot">

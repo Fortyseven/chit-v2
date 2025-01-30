@@ -10,7 +10,8 @@
         setChatSessionIndex,
     } from "../../stores/chatSessions.svelte.js"
 
-    let mobileToggleOpen = $state(false)
+    // let mobileToggleOpen = $state(false)
+    let mobileToggleOpen = false
 
     const popupPreset = {
         // Represents the type of event that opens/closed the popup

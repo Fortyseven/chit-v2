@@ -4,7 +4,13 @@ import { defineConfig } from "vite"
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [svelte()],
+    plugins: [
+        svelte({
+            compilerOptions: {
+                runes: false,
+            },
+        }),
+    ],
     resolve: {
         alias: {
             "@": path.resolve("./src"),

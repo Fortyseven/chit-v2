@@ -15,7 +15,8 @@
     import { currentChatSession } from "../../../stores/chatSessions.svelte"
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 
-    let chat_state = $state($currentChatSession.conversation)
+    // let chat_state = $state($currentChatSession.conversation)
+    let chat_state = $currentChatSession.conversation
 
     const popupSystemPrompt = {
         // Represents the type of event that opens/closed the popup

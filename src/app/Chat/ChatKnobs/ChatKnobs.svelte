@@ -30,7 +30,7 @@
 
     // $inspect(llm.models)
 
-    let chat_state = $state($currentChatSession.conversation)
+    let chat_state = $currentChatSession.conversation
 </script>
 
 <div id="ChatKnobs" class="flex flex-wrap h-full">

@@ -6,11 +6,9 @@
 
     let inputBoxEl = undefined
 
-    $effect(() => {
-        if (inputBoxEl) {
-            inputBoxEl.focus()
-        }
-    })
+    $: if (inputBoxEl) {
+        inputBoxEl.focus()
+    }
 
     async function submit_user_message(user_message) {
         let presubmit_message = inputBoxEl.value
