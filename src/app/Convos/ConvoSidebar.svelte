@@ -11,7 +11,8 @@
         chatSessions,
         currentChatSession,
         currentChatSessionIndex,
-    } from "../../stores/chatState.svelte.js"
+    } from "../../stores/chatSessions.svelte.js"
+
 
     let mobileToggleOpen = $state(false)
     console.log($chatSessions)

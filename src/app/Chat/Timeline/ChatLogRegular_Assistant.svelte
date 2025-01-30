@@ -1,6 +1,6 @@
 <script>
     import MarkdownIt from "markdown-it"
-    import { currentChatSession } from "../../../stores/chatState.svelte.js"
+    import { currentChatSession } from "../../../stores/chatSessions.svelte.js"
     import { hljs } from "../../../vendor/highlight.min"
 
     const md = MarkdownIt({

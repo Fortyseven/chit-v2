@@ -23,7 +23,7 @@
     import {
         chatSessions,
         currentChatSession,
-    } from "./stores/chatState.svelte.js"
+    } from "./stores/chatSessions.svelte.js"
 </script>
 
 <EventRepeater>

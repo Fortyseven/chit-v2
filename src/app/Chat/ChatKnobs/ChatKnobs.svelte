@@ -1,7 +1,7 @@
 <script>
     import { Accordion, AccordionItem } from "@skeletonlabs/skeleton"
 
-    import { currentChatSession } from "../../../stores/chatState.svelte"
+    import { currentChatSession } from "../../../stores/chatSessions.svelte"
     import ModelSelect from "./ModelSelect.svelte"
     import SystemPrompt from "./SystemPrompt.svelte"
 
@@ -17,8 +17,8 @@
     ]
 
     function onBlurValue(key) {
-        $currentChatSession.chatState.knobs[key] = Number(
-            $currentChatSession.chatState.knobs[key],
+        $currentChatSession.conversation.knobs[key] = Number(
+            $currentChatSession.conversation.knobs[key],
         )
     }
 
@@ -30,7 +30,7 @@
 
     // $inspect(llm.models)
 
-    let chat_state = $state($currentChatSession.chatState)
+    let chat_state = $state($currentChatSession.conversation)
 </script>
 
 <div id="ChatKnobs" class="flex flex-wrap h-full">
@@ -46,14 +46,14 @@
         <ModelSelect></ModelSelect>
     </div>
     <div>
-        {#if $currentChatSession.chatState.knobs}
+        {#if $currentChatSession.conversation.knobs}
             <ul>
-                {Object.keys($currentChatSession.chatState.knobs)}
-                {#each Object.keys($currentChatSession.chatState.knobs).filter( (e) => advancedValues.includes(e), ) as key}
+                {Object.keys($currentChatSession.conversation.knobs)}
+                {#each Object.keys($currentChatSession.conversation.knobs).filter( (e) => advancedValues.includes(e), ) as key}
                     <li>
                         <label>{key}</label>
                         <input
-                            bind:value={$currentChatSession.chatState.knobs[
+                            bind:value={$currentChatSession.conversation.knobs[
                                 key
                             ]}
                             on:blur={() => onBlurValue(key)}

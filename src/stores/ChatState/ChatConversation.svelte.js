@@ -1,7 +1,7 @@
 import { ChatKnobsState } from "./ChatKnobsState.svelte.js"
 import { ChatMessageEntry } from "./ChatMessageEntry.svelte.js"
 
-export class ChatState {
+export class ChatConversation {
     knobs = new ChatKnobsState()
 
     system_prompt = $state("WRITE EVERYTHING IN UPPERCASE")

@@ -3,26 +3,26 @@ import { get } from "svelte/store"
 import { z } from "zod"
 import zodToJsonSchema from "zod-to-json-schema"
 import llm from "../../lib/llm/ollama.svelte"
-import { ChatState } from "./ChatState.svelte"
+import { ChatConversation } from "./ChatConversation.svelte"
 
 const SummaryTitle = z.object({
     title: z.string(),
 })
 
 export class ChatSession {
-    chat_id = Math.floor(Math.random() * 100000)
-    title = "Untitled Chat " + this.chat_id
+    chat_id = $state(Math.floor(Math.random() * 100000))
+    title = $state("Untitled Chat " + this.chat_id)
 
     _regen_title = true
 
     /**
-     * @type {ChatState}
+     * @type {ChatConversation}
      */
-    chatState = new ChatState(this.chat_id)
+    conversation = $state(new ChatConversation(this.chat_id))
 
     async submitUserMessage(user_message) {
         try {
-            this.chatState.pushUserMessage(user_message)
+            this.conversation.pushUserMessage(user_message)
             const llm_resp = await llm.updateSession(this)
 
             if (this._regen_title) {

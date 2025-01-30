@@ -5,10 +5,10 @@
     import {
         chatSessions,
         currentChatSession,
-    } from "../../stores/chatState.svelte.js"
+    } from "../../stores/chatSessions.svelte.js"
 
     function selectPrompt(prompt_def) {
-        $currentChatSession.chatState.system_prompt = prompt_def.prompt
+        $currentChatSession.conversation.system_prompt = prompt_def.prompt
     }
 </script>
 

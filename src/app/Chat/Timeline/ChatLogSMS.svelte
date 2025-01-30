@@ -2,7 +2,7 @@
     // @ts-nocheck
 
     import { Avatar } from "@skeletonlabs/skeleton"
-    import { chatSessions } from "../../stores/chatState.svelte.js"
+    import { chatSessions } from "../../stores/chatSessions.svelte.js"
 
     $inspect(convos)
 </script>

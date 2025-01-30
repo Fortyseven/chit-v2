@@ -1,5 +1,8 @@
 <script>
-    import { currentChatSession } from "../../../stores/chatState.svelte"
+    import {
+        chatSessions,
+        currentChatSession,
+    } from "../../../stores/chatSessions.svelte"
 
     let inputBoxEl = undefined
 
