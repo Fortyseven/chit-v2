@@ -8,7 +8,7 @@
         chatSessionCreate,
         chatSessions,
         setChatSessionIndex,
-    } from "../../stores/chatState.svelte.js"
+    } from "../../stores/chatSessions.svelte.js"
 
     let mobileToggleOpen = $state(false)
 
@@ -31,10 +31,10 @@
 <div class="btn-group variant-filled-secondary">
     <button
         class="btn variant-filled-primary flex-auto"
-        title="Start a new conversation using a blank system prompt."
+        title="Start a new session using a blank system prompt."
         onclick={newConversationClick}
     >
-        New Conversation
+        New Session
     </button>
     <button
         class="btn-icon variant-filled-primary flex-none"

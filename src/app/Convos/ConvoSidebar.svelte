@@ -1,8 +1,6 @@
 <script>
     // @ts-nocheck
 
-    import BtnNewConversation from "./BtnNewConversation.svelte"
-
     import { AppRail, AppRailTile } from "@skeletonlabs/skeleton"
 
     import {
@@ -13,6 +11,7 @@
         currentChatSessionIndex,
     } from "../../stores/chatSessions.svelte.js"
 
+    import BtnNewSession from "./BtnNewSession.svelte"
 
     let mobileToggleOpen = $state(false)
     console.log($chatSessions)
@@ -56,7 +55,16 @@
     {/snippet}
 
     {#snippet trail()}
-        <BtnNewConversation></BtnNewConversation>
+        <div class="flex gap-2">
+            <div>
+                <BtnNewSession></BtnNewSession>
+            </div>
+            <div>
+                <button class="btn variant-filled-secondary !rounded-lg">
+                    Config
+                </button>
+            </div>
+        </div>
     {/snippet}
 </AppRail>
 
