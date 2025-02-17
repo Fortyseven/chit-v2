@@ -13,7 +13,6 @@
                         {messages.content}
                     </div>
                 {:else}
-                    <div>{messages.content}</div>
                     <ChatLogRegular_Assistant line={messages.content}
                     ></ChatLogRegular_Assistant>
                 {/if}
