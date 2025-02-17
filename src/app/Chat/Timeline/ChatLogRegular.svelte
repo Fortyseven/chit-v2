@@ -5,7 +5,6 @@
 
 <div class="bg-surface-900 h-full background-grid bg-fixed">
     <!-- {#if $currentChatSession.conversation.timeline} -->
-    {$activeChatId}
     {#if $activeChatId && $currentChat.messages}
         <div class="chatlog">
             {#each $currentChat.messages as messages, i}

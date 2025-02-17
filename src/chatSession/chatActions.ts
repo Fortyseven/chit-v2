@@ -126,25 +126,7 @@ export function chatDuplicate(chatId: string) {
     activeChatId.set(newChat.id)
 }
 
+//--------------------------------------------------------------
 export function chatRunInference(chatId: string) {
-    // const chat = get(chats).find((chat) => chat.id === chatId)
-    // if (!chat) return
-
     get(llm).chatUpdateSession(chatId)
-
-    // setTimeout(() => {
-    //     chatAddRoleMessage(chatId, "assistant", "Inference result")
-    // }, 1000)
-}
-
-// In store initialization
-const saved = localStorage.getItem("chats")
-if (saved) {
-    const parsed = JSON.parse(saved, (key, value) => {
-        if (key === "createdAt" || key === "updatedAt" || key === "timestamp") {
-            return new Date(value)
-        }
-        return value
-    })
-    chats.set(parsed)
 }

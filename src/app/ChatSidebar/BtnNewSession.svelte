@@ -1,20 +1,13 @@
-<script>
-    // @ts-nocheck
+<script lang="ts">
+    import { popup } from "@skeletonlabs/skeleton"
+    import { chatNew } from "../../chatSession/chatActions"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
 
-    import { popup } from "@skeletonlabs/skeleton"
-
-    import { chatNew } from "../../chatSession/chatActions"
-
-    // let mobileToggleOpen = $state(false)
     let mobileToggleOpen = false
 
     const popupPreset = {
-        // Represents the type of event that opens/closed the popup
         event: "click",
-        // Matches the data-popup value on your popup element
         target: "popupPreset",
-        // Defines which side of your trigger the popup will appear
         placement: "top",
     }
 
@@ -23,25 +16,28 @@
     }
 </script>
 
-<!-- <div class="flex flex-row justify-between"> -->
-<div class="btn-group variant-filled-secondary">
-    <button
-        class="btn variant-filled-primary flex-auto"
-        title="Start a new session using a blank system prompt."
-        onclick={newConversationClick}
-    >
-        New Session
-    </button>
-    <button
-        class="btn-icon variant-filled-primary flex-none"
-        title="Start a new conversation using a system prompt preset."
-        use:popup={popupPreset}
-    >
-        P
-    </button>
-
+<div class="flex flex-col">
+    <div class="absolute bottom-[4.5em] overflow-scroll-y">
+        <PopupSystemPresets></PopupSystemPresets>
+    </div>
+    <div class="btn-group variant-filled-secondary">
+        <button
+            class="btn variant-filled-primary flex-auto"
+            title="Start a new session using a blank system prompt."
+            onclick={newConversationClick}
+        >
+            New Session
+        </button>
+        <button
+            class="btn-icon variant-filled-primary flex-none"
+            title="Start a new conversation using a system prompt preset."
+        >
+            P
+        </button>
+        <!--
     <div data-popup="popupPreset">
         <PopupSystemPresets></PopupSystemPresets>
+    </div> -->
     </div>
 </div>
 

@@ -11,12 +11,8 @@
     import { writable } from "svelte/store"
     import { chatSetSystemPrompt } from "../../../chatSession/chatActions"
     import { activeChatId, currentChat } from "../../../chatSession/chatSession"
-    // import llm from "../../../lib/llm/ollama.svelte"
-    // import { currentChatSession } from "../../../stores/chatSessions.svelte"
-    storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 
-    // let chat_state = $state($currentChatSession.conversation)
-    // let chat_state = $currentChat.conversation
+    storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 
     const popupSystemPrompt = {
         // Represents the type of event that opens/closed the popup

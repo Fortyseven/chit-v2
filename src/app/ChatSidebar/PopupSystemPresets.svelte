@@ -1,20 +1,23 @@
 <script>
+    import { chatNew } from "../../chatSession/chatActions"
     import { currentChat } from "../../chatSession/chatSession"
     import SYSTEM_PROMPTS from "../../preset-prompts/index.js"
 
     function selectPrompt(prompt_def) {
+        chatNew()
         $currentChat.system_prompt = prompt_def.prompt
     }
 </script>
 
-<div
-    class="card shadow-2xl !p-4 !bg-neutral-700 text-primary-500 z-20 flex flex-col"
->
+<div class="shadow-2xl !p-4 z-20 bg-neutral-800 flex flex-col">
     {#each Object.keys(SYSTEM_PROMPTS) as skey}
         {@const p = SYSTEM_PROMPTS[skey]}
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_missing_attribute -->
         <button
             type="button"
-            class="btn !text-left !justify-start"
+            class="cursor-pointer text-start text-primary-500 p-0 hover:bg-primary-800 outline-none"
             onclick={selectPrompt(p)}
         >
             {p.name}
