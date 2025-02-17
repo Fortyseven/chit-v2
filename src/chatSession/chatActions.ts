@@ -66,7 +66,7 @@ export function chatDelete(chatId: string) {
     chats.update(($chats) => $chats.filter((chat) => chat.id !== chatId))
 
     // there must always be one
-    if (get(chats).length === 0) {
+    if (!get(chats).length) {
         chatNew()
     }
 }

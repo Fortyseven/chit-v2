@@ -31,7 +31,9 @@
     })
 
     currentChat.subscribe((value) => {
-        sys_prompt_state.set($currentChat.system_prompt)
+        if ($currentChat) {
+            sys_prompt_state.set($currentChat.system_prompt)
+        }
     })
 </script>
 

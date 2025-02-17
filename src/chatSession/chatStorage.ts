@@ -11,8 +11,10 @@ if (typeof window !== "undefined") {
         chats.set(JSON.parse(saved))
 
         const c = get(chats)
-        if (c.length >= 0) {
+        if (c.length > 0) {
             activeChatId.set(c[0].id)
+        } else {
+            chatNew()
         }
     } else {
         chatNew()

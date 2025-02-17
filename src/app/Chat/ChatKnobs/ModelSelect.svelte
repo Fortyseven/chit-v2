@@ -12,7 +12,9 @@
     })
 
     currentChat.subscribe((value) => {
-        selected_model.set($currentChat.model_name)
+        if ($currentChat) {
+            selected_model.set($currentChat.model_name)
+        }
     })
 </script>
 
