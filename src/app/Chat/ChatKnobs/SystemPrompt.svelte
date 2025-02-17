@@ -9,8 +9,8 @@
     } from "@floating-ui/dom"
     import { popup, storePopup } from "@skeletonlabs/skeleton"
     import { writable } from "svelte/store"
-    import { chatSetSystemPrompt } from "../../../nudes/chatActions"
-    import { activeChatId, currentChat } from "../../../nudes/chatSession"
+    import { chatSetSystemPrompt } from "../../../chatSession/chatActions"
+    import { activeChatId, currentChat } from "../../../chatSession/chatSession"
     // import llm from "../../../lib/llm/ollama.svelte"
     // import { currentChatSession } from "../../../stores/chatSessions.svelte"
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })

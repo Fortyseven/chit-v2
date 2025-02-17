@@ -1,8 +1,8 @@
 <script>
     import { writable } from "svelte/store"
+    import { chatSetModel } from "../../../chatSession/chatActions"
+    import { activeChatId, currentChat } from "../../../chatSession/chatSession"
     import llm from "../../../lib/llm/ollama.svelte"
-    import { chatSetModel } from "../../../nudes/chatActions"
-    import { activeChatId, currentChat } from "../../../nudes/chatSession"
 
     let selected_model = writable($currentChat.model_name)
 

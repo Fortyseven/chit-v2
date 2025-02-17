@@ -1,5 +1,5 @@
 <script>
-    import { currentChat } from "../../nudes/chatSession"
+    import { currentChat } from "../../chatSession/chatSession"
     import SYSTEM_PROMPTS from "../../preset-prompts/index.js"
 
     function selectPrompt(prompt_def) {

@@ -4,7 +4,7 @@
 
     import { popup } from "@skeletonlabs/skeleton"
 
-    import { chatNew } from "../../nudes/chatActions"
+    import { chatNew } from "../../chatSession/chatActions"
 
     // let mobileToggleOpen = $state(false)
     let mobileToggleOpen = false

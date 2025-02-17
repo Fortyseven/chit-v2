@@ -21,7 +21,7 @@
 
     import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
 
-    import { currentChat } from "./nudes/chatSession.ts"
+    import { currentChat } from "./chatSession/chatSession"
 </script>
 
 <!-- <EventRepeater> -->

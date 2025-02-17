@@ -1,5 +1,5 @@
 <script>
-    import { currentChat } from "../../../nudes/chatSession"
+    import { currentChat } from "../../../chatSession/chatSession"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
 </script>
 

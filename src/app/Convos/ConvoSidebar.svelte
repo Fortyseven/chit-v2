@@ -8,8 +8,8 @@
         chatDuplicate,
         chatIsEmpty,
         chatSwitchTo,
-    } from "../../nudes/chatActions"
-    import { chats, currentChat } from "../../nudes/chatSession"
+    } from "../../chatSession/chatActions"
+    import { chats, currentChat } from "../../chatSession/chatSession"
     import BtnNewSession from "./BtnNewSession.svelte"
 
     // let mobileToggleOpen = $state(false)
