@@ -9,7 +9,7 @@
         AppShell,
     } from "@skeletonlabs/skeleton"
 
-    import ConvoSidebar from "$app/Convos/ConvoSidebar.svelte"
+    import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
 
     import "$stores/appState.svelte.js"
 
