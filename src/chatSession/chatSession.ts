@@ -2,20 +2,21 @@ import { derived, get, writable, type Readable } from "svelte/store"
 import { populateTestData } from "./chatTestLoad"
 
 export interface Message {
-    content: string
+    content: String
     role: "user" | "assistant"
     timestamp: Date
-    media?: string
+    media?: String
 }
 
 export interface ChatSession {
-    id: string
-    title: string
-    system_prompt?: string
-    model_name: string
+    id: String
+    title: String
+    system_prompt?: String
+    model_name: String
     messages: Message[]
     createdAt: Date
     updatedAt: Date
+    response_buffer: String
 }
 
 export const chats = writable<ChatSession[]>([])

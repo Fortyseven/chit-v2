@@ -11,12 +11,16 @@ export function chatNew() {
         messages: [],
         createdAt: new Date(),
         updatedAt: new Date(),
+        model_name: "llama3.1:latest",
+        system_prompt: "",
+        response_buffer: "",
     }
 
     chats.update(($chats) => [...$chats, newChat])
     activeChatId.set(id)
 }
 
+//--------------------------------------------------------------
 export function chatSetModel(chatId: string, modelName: string) {
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -32,6 +36,8 @@ export function chatSetModel(chatId: string, modelName: string) {
     )
 }
 
+//--------------------------------------------------------------
+// Set the system prompt
 export function chatSetSystemPrompt(chatId: string, systemPrompt: string) {
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -72,7 +78,7 @@ export function chatIsEmpty(chatId: string) {
 }
 
 //--------------------------------------------------------------
-export function chatAddMessage(chatId: string, message: Message) {
+export function chatAddMessage(chatId: String, message: Message) {
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
