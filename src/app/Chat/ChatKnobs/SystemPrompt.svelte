@@ -1,6 +1,4 @@
 <script>
-    // @ts-nocheck
-
     import {
         arrow,
         autoUpdate,
@@ -10,13 +8,15 @@
         shift,
     } from "@floating-ui/dom"
     import { popup, storePopup } from "@skeletonlabs/skeleton"
-
-    import llm from "../../../lib/llm/ollama.svelte"
-    import { currentChatSession } from "../../../stores/chatSessions.svelte"
+    import { writable } from "svelte/store"
+    import { chatSetSystemPrompt } from "../../../nudes/chatActions"
+    import { activeChatId, currentChat } from "../../../nudes/chatSession"
+    // import llm from "../../../lib/llm/ollama.svelte"
+    // import { currentChatSession } from "../../../stores/chatSessions.svelte"
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 
     // let chat_state = $state($currentChatSession.conversation)
-    let chat_state = $currentChatSession.conversation
+    // let chat_state = $currentChat.conversation
 
     const popupSystemPrompt = {
         // Represents the type of event that opens/closed the popup
@@ -27,15 +27,24 @@
         placement: "bottom",
     }
 
-    // let sys_prompt =
+    let sys_prompt_state = writable($currentChat.system_prompt)
+
+    sys_prompt_state.subscribe((value) => {
+        console.log("sys_prompt_state", value)
+        chatSetSystemPrompt($activeChatId, value)
+    })
+
+    currentChat.subscribe((value) => {
+        sys_prompt_state.set($currentChat.system_prompt)
+    })
 </script>
 
-<div class="flex md:px-4">
+<div class="flex">
     <button
-        class="variant-ghost-primary [&>*]:pointer-events-none text-ellipsis text-nowrap overflow-hidden h-11 w-full max-w-xs"
+        class="variant-ghost-primary [&>*]:pointer-events-none text-ellipsis text-nowrap overflow-hidden h-11 w-full sm:max-w-xs"
         use:popup={popupSystemPrompt}
     >
-        {$currentChatSession.conversation.system_prompt || "System Prompt"}
+        {$sys_prompt_state || "System Prompt"}
     </button>
     <div
         class="card w-full shadow-2xl flex flex-wrap sm:flex-nowrap gap-4 hidden"
@@ -48,7 +57,7 @@
             id="prompt"
             placeholder="Write a system prompt..."
             rows="10"
-            bind:value={$currentChatSession.conversation.system_prompt}
+            bind:value={$sys_prompt_state}
         ></textarea>
     </div>
 </div>

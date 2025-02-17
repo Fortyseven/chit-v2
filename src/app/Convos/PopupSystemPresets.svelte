@@ -1,14 +1,9 @@
 <script>
-    // @ts-nocheck
-
+    import { currentChat } from "../../nudes/chatSession"
     import SYSTEM_PROMPTS from "../../preset-prompts/index.js"
-    import {
-        chatSessions,
-        currentChatSession,
-    } from "../../stores/chatSessions.svelte.js"
 
     function selectPrompt(prompt_def) {
-        $currentChatSession.conversation.system_prompt = prompt_def.prompt
+        $currentChat.system_prompt = prompt_def.prompt
     }
 </script>
 

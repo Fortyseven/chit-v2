@@ -1,19 +1,20 @@
 <script>
+    import { currentChat } from "../../../nudes/chatSession"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
-
-    import { currentChatSession } from "../../../stores/chatSessions.svelte.js"
 </script>
 
 <div class="bg-surface-900 h-full background-grid bg-fixed">
-    {#if $currentChatSession.conversation.timeline}
+    <!-- {#if $currentChatSession.conversation.timeline} -->
+    {#if $currentChat.messages}
         <div class="chatlog">
-            {#each $currentChatSession.conversation.timeline as timeline_entry, i}
-                {#if timeline_entry.role === "user"}
+            {#each $currentChat.messages as messages, i}
+                {#if messages.role === "user"}
                     <div class="response user">
-                        {timeline_entry.content}
+                        {messages.content}
                     </div>
                 {:else}
-                    <ChatLogRegular_Assistant line={timeline_entry.content}
+                    <div>{messages.content}</div>
+                    <ChatLogRegular_Assistant line={messages.content}
                     ></ChatLogRegular_Assistant>
                 {/if}
             {/each}

@@ -20,10 +20,8 @@
     import EventRepeater from "./app/EventRepeater.svelte"
 
     import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
-    import {
-        chatSessions,
-        currentChatSession,
-    } from "./stores/chatSessions.svelte.js"
+
+    import { currentChat } from "./nudes/chatSession.ts"
 </script>
 
 <!-- <EventRepeater> -->
@@ -54,7 +52,7 @@
             <div
                 class="p-2 text-lg text-primary-500 font-bold flex-auto text-nowrap text-ellipsis overflow-hidden w-3/4 md:w-full md:text-2xl"
             >
-                {$currentChatSession.title}
+                {$currentChat.title}
             </div>
             <div class="flex-auto place-self-center w-full">
                 <ChatKnobs></ChatKnobs>

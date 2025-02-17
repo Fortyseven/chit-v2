@@ -4,11 +4,7 @@
 
     import { popup } from "@skeletonlabs/skeleton"
 
-    import {
-        chatSessionCreate,
-        chatSessions,
-        setChatSessionIndex,
-    } from "../../stores/chatSessions.svelte.js"
+    import { chatNew } from "../../nudes/chatActions"
 
     // let mobileToggleOpen = $state(false)
     let mobileToggleOpen = false
@@ -23,8 +19,7 @@
     }
 
     function newConversationClick() {
-        chatSessionCreate()
-        setChatSessionIndex($chatSessions.sessions.length - 1)
+        chatNew()
     }
 </script>
 

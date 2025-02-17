@@ -1,8 +1,5 @@
 <script>
-    import {
-        chatSessions,
-        currentChatSession,
-    } from "../../../stores/chatSessions.svelte"
+    import { currentChat } from "../../../nudes/chatSession"
 
     let inputBoxEl = undefined
 
@@ -10,36 +7,36 @@
         inputBoxEl.focus()
     }
 
-    async function submit_user_message(user_message) {
-        let presubmit_message = inputBoxEl.value
+    // async function submit_user_message(user_message) {
+    //     let presubmit_message = inputBoxEl.value
 
-        try {
-            inputBoxEl.value = ""
-            inputBoxEl.disabled = true
-            let message = user_message //|| inputBoxEl.value
-            if (message.trim() === "") {
-                return
-            }
+    //     try {
+    //         inputBoxEl.value = ""
+    //         inputBoxEl.disabled = true
+    //         let message = user_message //|| inputBoxEl.value
+    //         if (message.trim() === "") {
+    //             return
+    //         }
 
-            await $currentChatSession.submitUserMessage(message)
-        } catch (e) {
-            // restore the message if it fails
-            inputBoxEl.value = presubmit_message
-            console.error(e)
-        } finally {
-            inputBoxEl.disabled = false
-            inputBoxEl.focus()
-        }
-    }
+    //         // await $currentChat.id.submitUserMessage(message)
+    //     } catch (e) {
+    //         // restore the message if it fails
+    //         inputBoxEl.value = presubmit_message
+    //         console.error(e)
+    //     } finally {
+    //         inputBoxEl.disabled = false
+    //         inputBoxEl.focus()
+    //     }
+    // }
 
-    async function onInputKeypress(ev) {
-        if (ev.key === "Enter") {
-            if (!ev.shiftKey) {
-                ev.preventDefault()
-                await submit_user_message(ev.target.value)
-            }
-        }
-    }
+    // async function onInputKeypress(ev) {
+    //     if (ev.key === "Enter") {
+    //         if (!ev.shiftKey) {
+    //             ev.preventDefault()
+    //             await submit_user_message(ev.target.value)
+    //         }
+    //     }
+    // }
 </script>
 
 <div id="InputBox" class="input-group">
@@ -51,16 +48,11 @@
         placeholder="Write a message..."
         rows="1"
         bind:this={inputBoxEl}
-        onkeypress={onInputKeypress}
     ></textarea>
+    <!-- onkeypress={onInputKeypress} -->
     <button
         class="variant-filled-primary"
         onclick={() => submit_user_message(inputBoxEl.value)}>Send</button
-    >
-    <button
-        class="variant-filled-primary"
-        onclick={() => console.log($currentChatSession.conversation.timeline)}
-        >D</button
     >
 </div>
 

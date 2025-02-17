@@ -20,7 +20,14 @@
                         >
                             <p>{timeline_entry.text}</p>
                         </div>
-                        {@render avatar(timeline_entry.role)}
+                        <div
+                            class="flex-[64px] flex-grow-0 flex-shrink-0 place-content-center"
+                        >
+                            <Avatar
+                                src={`https://i.pravatar.cc/?img={${timeline_entry.role}}`}
+                                class="w-full"
+                            />
+                        </div>
                     </div>
                 {:else}
                     <div
@@ -38,9 +45,3 @@
         </div>
     {/if}
 </div>
-
-{#snippet avatar(role)}
-    <div class="flex-[64px] flex-grow-0 flex-shrink-0 place-content-center">
-        <Avatar src="https://i.pravatar.cc/?img={role}" class=" w-full" />
-    </div>
-{/snippet}

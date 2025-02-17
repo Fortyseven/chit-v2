@@ -4,58 +4,65 @@
     import { AppRail, AppRailTile } from "@skeletonlabs/skeleton"
 
     import {
-        chatSessionCreate,
-        chatSessionDelete,
-        chatSessions,
-        currentChatSession,
-        currentChatSessionIndex,
-    } from "../../stores/chatSessions.svelte.js"
-
+        chatDelete,
+        chatDuplicate,
+        chatIsEmpty,
+        chatSwitchTo,
+    } from "../../nudes/chatActions"
+    import { chats, currentChat } from "../../nudes/chatSession"
     import BtnNewSession from "./BtnNewSession.svelte"
 
     // let mobileToggleOpen = $state(false)
     let mobileToggleOpen = false
-    console.log($chatSessions)
 
-    function changeConvo(convoIndex) {
-        $currentChatSessionIndex = convoIndex
+    function changeConvo(chatId) {
+        chatSwitchTo(chatId)
     }
 
-    function deleteConvo(convoIndex) {
-        if (confirm("Are you sure you want to delete this conversation?")) {
-            // so we don't try to render a convo that soon won't exist
-            if (convoIndex === $currentChatSessionIndex) {
-                $currentChatSessionIndex = 0
-            }
-
-            chatSessionDelete(convoIndex)
+    function deleteConvo(chatId) {
+        if (
+            chatIsEmpty(chatId) ||
+            confirm("Are you sure you want to delete this conversation?")
+        ) {
+            chatDelete(chatId)
         }
     }
 </script>
 
 <AppRail class="convo-panel app-rail h-full w-full p-4 hidden sm:grid">
-    {#snippet lead()}
+    <svelte:fragment slot="lead">
         <div class="flex flex-col gap-2 shadow-lg">
-            {#each $chatSessions.sessions as conversation, i}
+            {#each $chats as chat, i}
                 <div
                     class="flex flex-row justify-between"
-                    class:active={i === $currentChatSessionIndex}
+                    class:active={chat.id === $currentChat.id}
                 >
-                    <button class=" flex-auto" onclick={() => changeConvo(i)}>
-                        {conversation.title}
+                    <button
+                        class=" flex-auto"
+                        onclick={() => changeConvo(chat.id)}
+                    >
+                        {chat.title}
                     </button>
-                    <button class="opacity-75 p-0 w-8" onclick={() => {}}>
-                        D
+                    <button
+                        class="opacity-75 p-0 w-8"
+                        onclick={() => {
+                            chatDuplicate(chat.id)
+                        }}
+                    >
+                        🗋
                     </button>
-                    <button class="p-0 w-8" onclick={() => deleteConvo(i)}>
-                        X
+                    <button
+                        class="p-0 w-8"
+                        onclick={() => deleteConvo(chat.id)}
+                    >
+                        🗑
                     </button>
                 </div>
             {/each}
         </div>
-    {/snippet}
+    </svelte:fragment>
 
-    {#snippet trail()}
+    <svelte:fragment slot="trail">
         <div class="flex gap-2">
             <div>
                 <BtnNewSession></BtnNewSession>
@@ -66,7 +73,7 @@
                 </button>
             </div>
         </div>
-    {/snippet}
+    </svelte:fragment>
 </AppRail>
 
 <style lang="scss">

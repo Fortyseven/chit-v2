@@ -34,5 +34,6 @@
         "src/**/*.svelte",
         "src/tailwind.config.js",
         "src/theme/chit-theme.ts",
+        "src/nudes/chatSession.ts",
     ]
 }

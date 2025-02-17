@@ -1,6 +1,5 @@
 <script>
     import MarkdownIt from "markdown-it"
-    import { currentChatSession } from "../../../stores/chatSessions.svelte.js"
     import { hljs } from "../../../vendor/highlight.min"
 
     const md = MarkdownIt({
@@ -18,7 +17,7 @@
 
     export let line = { role: "assistant", content: "🍆" }
 
-    console.log("line", line)
+    $: console.log("line", line)
 
     let processedContent = md.render(line?.trim() || "???").trim()
 </script>

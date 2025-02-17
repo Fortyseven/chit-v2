@@ -1,52 +1,30 @@
 <script>
-    import {
-        arrow,
-        autoUpdate,
-        computePosition,
-        flip,
-        offset,
-        shift,
-    } from "@floating-ui/dom"
-    import { popup, storePopup } from "@skeletonlabs/skeleton"
+    import { writable } from "svelte/store"
     import llm from "../../../lib/llm/ollama.svelte"
-    import { currentChatSession } from "../../../stores/chatSessions.svelte"
+    import { chatSetModel } from "../../../nudes/chatActions"
+    import { activeChatId, currentChat } from "../../../nudes/chatSession"
 
-    storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
+    let selected_model = writable($currentChat.model_name)
 
-    // let chat_state = $state($currentChatSession.conversation)
-    let chat_state = $currentChatSession.conversation
+    selected_model.subscribe((value) => {
+        chatSetModel($activeChatId, value)
+    })
 
-    const popupModelSelect = {
-        // Represents the type of event that opens/closed the popup
-        event: "click",
-        // Matches the data-popup value on your popup element
-        target: "popupModelSelect",
-        // Defines which side of your trigger the popup will appear
-        placement: "bottom",
-    }
+    currentChat.subscribe((value) => {
+        selected_model.set($currentChat.model_name)
+    })
 </script>
 
-<div class="place-content-center">
-    <button
-        class="variant-ghost-secondary [&>*]:pointer-events-none whitespace-nowrap !text-ellipsis overflow-hidden h-11 w-full max-w-xs"
-        use:popup={popupModelSelect}
-        >{chat_state.model || "Select Model"}</button
+<div class="place-content-center flex flex-row gap-2">
+    <select
+        bind:value={$selected_model}
+        name="system"
+        id="system"
+        class="flex-auto w-full px-4 variant-ghost-secondary max-w-xs rounded-lg"
     >
-    <div
-        class="card w-full shadow-2xl flex flex-wrap sm:flex-nowrap gap-4 hidden"
-        data-popup="popupModelSelect"
-    >
-        <div class="arrow">&uparrow;</div>
-        <select
-            bind:value={chat_state.model}
-            name="system"
-            id="system"
-            class="flex-auto w-full p-4"
-        >
-            {#each llm.models as { model, name }}
-                <option value={model}>{name}</option>
-            {/each}
-        </select>
-        <button class="btn flex-auto">Refresh</button>
-    </div>
+        {#each llm.models as { model, name }}
+            <option value={model}>{name}</option>
+        {/each}
+    </select>
+    <button class="btn flex-auto">Refresh</button>
 </div>

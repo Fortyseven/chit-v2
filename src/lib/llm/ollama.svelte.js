@@ -1,10 +1,7 @@
 // @ts-nocheck
 import { Ollama } from "ollama"
 import { get, writable } from "svelte/store"
-import { chatSessions } from "../../stores/chatSessions.svelte"
-
-import { ChatSession } from "../../stores/ChatState/ChatSession.svelte"
-import { configPersistState } from "../../stores/configPersistState.svelte"
+import { appState } from "../../stores/appState.svelte"
 
 class LLMInterface {
     models = $state([])
@@ -22,12 +19,12 @@ class LLMInterface {
             // only reinstantiate if the host has changed
             if (
                 this.first_load ||
-                this.ol_instance_host !== get(configPersistState)?.apiEndpoint
+                this.ol_instance_host !== get(appState)?.apiEndpoint
             ) {
                 this.ol_instance = new Ollama({
-                    host: configPersistState.apiEndpoint,
+                    host: appState.apiEndpoint,
                 })
-                this.ol_instance_host = get(configPersistState)?.apiEndpoint
+                this.ol_instance_host = get(appState)?.apiEndpoint
 
                 console.log(
                     "🤖🌎 Updated Ollama instance host to ",
