@@ -11,9 +11,9 @@
 
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
 
-    import "$stores/appState.svelte.js"
+    // import "$stores/appState.svelte.js"
 
-    import llm from "$lib/llm/ollama.svelte.js"
+    import llm from "$lib/llm/ollama"
     import API from "./app/API.svelte"
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ChatLogRegular from "./app/Chat/Timeline/ChatLogRegular.svelte"

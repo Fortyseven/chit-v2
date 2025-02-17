@@ -19,7 +19,7 @@
 
     $: console.log("line", line)
 
-    let processedContent = md.render(line?.trim() || "???").trim()
+    let processedContent = line //md.render(line || "???").trim()
 </script>
 
 <div class="response bot">

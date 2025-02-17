@@ -1,42 +1,56 @@
-<script>
-    import { currentChat } from "../../../chatSession/chatSession"
+<script lang="ts">
+    import {
+        chatAddMessage,
+        chatAddRoleMessage,
+        chatRunInference,
+    } from "../../../chatSession/chatActions"
+    import { activeChatId } from "../../../chatSession/chatSession"
 
-    let inputBoxEl = undefined
+    let inputBoxEl: HTMLTextAreaElement | undefined = undefined
 
     $: if (inputBoxEl) {
         inputBoxEl.focus()
     }
 
-    // async function submit_user_message(user_message) {
-    //     let presubmit_message = inputBoxEl.value
+    async function submit_user_message(user_message: String) {
+        if (!inputBoxEl || !$activeChatId) {
+            throw new Error("inputBoxEl is not defined or some such")
+        }
 
-    //     try {
-    //         inputBoxEl.value = ""
-    //         inputBoxEl.disabled = true
-    //         let message = user_message //|| inputBoxEl.value
-    //         if (message.trim() === "") {
-    //             return
-    //         }
+        let presubmit_message = inputBoxEl.value
 
-    //         // await $currentChat.id.submitUserMessage(message)
-    //     } catch (e) {
-    //         // restore the message if it fails
-    //         inputBoxEl.value = presubmit_message
-    //         console.error(e)
-    //     } finally {
-    //         inputBoxEl.disabled = false
-    //         inputBoxEl.focus()
-    //     }
-    // }
+        try {
+            inputBoxEl.value = ""
+            inputBoxEl.disabled = true
+            let message = user_message //|| inputBoxEl.value
+            console.log("submit_user_message", message)
 
-    // async function onInputKeypress(ev) {
-    //     if (ev.key === "Enter") {
-    //         if (!ev.shiftKey) {
-    //             ev.preventDefault()
-    //             await submit_user_message(ev.target.value)
-    //         }
-    //     }
-    // }
+            if (message.trim() === "") {
+                return
+            }
+
+            // await $currentChat.id.submitUserMessage(message)
+            chatAddRoleMessage($activeChatId, "user", message)
+
+            chatRunInference($activeChatId)
+        } catch (e) {
+            // restore the message if it fails
+            inputBoxEl.value = presubmit_message
+            console.error(e)
+        } finally {
+            inputBoxEl.disabled = false
+            inputBoxEl.focus()
+        }
+    }
+
+    async function onInputKeypress(ev) {
+        if (ev.key === "Enter") {
+            if (!ev.shiftKey) {
+                ev.preventDefault()
+                await submit_user_message(ev.target.value)
+            }
+        }
+    }
 </script>
 
 <div id="InputBox" class="input-group">
@@ -48,8 +62,8 @@
         placeholder="Write a message..."
         rows="1"
         bind:this={inputBoxEl}
+        onkeypress={onInputKeypress}
     ></textarea>
-    <!-- onkeypress={onInputKeypress} -->
     <button
         class="variant-filled-primary"
         onclick={() => submit_user_message(inputBoxEl.value)}>Send</button

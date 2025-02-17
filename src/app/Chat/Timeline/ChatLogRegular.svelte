@@ -1,21 +1,24 @@
 <script>
-    import { currentChat } from "../../../chatSession/chatSession"
+    import { activeChatId, currentChat } from "../../../chatSession/chatSession"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
 </script>
 
 <div class="bg-surface-900 h-full background-grid bg-fixed">
     <!-- {#if $currentChatSession.conversation.timeline} -->
-    {#if $currentChat.messages}
+    {$activeChatId}
+    {#if $activeChatId && $currentChat.messages}
         <div class="chatlog">
             {#each $currentChat.messages as messages, i}
-                {#if messages.role === "user"}
-                    <div class="response user">
-                        {messages.content}
-                    </div>
-                {:else}
-                    <ChatLogRegular_Assistant line={messages.content}
-                    ></ChatLogRegular_Assistant>
-                {/if}
+                {#key messages}
+                    {#if messages.role === "user"}
+                        <div class="response user">
+                            {messages.content}
+                        </div>
+                    {:else}
+                        <ChatLogRegular_Assistant line={messages.content}
+                        ></ChatLogRegular_Assistant>
+                    {/if}
+                {/key}
             {/each}
         </div>
     {/if}

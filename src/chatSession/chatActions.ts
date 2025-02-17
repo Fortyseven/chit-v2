@@ -1,4 +1,5 @@
 import { get } from "svelte/store"
+import llm from "../lib/llm/ollama"
 import { activeChatId, chats, Message } from "./chatSession"
 
 //--------------------------------------------------------------
@@ -78,6 +79,21 @@ export function chatIsEmpty(chatId: string) {
 }
 
 //--------------------------------------------------------------
+export function chatAddRoleMessage(
+    chatId: String,
+    role: "user" | "assistant",
+    content: String
+) {
+    const message = {
+        content,
+        role,
+        timestamp: new Date(),
+    }
+
+    chatAddMessage(chatId, message)
+}
+
+//--------------------------------------------------------------
 export function chatAddMessage(chatId: String, message: Message) {
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -108,6 +124,17 @@ export function chatDuplicate(chatId: string) {
 
     chats.update(($chats) => [...$chats, newChat])
     activeChatId.set(newChat.id)
+}
+
+export function chatRunInference(chatId: string) {
+    // const chat = get(chats).find((chat) => chat.id === chatId)
+    // if (!chat) return
+
+    get(llm).chatUpdateSession(chatId)
+
+    // setTimeout(() => {
+    //     chatAddRoleMessage(chatId, "assistant", "Inference result")
+    // }, 1000)
 }
 
 // In store initialization

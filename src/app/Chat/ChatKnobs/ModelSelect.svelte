@@ -1,8 +1,9 @@
 <script>
-    import { writable } from "svelte/store"
+    import { get, writable } from "svelte/store"
     import { chatSetModel } from "../../../chatSession/chatActions"
     import { activeChatId, currentChat } from "../../../chatSession/chatSession"
-    import llm from "../../../lib/llm/ollama.svelte"
+
+    import llm from "../../../lib/llm/ollama"
 
     let selected_model = writable($currentChat.model_name)
 
@@ -22,7 +23,7 @@
         id="system"
         class="flex-auto w-full px-4 variant-ghost-secondary max-w-xs rounded-lg"
     >
-        {#each llm.models as { model, name }}
+        {#each get($llm.models) as { model, name }}
             <option value={model}>{name}</option>
         {/each}
     </select>

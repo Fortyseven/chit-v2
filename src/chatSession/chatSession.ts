@@ -3,7 +3,7 @@ import { populateTestData } from "./chatTestLoad"
 
 export interface Message {
     content: String
-    role: "user" | "assistant"
+    role: "user" | "assistant" | "system"
     timestamp: Date
     media?: String
 }
