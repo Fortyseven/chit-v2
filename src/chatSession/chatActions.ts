@@ -110,7 +110,7 @@ export function chatAddMessage(chatId: String, message: Message) {
 }
 
 //--------------------------------------------------------------
-export function chatDuplicate(chatId: string) {
+export function chatDuplicate(chatId: String) {
     const chat = get(chats).find((chat) => chat.id === chatId)
     if (!chat) return
 
@@ -127,6 +127,42 @@ export function chatDuplicate(chatId: string) {
 }
 
 //--------------------------------------------------------------
-export function chatRunInference(chatId: string) {
+export function chatFind(chatId: String) {
+    return get(chats).find((chat) => chat.id === chatId)
+}
+
+//--------------------------------------------------------------
+export function chatBack(chatId: String): Message | undefined {
+    // if most recent chat is of role assistant, remove it
+    // then if the next most recent is of role user, return it
+    console.log("chatBack", chatId)
+
+    // pop the last message
+
+    const chat = chatFind(chatId)
+    if (!chat) {
+        throw new Error("Chat not found: " + chatId)
+    }
+
+    const messages = [...chat.messages]
+    const popped = messages.pop()
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    messages: messages,
+                    updatedAt: new Date(),
+                }
+            }
+            return chat
+        })
+    )
+    return popped
+}
+
+//--------------------------------------------------------------
+export function chatRunInference(chatId: String) {
     get(llm).chatUpdateSession(chatId)
 }

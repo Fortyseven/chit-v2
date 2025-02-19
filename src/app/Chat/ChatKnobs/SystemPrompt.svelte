@@ -42,7 +42,7 @@
         class="variant-ghost-primary [&>*]:pointer-events-none text-ellipsis text-nowrap overflow-hidden h-11 w-full sm:max-w-xs"
         use:popup={popupSystemPrompt}
     >
-        {$sys_prompt_state || "System Prompt"}
+        {$sys_prompt_state || "No SPrompt"}
     </button>
     <div
         class="card w-full shadow-2xl flex flex-wrap sm:flex-nowrap gap-4 hidden"

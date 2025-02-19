@@ -1,7 +1,6 @@
-import { Ollama } from "ollama"
+import { ChatRequest, Message, Ollama } from "ollama"
 import { get, Writable, writable } from "svelte/store"
-import { chatAddRoleMessage } from "../../chatSession/chatActions"
-import { chats, ChatSession } from "../../chatSession/chatSession"
+import { chatAddRoleMessage, chatFind } from "../../chatSession/chatActions"
 import { appState } from "../../stores/appState"
 
 class LLMInterface {
@@ -76,26 +75,34 @@ class LLMInterface {
      * @param {ChatSession} chat_session
      */
     async chatUpdateSession(chatId: String) {
-        let chat_session: ChatSession | undefined = get<ChatSession[]>(
-            chats
-        ).find((chat: ChatSession) => chat.id === chatId)
+        // let chat_session: ChatSession | undefined = get<ChatSession[]>(
+        //     chats
+        // ).find((chat: ChatSession) => chat.id === chatId)
+
+        let chat_session = chatFind(chatId)
 
         if (!chat_session) {
-            console.error("Chat session not found")
+            console.error("Chat session not found: " + chatId)
             return
         }
 
-        let messages = chat_session.messages
+        let messages: Message[] = []
 
         if (chat_session.system_prompt) {
-            messages = [
-                {
-                    role: "system",
-                    content: chat_session.system_prompt,
-                    timestamp: new Date(),
-                },
-                ...messages,
-            ]
+            messages.push({
+                role: "system",
+                content: chat_session.system_prompt as string,
+            })
+        }
+
+        for (let message of chat_session.messages) {
+            let msg = message.content.trim()
+            if (msg) {
+                messages.push({
+                    role: message.role,
+                    content: msg as string,
+                })
+            }
         }
 
         console.log("🤖📡 Submitting chat session:", messages)
@@ -109,11 +116,25 @@ class LLMInterface {
         let inst = get(this.ol_instance) as Ollama
 
         if (inst) {
-            let response = await inst.chat({
-                model: chat_session.model_name,
+            const config: ChatRequest = {
+                model: chat_session.model_name as string,
                 messages,
                 stream: false,
-            })
+            }
+
+            console.log("-------------------------------------- START")
+            // dump messages to console
+            for (let message of messages) {
+                console.log(
+                    "🤖📡 Ollama message:",
+                    message.role,
+                    message.content
+                )
+            }
+            console.log("-------------------------------------- END")
+
+            let response = await inst.chat(config as ChatRequest)
+
             console.log("🤖📡 Ollama response:", response)
 
             chatAddRoleMessage(chatId, "assistant", response.message.content)

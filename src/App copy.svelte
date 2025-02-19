@@ -1,6 +1,14 @@
 <script>
     // @ts-nocheck
 
+    import {
+        AppBar,
+        AppRail,
+        AppRailAnchor,
+        AppRailTile,
+        AppShell,
+    } from "@skeletonlabs/skeleton"
+
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
 
     // import "$stores/appState.svelte.js"
@@ -20,19 +28,48 @@
 
     let scrollWindowEl = undefined
 
-    afterUpdate(() => {
-        scrollWindowEl?.scrollTo(0, scrollWindowEl.scrollHeight)
-    })
+    // afterUpdate(() => {
+    //     // if (scrollWindowEl) {
+    //     scrollToBottom(scrollWindowEl)
+    //     // }
+    // })
+
+    // const scrollToBottom = async (node) => {
+    //     node.scroll({ top: node.scrollHeight, behavior: "smooth" })
+    // }
+
+    // onMount(() => {
+    //     setInterval(() => {
+    //         scrollWindowEl?.scrollTop(scrollWindowEl.scrollHeight)
+    //         console.log("scrolling", scrollWindowEl)
+    //     }, 1000)
+    // })
 </script>
 
-<div class="flex h-full w-full">
-    <div class="flex-grow-0 w-[400px] h-full shadow-2xl">
-        <ConvoSidebar />
-    </div>
+<!-- <EventRepeater> -->
+<!-- <API> -->
+<AppShell class="h-full ">
+    <svelte:fragment slot="header">
+        <AppBar
+            gridColumns="grid-cols-3"
+            slotDefault="place-self-center"
+            slotTrail="place-content-end"
+            background="bg-surface-700"
+        >
+            <!-- <svelte:fragment slot="lead"></svelte:fragment> -->
+            <!-- <svelte:fragment slot="trail"></svelte:fragment> -->
+        </AppBar>
+    </svelte:fragment>
 
-    <div class="page" bind:this={scrollWindowEl}>
-        <header
-            class="sticky w-full h-auto top-0 z-50 bg-neutral-800 align-middle m-auto flex flex-col place-content-center"
+    <svelte:fragment slot="sidebarLeft">
+        <ConvoSidebar />
+    </svelte:fragment>
+
+    <!-- <svelte:fragment slot="pageHeader"></svelte:fragment> -->
+
+    <div class="page h-full w-full debug1">
+        <div
+            class="sticky h-auto top-0 z-50 bg-neutral-800 align-middle m-auto flex flex-col place-content-center"
         >
             {#if $currentChat}
                 <div
@@ -48,15 +85,15 @@
                     No chat selected
                 </div>
             {/if}
-        </header>
-        <div class="chatlog">
+        </div>
+        <div class="flex-col debug2 chatlog" bind:this={scrollWindowEl}>
             <ChatLogRegular></ChatLogRegular>
         </div>
-        <footer class="input-bar flex-auto flex-grow-0">
+        <div class="input-bar">
             <InputBar></InputBar>
-        </footer>
+        </div>
     </div>
-</div>
+</AppShell>
 
 <!-- </API> -->
 <!-- </EventRepeater> -->
@@ -72,27 +109,16 @@
         bottom: 0;
     }
 
-    .page {
-        overflow: scroll;
-        width: 100%;
-        height: 100%;
-        flex-direction: column;
-        display: flex;
-    }
-
     .chatlog {
         display: flex;
-        flex: 1 0 auto;
         flex-direction: column;
         gap: 0.5em;
-        width: 100%;
-        max-width: 1280px;
+        width: full;
+        max-width: 1024px;
         margin: auto;
         padding-inline: 1em;
-        padding-block-end: 4em;
         font-size: 1.2em;
         padding-top: 0.5em;
-        place-content: start;
         font-family:
             "Roboto",
             system-ui,

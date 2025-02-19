@@ -4,7 +4,7 @@ import { derived, get, writable, type Readable } from "svelte/store"
 export interface Message {
     content: String
     role: "user" | "assistant" | "system"
-    timestamp: Date
+    timestamp?: Date
     media?: String
 }
 

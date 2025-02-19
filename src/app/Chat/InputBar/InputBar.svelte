@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { onMount } from "svelte"
     import {
         chatAddMessage,
         chatAddRoleMessage,
+        chatBack,
         chatRunInference,
     } from "../../../chatSession/chatActions"
     import { activeChatId } from "../../../chatSession/chatSession"
@@ -12,9 +14,14 @@
         inputBoxEl.focus()
     }
 
-    async function submit_user_message(user_message: String) {
+    async function submit_user_message(user_message: String | undefined) {
         if (!inputBoxEl || !$activeChatId) {
             throw new Error("inputBoxEl is not defined or some such")
+        }
+
+        if (!user_message) {
+            chatRunInference($activeChatId)
+            return
         }
 
         let presubmit_message = inputBoxEl.value
@@ -29,7 +36,6 @@
                 return
             }
 
-            // await $currentChat.id.submitUserMessage(message)
             chatAddRoleMessage($activeChatId, "user", message)
 
             chatRunInference($activeChatId)
@@ -53,46 +59,54 @@
     }
 </script>
 
-<div id="InputBox" class="input-group">
-    <button class="input-group-shim">+</button>
-    <textarea
-        class="bg-transparent border-0 ring-0"
-        name="prompt"
-        id="prompt"
-        placeholder="Write a message..."
-        rows="1"
-        bind:this={inputBoxEl}
-        onkeypress={onInputKeypress}
-    ></textarea>
-    <button
-        class="variant-filled-primary"
-        onclick={() => submit_user_message(inputBoxEl.value)}>Send</button
-    >
+<div id="InputBox" class="bg-neutral-800 w-full flex flex-row gap-2 p-4">
+    <div class="flex flex-auto basis-[50%]">
+        <textarea
+            name="prompt"
+            id="prompt"
+            placeholder="Write a message..."
+            rows="1"
+            bind:this={inputBoxEl}
+            onkeypress={onInputKeypress}
+        ></textarea>
+    </div>
+    <div class="flex flex-row flex-auto gap-1 flex-grow-0">
+        <button
+            class="variant-filled-primary flex-auto text-center w-auto h-full"
+            onclick={() => submit_user_message(inputBoxEl?.value)}>Send</button
+        >
+        <div class="flex flex-col flex-auto gap-1">
+            <button
+                class="variant-filled-primary w-full p-1 flex-auto"
+                onclick={() => {
+                    chatBack($activeChatId)
+                    chatRunInference($activeChatId)
+                }}
+            >
+                Reroll
+            </button>
+            <button
+                class="variant-filled-primary w-full p-1 flex-auto"
+                onclick={() => chatBack($activeChatId)}
+            >
+                Back
+            </button>
+        </div>
+    </div>
 </div>
 
 <style lang="scss">
     #InputBox {
-        display: grid;
-        gap: 1em;
-        padding: 1rem;
-        bottom: 0px;
-        position: absolute;
         border-radius: var(--theme-rounded-container);
-        grid-template-columns: auto 1fr auto auto;
 
         textarea {
-            background-color: rgb(var(--color-surface-800));
-            border-bottom: 1px solid rgb(var(--color-surface-400));
             border-radius: var(--theme-rounded-container);
-            border-top: 1px solid rgb(var(--color-surface-800));
-            border: none;
-            color: var(--primary-fg);
-            flex: auto;
-            font-family: inherit;
             font-size: 1.2em;
             outline-style: none;
-            padding: 0.5em;
             width: 100%;
+            height: 100%;
+            padding: 0.5em;
+            background-color: rgb(var(--color-surface-900));
 
             &:disabled {
                 opacity: 0.5;

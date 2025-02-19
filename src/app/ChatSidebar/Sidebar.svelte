@@ -38,7 +38,7 @@
                     class:active={chat.id === $currentChat.id}
                 >
                     <button
-                        class=" flex-auto"
+                        class="flex-auto text-left"
                         onclick={() => changeConvo(chat.id)}
                     >
                         {chat.title}
@@ -90,12 +90,18 @@
         border: unset !important;
         background-color: rgb(var(--color-surface-700));
         &:hover {
-            background-color: rgb(var(--color-surface-500));
+            background-color: rgb(var(--color-surface-600));
+
             border: unset !important;
         }
     }
 
     .active {
-        border: 2px solid rgb(var(--color-primary-500));
+        // outline: 2px solid rgb(var(--color-primary-500));
+        button:first-of-type {
+            background-color: rgb(var(--color-primary-500));
+            color: black;
+            border-radius: 10px;
+        }
     }
 </style>

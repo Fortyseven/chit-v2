@@ -97,5 +97,6 @@ export const chit_theme: CustomThemeConfig = {
         "--color-surface-700": "40 43 44", // #282b2c
         "--color-surface-800": "32 34 35", // #202223
         "--color-surface-900": "26 28 29", // #1a1c1d
+        "--color-surface-950": "22 24 25", // #1a1c1d
     },
 }
