@@ -23,7 +23,9 @@ export function chatNew() {
 }
 
 //--------------------------------------------------------------
-export function chatSetModel(chatId: string, modelName: string) {
+export function chatSetModel(chatId: String = "", modelName: string) {
+    chatId = _getActiveChatId()
+
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
@@ -40,7 +42,9 @@ export function chatSetModel(chatId: string, modelName: string) {
 
 //--------------------------------------------------------------
 // Set the system prompt
-export function chatSetSystemPrompt(chatId: string, systemPrompt: string) {
+export function chatSetSystemPrompt(chatId: String = "", systemPrompt: string) {
+    chatId = _getActiveChatId()
+
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
@@ -57,7 +61,9 @@ export function chatSetSystemPrompt(chatId: string, systemPrompt: string) {
 
 //--------------------------------------------------------------
 // Change the active chat
-export function chatSwitchTo(chatId: string) {
+export function chatSwitchTo(chatId: String = "") {
+    chatId = _getActiveChatId()
+
     appState.update((state) => ({ ...state, activeChatId: chatId }))
     console.debug("Switching to chat", chatId)
     // activeChatId.set(chatId)
@@ -65,7 +71,9 @@ export function chatSwitchTo(chatId: string) {
 
 //--------------------------------------------------------------
 // Delete a chat
-export function chatDelete(chatId: string) {
+export function chatDelete(chatId: String = "") {
+    chatId = _getActiveChatId()
+
     chats.update(($chats) => $chats.filter((chat) => chat.id !== chatId))
 
     // there must always be one
@@ -76,17 +84,21 @@ export function chatDelete(chatId: string) {
 
 //--------------------------------------------------------------
 // Check if a chat has conversation
-export function chatIsEmpty(chatId: string) {
+export function chatIsEmpty(chatId: String = "") {
+    chatId = _getActiveChatId()
+
     const chat = get(chats).find((chat) => chat.id === chatId)
     return chat ? chat.messages.length === 0 : false
 }
 
 //--------------------------------------------------------------
 export function chatAddRoleMessage(
-    chatId: String,
+    chatId: String = "",
     role: "user" | "assistant",
     content: String
 ) {
+    chatId = _getActiveChatId()
+
     const message = {
         content,
         role,
@@ -97,7 +109,9 @@ export function chatAddRoleMessage(
 }
 
 //--------------------------------------------------------------
-export function chatAddMessage(chatId: String, message: Message) {
+export function chatAddMessage(chatId: String = "", message: Message) {
+    chatId = _getActiveChatId()
+
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
@@ -113,7 +127,9 @@ export function chatAddMessage(chatId: String, message: Message) {
 }
 
 //--------------------------------------------------------------
-export function chatDuplicate(chatId: String) {
+export function chatDuplicate(chatId: String = "") {
+    chatId = _getActiveChatId()
+
     const chat = get(chats).find((chat) => chat.id === chatId)
     if (!chat) return
 
@@ -130,12 +146,14 @@ export function chatDuplicate(chatId: String) {
 }
 
 //--------------------------------------------------------------
-export function chatFind(chatId: String) {
+export function chatFind(chatId: String = "") {
+    chatId = _getActiveChatId()
     return get(chats).find((chat) => chat.id === chatId)
 }
 
 //--------------------------------------------------------------
-function chatChopLatest(chatId: String): String {
+function chatChopLatest(chatId: String = ""): String {
+    chatId = _getActiveChatId()
     // this is the entry before the one we're about to remove
     let chopped_prev = undefined
 
@@ -161,9 +179,11 @@ function chatChopLatest(chatId: String): String {
 }
 
 //--------------------------------------------------------------
-export function chatBack(chatId: String): String | undefined {
+export function chatBack(chatId: String = ""): String | undefined {
     // if most recent chat is of role assistant, remove it
     // then if the next most recent is of role user, return it
+
+    chatId = _getActiveChatId()
 
     let chat = chatFind(chatId)
 
@@ -187,6 +207,19 @@ export function chatBack(chatId: String): String | undefined {
 }
 
 //--------------------------------------------------------------
-export function chatRunInference(chatId: String) {
+export function chatRunInference(chatId: String = "") {
+    chatId = _getActiveChatId()
     get(llm).chatUpdateSession(chatId)
+}
+
+//--------------------------------------------------------------
+export function chatLength(chatId: String = "") {
+    chatId = _getActiveChatId()
+
+    const chat = chatFind(chatId)
+    return chat ? chat.messages.length : 0
+}
+
+function _getActiveChatId(chatId: String = ""): String {
+    return chatId || get(appState).activeChatId
 }
