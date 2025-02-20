@@ -61,9 +61,7 @@ export function chatSetSystemPrompt(chatId: String = "", systemPrompt: string) {
 
 //--------------------------------------------------------------
 // Change the active chat
-export function chatSwitchTo(chatId: String = "") {
-    chatId = _getActiveChatId()
-
+export function chatSwitchTo(chatId: String) {
     appState.update((state) => ({ ...state, activeChatId: chatId }))
     console.debug("Switching to chat", chatId)
     // activeChatId.set(chatId)
