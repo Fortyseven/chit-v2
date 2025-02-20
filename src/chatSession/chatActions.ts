@@ -1,7 +1,7 @@
 import { get } from "svelte/store"
 import llm from "../lib/llm/ollama"
 import { appState } from "./appState"
-import { activeChatId, chats, Message } from "./chatSession"
+import { chats, Message } from "./chatSession"
 
 //--------------------------------------------------------------
 // Insert a new chat at the end of the list
@@ -63,8 +63,6 @@ export function chatSetSystemPrompt(chatId: String = "", systemPrompt: string) {
 // Change the active chat
 export function chatSwitchTo(chatId: String) {
     appState.update((state) => ({ ...state, activeChatId: chatId }))
-    console.debug("Switching to chat", chatId)
-    // activeChatId.set(chatId)
 }
 
 //--------------------------------------------------------------
@@ -140,7 +138,8 @@ export function chatDuplicate(chatId: String = "") {
     }
 
     chats.update(($chats) => [...$chats, newChat])
-    activeChatId.set(newChat.id)
+
+    chatSwitchTo(newChat.id)
 }
 
 //--------------------------------------------------------------
@@ -216,6 +215,67 @@ export function chatLength(chatId: String = "") {
 
     const chat = chatFind(chatId)
     return chat ? chat.messages.length : 0
+}
+
+export function chatGetStreamingPending(chatId: String = "") {
+    chatId = _getActiveChatId()
+
+    const chat = chatFind(chatId)
+    return chat ? chat.response_buffer : ""
+}
+
+//--------------------------------------------------------------
+export function chatAppendStreamingPending(
+    chatId: String = "",
+    fragment: String
+) {
+    chatId = _getActiveChatId()
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    response_buffer: ((chat.response_buffer as string) +
+                        fragment) as string,
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
+export function chatPromoteStreamingPending(chatId: String = "") {
+    chatId = _getActiveChatId()
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    messages: [
+                        ...chat.messages,
+                        {
+                            role: "assistant",
+                            content: chat.response_buffer as string,
+                            timestamp: new Date(),
+                        },
+                    ],
+                    response_buffer: "",
+                    updatedAt: new Date(),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+export function chatInProgress(chatId: String = ""): Boolean {
+    chatId = _getActiveChatId()
+
+    const chat = chatFind(chatId)
+    return chat ? chat.response_buffer.length > 0 : false
 }
 
 //--------------------------------------------------------------

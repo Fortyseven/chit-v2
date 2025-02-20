@@ -1,7 +1,6 @@
 import { get } from "svelte/store"
-import { appStateSetActiveChatId } from "./appStateActions"
 import { chatNew } from "./chatActions"
-import { activeChatId, chats } from "./chatSession"
+import { chats } from "./chatSession"
 
 // Restore from localStorage
 if (typeof window !== "undefined") {
@@ -28,5 +27,3 @@ if (typeof window !== "undefined") {
         localStorage.setItem("chats", JSON.stringify($chats))
     })
 }
-
-// console.log("chats", get(chats))

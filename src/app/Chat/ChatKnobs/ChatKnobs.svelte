@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
     import { appState } from "../../../chatSession/appState"
     import { activeChatId, currentChat } from "../../../chatSession/chatSession"
     import ModelSelect from "./ModelSelect.svelte"
@@ -17,4 +17,4 @@
 </div>
 
 <style lang="scss">
-</style>
+</style> -->

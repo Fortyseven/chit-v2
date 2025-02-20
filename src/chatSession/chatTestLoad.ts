@@ -1,4 +1,5 @@
-import { ChatSession, Message, activeChatId, chats } from "./chatSession"
+import { chatSwitchTo } from "./chatActions"
+import { ChatSession, Message, chats } from "./chatSession"
 
 export function populateTestData(reset = true) {
     const testChats: Array<ChatSession> = []
@@ -49,5 +50,5 @@ export function populateTestData(reset = true) {
         chats.update(($chats) => [...$chats, ...testChats])
     }
 
-    activeChatId.set(testChats[0].id)
+    chatSwitchTo(testChats[0].id)
 }

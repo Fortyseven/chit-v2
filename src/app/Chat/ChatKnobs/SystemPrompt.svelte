@@ -11,7 +11,7 @@
     import { writable } from "svelte/store"
     import { appState } from "../../../chatSession/appState"
     import { chatSetSystemPrompt } from "../../../chatSession/chatActions"
-    import { activeChatId, currentChat } from "../../../chatSession/chatSession"
+    import { currentChat } from "../../../chatSession/chatSession"
 
     storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow })
 

@@ -21,7 +21,6 @@ export interface ChatSession {
 }
 
 export const chats = writable<ChatSession[]>([])
-export const activeChatId = writable<String | null>(null)
 
 export const currentChat: Readable<ChatSession | null> = derived(
     [chats, appState],

@@ -1,7 +1,11 @@
 import { ChatRequest, Message, Ollama } from "ollama"
 import { get, Writable, writable } from "svelte/store"
 import { appState, DEFAULT_OL_ENDPOINT } from "../../chatSession/appState"
-import { chatAddRoleMessage, chatFind } from "../../chatSession/chatActions"
+import {
+    chatAppendStreamingPending,
+    chatFind,
+    chatPromoteStreamingPending,
+} from "../../chatSession/chatActions"
 
 class LLMInterface {
     models = writable([])
@@ -112,32 +116,22 @@ class LLMInterface {
             return
         }
 
-        // debugger
         let inst = get(this.ol_instance) as Ollama
 
         if (inst) {
             const config: ChatRequest = {
                 model: chat_session.model_name as string,
                 messages,
-                stream: false,
+                stream: true,
             }
 
-            console.log("-------------------------------------- START")
-            // dump messages to console
-            for (let message of messages) {
-                console.log(
-                    "🤖📡 Ollama message:",
-                    message.role,
-                    message.content
-                )
+            let stream = await inst.chat(config as ChatRequest)
+
+            for await (const part of stream) {
+                chatAppendStreamingPending(chatId, part.message.content)
             }
-            console.log("-------------------------------------- END")
 
-            let response = await inst.chat(config as ChatRequest)
-
-            console.log("🤖📡 Ollama response:", response)
-
-            chatAddRoleMessage(chatId, "assistant", response.message.content)
+            chatPromoteStreamingPending(chatId)
         }
     }
 }

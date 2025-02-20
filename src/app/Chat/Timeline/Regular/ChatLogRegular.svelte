@@ -1,5 +1,9 @@
 <script>
     import { appState } from "../../../../chatSession/appState"
+    import {
+        chatGetStreamingPending,
+        chatInProgress,
+    } from "../../../../chatSession/chatActions"
     import { currentChat } from "../../../../chatSession/chatSession"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
@@ -17,6 +21,13 @@
             {/if}
         {/key}
     {/each}
+
+    {#key $currentChat}
+        {#if chatInProgress($appState.activeChatId)}
+            <ChatLogRegular_Assistant line={chatGetStreamingPending()}
+            ></ChatLogRegular_Assistant>
+        {/if}
+    {/key}
 {/if}
 
 <style lang="scss">
