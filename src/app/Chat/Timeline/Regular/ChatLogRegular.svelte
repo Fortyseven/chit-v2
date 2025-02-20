@@ -1,13 +1,11 @@
 <script>
-    import {
-        activeChatId,
-        currentChat,
-    } from "../../../../chatSession/chatSession"
+    import { appState } from "../../../../chatSession/appState"
+    import { currentChat } from "../../../../chatSession/chatSession"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
 </script>
 
-{#if $activeChatId && $currentChat.messages}
+{#if $appState.activeChatId && $currentChat?.messages}
     {#each $currentChat.messages as messages, i}
         {#key messages}
             {#if messages.role === "user"}

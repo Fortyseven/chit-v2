@@ -9,6 +9,7 @@
     } from "@floating-ui/dom"
     import { popup, storePopup } from "@skeletonlabs/skeleton"
     import { writable } from "svelte/store"
+    import { appState } from "../../../chatSession/appState"
     import { chatSetSystemPrompt } from "../../../chatSession/chatActions"
     import { activeChatId, currentChat } from "../../../chatSession/chatSession"
 
@@ -27,7 +28,7 @@
 
     sys_prompt_state.subscribe((value) => {
         console.log("sys_prompt_state", value)
-        chatSetSystemPrompt($activeChatId, value)
+        chatSetSystemPrompt($appState.activeChatId, value)
     })
 
     currentChat.subscribe((value) => {

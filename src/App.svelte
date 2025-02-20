@@ -16,6 +16,7 @@
     import { currentChat } from "./chatSession/chatSession"
 
     import { afterUpdate, onMount } from "svelte"
+    import "./chatSession/appStateStorage"
     import "./chatSession/chatStorage"
 
     let scrollWindowEl = undefined

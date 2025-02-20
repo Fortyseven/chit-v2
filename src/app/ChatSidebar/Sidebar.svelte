@@ -3,6 +3,7 @@
 
     import { AppRail, AppRailTile } from "@skeletonlabs/skeleton"
 
+    import { appState } from "../../chatSession/appState"
     import {
         chatDelete,
         chatDuplicate,
@@ -35,7 +36,7 @@
             {#each $chats as chat, i}
                 <div
                     class="flex flex-row justify-between"
-                    class:active={chat.id === $currentChat.id}
+                    class:active={chat.id === $appState.activeChatId}
                 >
                     <button
                         class="flex-auto text-left"

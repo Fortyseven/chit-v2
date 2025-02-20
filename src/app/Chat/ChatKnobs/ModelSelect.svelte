@@ -1,14 +1,14 @@
 <script>
     import { get, writable } from "svelte/store"
+    import { appState } from "../../../chatSession/appState"
     import { chatSetModel } from "../../../chatSession/chatActions"
-    import { activeChatId, currentChat } from "../../../chatSession/chatSession"
-
+    import { currentChat } from "../../../chatSession/chatSession"
     import llm from "../../../lib/llm/ollama"
 
     let selected_model = writable($currentChat.model_name)
 
     selected_model.subscribe((value) => {
-        chatSetModel($activeChatId, value)
+        chatSetModel($appState.activeChatId, value)
     })
 
     currentChat.subscribe((value) => {

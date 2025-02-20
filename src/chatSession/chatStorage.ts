@@ -1,4 +1,5 @@
 import { get } from "svelte/store"
+import { appStateSetActiveChatId } from "./appStateActions"
 import { chatNew } from "./chatActions"
 import { activeChatId, chats } from "./chatSession"
 
@@ -11,10 +12,7 @@ if (typeof window !== "undefined") {
             chats.set(JSON.parse(saved))
 
             const c = get(chats)
-            if (c.length > 0) {
-                // set the first chat as active
-                activeChatId.set(c[0].id)
-            } else {
+            if (c.length == 0) {
                 chatNew()
             }
         } catch (e) {
@@ -31,4 +29,4 @@ if (typeof window !== "undefined") {
     })
 }
 
-console.log("chats", get(chats))
+// console.log("chats", get(chats))

@@ -1,12 +1,12 @@
 import { ChatRequest, Message, Ollama } from "ollama"
 import { get, Writable, writable } from "svelte/store"
+import { appState, DEFAULT_OL_ENDPOINT } from "../../chatSession/appState"
 import { chatAddRoleMessage, chatFind } from "../../chatSession/chatActions"
-import { appState } from "../../stores/appState"
 
 class LLMInterface {
     models = writable([])
     ol_instance: Writable<Ollama | undefined> = writable(undefined)
-    ol_instance_host = writable(undefined)
+    ol_instance_host: Writable<String> = writable("")
     first_load = true
 
     // Connects to the Ollama server using the current host endpoint
@@ -19,14 +19,14 @@ class LLMInterface {
             // only reinstantiate if the host has changed
             if (
                 this.first_load ||
-                get(this.ol_instance_host) !== get(appState)?.apiEndpoint
+                get(this.ol_instance_host) !== DEFAULT_OL_ENDPOINT
             ) {
                 this.ol_instance.set(
                     new Ollama({
-                        host: appState.apiEndpoint,
+                        host: get(appState).apiEndpoint as string,
                     })
                 )
-                this.ol_instance_host.set(get(appState)?.apiEndpoint)
+                this.ol_instance_host.set(get(appState).apiEndpoint)
 
                 console.log(
                     "🤖🌎 Updated Ollama instance host to ",

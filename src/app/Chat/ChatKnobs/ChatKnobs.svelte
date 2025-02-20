@@ -1,4 +1,5 @@
 <script>
+    import { appState } from "../../../chatSession/appState"
     import { activeChatId, currentChat } from "../../../chatSession/chatSession"
     import ModelSelect from "./ModelSelect.svelte"
     import SystemPrompt from "./SystemPrompt.svelte"
@@ -8,7 +9,7 @@
     <div
         class="flex flex-wrap gap-2 px-2 py-2 w-full place-content-center flex-col md:flex-row"
     >
-        {#key $activeChatId}
+        {#key $appState}
             <SystemPrompt></SystemPrompt>
             <ModelSelect></ModelSelect>
         {/key}

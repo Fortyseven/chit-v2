@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte"
+    import { appState } from "../../../chatSession/appState"
     import {
         chatAddMessage,
         chatAddRoleMessage,
@@ -15,12 +16,12 @@
     }
 
     async function submit_user_message(user_message: String | undefined) {
-        if (!inputBoxEl || !$activeChatId) {
+        if (!inputBoxEl || !$appState.activeChatId) {
             throw new Error("inputBoxEl is not defined or some such")
         }
 
         if (!user_message) {
-            chatRunInference($activeChatId)
+            chatRunInference($appState.activeChatId)
             return
         }
 
@@ -36,9 +37,9 @@
                 return
             }
 
-            chatAddRoleMessage($activeChatId, "user", message)
+            chatAddRoleMessage($appState.activeChatId, "user", message)
 
-            chatRunInference($activeChatId)
+            chatRunInference($appState.activeChatId)
         } catch (e) {
             // restore the message if it fails
             inputBoxEl.value = presubmit_message
@@ -55,6 +56,14 @@
                 ev.preventDefault()
                 await submit_user_message(ev.target.value)
             }
+        }
+    }
+
+    function onBtnBack() {
+        let usermsg = chatBack($appState.activeChatId)
+
+        if (inputBoxEl && usermsg) {
+            inputBoxEl.value = usermsg
         }
     }
 </script>
@@ -79,15 +88,14 @@
             <button
                 class="variant-filled-primary w-full p-1 flex-auto"
                 onclick={() => {
-                    chatBack($activeChatId)
-                    chatRunInference($activeChatId)
+                    chatRunInference($appState.activeChatId)
                 }}
             >
                 Reroll
             </button>
             <button
                 class="variant-filled-primary w-full p-1 flex-auto"
-                onclick={() => chatBack($activeChatId)}
+                onclick={onBtnBack}
             >
                 Back
             </button>

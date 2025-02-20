@@ -1,4 +1,5 @@
 import { derived, get, writable, type Readable } from "svelte/store"
+import { appState } from "./appState"
 // import { populateTestData } from "./chatTestLoad"
 
 export interface Message {
@@ -23,7 +24,7 @@ export const chats = writable<ChatSession[]>([])
 export const activeChatId = writable<String | null>(null)
 
 export const currentChat: Readable<ChatSession | null> = derived(
-    [chats, activeChatId],
-    ([$chats, $activeChatId]) =>
-        $chats.find((chat) => chat.id === $activeChatId) || null
+    [chats, appState],
+    ([$chats, $appState]) =>
+        $chats.find((chat) => chat.id === $appState.activeChatId) || null
 )

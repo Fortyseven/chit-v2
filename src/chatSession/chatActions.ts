@@ -1,5 +1,6 @@
 import { get } from "svelte/store"
 import llm from "../lib/llm/ollama"
+import { appState } from "./appState"
 import { activeChatId, chats, Message } from "./chatSession"
 
 //--------------------------------------------------------------
@@ -18,7 +19,7 @@ export function chatNew() {
     }
 
     chats.update(($chats) => [...$chats, newChat])
-    activeChatId.set(id)
+    appState.update((state) => ({ ...state, activeChatId: id }))
 }
 
 //--------------------------------------------------------------
@@ -57,7 +58,9 @@ export function chatSetSystemPrompt(chatId: string, systemPrompt: string) {
 //--------------------------------------------------------------
 // Change the active chat
 export function chatSwitchTo(chatId: string) {
-    activeChatId.set(chatId)
+    appState.update((state) => ({ ...state, activeChatId: chatId }))
+    console.debug("Switching to chat", chatId)
+    // activeChatId.set(chatId)
 }
 
 //--------------------------------------------------------------
@@ -132,34 +135,55 @@ export function chatFind(chatId: String) {
 }
 
 //--------------------------------------------------------------
-export function chatBack(chatId: String): Message | undefined {
-    // if most recent chat is of role assistant, remove it
-    // then if the next most recent is of role user, return it
-    console.log("chatBack", chatId)
-
-    // pop the last message
-
-    const chat = chatFind(chatId)
-    if (!chat) {
-        throw new Error("Chat not found: " + chatId)
-    }
-
-    const messages = [...chat.messages]
-    const popped = messages.pop()
+function chatChopLatest(chatId: String): String {
+    // this is the entry before the one we're about to remove
+    let chopped_prev = undefined
 
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
+                chopped_prev = chat.messages.slice(-1)[0].content
                 return {
                     ...chat,
-                    messages: messages,
+                    messages: chat.messages.slice(0, -1),
                     updatedAt: new Date(),
                 }
             }
             return chat
         })
     )
-    return popped
+
+    if (!chopped_prev) {
+        throw new Error("Failed to chop latest message")
+    }
+
+    return chopped_prev
+}
+
+//--------------------------------------------------------------
+export function chatBack(chatId: String): String | undefined {
+    // if most recent chat is of role assistant, remove it
+    // then if the next most recent is of role user, return it
+
+    let chat = chatFind(chatId)
+
+    if (!chat) {
+        throw new Error("Chat not found: " + chatId)
+    }
+
+    const chopped = chatChopLatest(chatId)
+
+    chat = chatFind(chatId)
+
+    if (!chat || chat.messages.length === 0) {
+        return undefined
+    }
+
+    if (chat.messages[chat.messages.length - 1].role === "user") {
+        return chatChopLatest(chatId)
+    }
+
+    return chopped
 }
 
 //--------------------------------------------------------------

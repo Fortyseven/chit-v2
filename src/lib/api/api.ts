@@ -1,11 +1,7 @@
 import { get, writable } from "svelte/store"
 
-// import { appState, chatTimeline, models } from "../../stores/stores"
-// import { chatState, chatState_resetToDefaults } from "../../stores/chatState"
-
-//@ts-ignore
+import { appState } from "../../chatSession/appState.js"
 import { ollama } from "../../lib/api/ollama.js"
-// import { ebk_inputBoxBack } from "../events/eventBus__keyboard.js"
 
 export const pendingResponse = writable({
     role: "assistant",
@@ -55,18 +51,15 @@ export const cancelInference = () => {
  */
 export async function OL_model_details(model_name) {
     try {
-        const response = await fetch(
-            `${get(configPersistState).apiEndpoint}/api/show`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name: model_name,
-                }),
-            }
-        )
+        const response = await fetch(`${get(appState).apiEndpoint}/api/show`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name: model_name,
+            }),
+        })
 
         let details = await response.json()
 
@@ -77,7 +70,7 @@ export async function OL_model_details(model_name) {
     }
 }
 
-function _parseConfigString(configString) {
+function _parseConfigString(configString: string) {
     const configArray = configString.split("\n")
     const configObject = {}
 
@@ -91,33 +84,33 @@ function _parseConfigString(configString) {
     return configObject
 }
 
-export async function updateModelDetails(model_name) {
-    chatState_resetToDefaults()
+// export async function updateModelDetails(model_name) {
+//     chatState_resetToDefaults()
 
-    await OL_model_details(model_name).then((details) => {
-        chatState.update((state) => {
-            if (!get(appState).ui.lock_system && details.system) {
-                state.system_prompt = details.system
-            }
+//     await OL_model_details(model_name).then((details) => {
+//         chatState.update((state) => {
+//             if (!get(appState).ui.lock_system && details.system) {
+//                 state.system_prompt = details.system
+//             }
 
-            // iterate state.values properties and replace
-            // with values from details.parameters
+//             // iterate state.values properties and replace
+//             // with values from details.parameters
 
-            if (!get(appState).ui.lock_values && details.parameters) {
-                const params = _parseConfigString(details.parameters)
-                for (const key of Object.keys(state.values)) {
-                    if (params[key]) {
-                        console.log("PARAM", key, params[key])
-                        state.values[key] = params[key]
-                    }
-                }
-            }
+//             if (!get(appState).ui.lock_values && details.parameters) {
+//                 const params = _parseConfigString(details.parameters)
+//                 for (const key of Object.keys(state.values)) {
+//                     if (params[key]) {
+//                         console.log("PARAM", key, params[key])
+//                         state.values[key] = params[key]
+//                     }
+//                 }
+//             }
 
-            return state
-        })
-    })
-}
+//             return state
+//         })
+//     })
+// }
 
-export const appendToTimeline = (message) => {
-    get(chatTimeline).push(message)
-}
+// export const appendToTimeline = (message) => {
+//     get(chatTimeline).push(message)
+// }
