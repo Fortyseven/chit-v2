@@ -4,6 +4,7 @@
     import {
         chatAddRoleMessage,
         chatBack,
+        chatChopLatest,
         chatLength,
         chatRunInference,
     } from "../../../chatSession/chatActions"
@@ -59,6 +60,27 @@
         }
     }
 
+    async function onGlobalKeypress(ev: KeyboardEvent) {
+        if (ev.key === "e" && ev.ctrlKey) {
+            ev.preventDefault()
+            onBtnReroll()
+        }
+
+        if (ev.key === "b" && ev.ctrlKey) {
+            ev.preventDefault()
+            onBtnBack()
+        }
+
+        if (inputBoxEl) {
+            inputBoxEl.focus()
+        }
+    }
+
+    function onBtnReroll() {
+        chatChopLatest()
+        chatRunInference()
+    }
+
     function onBtnBack() {
         let usermsg = chatBack()
 
@@ -71,6 +93,8 @@
         return chatLength() > 0
     })
 </script>
+
+<svelte:window on:keydown={onGlobalKeypress} />
 
 <div id="InputBox" class="bg-neutral-800 w-full flex flex-row gap-2 p-4">
     <div class="flex flex-auto basis-[50%]">
@@ -92,9 +116,7 @@
             <div class="flex flex-col flex-auto gap-1">
                 <button
                     class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
-                    onclick={() => {
-                        chatRunInference($appState.activeChatId)
-                    }}
+                    onclick={onBtnReroll}
                     disabled={!$hasMessages}
                 >
                     Reroll

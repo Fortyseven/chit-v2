@@ -150,7 +150,7 @@ export function chatFind(chatId: String = "") {
 }
 
 //--------------------------------------------------------------
-function chatChopLatest(chatId: String = ""): String {
+export function chatChopLatest(chatId: String = ""): String {
     chatId = _getActiveChatId()
     // this is the entry before the one we're about to remove
     let chopped_prev = undefined
@@ -218,6 +218,7 @@ export function chatLength(chatId: String = "") {
     return chat ? chat.messages.length : 0
 }
 
+//--------------------------------------------------------------
 function _getActiveChatId(chatId: String = ""): String {
     return chatId || get(appState).activeChatId
 }
