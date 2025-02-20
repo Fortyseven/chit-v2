@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { onMount } from "svelte"
+    import { derived } from "svelte/store"
     import { appState } from "../../../chatSession/appState"
     import {
-        chatAddMessage,
         chatAddRoleMessage,
         chatBack,
+        chatLength,
         chatRunInference,
     } from "../../../chatSession/chatActions"
-    import { activeChatId } from "../../../chatSession/chatSession"
+    import { chats } from "../../../chatSession/chatSession"
 
     let inputBoxEl: HTMLTextAreaElement | undefined = undefined
 
@@ -21,7 +21,7 @@
         }
 
         if (!user_message) {
-            chatRunInference($appState.activeChatId)
+            chatRunInference()
             return
         }
 
@@ -37,9 +37,9 @@
                 return
             }
 
-            chatAddRoleMessage($appState.activeChatId, "user", message)
+            chatAddRoleMessage("", "user", message)
 
-            chatRunInference($appState.activeChatId)
+            chatRunInference()
         } catch (e) {
             // restore the message if it fails
             inputBoxEl.value = presubmit_message
@@ -50,7 +50,7 @@
         }
     }
 
-    async function onInputKeypress(ev) {
+    async function onInputKeypress(ev: KeyboardEvent) {
         if (ev.key === "Enter") {
             if (!ev.shiftKey) {
                 ev.preventDefault()
@@ -60,12 +60,16 @@
     }
 
     function onBtnBack() {
-        let usermsg = chatBack($appState.activeChatId)
+        let usermsg = chatBack()
 
         if (inputBoxEl && usermsg) {
-            inputBoxEl.value = usermsg
+            inputBoxEl.value = usermsg as string
         }
     }
+
+    const hasMessages = derived([chats], ([$chats]) => {
+        return chatLength() > 0
+    })
 </script>
 
 <div id="InputBox" class="bg-neutral-800 w-full flex flex-row gap-2 p-4">
@@ -84,22 +88,26 @@
             class="variant-filled-primary flex-auto text-center w-auto h-full"
             onclick={() => submit_user_message(inputBoxEl?.value)}>Send</button
         >
-        <div class="flex flex-col flex-auto gap-1">
-            <button
-                class="variant-filled-primary w-full p-1 flex-auto"
-                onclick={() => {
-                    chatRunInference($appState.activeChatId)
-                }}
-            >
-                Reroll
-            </button>
-            <button
-                class="variant-filled-primary w-full p-1 flex-auto"
-                onclick={onBtnBack}
-            >
-                Back
-            </button>
-        </div>
+        {#key $hasMessages}
+            <div class="flex flex-col flex-auto gap-1">
+                <button
+                    class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
+                    onclick={() => {
+                        chatRunInference($appState.activeChatId)
+                    }}
+                    disabled={!$hasMessages}
+                >
+                    Reroll
+                </button>
+                <button
+                    class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
+                    onclick={onBtnBack}
+                    disabled={!$hasMessages}
+                >
+                    Back
+                </button>
+            </div>
+        {/key}
     </div>
 </div>
 
