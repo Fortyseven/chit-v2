@@ -1,6 +1,6 @@
 <script lang="ts">
     import { derived } from "svelte/store"
-    import { appState } from "../../../chatSession/appState"
+    import { appActiveChat, appState } from "../../../chatSession/appState"
     import {
         chatAddRoleMessage,
         chatBack,
@@ -89,49 +89,55 @@
         }
     }
 
-    const hasMessages = derived([chats], ([$chats]) => {
-        return chatLength() > 0
-    })
+    const hasMessages = derived(
+        [chats, appActiveChat],
+        ([$chats, $appActiveChat]) => {
+            return chatLength() > 0
+        },
+    )
 </script>
 
 <svelte:window on:keydown={onGlobalKeypress} />
 
-<div id="InputBox" class="bg-neutral-800 w-full flex flex-row gap-2 p-4">
-    <div class="flex flex-auto basis-[50%]">
-        <textarea
-            name="prompt"
-            id="prompt"
-            placeholder="Write a message..."
-            rows="1"
-            bind:this={inputBoxEl}
-            onkeypress={onInputKeypress}
-        ></textarea>
+{#key $appActiveChat}
+    <div id="InputBox" class="bg-neutral-800 w-full flex flex-row gap-2 p-4">
+        <div class="flex flex-auto basis-[50%]">
+            <textarea
+                name="prompt"
+                id="prompt"
+                placeholder="Write a message..."
+                rows="1"
+                bind:this={inputBoxEl}
+                onkeypress={onInputKeypress}
+            ></textarea>
+        </div>
+        <div class="flex flex-row flex-auto gap-1 flex-grow-0">
+            <button
+                class="variant-filled-primary flex-auto text-center w-auto h-full"
+                onclick={() => submit_user_message(inputBoxEl?.value)}
+                >Send</button
+            >
+            {#key $hasMessages}
+                <div class="flex flex-col flex-auto gap-1">
+                    <button
+                        class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
+                        onclick={onBtnReroll}
+                        disabled={!$hasMessages}
+                    >
+                        Reroll
+                    </button>
+                    <button
+                        class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
+                        onclick={onBtnBack}
+                        disabled={!$hasMessages}
+                    >
+                        Back
+                    </button>
+                </div>
+            {/key}
+        </div>
     </div>
-    <div class="flex flex-row flex-auto gap-1 flex-grow-0">
-        <button
-            class="variant-filled-primary flex-auto text-center w-auto h-full"
-            onclick={() => submit_user_message(inputBoxEl?.value)}>Send</button
-        >
-        {#key $hasMessages}
-            <div class="flex flex-col flex-auto gap-1">
-                <button
-                    class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
-                    onclick={onBtnReroll}
-                    disabled={!$hasMessages}
-                >
-                    Reroll
-                </button>
-                <button
-                    class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
-                    onclick={onBtnBack}
-                    disabled={!$hasMessages}
-                >
-                    Back
-                </button>
-            </div>
-        {/key}
-    </div>
-</div>
+{/key}
 
 <style lang="scss">
     #InputBox {

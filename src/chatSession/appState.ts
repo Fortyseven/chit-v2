@@ -15,3 +15,7 @@ export const appStateDefaults: AppState = {
 export const appState = writable<AppState>({
     ...appStateDefaults,
 })
+
+export const appActiveChat = derived(appState, ($appState) => {
+    return $appState.activeChatId
+})
