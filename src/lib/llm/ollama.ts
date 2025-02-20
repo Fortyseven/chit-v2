@@ -1,4 +1,4 @@
-import { ChatRequest, Message, Ollama } from "ollama"
+import { ChatRequest, Message, ModelResponse, Ollama } from "ollama"
 import { get, Writable, writable } from "svelte/store"
 import { appState, DEFAULT_OL_ENDPOINT } from "../../chatSession/appState"
 import {
@@ -8,7 +8,7 @@ import {
 } from "../../chatSession/chatActions"
 
 class LLMInterface {
-    models = writable([])
+    models: Writable<ModelResponse[]> = writable([])
     ol_instance: Writable<Ollama | undefined> = writable(undefined)
     ol_instance_host: Writable<String> = writable("")
     first_load = true
@@ -79,10 +79,6 @@ class LLMInterface {
      * @param {ChatSession} chat_session
      */
     async chatUpdateSession(chatId: String) {
-        // let chat_session: ChatSession | undefined = get<ChatSession[]>(
-        //     chats
-        // ).find((chat: ChatSession) => chat.id === chatId)
-
         let chat_session = chatFind(chatId)
 
         if (!chat_session) {
