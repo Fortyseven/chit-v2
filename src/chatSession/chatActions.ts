@@ -2,6 +2,7 @@ import { get } from "svelte/store"
 import llm from "../lib/llm/ollama"
 import { appState } from "./appState"
 import { chats, Message } from "./chatSession"
+import { chatGenerateTitle } from "./chatTitler"
 
 //--------------------------------------------------------------
 // Insert a new chat at the end of the list
@@ -217,6 +218,7 @@ export function chatLength(chatId: String = "") {
     return chat ? chat.messages.length : 0
 }
 
+//--------------------------------------------------------------
 export function chatGetStreamingPending(chatId: String = "") {
     chatId = _getActiveChatId()
 
@@ -246,7 +248,7 @@ export function chatAppendStreamingPending(
 }
 
 //--------------------------------------------------------------
-export function chatPromoteStreamingPending(chatId: String = "") {
+export async function chatPromoteStreamingPending(chatId: String = "") {
     chatId = _getActiveChatId()
 
     chats.update(($chats) =>
@@ -269,8 +271,31 @@ export function chatPromoteStreamingPending(chatId: String = "") {
             return chat
         })
     )
+    // this is our first response?
+    if (chatLength(chatId) == 2) {
+        // user -> assistant
+        await chatGenerateTitle(chatId)
+    }
 }
 
+export function chatSetTitle(chatId: String = "", title: String) {
+    chatId = _getActiveChatId()
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    title,
+                    updatedAt: new Date(),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
 export function chatInProgress(chatId: String = ""): Boolean {
     chatId = _getActiveChatId()
 

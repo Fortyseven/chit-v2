@@ -7,15 +7,14 @@ import {
     chatPromoteStreamingPending,
 } from "../../chatSession/chatActions"
 
-class LLMInterface {
+export class LLMInterface {
     models: Writable<ModelResponse[]> = writable([])
     ol_instance: Writable<Ollama | undefined> = writable(undefined)
     ol_instance_host: Writable<String> = writable("")
     first_load = true
 
-    // Connects to the Ollama server using the current host endpoint
-    /**
-     *
+    /***************************************************
+     * Connects to the Ollama server using the current host endpoint
      */
     async instantiateOL() {
         // convos.q
@@ -50,7 +49,7 @@ class LLMInterface {
         }
     }
 
-    /**
+    /***************************************************
      * Refreshes the list of models from the Ollama server
      */
     async refreshModelList() {
@@ -74,7 +73,7 @@ class LLMInterface {
         }
     }
 
-    /**
+    /***************************************************
      *
      * @param {ChatSession} chat_session
      */
@@ -135,6 +134,6 @@ class LLMInterface {
 const llm_instance = new LLMInterface()
 await llm_instance.instantiateOL()
 
-let llm = writable(llm_instance)
+let llm: Writable<LLMInterface> = writable(llm_instance)
 
 export default llm
