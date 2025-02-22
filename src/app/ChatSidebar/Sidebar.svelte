@@ -32,14 +32,14 @@
 
 <AppRail class="convo-panel app-rail h-full w-full p-4 hidden sm:grid">
     <svelte:fragment slot="lead">
-        <div class="flex flex-col gap-2 shadow-lg">
+        <div class="flex flex-col w-full gap-2 shadow-lg">
             {#each $chats as chat, i}
                 <div
-                    class="flex flex-row justify-between"
+                    class="grid grid-cols-[auto_24px_24px] flex-row"
                     class:active={chat.id === $appState.activeChatId}
                 >
                     <button
-                        class="flex-auto text-left"
+                        class="text-left"
                         onclick={() => changeConvo(chat.id)}
                     >
                         {chat.title}
