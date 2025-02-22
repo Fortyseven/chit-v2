@@ -25,9 +25,14 @@ export async function chatGenerateTitle(chatId: String) {
     let conversation = chat_session?.messages
         .filter((msg) => msg.role === "user" || msg.role === "assistant")
         .map((msg) => msg.content)
-        .join("\n-----\n")
+        .join("\n\n")
 
-    conversation = chat_session?.system_prompt + "\n-----\n" + conversation
+    conversation =
+        "\n```\n" +
+        chat_session?.system_prompt +
+        "\n\n" +
+        conversation +
+        "\n```\n"
     console.log("🤖📡 Generating title for chat:", conversation)
 
     const response = await get(_llm.ol_instance)?.chat({
