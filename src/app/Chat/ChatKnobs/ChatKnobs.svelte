@@ -1,6 +1,5 @@
-<!-- <script>
+<script>
     import { appState } from "../../../chatSession/appState"
-    import { activeChatId, currentChat } from "../../../chatSession/chatSession"
     import ModelSelect from "./ModelSelect.svelte"
     import SystemPrompt from "./SystemPrompt.svelte"
 </script>
@@ -17,4 +16,4 @@
 </div>
 
 <style lang="scss">
-</style> -->
+</style>
