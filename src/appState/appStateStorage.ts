@@ -1,5 +1,4 @@
-import { derived, get, writable, type Readable } from "svelte/store"
-import { appState, appStateDefaults } from "../chatSession/appState"
+import { appState, appStateDefaults } from "./appState"
 
 const APP_LS_KEY = "chitAppState"
 

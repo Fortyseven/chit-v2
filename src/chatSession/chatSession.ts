@@ -1,5 +1,5 @@
 import { derived, get, writable, type Readable } from "svelte/store"
-import { appState } from "./appState"
+import { appState } from "../appState/appState"
 // import { populateTestData } from "./chatTestLoad"
 
 export interface Message {

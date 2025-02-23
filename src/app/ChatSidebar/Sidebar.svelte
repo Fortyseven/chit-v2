@@ -3,7 +3,7 @@
 
     import { AppRail, AppRailTile } from "@skeletonlabs/skeleton"
 
-    import { appState } from "../../chatSession/appState"
+    import { appState } from "../../appState/appState"
     import {
         chatDelete,
         chatDuplicate,

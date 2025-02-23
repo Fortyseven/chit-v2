@@ -5,11 +5,13 @@ export const DEFAULT_OL_ENDPOINT = "http://localhost:11434"
 export interface AppState {
     activeChatId: String
     apiEndpoint: String
+    soundEnabled: boolean
 }
 
 export const appStateDefaults: AppState = {
     activeChatId: "", // will be initialized later
     apiEndpoint: DEFAULT_OL_ENDPOINT,
+    soundEnabled: true,
 }
 
 export const appState = writable<AppState>({

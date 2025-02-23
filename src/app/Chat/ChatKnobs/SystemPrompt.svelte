@@ -9,7 +9,7 @@
     } from "@floating-ui/dom"
     import { popup, storePopup } from "@skeletonlabs/skeleton"
     import { writable } from "svelte/store"
-    import { appState } from "../../../chatSession/appState"
+    import { appState } from "../../../appState/appState"
     import { chatSetSystemPrompt } from "../../../chatSession/chatActions"
     import { currentChat } from "../../../chatSession/chatSession"
 

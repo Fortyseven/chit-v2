@@ -1,5 +1,5 @@
 <script>
-    import { appState } from "../../../../chatSession/appState"
+    import { appState } from "../../../../appState/appState"
     import {
         chatGetStreamingPending,
         chatInProgress,

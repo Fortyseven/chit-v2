@@ -1,6 +1,6 @@
 import { get } from "svelte/store"
+import { appState } from "../appState/appState"
 import llm from "../lib/llm/ollama"
-import { appState } from "./appState"
 import { chats, Message } from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"
 

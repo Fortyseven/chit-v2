@@ -1,5 +1,6 @@
 <script>
-    import { appState } from "../../../chatSession/appState"
+    import { appState } from "../../../appState/appState"
+    import ChatOptionsDropdown from "./ChatOptionsDropdown.svelte"
     import ModelSelect from "./ModelSelect.svelte"
     import SystemPrompt from "./SystemPrompt.svelte"
 </script>

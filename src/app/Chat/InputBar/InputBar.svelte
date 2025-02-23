@@ -1,6 +1,6 @@
 <script lang="ts">
     import { derived } from "svelte/store"
-    import { appActiveChat, appState } from "../../../chatSession/appState"
+    import { appActiveChat, appState } from "../../../appState/appState"
     import {
         chatAddRoleMessage,
         chatBack,

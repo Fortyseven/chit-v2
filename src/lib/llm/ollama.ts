@@ -1,6 +1,6 @@
 import { ChatRequest, Message, ModelResponse, Ollama } from "ollama"
 import { get, Writable, writable } from "svelte/store"
-import { appState, DEFAULT_OL_ENDPOINT } from "../../chatSession/appState"
+import { appState, DEFAULT_OL_ENDPOINT } from "../../appState/appState"
 import {
     chatAppendStreamingPending,
     chatFind,
