@@ -18,6 +18,7 @@
     import { afterUpdate, onMount } from "svelte"
     import "./appState/appStateStorage"
     import "./chatSession/chatStorage"
+    import "./lib/audio"
 
     let scrollWindowEl = undefined
 

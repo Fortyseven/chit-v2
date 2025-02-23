@@ -1,5 +1,5 @@
-// import { appState } from "$stores/stores"
 import { get } from "svelte/store"
+import { appState } from "../appState/appState"
 
 const audioResponse = new Audio("assets/response.wav")
 audioResponse.preload = "auto"
@@ -9,39 +9,41 @@ audioTick.preload = "auto"
 
 const audioTyping = new Audio("assets/typing.wav")
 audioTyping.loop = true
-audioTick.preload = "auto"
+audioTyping.preload = "auto"
+audioTyping.volume = 0.5
 
 const audioFail = new Audio("assets/fail.wav")
 audioResponse.preload = "auto"
 
 export function sndPlayResponse() {
-    // if (get(appState).ui.play_sounds) {
-    audioResponse.play()
-    // }
+    if (get(appState).soundEnabled) {
+        audioResponse.play()
+    }
 }
 
 export function sndPlayTick() {
-    // if (get(appState).ui.play_sounds) {
-    audioTick.play()
-    // }
+    if (get(appState).soundEnabled) {
+        audioTick.play()
+    }
 }
 
 export function sndPlayFail() {
-    // if (get(appState).ui.play_sounds) {
-    audioFail.play()
-    // }
+    if (get(appState).soundEnabled) {
+        audioFail.play()
+    }
 }
 
 export function sndPlayTyping() {
     // admittedly, this is very silly
 
-    // if (get(appState).ui.play_sounds) {
-
-    audioTyping.play()
-    // }
+    if (get(appState).soundEnabled) {
+        audioTyping.play()
+    }
 }
 
 export function sndStopTyping() {
-    audioTyping.pause()
-    audioTyping.currentTime = 0
+    if (get(appState).soundEnabled) {
+        audioTyping.pause()
+        audioTyping.currentTime = 0
+    }
 }
