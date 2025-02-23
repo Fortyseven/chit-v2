@@ -8,7 +8,10 @@ if (typeof window !== "undefined") {
 
     if (saved) {
         try {
-            appState.set(JSON.parse(saved))
+            appState.set({
+                ...appStateDefaults,
+                ...JSON.parse(saved),
+            })
         } catch (e) {
             console.error("Failed to parse saved chats from localStorage", e)
             appState.set({ ...appStateDefaults })
