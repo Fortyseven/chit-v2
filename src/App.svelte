@@ -6,10 +6,9 @@
     // import "$stores/appState.svelte.js"
 
     import llm from "$lib/llm/ollama"
-    import API from "./app/API.svelte"
+
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ChatLogRegular from "./app/Chat/Timeline/Regular/ChatLogRegular.svelte"
-    import EventRepeater from "./app/EventRepeater.svelte"
 
     import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
 
