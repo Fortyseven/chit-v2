@@ -12,6 +12,7 @@
         {#key $appState}
             <SystemPrompt></SystemPrompt>
             <ModelSelect></ModelSelect>
+            <ChatOptionsDropdown></ChatOptionsDropdown>
         {/key}
     </div>
 </div>

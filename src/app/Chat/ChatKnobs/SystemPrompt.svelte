@@ -7,7 +7,6 @@
     let sys_prompt_state = writable($currentChat.system_prompt)
 
     sys_prompt_state.subscribe((value) => {
-        console.log("sys_prompt_state", value)
         chatSetSystemPrompt($appState.activeChatId, value)
     })
 

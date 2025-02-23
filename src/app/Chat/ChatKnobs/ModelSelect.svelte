@@ -23,11 +23,10 @@
         bind:value={$selected_model}
         name="system"
         id="system"
-        class="flex-auto w-full px-4 variant-ghost-secondary max-w-xs rounded-lg"
+        class="select flex-auto w-full px-4 max-w-xs"
     >
         {#each get($llm.models) as { model, name }}
             <option value={model}>{name}</option>
         {/each}
     </select>
-    <button class="btn flex-auto">Refresh</button>
 </div>
