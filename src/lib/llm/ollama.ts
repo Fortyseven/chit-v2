@@ -6,6 +6,7 @@ import {
     chatFind,
     chatPromoteStreamingPending,
 } from "../../chatSession/chatActions"
+import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
 
 export class LLMInterface {
     models: Writable<ModelResponse[]> = writable([])
@@ -122,11 +123,15 @@ export class LLMInterface {
 
             let stream = await inst.chat(config as ChatRequest)
 
+            sndPlayTyping()
             for await (const part of stream) {
+                // sndPlayTick()
                 chatAppendStreamingPending(chatId, part.message.content)
             }
+            sndStopTyping()
 
             chatPromoteStreamingPending(chatId)
+            sndPlayResponse()
         }
     }
 }
