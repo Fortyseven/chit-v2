@@ -24,6 +24,7 @@ const config = {
                 custom: [chit_theme],
             },
         }),
+        require("daisyui"),
     ],
 }
 
