@@ -49,6 +49,10 @@ export async function chatGenerateTitle(chatId: String) {
         ],
         format: zodToJsonSchema(Title),
         stream: false,
+        options: {
+            temperature: 0.6,
+            num_ctx: 65535, // TODO: catch the one in ollama.ts
+        },
     })
 
     console.log(

@@ -119,6 +119,10 @@ export class LLMInterface {
                 model: chat_session.model_name as string,
                 messages,
                 stream: true,
+                options: {
+                    temperature: 0.6,
+                    num_ctx: 65535, // TODO: catch the one in the titler
+                },
             }
 
             let stream = await inst.chat(config as ChatRequest)
