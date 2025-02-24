@@ -124,11 +124,15 @@
 <svelte:window on:keydown={onGlobalKeypress} />
 
 {#key $appActiveChat}
-    <div id="InputBox" class="bg-neutral-800 w-full flex flex-row gap-2 p-4">
+    <div
+        id="InputBox"
+        class="bg-surface-900 w-full flex flex-row gap-2 p-4 max-w-[1024px] m-auto"
+    >
         <div class="flex flex-auto basis-[50%] disabled:opacity-50">
             <textarea
                 name="prompt"
                 id="prompt"
+                class="bg-black"
                 placeholder="Write a message..."
                 rows="1"
                 bind:this={inputBoxEl}
@@ -175,7 +179,7 @@
             width: 100%;
             height: 100%;
             padding: 0.5em;
-            background-color: rgb(var(--color-surface-900));
+            // background-color: rgb(var(--color-surface-900));
 
             &:disabled {
                 opacity: 0.5;

@@ -87,7 +87,7 @@
         flex-direction: column;
         gap: 0.5em;
         width: 100%;
-        max-width: 1280px;
+        max-width: 1024px;
         margin: auto;
         padding-inline: 1em;
         padding-block-end: 4em;

@@ -2,7 +2,6 @@
     import { appState } from "../../../../appState/appState"
     import {
         chatGetStreamingPending,
-        chatInProgress,
         chatInProgressWithId,
     } from "../../../../chatSession/chatActions"
     import { currentChat } from "../../../../chatSession/chatSession"
