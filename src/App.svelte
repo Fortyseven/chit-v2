@@ -99,7 +99,10 @@
     }
 
     header {
-        box-shadow: 0 0 1em #000;
+        // box-shadow: 0 0 1em #000;
+        background: #fb01;
+        backdrop-filter: blur(15px);
+        filter: drop-shadow(0 0 2em #000);
     }
 
     .chatlog {
