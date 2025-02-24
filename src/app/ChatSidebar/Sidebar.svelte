@@ -7,6 +7,7 @@
     import {
         chatDelete,
         chatDuplicate,
+        chatInProgress,
         chatIsEmpty,
         chatSwitchTo,
     } from "../../chatSession/chatActions"
@@ -39,22 +40,25 @@
                     class:active={chat.id === $appState.activeChatId}
                 >
                     <button
-                        class="text-left"
+                        class="text-left disabled:opacity-50"
                         onclick={() => changeConvo(chat.id)}
+                        disabled={$chatInProgress}
                     >
                         {chat.title}
                     </button>
                     <button
-                        class="opacity-75 p-0 w-8"
+                        class="opacity-75 p-0 w-8 disabled:opacity-50"
                         onclick={() => {
                             chatDuplicate(chat.id)
                         }}
+                        disabled={$chatInProgress}
                     >
                         🗋
                     </button>
                     <button
-                        class="p-0 w-8"
+                        class="p-0 w-8 disabled:opacity-50"
                         onclick={() => deleteConvo(chat.id)}
+                        disabled={$chatInProgress}
                     >
                         🗑
                     </button>
@@ -69,7 +73,10 @@
                 <BtnNewSession></BtnNewSession>
             </div>
             <div>
-                <button class="btn variant-filled-secondary !rounded-lg">
+                <button
+                    class="btn variant-filled-secondary !rounded-lg disabled:opacity-50"
+                    disabled={$chatInProgress}
+                >
                     Config
                 </button>
             </div>

@@ -5,6 +5,7 @@
         chatAddRoleMessage,
         chatBack,
         chatChopLatest,
+        chatInProgress,
         chatLength,
         chatRunInference,
     } from "../../../chatSession/chatActions"
@@ -102,7 +103,7 @@
 
 {#key $appActiveChat}
     <div id="InputBox" class="bg-neutral-800 w-full flex flex-row gap-2 p-4">
-        <div class="flex flex-auto basis-[50%]">
+        <div class="flex flex-auto basis-[50%] disabled:opacity-50">
             <textarea
                 name="prompt"
                 id="prompt"
@@ -110,27 +111,28 @@
                 rows="1"
                 bind:this={inputBoxEl}
                 onkeypress={onInputKeypress}
+                disabled={$chatInProgress}
             ></textarea>
         </div>
         <div class="flex flex-row flex-auto gap-1 flex-grow-0">
             <button
-                class="variant-filled-primary flex-auto text-center w-auto h-full"
+                class="variant-filled-primary flex-auto text-center w-auto h-full disabled:opacity-50"
                 onclick={() => _submitUserMessage(inputBoxEl?.value)}
-                >Send</button
+                disabled={$chatInProgress}>Send</button
             >
             {#key $hasMessages}
                 <div class="flex flex-col flex-auto gap-1">
                     <button
                         class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
                         onclick={onBtnReroll}
-                        disabled={!$hasMessages}
+                        disabled={!$hasMessages || $chatInProgress}
                     >
                         Reroll
                     </button>
                     <button
                         class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
                         onclick={onBtnBack}
-                        disabled={!$hasMessages}
+                        disabled={!$hasMessages || $chatInProgress}
                     >
                         Back
                     </button>

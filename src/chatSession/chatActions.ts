@@ -1,4 +1,4 @@
-import { get } from "svelte/store"
+import { derived, get } from "svelte/store"
 import { appState } from "../appState/appState"
 import llm from "../lib/llm/ollama"
 import { chats, Message } from "./chatSession"
@@ -292,12 +292,17 @@ export function chatSetTitle(chatId: String = "", title: String) {
 }
 
 //--------------------------------------------------------------
-export function chatInProgress(chatId: String = ""): Boolean {
+export function chatInProgressWithId(chatId: String = ""): Boolean {
     chatId = _getActiveChatId()
 
     const chat = chatFind(chatId)
     return chat ? chat.response_buffer.length > 0 : false
 }
+
+export const chatInProgress = derived(chats, ($chats) => {
+    // # if any chat has a response buffer, we're in progress
+    return $chats.some((chat) => chat.response_buffer.length > 0)
+})
 
 //--------------------------------------------------------------
 function _getActiveChatId(chatId: String = ""): String {

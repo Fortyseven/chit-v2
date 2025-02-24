@@ -3,6 +3,7 @@
     import {
         chatGetStreamingPending,
         chatInProgress,
+        chatInProgressWithId,
     } from "../../../../chatSession/chatActions"
     import { currentChat } from "../../../../chatSession/chatSession"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
@@ -25,7 +26,7 @@
     {/each}
 
     {#key $currentChat}
-        {#if chatInProgress($appState.activeChatId)}
+        {#if chatInProgressWithId($appState.activeChatId)}
             <ChatLogRegular_Assistant line={chatGetStreamingPending()}
             ></ChatLogRegular_Assistant>
         {/if}

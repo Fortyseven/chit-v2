@@ -1,6 +1,6 @@
 <script lang="ts">
     import { popup } from "@skeletonlabs/skeleton"
-    import { chatNew } from "../../chatSession/chatActions"
+    import { chatInProgress, chatNew } from "../../chatSession/chatActions"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
 
     let mobileToggleOpen = false
@@ -20,17 +20,19 @@
     <div class="absolute bottom-[4.5em] overflow-scroll-y">
         <PopupSystemPresets></PopupSystemPresets>
     </div>
-    <div class="btn-group variant-filled-secondary">
+    <div class="btn-group variant-filled-secondary disabled:opacity-50">
         <button
             class="btn variant-filled-primary flex-auto"
             title="Start a new session using a blank system prompt."
             onclick={newConversationClick}
+            disabled={$chatInProgress}
         >
             New Session
         </button>
         <button
-            class="btn-icon variant-filled-primary flex-none"
+            class="btn-icon variant-filled-primary flex-none disabled:opacity-50"
             title="Start a new conversation using a system prompt preset."
+            disabled={$chatInProgress}
         >
             P
         </button>
