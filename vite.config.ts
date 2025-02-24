@@ -23,4 +23,5 @@ export default defineConfig({
     build: {
         target: "ES2022",
     },
+    base: "https://fortyseven.github.io/chit-v2/",
 })
