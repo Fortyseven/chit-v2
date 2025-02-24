@@ -124,46 +124,45 @@
 <svelte:window on:keydown={onGlobalKeypress} />
 
 {#key $appActiveChat}
-    <div
-        id="InputBox"
-        class="bg-surface-900 w-full flex flex-row gap-2 p-4 max-w-[1024px] m-auto"
-    >
-        <div class="flex flex-auto basis-[50%] disabled:opacity-50">
-            <textarea
-                name="prompt"
-                id="prompt"
-                class="bg-black"
-                placeholder="Write a message..."
-                rows="1"
-                bind:this={inputBoxEl}
-                onkeypress={onInputKeypress}
-                disabled={$chatInProgress}
-            ></textarea>
-        </div>
-        <div class="flex flex-row flex-auto gap-1 flex-grow-0">
-            <button
-                class="variant-filled-primary flex-auto text-center w-auto h-full disabled:opacity-50"
-                onclick={() => _submitUserMessage(inputBoxEl?.value)}
-                disabled={$chatInProgress}>Send</button
-            >
-            {#key $hasMessages}
-                <div class="flex flex-col flex-auto gap-1">
-                    <button
-                        class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
-                        onclick={onBtnReroll}
-                        disabled={!$hasMessages || $chatInProgress}
-                    >
-                        Reroll
-                    </button>
-                    <button
-                        class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
-                        onclick={onBtnBack}
-                        disabled={!$hasMessages || $chatInProgress}
-                    >
-                        Back
-                    </button>
-                </div>
-            {/key}
+    <div id="InputBox">
+        <div class="flex flex-row gap-2 p-4 max-w-[800px] m-auto">
+            <div class="flex flex-auto basis-[50%] disabled:opacity-50">
+                <textarea
+                    name="prompt"
+                    id="prompt"
+                    class="bg-black"
+                    placeholder="Write a message..."
+                    rows="1"
+                    bind:this={inputBoxEl}
+                    onkeypress={onInputKeypress}
+                    disabled={$chatInProgress}
+                ></textarea>
+            </div>
+            <div class="flex flex-row flex-auto gap-1 flex-grow-0">
+                <button
+                    class="variant-filled-primary flex-auto text-center w-auto h-full disabled:opacity-50"
+                    onclick={() => _submitUserMessage(inputBoxEl?.value)}
+                    disabled={$chatInProgress}>Send</button
+                >
+                {#key $hasMessages}
+                    <div class="flex flex-col flex-auto gap-1">
+                        <button
+                            class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
+                            onclick={onBtnReroll}
+                            disabled={!$hasMessages || $chatInProgress}
+                        >
+                            Reroll
+                        </button>
+                        <button
+                            class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
+                            onclick={onBtnBack}
+                            disabled={!$hasMessages || $chatInProgress}
+                        >
+                            Back
+                        </button>
+                    </div>
+                {/key}
+            </div>
         </div>
     </div>
 {/key}
@@ -171,6 +170,9 @@
 <style lang="scss">
     #InputBox {
         border-radius: var(--theme-rounded-container);
+        background: #fb01;
+        backdrop-filter: blur(15px);
+        filter: drop-shadow(0 0 2em #000);
 
         textarea {
             border-radius: var(--theme-rounded-container);
@@ -179,7 +181,10 @@
             width: 100%;
             height: 100%;
             padding: 0.5em;
-            // background-color: rgb(var(--color-surface-900));
+            border-top: 1px solid #fff4;
+            border-left: 2px solid #fff4;
+            border-right: 2px solid #fb04;
+            border-bottom: 1px solid #fb04;
 
             &:disabled {
                 opacity: 0.5;
