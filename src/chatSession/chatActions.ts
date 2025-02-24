@@ -97,16 +97,16 @@ export function chatAddRoleMessage(
     chatId = _getActiveChatId()
 
     const message = {
-        content,
         role,
+        content,
         timestamp: new Date(),
     }
 
-    chatAddMessage(chatId, message)
+    _chatAddMessage(chatId, message)
 }
 
 //--------------------------------------------------------------
-export function chatAddMessage(chatId: String = "", message: Message) {
+export function _chatAddMessage(chatId: String = "", message: Message) {
     chatId = _getActiveChatId()
 
     chats.update(($chats) =>
@@ -150,7 +150,7 @@ export function chatFind(chatId: String = "") {
 }
 
 //--------------------------------------------------------------
-export function chatChopLatest(chatId: String = ""): String {
+export function chatChopLatest(chatId: String = ""): String | undefined {
     chatId = _getActiveChatId()
     // this is the entry before the one we're about to remove
     let chopped_prev = undefined
@@ -168,10 +168,6 @@ export function chatChopLatest(chatId: String = ""): String {
             return chat
         })
     )
-
-    if (!chopped_prev) {
-        throw new Error("Failed to chop latest message")
-    }
 
     return chopped_prev
 }

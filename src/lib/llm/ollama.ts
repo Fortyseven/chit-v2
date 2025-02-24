@@ -97,12 +97,11 @@ export class LLMInterface {
 
         for (let message of chat_session.messages) {
             let msg = message.content.trim()
-            if (msg) {
-                messages.push({
-                    role: message.role,
-                    content: msg as string,
-                })
-            }
+
+            messages.push({
+                role: message.role,
+                content: msg as string,
+            })
         }
 
         console.log("🤖📡 Submitting chat session:", messages)

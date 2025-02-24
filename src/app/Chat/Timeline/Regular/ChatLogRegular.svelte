@@ -12,9 +12,11 @@
 {#if $appState.activeChatId && $currentChat?.messages}
     {#each $currentChat.messages as messages, i}
         {#key messages}
-            {#if messages.role === "user"}
+            {#if messages.role === "user" && messages.content}
                 <ChatLogRegular_User line={messages.content}
                 ></ChatLogRegular_User>
+            {:else if messages.role === "user" && !messages.content}
+                <!-- cont'd -->
             {:else}
                 <ChatLogRegular_Assistant line={messages.content}
                 ></ChatLogRegular_Assistant>

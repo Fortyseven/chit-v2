@@ -16,12 +16,13 @@
         inputBoxEl.focus()
     }
 
-    async function submit_user_message(user_message: String | undefined) {
+    async function _submitUserMessage(user_message: String | undefined) {
         if (!inputBoxEl || !$appState.activeChatId) {
             throw new Error("inputBoxEl is not defined or some such")
         }
 
         if (!user_message) {
+            chatAddRoleMessage("", "user", "")
             chatRunInference()
             return
         }
@@ -55,7 +56,7 @@
         if (ev.key === "Enter") {
             if (!ev.shiftKey) {
                 ev.preventDefault()
-                await submit_user_message(ev.target.value)
+                await _submitUserMessage(ev.target.value)
             }
         }
     }
@@ -114,7 +115,7 @@
         <div class="flex flex-row flex-auto gap-1 flex-grow-0">
             <button
                 class="variant-filled-primary flex-auto text-center w-auto h-full"
-                onclick={() => submit_user_message(inputBoxEl?.value)}
+                onclick={() => _submitUserMessage(inputBoxEl?.value)}
                 >Send</button
             >
             {#key $hasMessages}

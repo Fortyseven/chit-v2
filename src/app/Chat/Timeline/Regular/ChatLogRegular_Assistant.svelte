@@ -17,9 +17,7 @@
 
     export let line = { role: "assistant", content: "🍆" }
 
-    // $: console.log("line", line)
-
-    let processedContent = md.render(line || "???").trim()
+    let processedContent = md.render(line || "No line??? [Chit error.]").trim()
 </script>
 
 <div class="response markdown bot">
