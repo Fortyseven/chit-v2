@@ -1,4 +1,4 @@
-import { ChatRequest, Message, ModelResponse, Ollama } from "ollama"
+import { ChatRequest, Message, ModelResponse, Ollama } from "ollama/browser"
 import { get, Writable, writable } from "svelte/store"
 import { appState, DEFAULT_OL_ENDPOINT } from "../../appState/appState"
 import {
