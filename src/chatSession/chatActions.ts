@@ -1,4 +1,4 @@
-import { derived, get } from "svelte/store"
+import { get, writable } from "svelte/store"
 import { appState } from "../appState/appState"
 import llm from "../lib/llm/ollama"
 import { chats, Message } from "./chatSession"
@@ -291,6 +291,25 @@ export function chatSetTitle(chatId: String = "", title: String) {
     )
 }
 
+export function chatAbort() {
+    try {
+        get(get(llm).ol_instance).abort()
+    } catch (e) {
+        // console.info("Chat aborted:", e)
+    } finally {
+        chats.update(($chats) =>
+            $chats.map((chat) => {
+                return {
+                    ...chat,
+                    response_buffer: "",
+                }
+            })
+        )
+
+        chatWasAborted.set(true)
+    }
+}
+
 //--------------------------------------------------------------
 export function chatInProgressWithId(chatId: String = ""): Boolean {
     chatId = _getActiveChatId()
@@ -299,12 +318,11 @@ export function chatInProgressWithId(chatId: String = ""): Boolean {
     return chat ? chat.response_buffer.length > 0 : false
 }
 
-export const chatInProgress = derived(chats, ($chats) => {
-    // # if any chat has a response buffer, we're in progress
-    return $chats.some((chat) => chat.response_buffer.length > 0)
-})
+export const chatInProgress = writable(false)
 
 //--------------------------------------------------------------
 function _getActiveChatId(chatId: String = ""): String {
     return chatId || get(appState).activeChatId
 }
+
+export const chatWasAborted = writable(false)

@@ -2,6 +2,7 @@
     import { derived } from "svelte/store"
     import { appActiveChat, appState } from "../../../appState/appState"
     import {
+        chatAbort,
         chatAddRoleMessage,
         chatBack,
         chatChopLatest,
@@ -71,6 +72,11 @@
         if (ev.key === "b" && ev.ctrlKey) {
             ev.preventDefault()
             onBtnBack()
+        }
+
+        if (ev.key == "Escape") {
+            ev.preventDefault()
+            chatAbort()
         }
 
         if (inputBoxEl) {

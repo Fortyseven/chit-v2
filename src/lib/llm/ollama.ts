@@ -4,7 +4,9 @@ import { appState, DEFAULT_OL_ENDPOINT } from "../../appState/appState"
 import {
     chatAppendStreamingPending,
     chatFind,
+    chatInProgress,
     chatPromoteStreamingPending,
+    chatWasAborted,
 } from "../../chatSession/chatActions"
 import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
 
@@ -124,17 +126,29 @@ export class LLMInterface {
                 },
             }
 
-            let stream = await inst.chat(config as ChatRequest)
+            chatInProgress.set(true)
+            try {
+                let stream = await inst.chat(config as ChatRequest)
 
-            sndPlayTyping()
-            for await (const part of stream) {
-                // sndPlayTick()
-                chatAppendStreamingPending(chatId, part.message.content)
+                sndPlayTyping()
+                for await (const part of stream) {
+                    // sndPlayTick()
+                    chatAppendStreamingPending(chatId, part.message.content)
+                }
+
+                if (get(chatWasAborted)) {
+                    console.log("🤖🚫 Chat was aborted")
+                    chatWasAborted.set(false)
+                }
+
+                chatPromoteStreamingPending(chatId)
+            } catch (e) {
+                console.error("Error updating chat session:", e)
+            } finally {
+                chatInProgress.set(false)
+                sndStopTyping()
+                sndPlayResponse()
             }
-            sndStopTyping()
-
-            chatPromoteStreamingPending(chatId)
-            sndPlayResponse()
         }
     }
 }
