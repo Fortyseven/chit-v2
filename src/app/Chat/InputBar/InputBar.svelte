@@ -18,6 +18,17 @@
         inputBoxEl.focus()
     }
 
+    /* ------------------------------------------------------ */
+    chatInProgress.subscribe((value) => {
+        console.log("chatInProgress", value)
+        if (inputBoxEl && value == false) {
+            setTimeout(() => {
+                inputBoxEl?.focus()
+            }, 100)
+        }
+    })
+
+    /* ------------------------------------------------------ */
     async function _submitUserMessage(user_message: String | undefined) {
         if (!inputBoxEl || !$appState.activeChatId) {
             throw new Error("inputBoxEl is not defined or some such")
@@ -54,6 +65,7 @@
         }
     }
 
+    /* ------------------------------------------------------ */
     async function onInputKeypress(ev: KeyboardEvent) {
         if (ev.key === "Enter") {
             if (!ev.shiftKey) {
@@ -63,6 +75,7 @@
         }
     }
 
+    /* ------------------------------------------------------ */
     async function onGlobalKeypress(ev: KeyboardEvent) {
         if (ev.key === "e" && ev.ctrlKey) {
             ev.preventDefault()
@@ -84,11 +97,13 @@
         }
     }
 
+    /* ------------------------------------------------------ */
     function onBtnReroll() {
         chatChopLatest()
         chatRunInference()
     }
 
+    /* ------------------------------------------------------ */
     function onBtnBack() {
         let usermsg = chatBack()
 
@@ -97,6 +112,7 @@
         }
     }
 
+    /* ------------------------------------------------------ */
     const hasMessages = derived(
         [chats, appActiveChat],
         ([$chats, $appActiveChat]) => {
