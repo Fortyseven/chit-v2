@@ -20,4 +20,7 @@ export default defineConfig({
             $app: path.resolve("./src/app"),
         },
     },
+    build: {
+        target: "ES2022",
+    },
 })
