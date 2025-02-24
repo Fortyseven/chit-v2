@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { onDestroy, onMount } from "svelte"
+    import { onMount } from "svelte"
+    import { loadPresetFromFile } from "../../../lib/presets/presets"
 
     //TODO: convert this to a general component
 
@@ -7,7 +8,7 @@
     let isOpen = false
 
     let entries = [
-        { name: "Load Preset", action: () => console.log("Load Preset") },
+        { name: "Load Preset", action: onLoadPreset },
         { name: "Save Preset", action: () => console.log("Save Preset") },
         { name: "-", action: () => {} },
         {
@@ -21,6 +22,10 @@
             isOpen = false
         })
     })
+
+    function onLoadPreset() {
+        loadPresetFromFile()
+    }
 </script>
 
 <details
