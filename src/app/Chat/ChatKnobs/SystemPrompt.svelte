@@ -19,13 +19,15 @@
     const PREVIEW_CUTOFF_LENGTH = 50
 
     const shortPrompt = derived(sys_prompt_state, ($sys_prompt_state) => {
+        if (!$sys_prompt_state) return "No SPrompt"
+
         return $sys_prompt_state.length > PREVIEW_CUTOFF_LENGTH
             ? $sys_prompt_state.slice(0, PREVIEW_CUTOFF_LENGTH) + "..."
             : $sys_prompt_state
     })
 </script>
 
-<button tabindex="0" class="btn m-1" onclick={sprompt.showModal()}>
+<button tabindex="0" class="btn m-1" onclick={() => sprompt.showModal()}>
     {$shortPrompt || "No SPrompt"}
 </button>
 
