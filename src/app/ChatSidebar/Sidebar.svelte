@@ -43,6 +43,7 @@
                         class="text-left disabled:opacity-50"
                         onclick={() => changeConvo(chat.id)}
                         disabled={$chatInProgress}
+                        title={chat.title}
                     >
                         {chat.title}
                     </button>
