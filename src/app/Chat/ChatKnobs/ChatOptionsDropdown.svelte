@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte"
+    import { chatGenerateTitle } from "../../../chatSession/chatTitler"
     import { loadPresetFromFile } from "../../../lib/presets/presets"
 
     //TODO: convert this to a general component
@@ -10,6 +11,8 @@
     let entries = [
         { name: "Load Preset", action: onLoadPreset },
         { name: "Save Preset", action: () => console.log("Save Preset") },
+        { name: "-", action: () => {} },
+        { name: "Reroll chat title", action: () => chatGenerateTitle() },
         { name: "-", action: () => {} },
         {
             name: "Refresh Model List",

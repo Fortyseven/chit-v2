@@ -39,7 +39,9 @@
                 <div
                     class="p-2 text-lg text-primary-500 font-bold flex-auto text-nowrap text-ellipsis overflow-hidden w-3/4 md:w-full md:text-2xl"
                 >
-                    {$currentChat.title}
+                    {#key $currentChat}
+                        {$currentChat.title}
+                    {/key}
                 </div>
                 <div class="flex-auto place-self-center w-full">
                     <ChatKnobs></ChatKnobs>
