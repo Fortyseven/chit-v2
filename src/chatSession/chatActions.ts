@@ -4,6 +4,9 @@ import llm from "../lib/llm/ollama"
 import { chats, Message } from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"
 
+export const DEFAULT_CONTEXT = 8192
+export const DEFAULT_TEMPERATURE = 0.6
+
 //--------------------------------------------------------------
 // Insert a new chat at the end of the list
 export function chatNew() {
@@ -17,6 +20,10 @@ export function chatNew() {
         model_name: "llama3.1:latest",
         system_prompt: "",
         response_buffer: "",
+        settings: {
+            temperature: DEFAULT_TEMPERATURE,
+            num_ctx: DEFAULT_CONTEXT,
+        },
     }
 
     chats.update(($chats) => [...$chats, newChat])
@@ -52,6 +59,25 @@ export function chatSetSystemPrompt(chatId: String = "", systemPrompt: string) {
                 return {
                     ...chat,
                     system_prompt: systemPrompt,
+                    updatedAt: new Date(),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
+export function chatUpdateSettings(chatId: String = "", settings: any) {
+    chatId = _getActiveChatId()
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                console.debug("chatUpdateSettings", chat.settings)
+                return {
+                    ...chat,
+                    settings: { ...(chat.settings || {}), ...settings },
                     updatedAt: new Date(),
                 }
             }

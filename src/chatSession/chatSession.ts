@@ -9,6 +9,11 @@ export interface Message {
     media?: String
 }
 
+export interface ChatSettings {
+    temperature: number
+    num_ctx: number
+}
+
 export interface ChatSession {
     id: String
     title: String
@@ -18,6 +23,7 @@ export interface ChatSession {
     createdAt: Date
     updatedAt: Date
     response_buffer: String
+    settings: ChatSettings
 }
 
 export const chats = writable<ChatSession[]>([])

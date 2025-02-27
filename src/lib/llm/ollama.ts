@@ -7,6 +7,8 @@ import {
     chatInProgress,
     chatPromoteStreamingPending,
     chatWasAborted,
+    DEFAULT_CONTEXT,
+    DEFAULT_TEMPERATURE,
 } from "../../chatSession/chatActions"
 import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
 
@@ -121,8 +123,10 @@ export class LLMInterface {
                 messages,
                 stream: true,
                 options: {
-                    temperature: 0.6,
-                    num_ctx: 65535, // TODO: catch the one in the titler
+                    temperature:
+                        chat_session.settings?.temperature ||
+                        DEFAULT_TEMPERATURE,
+                    num_ctx: chat_session.settings?.num_ctx || DEFAULT_CONTEXT,
                 },
             }
 
