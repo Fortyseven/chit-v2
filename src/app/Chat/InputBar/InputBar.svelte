@@ -92,9 +92,9 @@
             chatAbort()
         }
 
-        if (inputBoxEl) {
-            inputBoxEl.focus()
-        }
+        // if (inputBoxEl) {
+        //     inputBoxEl.focus()
+        // }
     }
 
     /* ------------------------------------------------------ */
@@ -121,7 +121,7 @@
     )
 </script>
 
-<svelte:window on:keydown={onGlobalKeypress} />
+<svelte:window on:keypress={onGlobalKeypress} />
 
 {#key $appActiveChat}
     <div id="InputBox">
