@@ -33,7 +33,6 @@ export async function chatGenerateTitle(chatId: String = "") {
         "\n\n" +
         conversation +
         "\n```\n"
-    console.log("🤖📡 Generating title for chat:", conversation)
 
     const response = await get(_llm.ol_instance)?.chat({
         model: chat_session?.model_name,
