@@ -4,6 +4,8 @@ import { appState } from "../../appState/appState"
 import {
     chatSetModel,
     chatSetSystemPrompt,
+    DEFAULT_CONTEXT,
+    DEFAULT_TEMPERATURE,
 } from "../../chatSession/chatActions"
 
 /* ------------------------------------------------ */
@@ -14,18 +16,19 @@ interface Variables {
 
 interface Options {
     temperature: number
-    top_k: number
-    top_p: number
-    rep_pen: number
-    num_predict: number
-    max_context_length: number
-    repeat_last_n: number
-    mirostat: number
-    mirostat_eta: number
-    mirostat_tau: number
-    repeat_penalty: number
-    seed: number
-    tfs_z: number
+    num_ctx: number
+    // top_k: number
+    // top_p: number
+    // rep_pen: number
+    // num_predict: number
+    // max_context_length: number
+    // repeat_last_n: number
+    // mirostat: number
+    // mirostat_eta: number
+    // mirostat_tau: number
+    // repeat_penalty: number
+    // seed: number
+    // tfs_z: number
 }
 
 interface Config {
@@ -33,6 +36,19 @@ interface Config {
     model_name: string
     variables: Variables
     options: Options
+}
+
+const defaults: Config = {
+    system_prompt: "",
+    model_name: "",
+    variables: {
+        char: "Assistant",
+        user: "User",
+    },
+    options: {
+        temperature: DEFAULT_TEMPERATURE,
+        num_ctx: DEFAULT_CONTEXT,
+    },
 }
 
 /* ------------------------------------------------ */
