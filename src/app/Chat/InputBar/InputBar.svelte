@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { ChartClusterBar, Renew, SkipBackOutline, SkipBackOutlineFilled, TrashCan, Undo } from 'carbon-icons-svelte'
     import { derived } from "svelte/store"
     import { appActiveChat, appState } from "../../../appState/appState"
     import {
@@ -6,6 +7,7 @@
         chatAddRoleMessage,
         chatBack,
         chatChopLatest,
+        chatClearConversation,
         chatInProgress,
         chatLength,
         chatRunInference,
@@ -113,6 +115,14 @@
     }
 
     /* ------------------------------------------------------ */
+    function onBtnClear() {
+        if (inputBoxEl) {
+            inputBoxEl.value = ""
+        }
+        chatClearConversation()
+    }
+
+    /* ------------------------------------------------------ */
     const hasMessages = derived(
         [chats, appActiveChat],
         ([$chats, $appActiveChat]) => {
@@ -139,26 +149,34 @@
                 ></textarea>
             </div>
             <div class="flex flex-row flex-auto gap-1 flex-grow-0">
-                <button
+                <!-- <button
                     class="variant-filled-primary flex-auto text-center w-auto h-full disabled:opacity-50"
                     onclick={() => _submitUserMessage(inputBoxEl?.value)}
                     disabled={$chatInProgress}>Send</button
-                >
+                > -->
                 {#key $hasMessages}
-                    <div class="flex flex-col flex-auto gap-1">
+                    <div class="grid grid-cols-2  grid-rows-2  gap-1 ">
                         <button
                             class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
                             onclick={onBtnReroll}
                             disabled={!$hasMessages || $chatInProgress}
                         >
-                            Reroll
+                            <Renew title="Reroll last response (Ctrl+E)"/>
                         </button>
+                        <div></div>
                         <button
                             class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
                             onclick={onBtnBack}
                             disabled={!$hasMessages || $chatInProgress}
                         >
-                            Back
+                            <Undo title="Go back one response"/>
+                        </button>
+                        <button
+                            class="variant-filled-secondary !bg-red-800 !text-white w-full p-1 flex-auto disabled:opacity-50"
+                            onclick={onBtnClear}
+                            disabled={!$hasMessages || $chatInProgress}
+                        >
+                            <TrashCan title="Clear"/>
                         </button>
                     </div>
                 {/key}

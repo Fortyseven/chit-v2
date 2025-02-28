@@ -300,6 +300,7 @@ export async function chatPromoteStreamingPending(chatId: String = "") {
     }
 }
 
+//--------------------------------------------------------------
 export function chatSetTitle(chatId: String = "", title: String) {
     chatId = _getActiveChatId()
 
@@ -317,6 +318,7 @@ export function chatSetTitle(chatId: String = "", title: String) {
     )
 }
 
+//--------------------------------------------------------------
 export function chatAbort() {
     try {
         get(get(llm).ol_instance).abort()
@@ -342,6 +344,24 @@ export function chatInProgressWithId(chatId: String = ""): Boolean {
 
     const chat = chatFind(chatId)
     return chat ? chat.response_buffer.length > 0 : false
+}
+
+//--------------------------------------------------------------
+export function chatClearConversation(chatId: String = "") {
+    chatId = _getActiveChatId()
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    messages: [],
+                    updatedAt: new Date(),
+                }
+            }
+            return chat
+        })
+    )
 }
 
 export const chatInProgress = writable(false)
