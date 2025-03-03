@@ -1,6 +1,6 @@
 <script>
     import { appState } from "../../../appState/appState"
-    import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
+    import ChatInferenceSettings from "../InputBar/ChatInferenceSettings.svelte"
     import ChatOptionsDropdown from "./ChatOptionsDropdown.svelte"
     import ModelSelect from "./ModelSelect.svelte"
     import SystemPrompt from "./SystemPrompt.svelte"
@@ -13,8 +13,6 @@
         {#key $appState}
             <SystemPrompt></SystemPrompt>
             <ModelSelect></ModelSelect>
-            <ChatOptionsDropdown></ChatOptionsDropdown>
-            <ChatInferenceSettings></ChatInferenceSettings>
         {/key}
     </div>
 </div>

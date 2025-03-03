@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { Gears } from "carbon-icons-svelte"
     import { onMount } from "svelte"
     import { chatGenerateTitle } from "../../../chatSession/chatTitler"
     import { loadPresetFromFile } from "../../../lib/presets/presets"
@@ -32,22 +33,29 @@
 </script>
 
 <details
-    class="dropdown dropdown-bottom"
+    class="dropdown dropdown-top dropdown-end"
     bind:this={dropdownel}
     bind:open={isOpen}
 >
-    <summary class="btn m-1">Options</summary>
+    <summary class="btn bg-secondary-300 text-black min-h-0 h-8 p-0 w-8">
+        <Gears className=""/>
+    </summary>
     <ul
-        class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-48 p-2 shadow"
     >
         {#each entries as { name, action }, i}
             {#if name === "-"}
-                <li><hr /></li>
+                <li><hr class="" /></li>
             {:else}
                 <li>
                     <!-- svelte-ignore a11y_click_events_have_key_events -->
                     <!-- svelte-ignore a11y_missing_attribute -->
-                    <a role="button" tabindex={i} onclick={action}>{name}</a>
+                    <a
+                        role="button"
+                        class="text-primary-500"
+                        tabindex={i}
+                        onclick={action}>{name}</a
+                    >
                 </li>
             {/if}
         {/each}
@@ -55,4 +63,11 @@
 </details>
 
 <style lang="scss">
+    hr {
+        border: 1px solid rgba(var(--color-surface-500)) !important;
+        height: 0px !important;
+        width: 100%;
+        margin: auto;
+        padding: 0;
+    }
 </style>

@@ -1,5 +1,10 @@
 <script lang="ts">
-    import { ChartClusterBar, Renew, SkipBackOutline, SkipBackOutlineFilled, TrashCan, Undo } from 'carbon-icons-svelte'
+    import {
+        Renew,
+        SendFilled,
+        TrashCan,
+        Undo,
+    } from "carbon-icons-svelte"
     import { derived } from "svelte/store"
     import { appActiveChat, appState } from "../../../appState/appState"
     import {
@@ -13,6 +18,9 @@
         chatRunInference,
     } from "../../../chatSession/chatActions"
     import { chats } from "../../../chatSession/chatSession"
+    import IconButton from "../../UI/IconButton.svelte"
+    import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
+    import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
 
     let inputBoxEl: HTMLTextAreaElement | undefined = undefined
 
@@ -135,7 +143,8 @@
 
 {#key $appActiveChat}
     <div id="InputBox">
-        <div class="flex flex-row gap-2 p-4 max-w-[800px] m-auto">
+        <div class="flex flex-row gap-2 p-4 max-w-[1024px] m-auto">
+            <ChatInferenceSettings></ChatInferenceSettings>
             <div class="flex flex-auto basis-[50%] disabled:opacity-50">
                 <textarea
                     name="prompt"
@@ -149,35 +158,37 @@
                 ></textarea>
             </div>
             <div class="flex flex-row flex-auto gap-1 flex-grow-0">
-                <!-- <button
-                    class="variant-filled-primary flex-auto text-center w-auto h-full disabled:opacity-50"
+                <button
+                    class="variant-filled-primary flex-auto text-center  w-24  h-full leading-none disabled:opacity-50"
                     onclick={() => _submitUserMessage(inputBoxEl?.value)}
-                    disabled={$chatInProgress}>Send</button
-                > -->
+                    disabled={$chatInProgress}
+                >
+                   <div class="flex flex-row place-content-center gap-2">Send <SendFilled /></div>
+                </button>
                 {#key $hasMessages}
-                    <div class="grid grid-cols-2  grid-rows-2  gap-1 ">
-                        <button
-                            class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
-                            onclick={onBtnReroll}
+                    <div
+                        class="grid grid-cols-2 grid-rows-2 gap-1 place-content-center"
+                    >
+                        <IconButton
+                            title="Reroll last response (Ctrl+E)"
+                            onClick={onBtnReroll}
                             disabled={!$hasMessages || $chatInProgress}
-                        >
-                            <Renew title="Reroll last response (Ctrl+E)"/>
-                        </button>
-                        <div></div>
-                        <button
-                            class="variant-filled-primary w-full p-1 flex-auto disabled:opacity-50"
-                            onclick={onBtnBack}
+                            iconComponent={Renew}
+                        ></IconButton>
+                        <ChatOptionsDropdown></ChatOptionsDropdown>
+                        <IconButton
+                            title="Go back one response (Ctrl+B)"
+                            onClick={onBtnBack}
                             disabled={!$hasMessages || $chatInProgress}
-                        >
-                            <Undo title="Go back one response"/>
-                        </button>
-                        <button
-                            class="variant-filled-secondary !bg-red-800 !text-white w-full p-1 flex-auto disabled:opacity-50"
-                            onclick={onBtnClear}
+                            iconComponent={Undo}
+                        ></IconButton>
+                        <IconButton
+                            title="Clear"
+                            onClick={onBtnClear}
                             disabled={!$hasMessages || $chatInProgress}
-                        >
-                            <TrashCan title="Clear"/>
-                        </button>
+                            iconComponent={TrashCan}
+                            className="!bg-red-500 hover:!bg-red-400"
+                        ></IconButton>
                     </div>
                 {/key}
             </div>

@@ -58,10 +58,11 @@
         label {
             color: rgba(var(--color-primary-500));
             display: inline-block;
+            place-content: center;
         }
         input {
             background: transparent;
-            color: rgba(var(--color-primary-700));
+            color: rgba(var(--color-secondary-500));
             font-family: monospace;
             &:focus {
                 color: rgba(var(--color-primary-400));
