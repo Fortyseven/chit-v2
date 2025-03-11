@@ -4,7 +4,7 @@ import llm from "../lib/llm/ollama"
 import { chats, Message } from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"
 
-export const DEFAULT_CONTEXT = 8192
+export const DEFAULT_CONTEXT = 65535
 export const DEFAULT_TEMPERATURE = 0.6
 
 //--------------------------------------------------------------
