@@ -2,7 +2,13 @@ import { get } from "svelte/store"
 import { z } from "zod"
 import { zodToJsonSchema } from "zod-to-json-schema"
 import llm, { LLMInterface } from "../lib/llm/ollama"
-import { chatFind, chatLength, chatSetTitle } from "./chatActions"
+import {
+    chatFind,
+    chatLength,
+    chatSetTitle,
+    DEFAULT_CONTEXT,
+} from "./chatActions"
+import { ChatSession } from "./chatSession"
 
 const Title = z.object({
     short_summary_title: z.string(),
@@ -12,12 +18,16 @@ const TITLER_PROMPT =
     "Generate a brief title about what this conversation is about."
 
 export async function chatGenerateTitle(chatId: String = "") {
-    const chat_session = chatFind(chatId)
+    const chat_session: ChatSession | undefined = chatFind(chatId)
     const _llm: LLMInterface = get(llm)
 
     if (chatLength(chatId) < 2) {
         console.warn("chatGenerateTitle: chat length < 2")
         return
+    }
+
+    if (!chat_session) {
+        throw Error("chatGenerateTitle: chat session not found")
     }
 
     // concatenate the user and assistant messages
@@ -33,6 +43,10 @@ export async function chatGenerateTitle(chatId: String = "") {
         "\n\n" +
         conversation +
         "\n```\n"
+
+    const cur_context = chat_session.settings?.num_ctx || DEFAULT_CONTEXT
+
+    console.log("CTX", cur_context)
 
     const response = await get(_llm.ol_instance)?.chat({
         model: chat_session?.model_name,
@@ -50,7 +64,7 @@ export async function chatGenerateTitle(chatId: String = "") {
         stream: false,
         options: {
             temperature: 0.6,
-            num_ctx: 65535, // TODO: catch the one in ollama.ts
+            num_ctx: cur_context, // TODO: catch the one in ollama.ts
         },
     })
 
