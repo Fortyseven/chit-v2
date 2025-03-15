@@ -1,10 +1,5 @@
 <script lang="ts">
-    import {
-        Renew,
-        SendFilled,
-        TrashCan,
-        Undo,
-    } from "carbon-icons-svelte"
+    import { Renew, SendFilled, TrashCan, Undo } from "carbon-icons-svelte"
     import { derived } from "svelte/store"
     import { appActiveChat, appState } from "../../../appState/appState"
     import {
@@ -87,24 +82,29 @@
 
     /* ------------------------------------------------------ */
     async function onGlobalKeypress(ev: KeyboardEvent) {
-        if (ev.key === "e" && ev.ctrlKey) {
-            ev.preventDefault()
-            onBtnReroll()
-        }
+        if (ev.ctrlKey) {
 
-        if (ev.key === "b" && ev.ctrlKey) {
-            ev.preventDefault()
-            onBtnBack()
-        }
+            // reroll last response
+            if (ev.key === "e" && ev.ctrlKey) {
+                ev.preventDefault()
+                onBtnReroll()
+            }
 
-        if (ev.key == "Escape") {
+            // go back one response
+            if (ev.key === "b" && ev.ctrlKey) {
+                ev.preventDefault()
+                onBtnBack()
+            }
+
+            if (ev.key === "Enter" && ev.ctrlKey && ev.target.value) {
+                ev.preventDefault()
+                await _submitUserMessage(ev.target.value)
+            }
+
+        } else if (ev.key == "Escape") {
             ev.preventDefault()
             chatAbort()
         }
-
-        // if (inputBoxEl) {
-        //     inputBoxEl.focus()
-        // }
     }
 
     /* ------------------------------------------------------ */
@@ -139,7 +139,7 @@
     )
 </script>
 
-<svelte:window on:keypress={onGlobalKeypress} />
+<svelte:window onkeydown={onGlobalKeypress} />
 
 {#key $appActiveChat}
     <div id="InputBox">
@@ -159,11 +159,13 @@
             </div>
             <div class="flex flex-row flex-auto gap-1 flex-grow-0">
                 <button
-                    class="variant-filled-primary flex-auto text-center  w-24  h-full leading-none disabled:opacity-50"
+                    class="variant-filled-primary flex-auto text-center w-24 h-full leading-none disabled:opacity-50"
                     onclick={() => _submitUserMessage(inputBoxEl?.value)}
                     disabled={$chatInProgress}
                 >
-                   <div class="flex flex-row place-content-center gap-2">Send <SendFilled /></div>
+                    <div class="flex flex-row place-content-center gap-2">
+                        Send <SendFilled />
+                    </div>
                 </button>
                 {#key $hasMessages}
                     <div
