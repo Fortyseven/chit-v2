@@ -1,5 +1,5 @@
 import { get, writable } from "svelte/store"
-import { appState } from "../../chatSession/appState.js"
+import { appState } from "../../appState/appState"
 
 export const pendingResponse = writable({
     role: "assistant",
@@ -31,7 +31,9 @@ export async function OL_model_details(model_name: String) {
 
         return details
     } catch (err) {
-        console.error("OL_model_details error: ", err)
-        throw Error("Error connecting to server: " + err.message)
+        if (err instanceof Error) {
+            console.error("OL_model_details error: ", err)
+            throw Error("Error connecting to server: " + err.message)
+        }
     }
 }
