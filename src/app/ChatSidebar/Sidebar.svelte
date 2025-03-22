@@ -24,7 +24,7 @@
     function deleteConvo(chatId) {
         if (
             chatIsEmpty(chatId) ||
-            confirm("Are you sure you want to delete this conversation?")
+            confirm(`Are you sure you want to delete this conversation? ${chatId}`)
         ) {
             chatDelete(chatId)
         }
@@ -38,6 +38,7 @@
                 <div
                     class="grid grid-cols-[auto_24px_24px] flex-row"
                     class:active={chat.id === $appState.activeChatId}
+                    data-chatid={chat.id}
                 >
                     <button
                         class="text-left disabled:opacity-50"

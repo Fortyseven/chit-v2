@@ -94,10 +94,14 @@ export function chatSwitchTo(chatId: String) {
 
 //--------------------------------------------------------------
 // Delete a chat
-export function chatDelete(chatId: String = "") {
-    chatId = _getActiveChatId()
+export function chatDelete(chatId: String) {
+    if (!chatId) {
+        alert("BUG: chatDelete: chatId was empty")
+        throw new Error("chatDelete: chatId is required")
+    }
 
     chats.update(($chats) => $chats.filter((chat) => chat.id !== chatId))
+    console.log("chatDelete", chatId)
 
     // there must always be one
     if (!get(chats).length) {
@@ -107,8 +111,13 @@ export function chatDelete(chatId: String = "") {
 
 //--------------------------------------------------------------
 // Check if a chat has conversation
-export function chatIsEmpty(chatId: String = "") {
-    chatId = _getActiveChatId()
+export function chatIsEmpty(chatId: String) {
+    if (!chatId) {
+        // FIXME: I'm being obnoxious here because a couple times I had
+        // this happen and I want to know why.
+        alert("BUG: chatIsEmpty: chatId was empty")
+        throw new Error("chatIsEmpty: chatId is required")
+    }
 
     const chat = get(chats).find((chat) => chat.id === chatId)
     return chat ? chat.messages.length === 0 : false
