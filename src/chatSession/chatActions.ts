@@ -361,7 +361,7 @@ export function chatAbort() {
 
         const chatId = _getActiveChatId()
 
-        chatSetWasAbortedd(chatId, true)
+        chatSetWasAborted(chatId, true)
     }
 }
 

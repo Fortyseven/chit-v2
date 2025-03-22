@@ -5,7 +5,9 @@
 
     function selectPrompt(prompt_def) {
         chatNew()
+        console.log($currentChat.system_prompt)
         $currentChat.system_prompt = prompt_def.prompt
+        // debugger;
     }
 </script>
 
