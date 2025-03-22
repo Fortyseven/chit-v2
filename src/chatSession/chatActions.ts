@@ -24,6 +24,7 @@ export function chatNew() {
             temperature: DEFAULT_TEMPERATURE,
             num_ctx: DEFAULT_CONTEXT,
         },
+        wasAborted: false,
     }
 
     chats.update(($chats) => [...$chats, newChat])
@@ -59,6 +60,23 @@ export function chatSetSystemPrompt(chatId: String = "", systemPrompt: string) {
                 return {
                     ...chat,
                     system_prompt: systemPrompt,
+                    updatedAt: new Date(),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
+export function chatSetWasAborted(chatId: String = "", wasAborted: Boolean) {
+    chatId = _getActiveChatId()
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    wasAborted,
                     updatedAt: new Date(),
                 }
             }
@@ -329,21 +347,21 @@ export function chatSetTitle(chatId: String = "", title: String) {
 
 //--------------------------------------------------------------
 export function chatAbort() {
+    // check if we're running inference
+    if (!get(chatInProgress)) {
+        return
+    }
+
     try {
         get(get(llm).ol_instance).abort()
     } catch (e) {
         // console.info("Chat aborted:", e)
     } finally {
-        chats.update(($chats) =>
-            $chats.map((chat) => {
-                return {
-                    ...chat,
-                    response_buffer: "",
-                }
-            })
-        )
+        chatPromoteStreamingPending()
 
-        chatWasAborted.set(true)
+        const chatId = _getActiveChatId()
+
+        chatSetWasAbortedd(chatId, true)
     }
 }
 
@@ -379,5 +397,3 @@ export const chatInProgress = writable(false)
 function _getActiveChatId(chatId: String = ""): String {
     return chatId || get(appState).activeChatId
 }
-
-export const chatWasAborted = writable(false)

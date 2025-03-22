@@ -5,8 +5,7 @@ import {
     chatAppendStreamingPending,
     chatFind,
     chatInProgress,
-    chatPromoteStreamingPending,
-    chatWasAborted,
+    chatSetWasAborted,
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../../chatSession/chatActions"
@@ -131,6 +130,8 @@ export class LLMInterface {
             }
 
             chatInProgress.set(true)
+            chatSetWasAborted(chatId, false)
+
             try {
                 let stream = await inst.chat(config as ChatRequest)
 
@@ -139,13 +140,6 @@ export class LLMInterface {
                     // sndPlayTick()
                     chatAppendStreamingPending(chatId, part.message.content)
                 }
-
-                if (get(chatWasAborted)) {
-                    console.log("🤖🚫 Chat was aborted")
-                    chatWasAborted.set(false)
-                }
-
-                chatPromoteStreamingPending(chatId)
             } catch (e) {
                 console.error("Error updating chat session:", e)
             } finally {

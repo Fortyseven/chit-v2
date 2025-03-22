@@ -24,6 +24,7 @@ export interface ChatSession {
     updatedAt: Date
     response_buffer: String
     settings: ChatSettings
+    wasAborted: Boolean
 }
 
 export const chats = writable<ChatSession[]>([])
