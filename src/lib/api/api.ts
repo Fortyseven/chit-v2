@@ -5,7 +5,7 @@ export const pendingResponse = writable({
     role: "assistant",
     content: "",
 })
-export const responseInProgress = writable(false)
+
 export const pendingContinuedAssistantChat = writable(false)
 
 export const wasAborted = writable(false)

@@ -1,4 +1,4 @@
-import { derived, get, writable, type Readable } from "svelte/store"
+import { derived, writable } from "svelte/store"
 
 export const DEFAULT_OL_ENDPOINT = "http://localhost:11434"
 
