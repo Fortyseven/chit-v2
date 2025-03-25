@@ -1,8 +1,8 @@
 <script>
     import { get, writable } from "svelte/store"
     import { appState } from "../../../appState/appState"
-    import { chatSetModel } from "../../../chatSession/chatActions"
-    import { currentChat } from "../../../chatSession/chatSession"
+    import { chatSetModel } from "../../../lib/chatSession/chatActions"
+    import { currentChat } from "../../../lib/chatSession/chatSession"
     import llm from "../../../lib/llm/ollama"
 
     let selected_model = writable($currentChat.model_name)

@@ -12,12 +12,13 @@
 
     import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
 
-    import { currentChat } from "./chatSession/chatSession"
+    import { currentChat } from "./lib/chatSession/chatSession"
 
     import { afterUpdate, onMount } from "svelte"
     import "./appState/appStateStorage"
-    import "./chatSession/chatStorage"
     import "./lib/audio"
+    import "./lib/chatSession/chatStorage"
+    import AppFramework from "./ui/AppFramework/AppFramework.svelte"
 
     let scrollWindowEl = undefined
 

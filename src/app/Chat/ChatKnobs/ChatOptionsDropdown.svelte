@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Gears } from "carbon-icons-svelte"
     import { onMount } from "svelte"
-    import { chatGenerateTitle } from "../../../chatSession/chatTitler"
+    import { chatGenerateTitle } from "../../../lib/chatSession/chatTitler"
     import { loadPresetFromFile } from "../../../lib/presets/presets"
 
     //TODO: convert this to a general component

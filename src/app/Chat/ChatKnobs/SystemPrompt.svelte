@@ -1,8 +1,8 @@
 <script>
     import { derived, writable } from "svelte/store"
     import { appState } from "../../../appState/appState"
-    import { chatSetSystemPrompt } from "../../../chatSession/chatActions"
-    import { currentChat } from "../../../chatSession/chatSession"
+    import { chatSetSystemPrompt } from "../../../lib/chatSession/chatActions"
+    import { currentChat } from "../../../lib/chatSession/chatSession"
 
     let sys_prompt_state = writable($currentChat.system_prompt)
 

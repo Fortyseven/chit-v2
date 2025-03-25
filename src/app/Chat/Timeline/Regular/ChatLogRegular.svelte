@@ -3,8 +3,8 @@
     import {
         chatGetStreamingPending,
         chatInProgressWithId,
-    } from "../../../../chatSession/chatActions"
-    import { currentChat } from "../../../../chatSession/chatSession"
+    } from "../../../../lib/chatSession/chatActions"
+    import { currentChat } from "../../../../lib/chatSession/chatSession"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
 </script>

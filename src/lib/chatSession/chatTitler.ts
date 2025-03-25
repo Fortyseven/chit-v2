@@ -1,7 +1,7 @@
 import { get } from "svelte/store"
 import { z } from "zod"
 import { zodToJsonSchema } from "zod-to-json-schema"
-import llm, { LLMInterface } from "../lib/llm/ollama"
+import llm, { LLMInterface } from "../llm/ollama"
 import {
     chatFind,
     chatLength,

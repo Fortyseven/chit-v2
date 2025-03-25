@@ -8,8 +8,7 @@ import {
     chatSetWasAborted,
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
-} from "../../chatSession/chatActions"
-import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
+} from "../chatSession/chatActions"
 
 export class LLMInterface {
     models: Writable<ModelResponse[]> = writable([])

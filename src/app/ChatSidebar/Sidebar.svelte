@@ -10,8 +10,8 @@
         chatInProgress,
         chatIsEmpty,
         chatSwitchTo,
-    } from "../../chatSession/chatActions"
-    import { chats, currentChat } from "../../chatSession/chatSession"
+    } from "../../lib/chatSession/chatActions"
+    import { chats, currentChat } from "../../lib/chatSession/chatSession"
     import BtnNewSession from "./BtnNewSession.svelte"
 
     // let mobileToggleOpen = $state(false)

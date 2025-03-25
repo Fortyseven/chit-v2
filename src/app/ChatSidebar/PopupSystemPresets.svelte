@@ -1,6 +1,6 @@
 <script>
-    import { chatNew } from "../../chatSession/chatActions"
-    import { currentChat } from "../../chatSession/chatSession"
+    import { chatNew } from "../../lib/chatSession/chatActions"
+    import { currentChat } from "../../lib/chatSession/chatSession"
     import SYSTEM_PROMPTS from "../../preset-prompts/index.js"
 
     function selectPrompt(prompt_def) {

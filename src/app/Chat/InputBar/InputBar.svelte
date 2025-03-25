@@ -11,8 +11,8 @@
         chatInProgress,
         chatLength,
         chatRunInference,
-    } from "../../../chatSession/chatActions"
-    import { chats } from "../../../chatSession/chatSession"
+    } from "../../../lib/chatSession/chatActions"
+    import { chats } from "../../../lib/chatSession/chatSession"
     import IconButton from "../../UI/IconButton.svelte"
     import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"

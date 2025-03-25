@@ -6,7 +6,7 @@ import {
     chatSetSystemPrompt,
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
-} from "../../chatSession/chatActions"
+} from "../chatSession/chatActions"
 
 /* ------------------------------------------------ */
 interface Variables {

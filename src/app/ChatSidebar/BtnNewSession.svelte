@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { popup } from "@skeletonlabs/skeleton"
-    import { chatInProgress, chatNew } from "../../chatSession/chatActions"
+    import { chatInProgress, chatNew } from "../../lib/chatSession/chatActions"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
 
     let mobileToggleOpen = false
