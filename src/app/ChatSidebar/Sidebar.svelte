@@ -100,8 +100,9 @@
                     border-radius: 8px;
 
                     &:hover {
-                        background-color: var(--color-surface-600);
+                        background-color: var(--color-primary-900) !important;
                         border: unset !important;
+                        cursor: pointer;
                     }
                 }
 
@@ -119,6 +120,9 @@
                         background-color: var(--color-primary-500);
                         color: black;
                         border-radius: 10px;
+                        &:hover {
+                            background-color: var(--color-primary-400) !important;
+                        }
                     }
                 }
             }
