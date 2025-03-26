@@ -19,7 +19,7 @@
         <!-- svelte-ignore a11y_missing_attribute -->
         <button
             type="button"
-            class="cursor-pointer text-start text-primary-500 p-0 hover:bg-primary-800 outline-none"
+            class="cursor-pointer text-start text-primary-500 p-0 hover:bg-primary-800 outline-hidden"
             onclick={selectPrompt(p)}
         >
             {p.name}

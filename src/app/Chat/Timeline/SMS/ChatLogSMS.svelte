@@ -1,7 +1,5 @@
 <script>
     // @ts-nocheck
-
-    import { Avatar } from "@skeletonlabs/skeleton"
     import { chatSessions } from "../../stores/chatSessions.svelte.js"
 
     $inspect(convos)
@@ -21,7 +19,7 @@
                             <p>{timeline_entry.text}</p>
                         </div>
                         <div
-                            class="flex-[64px] flex-grow-0 flex-shrink-0 place-content-center"
+                            class="flex-[64px] grow-0 shrink-0 place-content-center"
                         >
                             <Avatar
                                 src={`https://i.pravatar.cc/?img={${timeline_entry.role}}`}

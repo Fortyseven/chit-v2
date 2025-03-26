@@ -19,15 +19,12 @@
 
 <style lang="scss">
     .response {
-        // border: 1px solid red;
         border-radius: 0.5em;
-        // background-color: #fff1;
         text-align: start;
         padding: 1em;
 
-        color: rgb(var(--color-surface-300));
+        color: var(--color-surface-300);
         flex: 0 1 auto;
-        // font-size: 1.1em;
         font-style: italic;
         line-height: 1.35em;
         overflow: scroll;
@@ -37,5 +34,7 @@
             font-weight: bold;
         }
         opacity: 0.75;
+        max-width: 1024px;
+        margin: auto;
     }
 </style>

@@ -83,7 +83,6 @@
     /* ------------------------------------------------------ */
     async function onGlobalKeypress(ev: KeyboardEvent) {
         if (ev.ctrlKey) {
-
             // reroll last response
             if (ev.key === "e" && ev.ctrlKey) {
                 ev.preventDefault()
@@ -100,7 +99,6 @@
                 ev.preventDefault()
                 await _submitUserMessage(ev.target.value)
             }
-
         } else if (ev.key == "Escape") {
             ev.preventDefault()
             chatAbort()
@@ -157,9 +155,9 @@
                     disabled={$chatInProgress}
                 ></textarea>
             </div>
-            <div class="flex flex-row flex-auto gap-1 flex-grow-0">
+            <div class="flex flex-row flex-auto gap-1 grow-0">
                 <button
-                    class="variant-filled-primary flex-auto text-center w-24 h-full leading-none disabled:opacity-50"
+                    class="bg-primary-500 flex-auto text-center w-24 h-full leading-none disabled:opacity-50"
                     onclick={() => _submitUserMessage(inputBoxEl?.value)}
                     disabled={$chatInProgress}
                 >
@@ -204,6 +202,11 @@
         background: #fb01;
         backdrop-filter: blur(15px);
         filter: drop-shadow(0 0 2em #000);
+        width: 100%;
+        position: sticky;
+        padding: 0;
+        bottom: 0;
+        left: 0;
 
         textarea {
             border-radius: var(--theme-rounded-container);
@@ -226,7 +229,7 @@
             }
 
             &::placeholder {
-                color: rgb(var(--color-surface-500));
+                color: var(--color-surface-500);
             }
         }
     }

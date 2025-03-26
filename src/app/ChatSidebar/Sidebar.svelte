@@ -1,8 +1,5 @@
 <script>
     // @ts-nocheck
-
-    import { AppRail, AppRailTile } from "@skeletonlabs/skeleton"
-
     import { appState } from "../../appState/appState"
     import {
         chatDelete,
@@ -31,8 +28,8 @@
     }
 </script>
 
-<AppRail class="convo-panel app-rail h-full w-full p-4 hidden sm:grid">
-    <svelte:fragment slot="lead">
+<div class="convo-panel app-rail h-full w-full p-4 hidden sm:grid">
+    <div class="FIXME">
         <div class="flex flex-col w-full gap-2 shadow-lg">
             {#each $chats as chat, i}
                 <div
@@ -67,9 +64,9 @@
                 </div>
             {/each}
         </div>
-    </svelte:fragment>
+    </div>
 
-    <svelte:fragment slot="trail">
+    <div class="FIXME trail">
         <div class="flex gap-2">
             <div>
                 <BtnNewSession></BtnNewSession>
@@ -83,12 +80,12 @@
                 </button>
             </div>
         </div>
-    </svelte:fragment>
-</AppRail>
+    </div>
+</div>
 
 <style lang="scss">
     :global(.convo-panel.app-rail) {
-        background-color: rgb(var(--color-surface-800));
+        background-color: var(--color-surface-800);
     }
 
     button {
@@ -98,18 +95,18 @@
         overflow: hidden;
         text-overflow: ellipsis;
         border: unset !important;
-        background-color: rgb(var(--color-surface-700));
+        background-color: var(--color-surface-700);
         &:hover {
-            background-color: rgb(var(--color-surface-600));
+            background-color: var(--color-surface-600);
 
             border: unset !important;
         }
     }
 
     .active {
-        // outline: 2px solid rgb(var(--color-primary-500));
+        // outline: 2px solid var(--color-primary-500);
         button:first-of-type {
-            background-color: rgb(var(--color-primary-500));
+            background-color: var(--color-primary-500);
             color: black;
             border-radius: 10px;
         }

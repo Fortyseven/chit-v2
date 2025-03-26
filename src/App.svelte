@@ -1,11 +1,5 @@
 <script>
-    // @ts-nocheck
-
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
-
-    // import "$stores/appState.svelte.js"
-
-    import llm from "$lib/llm/ollama"
 
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ChatLogRegular from "./app/Chat/Timeline/Regular/ChatLogRegular.svelte"
@@ -27,12 +21,11 @@
     })
 </script>
 
-<div class="flex h-full w-full">
-    <div class="flex-grow-0 w-[400px] h-full shadow-2xl">
+<AppFramework>
+    <div slot="sidebar">
         <ConvoSidebar />
     </div>
-
-    <div class="page" bind:this={scrollWindowEl}>
+    <div slot="content" class="page" bind:this={scrollWindowEl}>
         <header
             class="sticky w-full h-auto top-0 z-50 bg-neutral-800 align-middle m-auto flex flex-col place-content-center"
         >
@@ -53,14 +46,12 @@
                 </div>
             {/if}
         </header>
-        <div class="chatlog">
-            <ChatLogRegular></ChatLogRegular>
-        </div>
-        <footer class="input-bar flex-auto flex-grow-0">
-            <InputBar></InputBar>
-        </footer>
+        <ChatLogRegular />
+        <!-- <div class="input"> -->
+        <InputBar />
+        <!-- </div> -->
     </div>
-</div>
+</AppFramework>
 
 <!-- </API> -->
 <!-- </EventRepeater> -->
@@ -71,21 +62,16 @@
         background: transparent;
     }
 
-    .input-bar {
-        position: sticky;
-        bottom: 0;
-    }
-
     .page {
-        overflow: scroll;
+        box-sizing: border-box;
         width: 100%;
         height: 100%;
-        flex-direction: column;
-        display: flex;
+        overflow: scroll;
+        position: relative;
 
         --s: 8px; /* control the size*/
-        --c1: rgb(var(--color-surface-950));
-        --c2: rgb(var(--color-surface-800));
+        --c1: var(--color-surface-950);
+        --c2: var(--color-surface-800);
         --c: #0000, var(--c1) 0.5deg 119.5deg, #0000 120deg;
         --g1: conic-gradient(from 60deg at 56.25% calc(425% / 6), var(--c));
         --g2: conic-gradient(from 180deg at 43.75% calc(425% / 6), var(--c));
@@ -99,40 +85,14 @@
             var(--g3) var(--s) 0,
             var(--g3) 0 calc(1.73 * var(--s)) var(--c2);
         background-size: calc(2 * var(--s)) calc(3.46 * var(--s));
-    }
 
-    header {
-        // box-shadow: 0 0 1em #000;
-        background: #fb01;
-        backdrop-filter: blur(15px);
-        filter: drop-shadow(0 0 2em #000);
-    }
-
-    .chatlog {
-        display: flex;
-        flex: 1 0 auto;
-        flex-direction: column;
-        gap: 0.5em;
-        width: 100%;
-        max-width: 1024px;
-        margin: auto;
-        padding-inline: 1em;
-        padding-block-end: 4em;
-        font-size: 1.2em;
-        padding-top: 0.5em;
-        place-content: start;
-        font-family:
-            "Roboto",
-            system-ui,
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            Roboto,
-            Oxygen,
-            Ubuntu,
-            Cantarell,
-            "Open Sans",
-            "Helvetica Neue",
-            sans-serif;
+        header {
+            background: #fb01;
+            backdrop-filter: blur(15px);
+            filter: drop-shadow(0 0 2em #000);
+            position: sticky;
+            width: 100%;
+            top: 0;
+        }
     }
 </style>

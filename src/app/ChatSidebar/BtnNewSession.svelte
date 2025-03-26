@@ -44,7 +44,7 @@
 
 <style lang="scss">
     :global(.convo-panel.app-rail) {
-        background-color: rgb(var(--color-surface-800));
+        background-color: var(--color-surface-800);
     }
 
     button {

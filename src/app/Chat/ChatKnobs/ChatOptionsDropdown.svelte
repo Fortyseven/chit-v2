@@ -41,7 +41,7 @@
         <Gears className=""/>
     </summary>
     <ul
-        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-48 p-2 shadow"
+        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-48 p-2 shadow-xs"
     >
         {#each entries as { name, action }, i}
             {#if name === "-"}
@@ -64,7 +64,7 @@
 
 <style lang="scss">
     hr {
-        border: 1px solid rgba(var(--color-surface-500)) !important;
+        border: 1px solid var(--color-surface-500) !important;
         height: 0px !important;
         width: 100%;
         margin: auto;

@@ -32,7 +32,7 @@
         text-align: start;
         padding: 1em;
         font-size: 1.1em;
-        background-color: rgb(var(--color-surface-950));
+        background-color: var(--color-surface-950);
         width: 100%;
         flex: 0 1 auto;
         // background-image: linear-gradient(
@@ -44,7 +44,10 @@
         border-bottom: 1px solid #fff1;
         border-top: 1px solid #fff2;
         // border-top-left-radius: unset;
-        color: rgb(var(--color-primary-300));
+        color: var(--color-primary-300);
         // backdrop-filter: blur(2px) brightness(140%);
+
+        max-width: 1024px;
+        margin: auto;
     }
 </style>
