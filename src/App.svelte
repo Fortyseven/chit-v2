@@ -57,11 +57,6 @@
 <!-- </EventRepeater> -->
 
 <style lang="scss">
-    :global(.app-rail button) {
-        border-radius: 0;
-        background: transparent;
-    }
-
     .page {
         box-sizing: border-box;
         width: 100%;

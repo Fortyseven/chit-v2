@@ -142,7 +142,7 @@
 {#key $appActiveChat}
     <div id="InputBox">
         <div class="flex flex-row gap-2 p-4 max-w-[1024px] m-auto">
-            <ChatInferenceSettings></ChatInferenceSettings>
+            <ChatInferenceSettings/>
             <div class="flex flex-auto basis-[50%] disabled:opacity-50">
                 <textarea
                     name="prompt"

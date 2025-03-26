@@ -17,13 +17,10 @@
 
     #App :global(> :first-child) {
         max-width: 400px;
-        border: 1px solid red;
-        background: var(--color-amber-300) !important;
     }
 
     #App :global(> :last-child) {
         width: 100%;
         height: auto;
-        border: 1px dashed red;
     }
 </style>
