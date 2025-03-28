@@ -6,6 +6,7 @@ import {
     chatAppendStreamingPending,
     chatFind,
     chatInProgress,
+    chatPromoteStreamingPending,
     chatSetWasAborted,
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
@@ -143,6 +144,7 @@ export class LLMInterface {
             } catch (e) {
                 console.error("Error updating chat session:", e)
             } finally {
+                chatPromoteStreamingPending(chatId)
                 chatInProgress.set(false)
                 sndStopTyping()
                 sndPlayResponse()
