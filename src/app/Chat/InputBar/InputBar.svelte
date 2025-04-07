@@ -140,14 +140,13 @@
 <svelte:window onkeydown={onGlobalKeypress} />
 
 {#key $appActiveChat}
-    <div id="InputBox">
-        <div class="flex flex-row gap-2 p-4 max-w-[1024px] m-auto">
-            <ChatInferenceSettings/>
-            <div class="flex flex-auto basis-[50%] disabled:opacity-50">
+    <div id="InputBox" class="debug1">
+        <div class="inner">
+            <ChatInferenceSettings />
+            <div class="user-prompt">
                 <textarea
                     name="prompt"
                     id="prompt"
-                    class="bg-black"
                     placeholder="Write a message..."
                     rows="1"
                     bind:this={inputBoxEl}
@@ -155,20 +154,18 @@
                     disabled={$chatInProgress}
                 ></textarea>
             </div>
-            <div class="flex flex-row flex-auto gap-1 grow-0">
+            <div class="chat-controls">
                 <button
-                    class="bg-primary-500 flex-auto text-center w-24 h-full leading-none disabled:opacity-50"
                     onclick={() => _submitUserMessage(inputBoxEl?.value)}
                     disabled={$chatInProgress}
+                    class="btn-send"
                 >
-                    <div class="flex flex-row place-content-center gap-2">
+                    <div>
                         Send <SendFilled />
                     </div>
                 </button>
                 {#key $hasMessages}
-                    <div
-                        class="grid grid-cols-2 grid-rows-2 gap-1 place-content-center"
-                    >
+                    <div class="btn-grid">
                         <IconButton
                             title="Reroll last response (Ctrl+E)"
                             onClick={onBtnReroll}
@@ -203,33 +200,87 @@
         backdrop-filter: blur(15px);
         filter: drop-shadow(0 0 2em #000);
         width: 100%;
-        position: sticky;
+        position: fixed;
         padding: 0;
         bottom: 0;
-        left: 0;
 
-        textarea {
-            border-radius: var(--theme-rounded-container);
-            font-size: 1.2em;
-            outline-style: none;
+        .inner {
+            display: flex;
+            flex-direction: row;
+            gap: 2em;
+            padding: 1em;
+            max-width: 1024px;
+            margin-inline: auto;
             width: 100%;
-            height: 100%;
-            padding: 0.5em;
-            border-top: 1px solid #fff4;
-            border-left: 2px solid #fff4;
-            border-right: 2px solid #fb04;
-            border-bottom: 1px solid #fb04;
 
-            &:disabled {
-                opacity: 0.5;
+            .user-prompt {
+                display: flex;
+                flex: auto;
+                flex-basis: 50%;
+
+                &:disabled {
+                    opacity: 0.5;
+                }
+
+                textarea {
+                    background-color: var(--color-black);
+                    border-radius: var(--theme-rounded-container);
+                    font-size: 1.2em;
+                    outline-style: none;
+                    width: 100%;
+                    height: 100%;
+                    padding: 0.5em;
+                    border-top: 1px solid #fff4;
+                    border-left: 2px solid #fff4;
+                    border-right: 2px solid #fb04;
+                    border-bottom: 1px solid #fb04;
+
+                    &:disabled {
+                        opacity: 0.5;
+                    }
+
+                    // &.overflow {
+                    //     color: #f44;
+                    // }
+
+                    &::placeholder {
+                        color: var(--color-surface-500);
+                    }
+                }
             }
+            .chat-controls {
+                display: flex;
+                flex-direction: row;
+                flex: auto;
+                gap: calc(var(--spacing) * 1);
+                flex-grow: 0;
 
-            &.overflow {
-                color: #f44;
-            }
+                button {
+                    background-color: var(--color-primary-500);
+                    flex: auto;
+                    text-align: center;
+                    width: calc(var(--spacing) * 24);
+                    height: 100%;
+                    line-height: 1;
+                    &:disabled {
+                        opacity: 50%;
+                    }
+                }
 
-            &::placeholder {
-                color: var(--color-surface-500);
+                button.btn-send div {
+                    display: flex;
+                    flex-direction: row;
+                    place-content: center;
+                    gap: calc(var(--spacing) * 2);
+                }
+
+                .btn-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    grid-template-rows: repeat(2, minmax(0, 1fr));
+                    gap: calc(var(--spacing) * 1);
+                    place-content: center;
+                }
             }
         }
     }
