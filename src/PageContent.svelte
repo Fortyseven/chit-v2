@@ -1,8 +1,4 @@
 <script>
-    import PageContent from "./PageContent.svelte"
-
-    import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
-
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ChatLogRegular from "./app/Chat/Timeline/Regular/ChatLogRegular.svelte"
 
@@ -10,30 +6,50 @@
 
     import { currentChat } from "./lib/chatSession/chatSession"
 
-    import { afterUpdate, onMount } from "svelte"
+    import { afterUpdate } from "svelte"
     import "./appState/appStateStorage"
     import "./lib/audio"
     import "./lib/chatSession/chatStorage"
-    import AppFramework from "./ui/AppFramework/AppFramework.svelte"
 
     let scrollWindowEl = undefined
 
-    afterUpdate(() => {
-        scrollWindowEl?.scrollTo(0, scrollWindowEl.scrollHeight)
-    })
+    function scrollDown() {
+        setTimeout(
+            () => scrollWindowEl?.scrollTo(0, scrollWindowEl.scrollHeight),
+            50,
+        )
+    }
+
+    currentChat.subscribe(scrollDown)
+
+    afterUpdate(scrollDown)
 </script>
 
-<AppFramework>
-    <div slot="sidebar">
-        <ConvoSidebar />
-    </div>
-    <div slot="content" class="page" bind:this={scrollWindowEl}>
-        <PageContent></PageContent>
-    </div>
-</AppFramework>
+<header
+    class="sticky w-full h-auto top-0 z-50 bg-neutral-800 align-middle m-auto flex flex-col place-content-center"
+>
+    {#if $currentChat}
+        <div
+            class="p-2 text-lg text-primary-500 font-bold flex-auto text-nowrap text-ellipsis overflow-hidden w-3/4 md:w-full md:text-2xl"
+        >
+            {#key $currentChat}
+                {$currentChat.title}
+            {/key}
+        </div>
+        <div class="flex-auto place-self-center w-full">
+            <ChatKnobs></ChatKnobs>
+        </div>
+    {:else}
+        <div class="p-2 text-lg text-primary-500 font-bold">
+            No chat selected
+        </div>
+    {/if}
+</header>
+<ChatLogRegular />
+<!-- <div class="input"> -->
+<InputBar />
 
-<!-- </API> -->
-<!-- </EventRepeater> -->
+<!-- </div> -->
 
 <style lang="scss">
     .page {
