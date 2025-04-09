@@ -8,9 +8,26 @@
 
 <!-- svelte-ignore a11y_consider_explicit_label -->
 <button
-    class={`btn p-0 inline-flex w-8 h-8 bg-primary-500 text-white hover:bg-primary-400  disabled:opacity-50 place-content-center ${className}`}
     onclick={onClick}
     {disabled}
 >
     <svelte:component this={iconComponent} {title} class="m-auto"></svelte:component>
 </button>
+
+<style lang="scss">
+
+    button {
+        padding: 0;
+        display: inline-flex;
+        width: 8px;
+        height: 8px;
+        background-color: var(--color-primary-500);
+        color: white;
+        place-content: center;
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    }
+
+</style>

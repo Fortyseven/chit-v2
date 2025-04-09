@@ -1,26 +1,30 @@
 <script>
+    import { afterUpdate } from "svelte"
+
     import PageContent from "./PageContent.svelte"
-
-    import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
-
-    import InputBar from "./app/Chat/InputBar/InputBar.svelte"
-    import ChatLogRegular from "./app/Chat/Timeline/Regular/ChatLogRegular.svelte"
-
     import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
+    import InputBar from "./app/Chat/InputBar/InputBar.svelte"
+    import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
+    import AppFramework from "./ui/AppFramework/AppFramework.svelte"
 
     import { currentChat } from "./lib/chatSession/chatSession"
 
-    import { afterUpdate, onMount } from "svelte"
     import "./appState/appStateStorage"
     import "./lib/audio"
     import "./lib/chatSession/chatStorage"
-    import AppFramework from "./ui/AppFramework/AppFramework.svelte"
 
     let scrollWindowEl = undefined
 
-    afterUpdate(() => {
-        scrollWindowEl?.scrollTo(0, scrollWindowEl.scrollHeight)
-    })
+    function scrollDown() {
+        setTimeout(
+            () => scrollWindowEl?.scrollTo(0, scrollWindowEl.scrollHeight),
+            50,
+        )
+    }
+
+    currentChat.subscribe(scrollDown)
+
+    afterUpdate(scrollDown)
 </script>
 
 <AppFramework>
@@ -28,45 +32,99 @@
         <ConvoSidebar />
     </div>
     <div slot="content" class="page" bind:this={scrollWindowEl}>
-        <PageContent></PageContent>
+        <header>
+            {#if $currentChat}
+                <div class="title">
+                    {#key $currentChat}
+                        {$currentChat.title}
+                    {/key}
+                </div>
+                <div class="knobs">
+                    <ChatKnobs></ChatKnobs>
+                </div>
+            {:else}
+                <div class="not-selected">No chat selected</div>
+            {/if}
+        </header>
+        <PageContent />
+        <div class="input-bar"><InputBar /></div>
     </div>
 </AppFramework>
 
-<!-- </API> -->
-<!-- </EventRepeater> -->
-
 <style lang="scss">
     .page {
+        // display: block;
         box-sizing: border-box;
-        width: 100%;
+        // width: inherit;
         height: 100%;
-        overflow: scroll;
+        overflow-y: scroll;
         position: relative;
+        border: 1px solid red;
+    }
 
-        --s: 8px; /* control the size*/
-        --c1: var(--color-surface-950);
-        --c2: var(--color-surface-800);
-        --c: #0000, var(--c1) 0.5deg 119.5deg, #0000 120deg;
-        --g1: conic-gradient(from 60deg at 56.25% calc(425% / 6), var(--c));
-        --g2: conic-gradient(from 180deg at 43.75% calc(425% / 6), var(--c));
-        --g3: conic-gradient(from -60deg at 50% calc(175% / 12), var(--c));
+    header {
+        width: 100%;
+        height: auto;
+        background: #fb01;
+        backdrop-filter: blur(15px);
+        filter: drop-shadow(0 0 2em #000);
+        position: sticky;
+        // width: inherit;
+        top: calc(var(--spacing) * 0);
+        z-index: 50;
+        background-color: var(--color-neutral-800);
+        vertical-align: middle;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        place-content: center;
 
-        background:
-            var(--g1),
-            var(--g1) var(--s) calc(1.73 * var(--s)),
-            var(--g2),
-            var(--g2) var(--s) calc(1.73 * var(--s)),
-            var(--g3) var(--s) 0,
-            var(--g3) 0 calc(1.73 * var(--s)) var(--c2);
-        background-size: calc(2 * var(--s)) calc(3.46 * var(--s));
-
-        header {
-            background: #fb01;
-            backdrop-filter: blur(15px);
-            filter: drop-shadow(0 0 2em #000);
-            position: sticky;
-            width: 100%;
-            top: 0;
+        .title {
+            padding: calc(var(--spacing) * 2);
+            font-size: var(--text-lg) /* 1.125rem = 18px */;
+            line-height: var(
+                --tw-leading,
+                var(--text-lg--line-height) /* calc(1.75 / 1.125) ≈ 1.5556 */
+            );
+            color: var(--color-primary-500);
+            font-weight: bold;
+            flex: auto;
+            text-wrap: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: calc(3 / 4 * 100%);
+            @media (width >= 48rem /* 768px */) {
+                width: 100%;
+                font-size: var(--text-2xl) /* 1.5rem = 24px */;
+                line-height: var(
+                    --tw-leading,
+                    var(--text-2xl--line-height) /* calc(2 / 1.5) ≈ 1.3333 */
+                );
+            }
         }
+
+        .knobs {
+            flex: auto;
+            place-self: center;
+            width: 100%;
+        }
+
+        .not-selected {
+            padding: calc(var(--spacing) * 2);
+            font-size: var(--text-lg) /* 1.125rem = 18px */;
+            line-height: var(
+                --tw-leading,
+                var(--text-lg--line-height) /* calc(1.75 / 1.125) ≈ 1.5556 */
+            );
+            color: var(--color-primary-500);
+            font-weight: bold;
+        }
+    }
+
+    .input-bar {
+        position: sticky;
+        bottom: 0;
+        z-index: 50;
+        width: inherit;
     }
 </style>

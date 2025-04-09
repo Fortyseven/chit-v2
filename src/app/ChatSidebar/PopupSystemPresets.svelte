@@ -11,7 +11,7 @@
     }
 </script>
 
-<div class="shadow-2xl !p-4 z-20 bg-neutral-800 flex flex-col">
+<div class="system-presets-popup">
     {#each Object.keys(SYSTEM_PROMPTS) as skey}
         {@const p = SYSTEM_PROMPTS[skey]}
         <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -28,4 +28,26 @@
 </div>
 
 <style lang="scss">
+.system-presets-popup {
+    display: flex;
+    flex-direction: column;
+    // gap: 0.5rem;
+    padding: 1rem;
+    background-color: var(--bg-color);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow);
+
+    button {
+        border-radius: 0.5rem;
+        background-color: #f0f;
+        color: var(--text-color);
+        font-size: 1rem;
+        text-align: left;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+            background-color: var(--bg-hover);
+        }
+    }
+}
 </style>

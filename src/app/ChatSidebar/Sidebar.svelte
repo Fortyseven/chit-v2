@@ -39,7 +39,6 @@
                 data-chatid={chat.id}
             >
                 <button
-                    class="text-left disabled:opacity-50"
                     onclick={() => changeConvo(chat.id)}
                     disabled={$chatInProgress}
                     title={chat.title}
@@ -47,7 +46,6 @@
                     {chat.title}
                 </button>
                 <button
-                    class="opacity-75 p-0 w-8 disabled:opacity-50"
                     onclick={() => {
                         chatDuplicate(chat.id)
                     }}
@@ -56,7 +54,6 @@
                     🗋
                 </button>
                 <button
-                    class="p-0 w-8 disabled:opacity-50"
                     onclick={() => deleteConvo(chat.id)}
                     disabled={$chatInProgress}
                 >
@@ -72,7 +69,6 @@
         </div>
         <div>
             <button
-                class="btn variant-filled-secondary !rounded-lg disabled:opacity-50"
                 disabled={$chatInProgress}
             >
                 Config

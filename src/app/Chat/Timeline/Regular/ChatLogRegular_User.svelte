@@ -22,9 +22,10 @@
         border-radius: 0.5em;
         text-align: start;
         padding: 1em;
+        padding-block-start: 2em;
 
         color: var(--color-surface-300);
-        flex: 0 1 auto;
+
         font-style: italic;
         line-height: 1.35em;
         overflow: scroll;
@@ -34,7 +35,7 @@
             font-weight: bold;
         }
         opacity: 0.75;
-        max-width: 1024px;
+        // max-width: 1024px;
         margin: auto;
     }
 </style>

@@ -1,15 +1,11 @@
 <script>
     import { appState } from "../../../appState/appState"
-    import ChatInferenceSettings from "../InputBar/ChatInferenceSettings.svelte"
-    import ChatOptionsDropdown from "./ChatOptionsDropdown.svelte"
     import ModelSelect from "./ModelSelect.svelte"
     import SystemPrompt from "./SystemPrompt.svelte"
 </script>
 
-<div id="ChatKnobs" class="flex flex-wrap h-full">
-    <div
-        class="flex flex-wrap gap-2 px-2 py-2 w-full place-content-center flex-col md:flex-row"
-    >
+<div id="ChatKnobs">
+    <div class="knob-container">
         {#key $appState}
             <SystemPrompt></SystemPrompt>
             <ModelSelect></ModelSelect>
@@ -18,4 +14,23 @@
 </div>
 
 <style lang="scss">
+    #ChatKnobs {
+        display: flex;
+        flex-wrap: wrap;
+        height: 100%;
+    }
+
+    .knob-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        width: 100%;
+        place-content: center;
+        flex-direction: column;
+
+        @media (min-width: 768px) {
+            flex-direction: row;
+        }
+    }
 </style>

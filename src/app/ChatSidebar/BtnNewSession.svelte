@@ -15,11 +15,11 @@
     }
 </script>
 
-<div class="flex flex-col">
-    <div class="absolute bottom-[4.5em] overflow-scroll-y">
+<div class="new-session">
+    <div class="">
         <PopupSystemPresets></PopupSystemPresets>
     </div>
-    <div class="btn-group variant-filled-secondary disabled:opacity-50">
+    <div class="">
         <button
             class="btn variant-filled-primary flex-auto"
             title="Start a new session using a blank system prompt."
@@ -29,7 +29,7 @@
             New Session
         </button>
         <button
-            class="btn-icon variant-filled-primary flex-none disabled:opacity-50"
+            class=""
             title="Start a new conversation using a system prompt preset."
             disabled={$chatInProgress}
         >
@@ -53,5 +53,10 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .new-session {
+        display: flex;
+        flex-direction: column;
     }
 </style>

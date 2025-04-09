@@ -13,7 +13,6 @@
         "@sveltejs/vite-plugin-svelte": "^4.0.0",
         "@types/js-yaml": "^4.0.9",
         "carbon-icons-svelte": "^13.3.0",
-        "daisyui": "^5.0.9",
         "js-yaml": "^4.1.0",
         "sass-embedded": "^1.80.4",
         "svelte": "^5.0.3",
@@ -24,12 +23,9 @@
     "dependencies": {
         "@floating-ui/dom": "^1.6.12",
         "@mozilla/readability": "^0.5.0",
-        "@tailwindcss/postcss": "^4.0.15",
-        "@tailwindcss/vite": "^4.0.16",
         "autoprefixer": "^10.4.20",
         "markdown-it": "^14.1.0",
         "ollama": "^0.5.11",
-        "tailwindcss": "^4.0.16",
         "zod-to-json-schema": "^3.23.5"
     }
 }

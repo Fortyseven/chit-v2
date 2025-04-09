@@ -9,7 +9,7 @@
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
 </script>
 
-<div>
+<div class="wrapper" id="ChatLogRegular">
     {#if $appState.activeChatId && $currentChat?.messages}
         {#each $currentChat.messages as messages, i}
             {#key messages}
@@ -35,8 +35,13 @@
 </div>
 
 <style lang="scss">
-    div {
-        min-height: 100%;
+    div.wrapper {
+        width: inherit;
         margin-block: 2em 10em;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-width: var(--timeline-max-width);
+        margin-inline:auto;
     }
 </style>

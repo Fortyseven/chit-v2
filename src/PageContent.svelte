@@ -25,39 +25,22 @@
     afterUpdate(scrollDown)
 </script>
 
-<header
-    class="sticky w-full h-auto top-0 z-50 bg-neutral-800 align-middle m-auto flex flex-col place-content-center"
->
-    {#if $currentChat}
-        <div
-            class="p-2 text-lg text-primary-500 font-bold flex-auto text-nowrap text-ellipsis overflow-hidden w-3/4 md:w-full md:text-2xl"
-        >
-            {#key $currentChat}
-                {$currentChat.title}
-            {/key}
-        </div>
-        <div class="flex-auto place-self-center w-full">
-            <ChatKnobs></ChatKnobs>
-        </div>
-    {:else}
-        <div class="p-2 text-lg text-primary-500 font-bold">
-            No chat selected
-        </div>
-    {/if}
-</header>
-<ChatLogRegular />
-<!-- <div class="input"> -->
-<InputBar />
+<div class="page">
 
-<!-- </div> -->
+
+    <ChatLogRegular />
+
+</div>
 
 <style lang="scss">
     .page {
+        // display: block;
         box-sizing: border-box;
-        width: 100%;
+        width: inherit;
         height: 100%;
-        overflow: scroll;
-        position: relative;
+        overflow-y: scroll;
+        // position: relative;
+        border: 2px dashed green;
 
         --s: 8px; /* control the size*/
         --c1: var(--color-surface-950);
@@ -76,13 +59,6 @@
             var(--g3) 0 calc(1.73 * var(--s)) var(--c2);
         background-size: calc(2 * var(--s)) calc(3.46 * var(--s));
 
-        header {
-            background: #fb01;
-            backdrop-filter: blur(15px);
-            filter: drop-shadow(0 0 2em #000);
-            position: sticky;
-            width: 100%;
-            top: 0;
-        }
+
     }
 </style>

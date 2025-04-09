@@ -140,9 +140,11 @@
 <svelte:window onkeydown={onGlobalKeypress} />
 
 {#key $appActiveChat}
-    <div id="InputBox" class="debug1">
+    <div id="InputBox">
         <div class="inner">
-            <ChatInferenceSettings />
+            <div class="chat-settings">
+                <ChatInferenceSettings />
+            </div>
             <div class="user-prompt">
                 <textarea
                     name="prompt"
@@ -195,28 +197,32 @@
 
 <style lang="scss">
     #InputBox {
-        border-radius: var(--theme-rounded-container);
+        width: inherit;
         background: #fb01;
         backdrop-filter: blur(15px);
         filter: drop-shadow(0 0 2em #000);
-        width: 100%;
-        position: fixed;
-        padding: 0;
-        bottom: 0;
 
         .inner {
-            display: flex;
-            flex-direction: row;
+            border: 1px solid red;
+            display: grid;
+            // display: none;
+            grid-template-columns: auto minmax(0, 1fr) auto;
             gap: 2em;
-            padding: 1em;
-            max-width: 1024px;
+            width: 100%;
+            max-width: var(--timeline-max-width);
+            padding-block: 1em;
             margin-inline: auto;
             width: 100%;
 
+            .chat-settings {
+                // flex: auto;
+                border: 1px solid green;
+            }
             .user-prompt {
-                display: flex;
-                flex: auto;
-                flex-basis: 50%;
+                // display: flex;
+                // flex: auto;
+                // flex-basis: 50%;
+                border: 1px solid blue;
 
                 &:disabled {
                     opacity: 0.5;
@@ -250,10 +256,8 @@
             }
             .chat-controls {
                 display: flex;
-                flex-direction: row;
-                flex: auto;
                 gap: calc(var(--spacing) * 1);
-                flex-grow: 0;
+                border: 1px solid yellow;
 
                 button {
                     background-color: var(--color-primary-500);
