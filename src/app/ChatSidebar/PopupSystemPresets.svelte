@@ -3,6 +3,8 @@
     import { currentChat } from "../../lib/chatSession/chatSession"
     import SYSTEM_PROMPTS from "../../preset-prompts/index.js"
 
+    export let open = false
+
     function selectPrompt(prompt_def) {
         chatNew()
         console.log($currentChat.system_prompt)
@@ -11,7 +13,7 @@
     }
 </script>
 
-<div class="system-presets-popup">
+<div class="system-presets-popup" class:open={open}>
     {#each Object.keys(SYSTEM_PROMPTS) as skey}
         {@const p = SYSTEM_PROMPTS[skey]}
         <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -19,7 +21,7 @@
         <!-- svelte-ignore a11y_missing_attribute -->
         <button
             type="button"
-            class="cursor-pointer text-start text-primary-500 p-0 hover:bg-primary-800 outline-hidden"
+            class="btn-preset"
             onclick={selectPrompt(p)}
         >
             {p.name}
@@ -29,24 +31,24 @@
 
 <style lang="scss">
 .system-presets-popup {
-    display: flex;
     flex-direction: column;
-    // gap: 0.5rem;
-    padding: 1rem;
-    background-color: var(--bg-color);
-    border-radius: 0.5rem;
-    box-shadow: var(--shadow);
+    padding: 0.5em 0.5em;
+    background-color: var(--color-background-lighter);
+    box-shadow: 0 0 10px black;
+    display: none;
 
-    button {
-        border-radius: 0.5rem;
-        background-color: #f0f;
-        color: var(--text-color);
-        font-size: 1rem;
+    &.open {
+        display: flex;
+    }
+
+    button.btn-preset {
+        background-color: transparent;
+        color: var(--color-accent);
         text-align: left;
-        transition: background-color 0.2s ease;
 
         &:hover {
-            background-color: var(--bg-hover);
+            background-color: var(--color-accent);
+            color: var(--color-accent-text);
         }
     }
 }

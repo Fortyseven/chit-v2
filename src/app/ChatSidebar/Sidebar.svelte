@@ -39,23 +39,31 @@
                 data-chatid={chat.id}
             >
                 <button
+                    class="chat-title"
                     onclick={() => changeConvo(chat.id)}
                     disabled={$chatInProgress}
                     title={chat.title}
+                    aria-label={`Switch to: ${chat.title}`}
                 >
                     {chat.title}
                 </button>
                 <button
+                    class="duplicate"
                     onclick={() => {
                         chatDuplicate(chat.id)
                     }}
                     disabled={$chatInProgress}
+                    title="Duplicate"
+                    aria-label={`Duplicate: ${chat.title}`}
                 >
-                    🗋
+                    D
                 </button>
                 <button
+                    class="delete"
                     onclick={() => deleteConvo(chat.id)}
                     disabled={$chatInProgress}
+                    title="Delete"
+                    aria-label={`Delete: ${chat.title}`}
                 >
                     🗑
                 </button>
@@ -68,17 +76,12 @@
             <BtnNewSession></BtnNewSession>
         </div>
         <div>
-            <button
-                disabled={$chatInProgress}
-            >
-                Config
-            </button>
+            <button disabled={$chatInProgress}> Config </button>
         </div>
     </div>
 </div>
 
 <style lang="scss">
-
     #Sidebar {
         display: grid;
         grid-template-rows: 1fr auto;
@@ -86,38 +89,51 @@
         z-index: 10;
         padding: 1em;
 
+        background-color: var(--color-background);
+        color: var(--color-text);
+
         .top {
             .chatRow {
                 display: grid;
                 grid-template-columns: auto 24px 24px;
-                gap: 0.5em;
+                gap: 0.25em;
 
                 button {
-                    border-radius: 8px;
-
-                    &:hover {
-                        background-color: var(--color-primary-900) !important;
-                        border: unset !important;
-                        cursor: pointer;
-                    }
+                    padding: 0;
+                    margin-bottom: 0.5em;
+                    line-height: 1;
                 }
 
-                button:first-of-type {
-                    padding: 0.5em 1em;
+                button.chat-title {
+                    color: var(--color-text);
                     background: transparent;
+                    padding: 0.5em 1em;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    border: unset !important;
+                    text-align: left;
+                    &:hover {
+                        color: var(--color-accent);
+                    }
+                }
+
+                button.duplicate,
+                button.delete {
+                    color: var(--color-accent-complement);
+                    &:hover {
+                        color: white;
+                        background-color: var(--color-accent-complement-darker);
+                    }
+                    background: transparent;
                 }
 
                 &.active {
                     button:first-of-type {
-                        background-color: var(--color-primary-500);
+                        background-color: var(--color-accent);
                         color: black;
                         border-radius: 10px;
                         &:hover {
-                            background-color: var(--color-primary-400) !important;
+                            background-color: var(--color-accent-lighter);
                         }
                     }
                 }

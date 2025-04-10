@@ -1,20 +1,26 @@
 :root {
     --timeline-max-width: 1280px;
+    --border-radius-standard: 8px;
 
-    --color-accent: #ffbb00;
-    --color-accent-darker: #876300;
     --color-accent-lighter: #ffdd11;
-    --color-accent-complement: #00bbff;
-    --color-accent-complement-darker: #006387;
-    --color-accent-complement-lighter: #00ddff;
+    --color-accent: #ffaa00;
+    --color-accent-darker: #876300;
+    --color-accent-text: #000;
 
-    --color-neutral: #eeeeee;
-    --color-neutral-darker: #aaaaaa;
-    --color-neutral-lighter: #ffffff;
+    --color-accent-complement-lighter: #0df;
+    --color-accent-complement: #0af;
+    --color-accent-complement-darker: #07d;
+    --color-accent-complement-text: #000;
 
-    --color-background: #202223;
-    --color-background-darker: #18191a;
-    --color-background-lighter: #2a2b2c;
+    --color-neutral-darker: #aaa;
+    --color-neutral: #eee;
+    --color-neutral-lighter: #fff;
+
+    --color-text: var(--color-neutral);
+
+    --color-background-darker: #111;
+    --color-background: #222;
+    --color-background-lighter: #333;
 
     /* ---- */
 
@@ -357,5 +363,27 @@ body {
                 text-align: left !important;
             }
         }
+    }
+}
+
+button {
+    background-color: var(--color-accent);
+    color: var(--color-accent-text);
+
+    border: none;
+    padding: 0.5em 0.75em;
+    border-radius: var(--border-radius-standard);
+    font-size: 1em;
+    cursor: pointer;
+    display: inline-block;
+    place-content: center;
+    text-align: center;
+
+    &:hover {
+        background-color: var(--color-accent-lighter);
+    }
+
+    &:active {
+        background-color: var(--color-accent-darker);
     }
 }
