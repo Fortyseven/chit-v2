@@ -41,28 +41,30 @@
 
 <style lang="scss">
     .page {
-        // display: block;
         box-sizing: border-box;
         width: inherit;
-        // height: 100%;
         overflow-y: scroll;
         position: relative;
-        // border: 1px solid red;
     }
 
     .chat-header {
-        width: inherit;
+        // width: -moz-available;
+        // width: -webkit-fill-available;
+        width: stretch;
         height: auto;
         position: fixed;
         top: 0;
         z-index: 50;
+        border: 1px dashed yellow;
     }
 
     .input-bar {
-        width: inherit;
+        // width: -moz-available;
+        // width: -webkit-fill-available;
+        width: stretch;
+
         position: fixed;
         bottom: 0;
         z-index: 50;
-        border: 1px solid red;
     }
 </style>

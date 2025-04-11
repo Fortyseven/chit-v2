@@ -202,18 +202,15 @@
     #InputBox {
         width: inherit;
         // height: 150px;
-        // background: #fb01;
-        background: var(--color-background-lighter);
-        // backdrop-filter: blur(15px);
+        background: #fb01;
+        backdrop-filter: blur(15px);
         filter: drop-shadow(0 0 2em #000);
         padding-block: 1em;
 
         --input-bar-height: 100px;
 
         .inner {
-            // border: 1px solid orange;
             display: grid;
-            // display: none;
             grid-template-columns: auto minmax(0, 1fr) auto;
             gap: 2em;
             width: 100%;
@@ -225,8 +222,6 @@
             .chat-settings {
             }
             .user-prompt {
-                // border: 1px solid blue;
-
                 &:disabled {
                     opacity: 0.5;
                 }
@@ -287,7 +282,6 @@
                 .btn-grid {
                     width: 100px;
                     height: 100%;
-                    // border: 1px solid red;
                     display: grid;
                     grid-template-columns: auto auto;
                     grid-template-rows: auto auto;
