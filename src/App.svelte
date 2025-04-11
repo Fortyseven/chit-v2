@@ -1,9 +1,8 @@
 <script>
-  import ChatHeader from './ChatHeader.svelte'
+    import ChatHeader from "./app/Chat/ChatHeader.svelte"
 
     import { afterUpdate } from "svelte"
 
-    import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
     import PageContent from "./app/PageContent.svelte"
@@ -35,7 +34,7 @@
     </div>
     <div slot="content" class="page" bind:this={scrollWindowEl}>
         <PageContent />
-        <div class="chat-header"><ChatHeader/></div>
+        <div class="chat-header"><ChatHeader /></div>
         <div class="input-bar"><InputBar /></div>
     </div>
 </AppFramework>
