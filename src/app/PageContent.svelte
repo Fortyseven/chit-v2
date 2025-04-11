@@ -26,10 +26,7 @@
 </script>
 
 <div class="page">
-
-
     <ChatLogRegular />
-
 </div>
 
 <style lang="scss">
@@ -58,7 +55,5 @@
             var(--g3) var(--s) 0,
             var(--g3) 0 calc(1.73 * var(--s)) var(--c2);
         background-size: calc(2 * var(--s)) calc(3.46 * var(--s));
-
-
     }
 </style>
