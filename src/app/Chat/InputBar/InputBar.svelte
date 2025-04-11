@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Renew, SendFilled, TrashCan, Undo } from "carbon-icons-svelte"
     import { derived } from "svelte/store"
-    import { appActiveChat, appState } from "../../../appState/appState"
+    import { appActiveChat, appState } from "../../../lib/appState/appState"
     import {
         chatAbort,
         chatAddRoleMessage,

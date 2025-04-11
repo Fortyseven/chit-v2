@@ -1,5 +1,5 @@
 import { get } from "svelte/store"
-import { appState } from "../appState/appState"
+import { appState } from "./appState/appState"
 
 const audioResponse = new Audio("assets/response.wav")
 audioResponse.preload = "auto"

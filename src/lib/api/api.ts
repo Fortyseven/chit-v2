@@ -1,5 +1,5 @@
 import { get, writable } from "svelte/store"
-import { appState } from "../../appState/appState"
+import { appState } from "../appState/appState"
 
 export const pendingResponse = writable({
     role: "assistant",

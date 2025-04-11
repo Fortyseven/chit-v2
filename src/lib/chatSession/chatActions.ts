@@ -1,5 +1,5 @@
 import { get, writable } from "svelte/store"
-import { appState } from "../../appState/appState"
+import { appState } from "../appState/appState"
 import llm from "../llm/ollama"
 import { chats, Message } from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"

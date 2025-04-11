@@ -1,6 +1,6 @@
 <script>
     // @ts-nocheck
-    import { appState } from "../../appState/appState"
+    import { appState } from "../../lib/appState/appState"
     import {
         chatDelete,
         chatDuplicate,

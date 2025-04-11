@@ -1,6 +1,6 @@
 import yaml from "js-yaml"
 import { get } from "svelte/store"
-import { appState } from "../../appState/appState"
+import { appState } from "../appState/appState"
 import {
     chatSetModel,
     chatSetSystemPrompt,

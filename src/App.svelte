@@ -9,7 +9,7 @@
 
     import { currentChat } from "./lib/chatSession/chatSession"
 
-    import "./appState/appStateStorage"
+    import "./lib/appState/appStateStorage"
     import "./lib/audio"
     import "./lib/chatSession/chatStorage"
 

@@ -1,6 +1,6 @@
 <script>
     import { get, writable } from "svelte/store"
-    import { appState } from "../../../appState/appState"
+    import { appState } from "../../../lib/appState/appState"
     import { chatSetModel } from "../../../lib/chatSession/chatActions"
     import { currentChat } from "../../../lib/chatSession/chatSession"
     import llm from "../../../lib/llm/ollama"
