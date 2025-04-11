@@ -19,23 +19,15 @@
 
 <style lang="scss">
     .response {
-        border-radius: 0.5em;
-        text-align: start;
-        padding: 1em;
+        width: auto;
+        padding-block: 1em;
+        padding-inline:0.6em;
         padding-block-start: 2em;
-
-        color: var(--color-surface-300);
-
+        color: var(--color-neutral);
         font-style: italic;
-        line-height: 1.35em;
-        overflow: scroll;
-        width: 100%;
         &::before {
             content: "> ";
             font-weight: bold;
         }
-        opacity: 0.75;
-        // max-width: 1024px;
-        margin: auto;
     }
 </style>

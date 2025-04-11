@@ -26,27 +26,16 @@
 
 <style lang="scss">
     .response {
+        width: auto;
         border-radius: 0.5em;
         box-shadow: 0 0.25em 0.25em 0 #000;
         text-align: start;
-        padding: 1em;
+        padding-inline: 1em;
         font-size: 1.1em;
-        background-color: #0008;
-        width: 100%;
-
-        // background-image: linear-gradient(
-        //     140deg,
-        //     #3330 0%,
-        //     rgba(0, 0, 0, 0.8) 100%
-        // );
-
+        background-color: var(--color-background-darker);
+        color: var(--color-accent);
         border-bottom: 1px solid #fff1;
         border-top: 1px solid #fff2;
-        // border-top-left-radius: unset;
-        color: var(--color-primary-300);
-        backdrop-filter: blur(3px) brightness(140%);
-
-        // max-width: 1024px;
         margin: auto;
     }
 </style>

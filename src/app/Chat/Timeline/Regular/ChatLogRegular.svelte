@@ -35,13 +35,14 @@
 </div>
 
 <style lang="scss">
-    div.wrapper {
+    #ChatLogRegular {
         width: inherit;
-        margin-block: 2em 10em;
         flex-direction: column;
         overflow-y: auto;
-        overflow-x: hidden;
+        overflow-x: scroll;
         max-width: var(--timeline-max-width);
         margin-inline:auto;
+        font-size: 1.25em;
+        margin-block: 5rem 12rem;
     }
 </style>
