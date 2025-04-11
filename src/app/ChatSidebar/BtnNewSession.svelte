@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
     import { onMount } from "svelte"
     import { chatInProgress, chatNew } from "../../lib/chatSession/chatActions"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
@@ -18,14 +18,14 @@
     }
 
     onMount(() => {
-        function handleClickOutside(event: MouseEvent) {
+        function handleClickOutside(event) {
             const popup = document.querySelector(".preset-popup-container")
             const button = document.querySelector(".btn-preset")
             if (
                 popup &&
-                !popup.contains(event.target as Node) &&
+                !popup.contains(event.target) &&
                 button &&
-                !button.contains(event.target as Node)
+                !button.contains(event.target)
             ) {
                 popupOpen = false
             }
