@@ -41,6 +41,7 @@
     secondary
     disabled={$chatInProgress}
     className="btn-preset"
+    roundCorner="ne"
     />
 
 <style lang="scss">
@@ -238,7 +239,7 @@
             var(--radius-field) /* var(--radius-field) */
         );
         background-color: var(--btn-bg);
-        background-size: auto, calc(var(--noise) * 100%);
+        // background-size: auto, calc(var(--noise) * 100%);
         background-image: none, var(--btn-noise);
         border-width: var(--border);
         border-style: solid;
@@ -518,7 +519,7 @@
                 }
                 color: var(--menu-active-fg);
                 background-color: var(--menu-active-bg);
-                background-size: auto, calc(var(--noise) * 100%);
+                // background-size: auto, calc(var(--noise) * 100%);
                 background-image: none, var(--fx-noise);
                 &:not(&:active) {
                     box-shadow: 0 2px calc(var(--depth) * 3px) -2px var(--menu-active-bg);

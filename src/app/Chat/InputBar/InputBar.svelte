@@ -173,6 +173,7 @@
                             onClick={onBtnReroll}
                             disabled={!$hasMessages || $chatInProgress}
                             iconComponent={Renew}
+                            roundCorner="nw"
                         />
 
                         <ChatOptionsDropdown></ChatOptionsDropdown>
@@ -182,14 +183,16 @@
                             onClick={onBtnBack}
                             disabled={!$hasMessages || $chatInProgress}
                             iconComponent={Undo}
+                            roundCorner="sw"
                         />
 
                         <IconButton
                             title="Clear"
+                            warning
                             onClick={onBtnClear}
                             disabled={!$hasMessages || $chatInProgress}
                             iconComponent={TrashCan}
-                            className="!bg-red-500 hover:!bg-red-400"
+                            roundCorner="se"
                         />
                     </div>
                 {/key}
@@ -285,7 +288,7 @@
                     display: grid;
                     grid-template-columns: auto auto;
                     grid-template-rows: auto auto;
-                    gap: 0.25em;
+                    gap: 2px;
                     place-content: center;
                 }
             }

@@ -22,6 +22,11 @@
     --color-background: #222;
     --color-background-lighter: #333;
 
+    --color-accent-warning-darker: #a52f2f;
+    --color-accent-warning: #d65252;
+    --color-accent-warning-lighter: #f87474;
+
+
     /* ---- */
 
     --color-primary-50: #fbeed9;
@@ -379,6 +384,15 @@ button {
     place-content: center;
     text-align: center;
 
+
+    &:hover {
+        background-color: var(--color-accent-lighter);
+    }
+
+    &:active {
+        background-color: var(--color-accent-darker);
+    }
+
     &.secondary {
         background-color: var(--color-accent-complement);
         color: var(--color-accent-complement-text);
@@ -388,11 +402,12 @@ button {
         }
     }
 
-    &:hover {
-        background-color: var(--color-accent-lighter);
-    }
+    &.warning {
+        background-color: var(--color-accent-warning) !important;
+        color: white;
 
-    &:active {
-        background-color: var(--color-accent-darker);
+        &:hover {
+            background-color: var(--color-accent-warning-lighter) !important;
+        }
     }
 }

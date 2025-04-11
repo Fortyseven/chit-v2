@@ -211,7 +211,7 @@
                 var(--radius-field) /* var(--radius-field) */
             );
             background-color: var(--btn-bg);
-            background-size: auto, calc(var(--noise) * 100%);
+            // background-size: auto, calc(var(--noise) * 100%);
             background-image: none, var(--btn-noise);
             border-width: var(--border);
             border-style: solid;
