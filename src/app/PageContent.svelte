@@ -1,12 +1,10 @@
 <script>
-    import InputBar from "./Chat/InputBar/InputBar.svelte"
-    import ChatLogRegular from "./Chat/Timeline/Regular/ChatLogRegular.svelte"
+    import { afterUpdate } from "svelte"
 
-    import ChatKnobs from "./Chat/ChatKnobs/ChatKnobs.svelte"
+    import ChatLogRegular from "./Chat/Timeline/Regular/ChatLogRegular.svelte"
 
     import { currentChat } from "../lib/chatSession/chatSession"
 
-    import { afterUpdate } from "svelte"
     import "../appState/appStateStorage"
     import "../lib/audio"
     import "../lib/chatSession/chatStorage"
