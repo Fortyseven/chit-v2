@@ -15,13 +15,10 @@
     }
 </script>
 
-<div class="new-session">
-    <div class="">
-        <PopupSystemPresets></PopupSystemPresets>
-    </div>
-    <div class="">
+<div class="">
+    <div class="sessions">
         <button
-            class="btn variant-filled-primary flex-auto"
+            class="btn-new-session"
             title="Start a new session using a blank system prompt."
             onclick={newConversationClick}
             disabled={$chatInProgress}
@@ -29,34 +26,46 @@
             New Session
         </button>
         <button
-            class=""
+            class="btn-preset"
             title="Start a new conversation using a system prompt preset."
             disabled={$chatInProgress}
         >
-            P
+            ...
         </button>
         <!--
     <div data-popup="popupPreset">
         <PopupSystemPresets></PopupSystemPresets>
     </div> -->
     </div>
+    <div class="">
+        <!-- <PopupSystemPresets/> -->
+    </div>
 </div>
 
 <style lang="scss">
-    :global(.convo-panel.app-rail) {
-        background-color: var(--color-surface-800);
-    }
+    .sessions {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        button {
+            &.btn-new-session {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
 
-    button {
-        border-radius: 8px;
-        background: transparent;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+            &.btn-preset {
+                // background-color: var(--color-accent-lighter);
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                border-left-color: var(--color-accent-darker);
+                border-left-style: solid;
+                border-left-width: 2px;
+                vertical-align: middle;
+            }
+        }
 
-    .new-session {
-        display: flex;
-        flex-direction: column;
+        .new-session {
+            // display: flex;
+            // flex-direction: column;
+        }
     }
 </style>

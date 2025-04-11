@@ -76,7 +76,7 @@
             <BtnNewSession></BtnNewSession>
         </div>
         <div>
-            <button disabled={$chatInProgress}> Config </button>
+            <button class="btn-config" disabled={$chatInProgress}> Config </button>
         </div>
     </div>
 </div>
@@ -87,12 +87,13 @@
         grid-template-rows: 1fr auto;
         height: 100%;
         z-index: 10;
-        padding: 1em;
-
         background-color: var(--color-background);
         color: var(--color-text);
 
         .top {
+            margin-block: 1em;
+            margin-inline: 1em;
+
             .chatRow {
                 display: grid;
                 grid-template-columns: auto 24px 24px;
@@ -142,7 +143,13 @@
         .bottom {
             display: grid;
             grid-template-columns: 1fr auto;
-            // padding: 0.5em;
+            gap: 1em;
+            margin-block: 1em;
+            margin-inline: 1em;
+
+            .btn-config {
+                background-color: var(--color-accent-complement);
+            }
         }
     }
 </style>
