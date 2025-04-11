@@ -1,8 +1,10 @@
 <script lang="ts">
     import { Gears } from "carbon-icons-svelte"
     import { onMount } from "svelte"
+    import { chatInProgress } from "../../../lib/chatSession/chatActions"
     import { chatGenerateTitle } from "../../../lib/chatSession/chatTitler"
     import { loadPresetFromFile } from "../../../lib/presets/presets"
+    import IconButton from "../../UI/IconButton.svelte"
 
     //TODO: convert this to a general component
 
@@ -32,28 +34,14 @@
     }
 </script>
 
-<details
-    class="dropdown dropdown-top dropdown-end"
-    bind:this={dropdownel}
-    bind:open={isOpen}
->
-    <summary class="btn">
-        <Gears className="" />
-    </summary>
-    <ul class="dropdown-content menu">
-        {#each entries as { name, action }, i}
-            {#if name === "-"}
-                <li><hr class="" /></li>
-            {:else}
-                <li>
-                    <!-- svelte-ignore a11y_click_events_have_key_events -->
-                    <!-- svelte-ignore a11y_missing_attribute -->
-                    <a role="button" tabindex={i} onclick={action}>{name}</a>
-                </li>
-            {/if}
-        {/each}
-    </ul>
-</details>
+<IconButton
+    title="Chat Options"
+    onClick={() => (isOpen = !isOpen)}
+    iconComponent={Gears}
+    secondary
+    disabled={$chatInProgress}
+    className="btn-preset"
+    />
 
 <style lang="scss">
     summary {

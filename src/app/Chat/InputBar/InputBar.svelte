@@ -173,21 +173,24 @@
                             onClick={onBtnReroll}
                             disabled={!$hasMessages || $chatInProgress}
                             iconComponent={Renew}
-                        ></IconButton>
+                        />
+
                         <ChatOptionsDropdown></ChatOptionsDropdown>
+
                         <IconButton
                             title="Go back one response (Ctrl+B)"
                             onClick={onBtnBack}
                             disabled={!$hasMessages || $chatInProgress}
                             iconComponent={Undo}
-                        ></IconButton>
+                        />
+
                         <IconButton
                             title="Clear"
                             onClick={onBtnClear}
                             disabled={!$hasMessages || $chatInProgress}
                             iconComponent={TrashCan}
                             className="!bg-red-500 hover:!bg-red-400"
-                        ></IconButton>
+                        />
                     </div>
                 {/key}
             </div>
@@ -198,44 +201,46 @@
 <style lang="scss">
     #InputBox {
         width: inherit;
-        background: #fb01;
-        backdrop-filter: blur(15px);
+        // height: 150px;
+        // background: #fb01;
+        background: var(--color-background-lighter);
+        // backdrop-filter: blur(15px);
         filter: drop-shadow(0 0 2em #000);
+        padding-block: 1em;
+
+        --input-bar-height: 100px;
 
         .inner {
-            border: 1px solid red;
+            // border: 1px solid orange;
             display: grid;
             // display: none;
             grid-template-columns: auto minmax(0, 1fr) auto;
             gap: 2em;
             width: 100%;
             max-width: var(--timeline-max-width);
-            padding-block: 1em;
             margin-inline: auto;
             width: 100%;
+            height: var(--input-bar-height);
 
             .chat-settings {
-                // flex: auto;
-                border: 1px solid green;
             }
             .user-prompt {
-                // display: flex;
-                // flex: auto;
-                // flex-basis: 50%;
-                border: 1px solid blue;
+                // border: 1px solid blue;
 
                 &:disabled {
                     opacity: 0.5;
                 }
 
                 textarea {
-                    background-color: var(--color-black);
+                    background-color: black;
+                    color: var(--color-neutral);
                     border-radius: var(--theme-rounded-container);
+                    font-family: var(--font-standard);
                     font-size: 1.2em;
-                    outline-style: none;
+                    height: calc(var(--input-bar-height) - 0.5em);
+                    // outline-style: none;
                     width: 100%;
-                    height: 100%;
-                    padding: 0.5em;
+                    // height: 100%;
                     border-top: 1px solid #fff4;
                     border-left: 2px solid #fff4;
                     border-right: 2px solid #fb04;
@@ -250,14 +255,15 @@
                     // }
 
                     &::placeholder {
-                        color: var(--color-surface-500);
+                        color: #292929;
+                        font-style: italic;
+                        font-family: sans-serif;
                     }
                 }
             }
             .chat-controls {
                 display: flex;
-                gap: calc(var(--spacing) * 1);
-                border: 1px solid yellow;
+                gap: 1em;
 
                 button {
                     background-color: var(--color-primary-500);
@@ -279,10 +285,13 @@
                 }
 
                 .btn-grid {
+                    width: 100px;
+                    height: 100%;
+                    // border: 1px solid red;
                     display: grid;
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
-                    grid-template-rows: repeat(2, minmax(0, 1fr));
-                    gap: calc(var(--spacing) * 1);
+                    grid-template-columns: auto auto;
+                    grid-template-rows: auto auto;
+                    gap: 0.25em;
                     place-content: center;
                 }
             }
