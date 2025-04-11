@@ -1,10 +1,10 @@
 <script>
     import { afterUpdate } from "svelte"
 
-    import PageContent from "./PageContent.svelte"
     import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
+    import PageContent from "./app/PageContent.svelte"
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
 
     import { currentChat } from "./lib/chatSession/chatSession"

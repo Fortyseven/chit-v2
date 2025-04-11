@@ -1,15 +1,15 @@
 <script>
-    import InputBar from "./app/Chat/InputBar/InputBar.svelte"
-    import ChatLogRegular from "./app/Chat/Timeline/Regular/ChatLogRegular.svelte"
+    import InputBar from "./Chat/InputBar/InputBar.svelte"
+    import ChatLogRegular from "./Chat/Timeline/Regular/ChatLogRegular.svelte"
 
-    import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
+    import ChatKnobs from "./Chat/ChatKnobs/ChatKnobs.svelte"
 
-    import { currentChat } from "./lib/chatSession/chatSession"
+    import { currentChat } from "../lib/chatSession/chatSession"
 
     import { afterUpdate } from "svelte"
-    import "./appState/appStateStorage"
-    import "./lib/audio"
-    import "./lib/chatSession/chatStorage"
+    import "../appState/appStateStorage"
+    import "../lib/audio"
+    import "../lib/chatSession/chatStorage"
 
     let scrollWindowEl = undefined
 
