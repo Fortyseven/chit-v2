@@ -36,6 +36,7 @@
     background-color: var(--color-background-lighter);
     box-shadow: 0 0 10px black;
     display: none;
+    border-radius: 1em;
 
     &.open {
         display: flex;

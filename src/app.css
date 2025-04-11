@@ -379,6 +379,15 @@ button {
     place-content: center;
     text-align: center;
 
+    &.secondary {
+        background-color: var(--color-accent-complement);
+        color: var(--color-accent-complement-text);
+
+        &:hover {
+            background-color: var(--color-accent-complement-lighter);
+        }
+    }
+
     &:hover {
         background-color: var(--color-accent-lighter);
     }

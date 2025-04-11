@@ -1,8 +1,11 @@
 <script lang="ts">
+    import { onMount } from "svelte"
     import { chatInProgress, chatNew } from "../../lib/chatSession/chatActions"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
 
     let mobileToggleOpen = false
+
+    let popupOpen = false
 
     const popupPreset = {
         event: "click",
@@ -13,6 +16,27 @@
     function newConversationClick() {
         chatNew()
     }
+
+    onMount(() => {
+        function handleClickOutside(event: MouseEvent) {
+            const popup = document.querySelector(".preset-popup-container")
+            const button = document.querySelector(".btn-preset")
+            if (
+                popup &&
+                !popup.contains(event.target as Node) &&
+                button &&
+                !button.contains(event.target as Node)
+            ) {
+                popupOpen = false
+            }
+        }
+
+        document.addEventListener("click", handleClickOutside)
+
+        return () => {
+            document.removeEventListener("click", handleClickOutside)
+        }
+    })
 </script>
 
 <div class="">
@@ -29,16 +53,13 @@
             class="btn-preset"
             title="Start a new conversation using a system prompt preset."
             disabled={$chatInProgress}
+            onclick={() => (popupOpen = !popupOpen)}
         >
             ...
         </button>
-        <!--
-    <div data-popup="popupPreset">
-        <PopupSystemPresets></PopupSystemPresets>
-    </div> -->
-    </div>
-    <div class="">
-        <!-- <PopupSystemPresets/> -->
+        <div class="preset-popup-container">
+            <PopupSystemPresets open={popupOpen} />
+        </div>
     </div>
 </div>
 
@@ -63,9 +84,12 @@
             }
         }
 
-        .new-session {
-            // display: flex;
-            // flex-direction: column;
+        .preset-popup-container {
+            position: absolute;
+            bottom: 45px;
+            left: 50px;
+            width: 256px;
+            z-index: 100;
         }
     }
 </style>

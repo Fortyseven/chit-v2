@@ -76,7 +76,7 @@
             <BtnNewSession></BtnNewSession>
         </div>
         <div>
-            <button class="btn-config" disabled={$chatInProgress}> Config </button>
+            <button class="btn-config secondary" disabled={$chatInProgress}>Config</button>
         </div>
     </div>
 </div>
@@ -147,9 +147,6 @@
             margin-block: 1em;
             margin-inline: 1em;
 
-            .btn-config {
-                background-color: var(--color-accent-complement);
-            }
         }
     }
 </style>
