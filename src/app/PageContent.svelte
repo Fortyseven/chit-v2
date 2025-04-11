@@ -29,13 +29,10 @@
 
 <style lang="scss">
     .page {
-        // display: block;
         box-sizing: border-box;
         width: inherit;
         height: 100%;
         overflow-y: scroll;
-        // position: relative;
-        border: 2px dashed green;
 
         --s: 8px; /* control the size*/
         --c1: var(--color-surface-950);
