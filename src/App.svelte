@@ -5,7 +5,7 @@
     import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
-    import AppFramework from "./ui/AppFramework/AppFramework.svelte"
+    import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
 
     import { currentChat } from "./lib/chatSession/chatSession"
 
