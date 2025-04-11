@@ -7,8 +7,8 @@
 <div id="ChatKnobs">
     <div class="knob-container">
         {#key $appState}
-            <SystemPrompt></SystemPrompt>
             <ModelSelect></ModelSelect>
+            <SystemPrompt></SystemPrompt>
         {/key}
     </div>
 </div>
@@ -18,14 +18,16 @@
         display: flex;
         flex-wrap: wrap;
         height: 100%;
+        width: fit-content;
+        margin: auto;
     }
 
     .knob-container {
+        width: 100%;
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
         padding: 0.5rem;
-        width: 100%;
         place-content: center;
         flex-direction: column;
 

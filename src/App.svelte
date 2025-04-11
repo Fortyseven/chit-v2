@@ -1,4 +1,6 @@
 <script>
+  import ChatHeader from './ChatHeader.svelte'
+
     import { afterUpdate } from "svelte"
 
     import ChatKnobs from "./app/Chat/ChatKnobs/ChatKnobs.svelte"
@@ -32,21 +34,8 @@
         <ConvoSidebar />
     </div>
     <div slot="content" class="page" bind:this={scrollWindowEl}>
-        <header>
-            {#if $currentChat}
-                <div class="title">
-                    {#key $currentChat}
-                        {$currentChat.title}
-                    {/key}
-                </div>
-                <div class="knobs">
-                    <ChatKnobs></ChatKnobs>
-                </div>
-            {:else}
-                <div class="not-selected">No chat selected</div>
-            {/if}
-        </header>
         <PageContent />
+        <div class="chat-header"><ChatHeader/></div>
         <div class="input-bar"><InputBar /></div>
     </div>
 </AppFramework>
@@ -55,76 +44,26 @@
     .page {
         // display: block;
         box-sizing: border-box;
-        // width: inherit;
-        height: 100%;
+        width: inherit;
+        // height: 100%;
         overflow-y: scroll;
         position: relative;
-        border: 1px solid red;
+        // border: 1px solid red;
     }
 
-    header {
-        width: 100%;
+    .chat-header {
+        width: inherit;
         height: auto;
-        background: #fb01;
-        backdrop-filter: blur(15px);
-        filter: drop-shadow(0 0 2em #000);
-        position: sticky;
-        // width: inherit;
-        top: calc(var(--spacing) * 0);
+        position: fixed;
+        top: 0;
         z-index: 50;
-        background-color: var(--color-neutral-800);
-        vertical-align: middle;
-        margin: auto;
-        display: flex;
-        flex-direction: column;
-        place-content: center;
-
-        .title {
-            padding: calc(var(--spacing) * 2);
-            font-size: var(--text-lg) /* 1.125rem = 18px */;
-            line-height: var(
-                --tw-leading,
-                var(--text-lg--line-height) /* calc(1.75 / 1.125) ≈ 1.5556 */
-            );
-            color: var(--color-primary-500);
-            font-weight: bold;
-            flex: auto;
-            text-wrap: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            width: calc(3 / 4 * 100%);
-            @media (width >= 48rem /* 768px */) {
-                width: 100%;
-                font-size: var(--text-2xl) /* 1.5rem = 24px */;
-                line-height: var(
-                    --tw-leading,
-                    var(--text-2xl--line-height) /* calc(2 / 1.5) ≈ 1.3333 */
-                );
-            }
-        }
-
-        .knobs {
-            flex: auto;
-            place-self: center;
-            width: 100%;
-        }
-
-        .not-selected {
-            padding: calc(var(--spacing) * 2);
-            font-size: var(--text-lg) /* 1.125rem = 18px */;
-            line-height: var(
-                --tw-leading,
-                var(--text-lg--line-height) /* calc(1.75 / 1.125) ≈ 1.5556 */
-            );
-            color: var(--color-primary-500);
-            font-weight: bold;
-        }
     }
 
     .input-bar {
-        position: sticky;
+        width: inherit;
+        position: fixed;
         bottom: 0;
         z-index: 50;
-        width: inherit;
+        border: 1px solid red;
     }
 </style>

@@ -27,15 +27,11 @@
     })
 </script>
 
-<button
-    tabindex="0"
-    class="prompt-btn btn"
-    onclick={() => sprompt.showModal()}
->
+<button tabindex="0" class="btn-prompt" onclick={() => sprompt.showModal()}>
     {$shortPrompt || "No SPrompt"}
 </button>
 
-<dialog id="sprompt" class="modal">
+<!-- <dialog id="sprompt" class="modal">
     <div class="modal-box">
         <h2>System Prompt</h2>
         <textarea
@@ -45,18 +41,15 @@
             rows="10"
             bind:value={$sys_prompt_state}
         ></textarea>
+    </div>
         <div class="modal-action">
             <form method="dialog">
                 <button class="btn btn-primary">Close</button>
             </form>
         </div>
-    </div>
-</dialog>
+</dialog> -->
 
 <style lang="scss">
-    .prompt-btn {
-        margin: 0.5em;
-    }
     #sprompt {
         width: 100%;
         max-width: 800px;
@@ -65,12 +58,8 @@
 
         h2 {
             font-weight: bold;
-            font-size: var(--text-xl) /* 1.25rem = 20px */;
-            line-height: var(
-                --tw-leading,
-                var(--text-xl--line-height) /* calc(1.75 / 1.25) ≈ 1.4 */
-            );
-            padding-bottom: calc(var(--spacing) * 4);
+            font-size: 1.25rem;
+            padding-bottom: 1em;
         }
 
         textarea {

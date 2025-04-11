@@ -8,19 +8,22 @@
 
 <style lang="scss">
     #App {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
+        display: flex;
+        flex-wrap: nowrap;;
+        // grid-template-columns: 1fr 1fr;
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
     }
 
     #App :global(> :first-child) {
-        max-width: 400px;
+        flex: 0 0 400px;
+        // max-width: 400px;
     }
 
     #App :global(> :last-child) {
-        width: 100%;
-        height: auto;
+        flex: 1 1 auto;
+        // width: 100%;
+        // height: auto;
     }
 </style>
