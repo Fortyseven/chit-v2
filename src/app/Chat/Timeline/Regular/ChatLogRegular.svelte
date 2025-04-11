@@ -36,13 +36,14 @@
 
 <style lang="scss">
     #ChatLogRegular {
-        width: inherit;
+        width: stretch;
         flex-direction: column;
         overflow-y: auto;
         overflow-x: scroll;
         max-width: var(--timeline-max-width);
-        margin-inline:auto;
+        margin-inline: auto;
         font-size: 1.25em;
         margin-block: 5rem 12rem;
+        padding-inline: 1em;
     }
 </style>
