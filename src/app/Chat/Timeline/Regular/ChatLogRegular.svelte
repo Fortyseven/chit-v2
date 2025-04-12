@@ -1,4 +1,5 @@
 <script>
+    import { afterUpdate } from "svelte"
     import { appState } from "../../../../lib/appState/appState"
     import {
         chatGetStreamingPending,

@@ -13,26 +13,13 @@
     import "./lib/appState/appStateStorage"
     import "./lib/audio"
     import "./lib/chatSession/chatStorage"
-
-    let scrollWindowEl = undefined
-
-    function scrollDown() {
-        setTimeout(
-            () => scrollWindowEl?.scrollTo(0, scrollWindowEl.scrollHeight),
-            50,
-        )
-    }
-
-    currentChat.subscribe(scrollDown)
-
-    afterUpdate(scrollDown)
 </script>
 
 <AppFramework>
     <div slot="sidebar">
         <ConvoSidebar />
     </div>
-    <div slot="content" class="page" bind:this={scrollWindowEl}>
+    <div slot="content" class="page">
         <PageContent />
         <div class="chat-header"><ChatHeader /></div>
         <div class="input-bar"><InputBar /></div>

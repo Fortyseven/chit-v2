@@ -1,6 +1,4 @@
 <script>
-    import { afterUpdate } from "svelte"
-
     import ChatKnobs from "./ChatKnobs/ChatKnobs.svelte"
 
     import { currentChat } from "../../lib/chatSession/chatSession"
@@ -8,19 +6,6 @@
     import "../../lib/appState/appStateStorage"
     import "../../lib/audio"
     import "../../lib/chatSession/chatStorage"
-
-    let scrollWindowEl = undefined
-
-    function scrollDown() {
-        setTimeout(
-            () => scrollWindowEl?.scrollTo(0, scrollWindowEl.scrollHeight),
-            50,
-        )
-    }
-
-    currentChat.subscribe(scrollDown)
-
-    afterUpdate(scrollDown)
 </script>
 
 <header>

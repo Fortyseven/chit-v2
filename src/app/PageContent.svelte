@@ -9,6 +9,8 @@
     import "../lib/audio"
     import "../lib/chatSession/chatStorage"
 
+    /* This allows the page to scroll when the chat is updated. */
+
     let scrollWindowEl = undefined
 
     function scrollDown() {
@@ -23,7 +25,7 @@
     afterUpdate(scrollDown)
 </script>
 
-<div class="page">
+<div class="page" bind:this={scrollWindowEl}>
     <ChatLogRegular />
 </div>
 
