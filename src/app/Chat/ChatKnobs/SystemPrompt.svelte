@@ -31,6 +31,7 @@
 
     let buttonEl
     let dialog = null
+    let textAreaEl;
 
     let dialogPosition = {
         top: 0,
@@ -52,7 +53,18 @@
         })
 
         window.addEventListener("resize", recalculateModal)
+
+        window.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && isOpen) {
+                isOpen = false
+            }
+        })
     })
+
+    $: if (isOpen && textAreaEl) {
+        textAreaEl.focus();
+        textAreaEl.setSelectionRange(0, 0);
+    }
 </script>
 
 <button
@@ -80,6 +92,7 @@
                 placeholder="Write a system prompt..."
                 rows="10"
                 bind:value={$sys_prompt_state}
+                bind:this={textAreaEl}
             ></textarea>
         </div>
         <button class="btnClose" onclick={() => (isOpen = false)}>
