@@ -92,7 +92,6 @@ export function chatUpdateSettings(chatId: String = "", settings: any) {
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
-                console.debug("chatUpdateSettings", chat.settings)
                 return {
                     ...chat,
                     settings: { ...(chat.settings || {}), ...settings },
