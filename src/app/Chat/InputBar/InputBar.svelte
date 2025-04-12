@@ -219,8 +219,6 @@
             width: 100%;
             max-width: var(--timeline-max-width);
             margin-inline: auto;
-            width: 100%;
-            height: var(--input-bar-height);
 
             .chat-settings {
             }
@@ -230,19 +228,28 @@
                 }
 
                 textarea {
+                    box-sizing: border-box;
                     background-color: black;
-                    color: var(--color-neutral);
+                    color: var(--color-neutral-darker);
                     border-radius: var(--theme-rounded-container);
                     font-family: var(--font-standard);
                     font-size: 1.2em;
                     height: calc(var(--input-bar-height) - 0.5em);
                     // outline-style: none;
                     width: 100%;
-                    // height: 100%;
+                    height: 100%;
                     border-top: 1px solid #fff4;
                     border-left: 2px solid #fff4;
                     border-right: 2px solid #fb04;
                     border-bottom: 1px solid #fb04;
+                    padding: 0.3em;
+
+
+                    &:focus {
+                        color: var(--color-neutral);
+                        outline: 1px solid var(--color-accent-darker);
+                        // border-color: ;
+                    }
 
                     &:disabled {
                         opacity: 0.5;

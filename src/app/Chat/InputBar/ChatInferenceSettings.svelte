@@ -21,28 +21,28 @@
 
 <div id="ChatInfSettings">
     <!-- {#key $currentChat} -->
-        <div>
-            <label for="context">Cntx:</label>
-            <input
-                name="context"
-                type="number"
-                min="1024"
-                max="1048576"
-                step="1024"
-                bind:value={$ctx}
-            />
-        </div>
-        <div>
-            <label for="temp">Temp:</label>
-            <input
-                name="temp"
-                type="number"
-                min="0"
-                max="2"
-                step="0.1"
-                bind:value={$temp}
-            />
-        </div>
+    <div>
+        <label for="context">Cntx 📜</label>
+        <input
+            name="context"
+            type="number"
+            min="1024"
+            max="1048576"
+            step="1024"
+            bind:value={$ctx}
+        />
+    </div>
+    <div>
+        <label for="temp">Temp 🌡</label>
+        <input
+            name="temp"
+            type="number"
+            min="0"
+            max="2"
+            step="0.1"
+            bind:value={$temp}
+        />
+    </div>
     <!-- {/key} -->
 </div>
 
@@ -50,20 +50,32 @@
     #ChatInfSettings {
         display: flex;
         flex-direction: column;
+        gap: 0.25em;
+        padding-inline: 1em;
+        height: 100%;
         div {
-            flex: auto;
+            flex: 0 0 auto;
             display: grid;
-            grid-template-columns: 3em 1fr;
+            grid-template-columns: 4.5em 1fr;
         }
+
         label {
-            color: var(--color-primary-500);
-            display: inline-block;
-            place-content: center;
+            color: var(--color-accent);
+            display: flex;
+            text-transform: uppercase;
+            line-height: 2;
+            font-weight: bold;
         }
+
         input {
-            background: transparent;
-            color: var(--color-secondary-500);
             font-family: monospace;
+            background: var(--color-background-darker);
+            border: 0;
+            padding: 0.25em;
+            color: var(--color-accent-complement);
+            display: inline;
+            width: 6.4em;
+
             &:focus {
                 color: var(--color-primary-400);
                 outline: none;
