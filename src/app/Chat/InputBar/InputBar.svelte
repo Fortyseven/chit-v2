@@ -214,8 +214,8 @@
 
         .inner {
             display: grid;
-            grid-template-columns: auto minmax(0, 1fr) auto;
-            gap: 2em;
+            grid-template-columns: 11.5em minmax(0, 1fr) auto;
+            gap: 1em;
             width: 100%;
             max-width: var(--timeline-max-width);
             margin-inline: auto;
