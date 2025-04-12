@@ -5,8 +5,10 @@
         chatChopLatest,
         chatRunInference,
     } from "../../../../lib/chatSession/chatActions"
-    import { saveAs } from "../../../../vendor/FileSaver.min.js"
+// import { saveAs } from "../../../../vendor/FileSaver.min.js"
     import { hljs } from "../../../../vendor/highlight.min"
+
+    export let line = { role: "assistant", content: "🍆" }
 
     const md = MarkdownIt({
         highlight: function (str, lang) {
@@ -20,8 +22,6 @@
             return "" // use external default escaping
         },
     })
-
-    export let line = { role: "assistant", content: "🍆" }
 
     let processedContent = md.render(line || "No line??? [Chit error.]").trim()
 
@@ -64,7 +64,7 @@
     }
 
     function copyToClipboard() {
-        navigator.clipboard.writeText(line.content)
+        navigator.clipboard.writeText(line)
         closeContextMenu()
     }
 
@@ -179,13 +179,11 @@
 
     .context-menu {
         background-color: var(--color-background);
-        // border: 1px solid var(--color-accent-darker);
         border-radius: var(--border-radius-standard);
         box-shadow: 0 0 10px black;
         z-index: 1000;
         padding: 0.25em;
         font-size: 0.8em;
-        // min-width: 150px;
 
         button {
             background: transparent;
