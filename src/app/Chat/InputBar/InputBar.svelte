@@ -162,7 +162,7 @@
                     class="btn-send"
                 >
                     <div>
-                        Send <SendFilled />
+                        Send&nbsp;<SendFilled />
                     </div>
                 </button>
                 {#key $hasMessages}
