@@ -25,6 +25,7 @@
         padding-block-start: 2em;
         color: var(--color-neutral);
         font-style: italic;
+        font-size: 1.15em;
         &::before {
             content: "> ";
             font-weight: bold;

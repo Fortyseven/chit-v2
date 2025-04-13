@@ -133,7 +133,7 @@
             background-color: var(--color-background-darker);
             color: var(--color-accent);
             border: none;
-            font-family: --font-standard;
+            font-family: --font-ui;
             padding: 1em;
             font-size: 1.25em;
         }

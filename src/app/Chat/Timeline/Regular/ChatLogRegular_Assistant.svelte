@@ -137,17 +137,20 @@
 <style lang="scss">
     .response {
         width: auto;
+        font-family: Barlow, Ubuntu;
+        line-height: 1.2;
         border-radius: 0.5em;
         box-shadow: 0 0.25em 0.25em 0 #000;
         text-align: start;
         padding-inline: 1em;
-        font-size: 1.1em;
+        font-size: 1.2em;
         background-color: var(--color-background-darker);
-        color: var(--color-accent);
+        color: var(--color-text-assistant);
         border-bottom: 1px solid #ffffff30;
         border-top: 1px solid #fff2;
         margin: auto;
         position: relative;
+
 
         .message-controls {
             position: absolute;
