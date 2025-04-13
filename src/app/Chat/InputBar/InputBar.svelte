@@ -25,7 +25,6 @@
 
     /* ------------------------------------------------------ */
     chatInProgress.subscribe((value) => {
-        console.log("chatInProgress", value)
         if (inputBoxEl && value == false) {
             setTimeout(() => {
                 inputBoxEl?.focus()

@@ -28,7 +28,7 @@
 
         {#key $currentChat}
             {#if chatInProgressWithId($appState.activeChatId)}
-                <ChatLogRegular_Assistant line={chatGetStreamingPending()}
+                <ChatLogRegular_Assistant line={chatGetStreamingPending()} inprogress
                 ></ChatLogRegular_Assistant>
             {/if}
         {/key}

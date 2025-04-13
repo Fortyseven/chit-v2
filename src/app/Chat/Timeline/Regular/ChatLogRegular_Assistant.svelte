@@ -9,6 +9,7 @@
     import { hljs } from "../../../../vendor/highlight.min"
 
     export let line = { role: "assistant", content: "🍆" }
+    export let inprogress = false
 
     const md = MarkdownIt({
         highlight: function (str, lang) {
@@ -113,6 +114,7 @@
     role="button"
     tabindex="0"
     on:contextmenu={toggleContextMenu}
+    class:inprogress
 >
     <div class="message-controls">
         <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
@@ -150,6 +152,10 @@
         border-top: 1px solid #fff2;
         margin: auto;
         position: relative;
+
+        &.inprogress {
+            //
+        }
 
 
         .message-controls {

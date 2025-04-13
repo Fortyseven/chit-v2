@@ -356,8 +356,6 @@ export function chatAbort() {
     } catch (e) {
         // console.info("Chat aborted:", e)
     } finally {
-        chatPromoteStreamingPending()
-
         const chatId = _getActiveChatId()
 
         chatSetWasAborted(chatId, true)
