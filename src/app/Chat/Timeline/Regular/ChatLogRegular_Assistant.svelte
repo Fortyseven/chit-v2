@@ -24,7 +24,7 @@
         },
     })
 
-    let processedContent = md.render(line || "No line??? [Chit error.]").trim()
+    let processedContent = md.render(line || "_[blank response]_").trim()
 
     // Context menu state
     let contextMenuOpen = false

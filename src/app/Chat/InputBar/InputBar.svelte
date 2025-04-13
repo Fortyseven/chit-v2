@@ -39,7 +39,6 @@
         }
 
         if (!user_message) {
-            chatAddRoleMessage("", "user", "")
             chatRunInference()
             return
         }

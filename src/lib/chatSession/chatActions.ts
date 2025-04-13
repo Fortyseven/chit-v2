@@ -249,7 +249,7 @@ export function chatBack(chatId: String = ""): String | undefined {
         return chatChopLatest(chatId)
     }
 
-    return chopped
+    return undefined
 }
 
 //--------------------------------------------------------------
