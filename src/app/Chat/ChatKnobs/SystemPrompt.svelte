@@ -31,7 +31,7 @@
 
     let buttonEl
     let dialog = null
-    let textAreaEl;
+    let textAreaEl
 
     let dialogPosition = {
         top: 0,
@@ -39,19 +39,22 @@
     }
 
     function recalculateModal() {
+        if (!isOpen) return
+
         if (buttonEl) {
             const btn = buttonEl.getBoundingClientRect()
 
             dialogPosition.top = btn.top + btn.height
-            dialogPosition.left = btn.left - btn.width - 75
+            dialogPosition.left = window.innerWidth / 2 - dialog?.innerWidth / 2
         }
     }
 
-    onMount(() => {
-        buttonEl.addEventListener("click", () => {
-            recalculateModal()
-        })
+    function toggleModal() {
+        isOpen = !isOpen
+        recalculateModal()
+    }
 
+    onMount(() => {
         window.addEventListener("resize", recalculateModal)
 
         window.addEventListener("keydown", (event) => {
@@ -62,8 +65,8 @@
     })
 
     $: if (isOpen && textAreaEl) {
-        textAreaEl.focus();
-        textAreaEl.setSelectionRange(0, 0);
+        textAreaEl.focus()
+        textAreaEl.setSelectionRange(0, 0)
     }
 </script>
 
@@ -71,9 +74,7 @@
     tabindex="0"
     class="btn-prompt"
     bind:this={buttonEl}
-    onclick={() => {
-        isOpen = !isOpen
-    }}
+    onclick={toggleModal}
 >
     {$shortPrompt || "No SPrompt"}
 </button>
@@ -83,6 +84,7 @@
         id="sprompt_modal"
         class="modal"
         style="position: absolute; left: {dialogPosition.left}px; top: {dialogPosition.top}px; z-index: 1000;"
+        bind:this={dialog}
     >
         <div class="modal-box">
             <h2>System Prompt</h2>
