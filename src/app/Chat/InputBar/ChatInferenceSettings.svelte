@@ -17,6 +17,13 @@
             temperature: value,
         })
     })
+
+    function handleContextBlur(event) {
+        const value = parseInt(event.target.value);
+        if (value < 1024) {
+            $ctx = value * 1024;
+        }
+    }
 </script>
 
 <div id="ChatInfSettings">
@@ -30,6 +37,7 @@
             max="1048576"
             step="1024"
             bind:value={$ctx}
+            on:blur={handleContextBlur}
         />
     </div>
     <div>
