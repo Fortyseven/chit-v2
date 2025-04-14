@@ -51,8 +51,8 @@ export function chatSetModel(chatId: String = "", modelName: string) {
 
 //--------------------------------------------------------------
 // Set the system prompt
-export function chatSetSystemPrompt(chatId: String = "", systemPrompt: string) {
-    chatId = _getActiveChatId()
+export function chatSetSystemPrompt(chatId: String, systemPrompt: String) {
+    chatId = _getActiveChatId(chatId)
 
     chats.update(($chats) =>
         $chats.map((chat) => {
