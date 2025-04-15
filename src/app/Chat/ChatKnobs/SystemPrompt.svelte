@@ -104,6 +104,11 @@
 {/if}
 
 <style lang="scss">
+    .btn-prompt {
+        background-color: var(--color-accent-darker2);
+        color: var(--color-text);
+    }
+
     #sprompt_modal {
         background-color: var(--color-background);
         color: var(--color-text);
