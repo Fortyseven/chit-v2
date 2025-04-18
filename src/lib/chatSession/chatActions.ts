@@ -71,7 +71,7 @@ export function chatSetSystemPrompt(chatId: String, systemPrompt: String) {
 
 //--------------------------------------------------------------
 export function chatSetWasAborted(chatId: String = "", wasAborted: Boolean) {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
@@ -88,7 +88,7 @@ export function chatSetWasAborted(chatId: String = "", wasAborted: Boolean) {
 
 //--------------------------------------------------------------
 export function chatUpdateSettings(chatId: String = "", settings: any) {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -147,7 +147,7 @@ export function chatAddRoleMessage(
     role: "user" | "assistant",
     content: String
 ) {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     const message = {
         role,
@@ -160,7 +160,7 @@ export function chatAddRoleMessage(
 
 //--------------------------------------------------------------
 export function _chatAddMessage(chatId: String = "", message: Message) {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -178,7 +178,7 @@ export function _chatAddMessage(chatId: String = "", message: Message) {
 
 //--------------------------------------------------------------
 export function chatDuplicate(chatId: String = "") {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     const chat = get(chats).find((chat) => chat.id === chatId)
     if (!chat) return
@@ -198,13 +198,13 @@ export function chatDuplicate(chatId: String = "") {
 
 //--------------------------------------------------------------
 export function chatFind(chatId: String = "") {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
     return get(chats).find((chat) => chat.id === chatId)
 }
 
 //--------------------------------------------------------------
 export function chatChopLatest(chatId: String = ""): String | undefined {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
     // this is the entry before the one we're about to remove
     let chopped_prev = undefined
 
@@ -230,7 +230,7 @@ export function chatBack(chatId: String = ""): String | undefined {
     // if most recent chat is of role assistant, remove it
     // then if the next most recent is of role user, return it
 
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     let chat = chatFind(chatId)
 
@@ -255,13 +255,13 @@ export function chatBack(chatId: String = ""): String | undefined {
 
 //--------------------------------------------------------------
 export function chatRunInference(chatId: String = "") {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
     get(llm).chatUpdateSession(chatId)
 }
 
 //--------------------------------------------------------------
 export function chatLength(chatId: String = "") {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     const chat = chatFind(chatId)
     return chat ? chat.messages.length : 0
@@ -269,7 +269,7 @@ export function chatLength(chatId: String = "") {
 
 //--------------------------------------------------------------
 export function chatGetStreamingPending(chatId: String = "") {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     const chat = chatFind(chatId)
     return chat ? chat.response_buffer : ""
@@ -280,7 +280,7 @@ export function chatAppendStreamingPending(
     chatId: String = "",
     fragment: String
 ) {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -298,7 +298,7 @@ export function chatAppendStreamingPending(
 
 //--------------------------------------------------------------
 export async function chatPromoteStreamingPending(chatId: String = "") {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -380,7 +380,7 @@ export function chatAttachMedia(
 
 //--------------------------------------------------------------
 export function chatSetTitle(chatId: String = "", title: String) {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -416,7 +416,7 @@ export function chatAbort() {
 
 //--------------------------------------------------------------
 export function chatInProgressWithId(chatId: String = ""): Boolean {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     const chat = chatFind(chatId)
     return chat ? chat.response_buffer.length > 0 : false
@@ -424,7 +424,7 @@ export function chatInProgressWithId(chatId: String = ""): Boolean {
 
 //--------------------------------------------------------------
 export function chatClearConversation(chatId: String = "") {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     chats.update(($chats) =>
         $chats.map((chat) => {
