@@ -1,7 +1,7 @@
 import { get, writable } from "svelte/store"
 import { appState } from "../appState/appState"
 import llm from "../llm/ollama"
-import { chats, Message } from "./chatSession"
+import { ChatMediaType, chats, Message } from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"
 
 export const DEFAULT_CONTEXT = 65536
@@ -25,6 +25,7 @@ export function chatNew() {
             num_ctx: DEFAULT_CONTEXT,
         },
         wasAborted: false,
+        pastedMedia: null,
     }
 
     chats.update(($chats) => [...$chats, newChat])
@@ -33,7 +34,7 @@ export function chatNew() {
 
 //--------------------------------------------------------------
 export function chatSetModel(chatId: String = "", modelName: string) {
-    chatId = _getActiveChatId()
+    chatId = _getActiveChatId(chatId)
 
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -324,6 +325,57 @@ export async function chatPromoteStreamingPending(chatId: String = "") {
         // user -> assistant
         await chatGenerateTitle(chatId)
     }
+}
+
+export function chatSetPastedMedia(
+    chatId: String = "",
+    data: String | null = null
+) {
+    chatId = _getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    pastedMedia: data,
+                    updatedAt: new Date(),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+export function chatClearPastedMedia(chatId: String = "") {
+    chatSetPastedMedia(chatId, null)
+}
+
+export function chatAttachMedia(
+    chatId: String = "",
+    data: String,
+    type: ChatMediaType = ChatMediaType.IMAGE
+) {
+    chatId = _getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat_entry) => {
+            if (chat_entry.id === chatId) {
+                return {
+                    ...chat_entry,
+                    media_attachments: [
+                        ...(chat_entry.media_attachments || []),
+                        {
+                            data: data,
+                            type,
+                        },
+                    ],
+                    updatedAt: new Date(),
+                }
+            }
+            return chat_entry
+        })
+    )
 }
 
 //--------------------------------------------------------------

@@ -8,14 +8,17 @@
         chatBack,
         chatChopLatest,
         chatClearConversation,
+        chatClearPastedMedia,
         chatInProgress,
         chatLength,
         chatRunInference,
     } from "../../../lib/chatSession/chatActions"
-    import { chats } from "../../../lib/chatSession/chatSession"
+    import { chats, currentChat } from "../../../lib/chatSession/chatSession"
     import IconButton from "../../UI/IconButton.svelte"
+    import Pill from "../../UI/Pill/Pill.svelte"
     import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
+    import InputBar__PasteHandler from "./InputBar__PasteHandler.svelte"
 
     let inputBoxEl: HTMLTextAreaElement | undefined = undefined
 
@@ -136,6 +139,7 @@
 </script>
 
 <svelte:window onkeydown={onGlobalKeypress} />
+<InputBar__PasteHandler />
 
 {#key $appActiveChat}
     <div id="InputBox">
@@ -153,6 +157,25 @@
                     onkeypress={onInputKeypress}
                     disabled={$chatInProgress}
                 ></textarea>
+                <button class="btn-image-attach">i</button>
+            </div>
+            <div class="attachments">
+                {#if $currentChat?.pastedMedia}
+                    <Pill
+                        text="Image"
+                        dismissible
+                        color="var(--color-accent-complement)"
+                        on:dismiss={() => {
+                            chatClearPastedMedia();
+                        }}
+                    >
+                        <!-- svelte-ignore a11y_missing_attribute -->
+                        <img
+                            src={$currentChat?.pastedMedia}
+                            class="max-h-48 m-auto"
+                        />
+                    </Pill>
+                {/if}
             </div>
             <div class="chat-controls">
                 <button
@@ -212,7 +235,7 @@
 
         .inner {
             display: grid;
-            grid-template-columns: 11.5em minmax(0, 1fr) auto;
+            grid-template-columns: 11.5em minmax(0, 1fr) auto auto;
             gap: 1em;
             width: 100%;
             max-width: var(--timeline-max-width);
@@ -242,7 +265,6 @@
                     border-bottom: 1px solid #fb04;
                     padding: 0.3em;
 
-
                     &:focus {
                         color: var(--color-neutral);
                         outline: 1px solid var(--color-accent-darker);
@@ -262,6 +284,12 @@
                         font-style: italic;
                         font-family: sans-serif;
                     }
+                }
+
+                .btn-image-attach {
+                    position: relative;
+                    right: 0;
+                    top: 0;
                 }
             }
             .chat-controls {

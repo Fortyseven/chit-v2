@@ -14,6 +14,17 @@ export interface ChatSettings {
     num_ctx: number
 }
 
+export enum ChatMediaType {
+    IMAGE = "image",
+    AUDIO = "audio",
+    VIDEO = "video",
+}
+
+export interface MediaAttachment {
+    data: String
+    type: ChatMediaType
+}
+
 export interface ChatSession {
     id: String
     title: String
@@ -25,6 +36,8 @@ export interface ChatSession {
     response_buffer: String
     settings: ChatSettings
     wasAborted: Boolean
+    pastedMedia: String
+    media_attachments?: MediaAttachment[]
 }
 
 export const chats = writable<ChatSession[]>([])

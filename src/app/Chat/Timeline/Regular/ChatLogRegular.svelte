@@ -31,6 +31,14 @@
                 <ChatLogRegular_Assistant line={chatGetStreamingPending()} inprogress
                 ></ChatLogRegular_Assistant>
             {/if}
+            ---
+            {#if $currentChat?.media_attachments}
+                {#each $currentChat.media_attachments as attachment}
+                    <div class="media-attachment">
+                        <p>Media: {attachment}</p>
+                    </div>
+                {/each}
+            {/if}
         {/key}
     {/if}
 </div>
