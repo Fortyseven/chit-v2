@@ -4,6 +4,7 @@
     import {
         chatNew,
         chatSetSystemPrompt,
+        chatUpdateSettings,
     } from "../../lib/chatSession/chatActions"
     import SYSTEM_PROMPTS from "../../preset-prompts/index.js"
 
@@ -11,6 +12,12 @@
     let appendMode = false
 
     function selectPrompt(prompt_def) {
+        if (prompt_def.temperature) {
+            chatUpdateSettings($appState.activeChatId, {
+                temperature: prompt_def.temperature,
+            })
+        }
+
         if (!appendMode) {
             chatNew()
         }
