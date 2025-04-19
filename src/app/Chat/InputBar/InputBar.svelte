@@ -60,10 +60,14 @@
                 return
             }
 
-            chatAddRoleMessage($currentChat?.id, "user", message, $currentChat?.pastedMedia)
+            chatAddRoleMessage(
+                $currentChat?.id,
+                "user",
+                message,
+                $currentChat?.pastedMedia,
+            )
 
             chatRunInference($currentChat?.id) // Pass the current chat ID to chatRunInference
-
         } catch (e) {
             // restore the message if it fails
             inputBoxEl.value = presubmit_message
@@ -161,7 +165,6 @@
                     onkeypress={onInputKeypress}
                     disabled={$chatInProgress}
                 ></textarea>
-                <button class="btn-image-attach">i</button>
             </div>
             <div class="attachments">
                 {#if $currentChat?.pastedMedia}
@@ -170,7 +173,7 @@
                         dismissible
                         color="var(--color-accent-complement)"
                         on:dismiss={() => {
-                            chatClearPastedMedia();
+                            chatClearPastedMedia()
                         }}
                     >
                         <!-- svelte-ignore a11y_missing_attribute -->
