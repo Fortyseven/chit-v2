@@ -11,6 +11,7 @@ import {
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
+import { convertBlobToBase64 } from "../utils"
 
 export class LLMInterface {
     models: Writable<ModelResponse[]> = writable([])
@@ -102,9 +103,17 @@ export class LLMInterface {
         for (let message of chat_session.messages) {
             let msg = message.content.trim()
 
+            let images: String[] = []
+
+            if (message.media && message.media.size > 0) {
+                let img64 = await convertBlobToBase64(message.media)
+                images.push(img64 as string)
+            }
+
             messages.push({
                 role: message.role,
                 content: msg as string,
+                images,
             })
         }
 

@@ -41,8 +41,8 @@
             throw new Error("inputBoxEl is not defined or some such")
         }
 
-        if (!user_message) {
-            chatRunInference()
+        if (!user_message && !$currentChat?.pastedMedia) {
+            chatRunInference($currentChat?.id)
             return
         }
 
@@ -51,16 +51,19 @@
         try {
             inputBoxEl.value = ""
             inputBoxEl.disabled = true
-            let message = user_message //|| inputBoxEl.value
+
+            let message = user_message
+
             console.log("submit_user_message", message)
 
-            if (message.trim() === "") {
+            if (!$currentChat?.pastedMedia && message.trim() === "") {
                 return
             }
 
-            chatAddRoleMessage("", "user", message)
+            chatAddRoleMessage($currentChat?.id, "user", message, $currentChat?.pastedMedia)
 
-            chatRunInference()
+            chatRunInference($currentChat?.id) // Pass the current chat ID to chatRunInference
+
         } catch (e) {
             // restore the message if it fails
             inputBoxEl.value = presubmit_message
@@ -126,6 +129,7 @@
         if (inputBoxEl) {
             inputBoxEl.value = ""
         }
+        chatClearPastedMedia()
         chatClearConversation()
     }
 

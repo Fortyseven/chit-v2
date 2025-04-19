@@ -25,7 +25,7 @@ export function chatNew() {
             num_ctx: DEFAULT_CONTEXT,
         },
         wasAborted: false,
-        pastedMedia: null,
+        pastedMedia: undefined,
     }
 
     chats.update(($chats) => [...$chats, newChat])
@@ -145,17 +145,23 @@ export function chatIsEmpty(chatId: String) {
 export function chatAddRoleMessage(
     chatId: String = "",
     role: "user" | "assistant",
-    content: String
+    content: String,
+    pastedMedia: Blob | undefined = undefined
 ) {
     chatId = _getActiveChatId(chatId)
 
-    const message = {
+    const message: Message = {
         role,
         content,
         timestamp: new Date(),
     }
 
+    if (pastedMedia && pastedMedia.size > 0) {
+        message.media = pastedMedia
+    }
+
     _chatAddMessage(chatId, message)
+    chatClearPastedMedia(chatId)
 }
 
 //--------------------------------------------------------------
@@ -329,7 +335,7 @@ export async function chatPromoteStreamingPending(chatId: String = "") {
 
 export function chatSetPastedMedia(
     chatId: String = "",
-    data: String | null = null
+    data: Blob | undefined
 ) {
     chatId = _getActiveChatId(chatId)
 
@@ -348,34 +354,7 @@ export function chatSetPastedMedia(
 }
 
 export function chatClearPastedMedia(chatId: String = "") {
-    chatSetPastedMedia(chatId, null)
-}
-
-export function chatAttachMedia(
-    chatId: String = "",
-    data: String,
-    type: ChatMediaType = ChatMediaType.IMAGE
-) {
-    chatId = _getActiveChatId(chatId)
-
-    chats.update(($chats) =>
-        $chats.map((chat_entry) => {
-            if (chat_entry.id === chatId) {
-                return {
-                    ...chat_entry,
-                    media_attachments: [
-                        ...(chat_entry.media_attachments || []),
-                        {
-                            data: data,
-                            type,
-                        },
-                    ],
-                    updatedAt: new Date(),
-                }
-            }
-            return chat_entry
-        })
-    )
+    chatSetPastedMedia(chatId, undefined)
 }
 
 //--------------------------------------------------------------

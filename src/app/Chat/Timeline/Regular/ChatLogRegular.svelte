@@ -12,15 +12,26 @@
 
 <div class="wrapper" id="ChatLogRegular">
     {#if $appState.activeChatId && $currentChat?.messages}
-        {#each $currentChat.messages as messages, i}
-            {#key messages}
-                {#if messages.role === "user" && messages.content}
-                    <ChatLogRegular_User line={messages.content}
-                    ></ChatLogRegular_User>
-                {:else if messages.role === "user" && !messages.content}
+        {#each $currentChat.messages as message, i}
+            {#key message}
+                {#if message.role === "user"}
+                    {#if message.media && message.media.size > 0}
+                        <div class="media-attachment">
+                            <img
+                                src={URL.createObjectURL(message?.media)}
+                                alt="Media Attachment"
+                                class="max-h-48 m-auto"
+                            />
+                        </div>
+                    {/if}
+                    {#if message.content}
+                        <ChatLogRegular_User line={message.content}
+                        ></ChatLogRegular_User>
+                    {/if}
+                {:else if message.role === "user" && !message.content}
                     <!-- cont'd -->
                 {:else}
-                    <ChatLogRegular_Assistant line={messages.content}
+                    <ChatLogRegular_Assistant line={message.content}
                     ></ChatLogRegular_Assistant>
                 {/if}
             {/key}
@@ -28,16 +39,10 @@
 
         {#key $currentChat}
             {#if chatInProgressWithId($appState.activeChatId)}
-                <ChatLogRegular_Assistant line={chatGetStreamingPending()} inprogress
+                <ChatLogRegular_Assistant
+                    line={chatGetStreamingPending()}
+                    inprogress
                 ></ChatLogRegular_Assistant>
-            {/if}
-            ---
-            {#if $currentChat?.media_attachments}
-                {#each $currentChat.media_attachments as attachment}
-                    <div class="media-attachment">
-                        <p>Media: {attachment}</p>
-                    </div>
-                {/each}
             {/if}
         {/key}
     {/if}
@@ -54,5 +59,15 @@
         font-size: 1.25em;
         margin-block: 5rem 12rem;
         padding-inline: 1em;
+
+        .media-attachment {
+            margin-block-start: 1em;
+            margin-block-end: 0.5em;
+            img {
+                max-width: 50%;
+                border-radius: 8px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 1);
+            }
+        }
     }
 </style>

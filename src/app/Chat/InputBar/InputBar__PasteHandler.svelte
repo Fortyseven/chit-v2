@@ -2,7 +2,6 @@
     import { onMount } from "svelte"
     import { writable } from "svelte/store"
     import {
-        chatAttachMedia,
         chatSetPastedMedia,
     } from "../../../lib/chatSession/chatActions"
     import { currentChat } from "../../../lib/chatSession/chatSession"
@@ -19,9 +18,14 @@
                         e.preventDefault()
                         console.debug("received image")
 
+                        const blob = new Blob([clipboardItem], {
+                            type: clipboardItem.type,
+                        })
+
+
                         chatSetPastedMedia(
                             $currentChat?.id,
-                            URL.createObjectURL(clipboardItem),
+                            blob
                         )
 
                         // chatAttachMedia(

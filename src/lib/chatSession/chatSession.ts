@@ -6,7 +6,7 @@ export interface Message {
     content: String
     role: "user" | "assistant" | "system"
     timestamp?: Date
-    media?: String
+    media?: Blob
 }
 
 export interface ChatSettings {
@@ -36,8 +36,7 @@ export interface ChatSession {
     response_buffer: String
     settings: ChatSettings
     wasAborted: Boolean
-    pastedMedia: String
-    media_attachments?: MediaAttachment[]
+    pastedMedia: Blob | undefined
 }
 
 export const chats = writable<ChatSession[]>([])
