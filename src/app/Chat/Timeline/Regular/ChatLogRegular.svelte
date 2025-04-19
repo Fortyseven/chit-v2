@@ -8,6 +8,23 @@
     import { currentChat } from "../../../../lib/chatSession/chatSession"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
+
+    let lastBlobURL = null
+    let lastBlob = null
+
+    function getBlobURL(blob) {
+        // since this is expensive and will be called frequently when the
+        // page is updated, we will cache the blob URL and only create a
+        // new one if the blob is different from the last one
+        if (lastBlob !== blob) {
+            console.log("Revoking lastBlobURL")
+            URL.revokeObjectURL(lastBlobURL)
+            lastBlob = blob
+            lastBlobURL = URL.createObjectURL(blob)
+        }
+
+        return lastBlobURL
+    }
 </script>
 
 <div class="wrapper" id="ChatLogRegular">
@@ -18,7 +35,7 @@
                     {#if message.media && message.media.size > 0}
                         <div class="media-attachment">
                             <img
-                                src={URL.createObjectURL(message?.media)}
+                                src={getBlobURL(message?.media)}
                                 alt="Media Attachment"
                                 class="max-h-48 m-auto"
                             />
