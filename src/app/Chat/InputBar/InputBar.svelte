@@ -19,12 +19,17 @@
     import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
     import InputBar__PasteHandler from "./InputBar__PasteHandler.svelte"
+    import Status from "./Status.svelte"
 
     let inputBoxEl: HTMLTextAreaElement | undefined = undefined
+
+    let inputBoxValue = "" // for reactivity
 
     $: if (inputBoxEl) {
         inputBoxEl.focus()
     }
+
+    $: inputLength = inputBoxValue.length
 
     /* ------------------------------------------------------ */
     chatInProgress.subscribe((value) => {
@@ -50,6 +55,8 @@
 
         try {
             inputBoxEl.value = ""
+            inputBoxValue = ""
+            inputBoxEl.classList.remove("overflow")
             inputBoxEl.disabled = true
 
             let message = user_message
@@ -162,6 +169,7 @@
                     placeholder="Write a message..."
                     rows="1"
                     bind:this={inputBoxEl}
+                    bind:value={inputBoxValue}
                     onkeypress={onInputKeypress}
                     disabled={$chatInProgress}
                 ></textarea>
@@ -225,6 +233,12 @@
                     </div>
                 {/key}
             </div>
+        </div>
+        <div class="under">
+            <Status
+                {inputLength}
+                systemPromptLength={$currentChat.system_prompt?.length}
+            />
         </div>
     </div>
 {/key}
