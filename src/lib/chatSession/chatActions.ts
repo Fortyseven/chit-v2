@@ -17,7 +17,7 @@ export function chatNew() {
         messages: [],
         createdAt: new Date(),
         updatedAt: new Date(),
-        model_name: "llama3.1:latest",
+        model_name: "gemma3:12b",
         system_prompt: "",
         response_buffer: "",
         settings: {
