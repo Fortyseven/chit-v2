@@ -350,6 +350,6 @@
         right: 0px;
         top: 0;
         max-width: 256px;
-        // box-shadow: 0 0 10px #f0f;
+        max-height: 256px;
     }
 </style>
