@@ -18,7 +18,7 @@ export function chatNew() {
         createdAt: new Date(),
         updatedAt: new Date(),
         model_name: "gemma3:12b",
-        system_prompt: "",
+        system_prompt: get(appState).defaultPrompt,
         response_buffer: "",
         settings: {
             temperature: DEFAULT_TEMPERATURE,

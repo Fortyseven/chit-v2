@@ -10,9 +10,15 @@
     } from "../../lib/chatSession/chatActions"
     import { chats, currentChat } from "../../lib/chatSession/chatSession"
     import BtnNewSession from "./BtnNewSession.svelte"
+    import ConfigPanel from "./Config/ConfigPanel.svelte"
 
     // let mobileToggleOpen = $state(false)
     let mobileToggleOpen = false
+    let configPanelOpen = false
+
+    function toggleConfigPanel() {
+        configPanelOpen = !configPanelOpen
+    }
 
     function changeConvo(chatId) {
         chatSwitchTo(chatId)
@@ -76,10 +82,18 @@
             <BtnNewSession></BtnNewSession>
         </div>
         <div>
-            <button class="btn-config secondary" disabled={$chatInProgress}>Config</button>
+            <button
+                class="btn-config secondary"
+                disabled={$chatInProgress}
+                onclick={toggleConfigPanel}
+            >
+                Config
+            </button>
         </div>
     </div>
 </div>
+
+<ConfigPanel bind:open={configPanelOpen} />
 
 <style lang="scss">
     #Sidebar {
@@ -146,7 +160,6 @@
             gap: 1em;
             margin-block: 1em;
             margin-inline: 1em;
-
         }
     }
 </style>

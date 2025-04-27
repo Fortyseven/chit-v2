@@ -28,7 +28,7 @@ export class LLMInterface {
             // only reinstantiate if the host has changed
             if (
                 this.first_load ||
-                get(this.ol_instance_host) !== DEFAULT_OL_ENDPOINT
+                get(this.ol_instance_host) !== get(appState).apiEndpoint
             ) {
                 this.ol_instance.set(
                     new Ollama({
@@ -164,6 +164,12 @@ export class LLMInterface {
 
 const llm_instance = new LLMInterface()
 await llm_instance.instantiateOL()
+
+appState.subscribe((state) => {
+    if (state.apiEndpoint !== get(llm_instance.ol_instance_host)) {
+        llm_instance.instantiateOL()
+    }
+})
 
 let llm: Writable<LLMInterface> = writable(llm_instance)
 
