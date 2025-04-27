@@ -55,16 +55,20 @@
             <h2>Configuration Panel</h2>
 
             <div class="form-group">
-                <label>
-                    <input
-                        type="checkbox"
-                        bind:checked={$appState.soundEnabled}
-                    /> Audio feedback
-                </label>
+                <label
+                    for="audio-feedback"
+                    title="Enable or disable audio feedback."
+                    >Audio feedback</label
+                >
+                <input type="checkbox" bind:checked={$appState.soundEnabled} />
             </div>
 
             <div class="form-group">
-                <label for="ollama-api-endpoint">Ollama API Endpoint</label>
+                <label
+                    for="ollama-api-endpoint"
+                    title="The API endpoint for Ollama with a specific URL."
+                    >Ollama API Endpoint</label
+                >
                 <input
                     id="ollama-api-endpoint"
                     type="text"
@@ -80,7 +84,11 @@
             </div>
 
             <div class="form-group">
-                <label for="default-prompt">Default Prompt</label>
+                <label
+                    for="default-prompt"
+                    title="Prompt that populates the system prompt for all new sessions when not loaded from a preset."
+                    >Default Prompt</label
+                >
                 <textarea
                     id="default-prompt"
                     rows="4"
@@ -119,7 +127,7 @@
 
         .modal {
             position: relative;
-            background: #333;
+            background: #222;
             color: white;
             width: 80%;
             max-height: 80%;
