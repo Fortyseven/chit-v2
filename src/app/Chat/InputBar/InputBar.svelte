@@ -175,7 +175,7 @@
                 ></textarea>
             </div>
             <div class="attachments">
-                {#if $currentChat?.pastedMedia}
+                {#if $currentChat?.pastedMedia && $currentChat?.pastedMedia instanceof Blob}
                     <Pill
                         text="Image"
                         dismissible
@@ -186,8 +186,10 @@
                     >
                         <!-- svelte-ignore a11y_missing_attribute -->
                         <img
-                            src={$currentChat?.pastedMedia}
-                            class="max-h-48 m-auto"
+                            src={$currentChat?.pastedMedia
+                                ? URL.createObjectURL($currentChat?.pastedMedia)
+                                : ""}
+                            class="btn-image-attach"
                         />
                     </Pill>
                 {/if}
@@ -306,12 +308,6 @@
                         font-family: sans-serif;
                     }
                 }
-
-                .btn-image-attach {
-                    position: relative;
-                    right: 0;
-                    top: 0;
-                }
             }
             .chat-controls {
                 display: flex;
@@ -347,5 +343,13 @@
                 }
             }
         }
+    }
+
+    .btn-image-attach {
+        position: relative;
+        right: 0px;
+        top: 0;
+        max-width: 256px;
+        // box-shadow: 0 0 10px #f0f;
     }
 </style>

@@ -10,7 +10,7 @@
     export let dismissible = false // Whether to show an X button to dismiss the pill
 
     // Internal state
-    let showTooltip = false
+    let showTooltip = true
     let pillElement
 
     const dispatch = createEventDispatcher()
