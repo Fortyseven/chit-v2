@@ -237,7 +237,7 @@
         <div class="under">
             <Status
                 {inputLength}
-                systemPromptLength={$currentChat.system_prompt?.length}
+                systemPromptLength={$currentChat?.system_prompt?.length}
             />
         </div>
     </div>
