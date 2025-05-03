@@ -98,6 +98,7 @@
                 border-left-color: var(--color-accent-darker);
                 border-left-style: solid;
                 border-left-width: 1px;
+                line-height: 0;
             }
 
             &.btn-preset {
