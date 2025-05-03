@@ -39,19 +39,19 @@
         }
 
         &.ne {
-            border-radius: 0 10px 0 0;
+            border-radius: 0 var(--border-radius-standard) 0 0;
         }
 
         &.nw {
-            border-radius: 10px 0 0 0;
+            border-radius: var(--border-radius-standard) 0 0 0;
         }
 
         &.se {
-            border-radius: 0 0 10px 0;
+            border-radius: 0 0 var(--border-radius-standard) 0;
         }
 
         &.sw {
-            border-radius: 0 0 0 10px;
+            border-radius: 0 0 0 var(--border-radius-standard);
         }
     }
 </style>
