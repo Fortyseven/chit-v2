@@ -146,7 +146,7 @@
                     button:first-of-type {
                         background-color: var(--color-accent);
                         color: black;
-                        border-radius: 10px;
+                        border-radius: var(--border-radius-standard);
                         &:hover {
                             background-color: var(--color-accent-lighter);
                         }

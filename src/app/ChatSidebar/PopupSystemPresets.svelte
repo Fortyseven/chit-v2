@@ -70,7 +70,7 @@
         background-color: var(--color-background-lighter);
         box-shadow: 0 0 10px black;
         display: none;
-        border-radius: 1em;
+        border-radius: var(--border-radius-standard);
 
         &.open {
             display: flex;

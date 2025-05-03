@@ -275,7 +275,7 @@
                     box-sizing: border-box;
                     background-color: black;
                     color: var(--color-neutral-darker);
-                    border-radius: var(--theme-rounded-container);
+                    border-radius: var(--border-radius-standard);
                     font-family: var(--font-ui);
                     font-size: 1.2em;
                     height: calc(var(--input-bar-height) - 0.5em);

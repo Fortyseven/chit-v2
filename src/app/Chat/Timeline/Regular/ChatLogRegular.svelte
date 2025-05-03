@@ -82,7 +82,7 @@
             margin-block-end: 0.5em;
             img {
                 max-width: 50%;
-                border-radius: 8px;
+                border-radius: var(--border-radius-standard);
                 box-shadow: 0 0 20px rgba(0, 0, 0, 1);
             }
         }

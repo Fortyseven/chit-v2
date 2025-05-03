@@ -134,7 +134,7 @@
             height: fit-content;
             max-width: 800px;
             padding: 1em;
-            border-radius: 8px;
+            border-radius: var(--border-radius-standard);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             pointer-events: auto;
@@ -167,7 +167,7 @@
         input[type="text"] {
             width: 100%;
             padding: 0.5em;
-            border-radius: 4px;
+            border-radius: var(--border-radius-standard);
             border: 1px solid #555;
             background-color: #444;
             color: white;
@@ -178,7 +178,7 @@
         textarea {
             width: 100%;
             padding: 0.5em;
-            border-radius: 4px;
+            border-radius: var(--border-radius-standard);
             border: 1px solid #555;
             background-color: #444;
             color: white;

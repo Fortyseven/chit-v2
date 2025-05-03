@@ -157,7 +157,6 @@
             //
         }
 
-
         .message-controls {
             position: absolute;
             top: 0.5em;
@@ -176,7 +175,7 @@
                 font-size: 1.25em;
                 font-weight: bold;
                 padding: 0.2em 0.5em;
-                border-radius: 0.25em;
+                border-radius: var(--border-radius-standard);
                 cursor: pointer;
 
                 &:hover {

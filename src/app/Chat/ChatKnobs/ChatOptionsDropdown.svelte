@@ -42,7 +42,7 @@
     disabled={$chatInProgress}
     className="btn-preset"
     roundCorner="ne"
-    />
+/>
 
 <style lang="scss">
     summary {
@@ -56,7 +56,7 @@
 
     ul {
         background-color: var(--color-base-100);
-        border-radius: var(--radius-box);
+        border-radius: var(--border-radius-standard);
         z-index: 1;
 
         width: calc(var(--spacing) * 48);
@@ -391,7 +391,7 @@
             align-content: flex-start;
             align-items: center;
             gap: calc(0.25rem /* 4px */ * 2) /* 0.5rem = 8px */;
-            border-radius: var(--radius-field) /* var(--radius-field) */;
+            border-radius: var(--border-radius-standard);
             padding-inline: calc(0.25rem /* 4px */ * 3) /* 0.75rem = 12px */;
             padding-block: calc(0.25rem /* 4px */ * 1.5) /* 0.375rem = 6px */;
             text-align: start;
