@@ -259,7 +259,7 @@
         .inner {
             display: grid;
             grid-template-columns: 11.5em minmax(0, 1fr) auto auto;
-            gap: 1em;
+            gap: 0.5em;
             width: 100%;
             max-width: var(--timeline-max-width);
             margin-inline: auto;
@@ -311,7 +311,7 @@
             }
             .chat-controls {
                 display: flex;
-                gap: 1em;
+                gap: 0.5em;
 
                 button {
                     background-color: var(--color-primary-500);
