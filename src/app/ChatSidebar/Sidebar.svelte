@@ -157,7 +157,7 @@
         .bottom {
             display: grid;
             grid-template-columns: 1fr auto;
-            gap: 1em;
+            gap: 0.5em;
             margin-block: 1em;
             margin-inline: 1em;
         }
