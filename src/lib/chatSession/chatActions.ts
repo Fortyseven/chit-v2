@@ -9,7 +9,7 @@ export const DEFAULT_TEMPERATURE = 0.6
 
 //--------------------------------------------------------------
 // Insert a new chat at the end of the list
-export function chatNew() {
+export function chatNew(): String {
     const id = crypto.randomUUID()
     const newChat = {
         id,
@@ -30,6 +30,8 @@ export function chatNew() {
 
     chats.update(($chats) => [...$chats, newChat])
     appState.update((state) => ({ ...state, activeChatId: id }))
+
+    return id
 }
 
 //--------------------------------------------------------------

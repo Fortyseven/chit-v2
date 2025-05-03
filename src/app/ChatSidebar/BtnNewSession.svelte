@@ -1,6 +1,12 @@
 <script>
+    import { Replicate } from "carbon-icons-svelte"
     import { onMount } from "svelte"
-    import { chatInProgress, chatNew } from "../../lib/chatSession/chatActions"
+    import {
+        chatInProgress,
+        chatNew,
+        chatSetSystemPrompt,
+    } from "../../lib/chatSession/chatActions"
+    import { currentChat } from "../../lib/chatSession/chatSession"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
 
     let mobileToggleOpen = false
@@ -15,6 +21,12 @@
 
     function newConversationClick() {
         chatNew()
+    }
+
+    function duplicateSession() {
+        const currentSystemPrompt = $currentChat.system_prompt
+        const new_id = chatNew()
+        chatSetSystemPrompt(new_id, currentSystemPrompt)
     }
 
     onMount(() => {
@@ -50,6 +62,14 @@
             New Session
         </button>
         <button
+            class="btn-duplicate"
+            title="Start a new conversation using the current system prompt."
+            disabled={$chatInProgress}
+            onclick={() => duplicateSession()}
+        >
+            <Replicate />
+        </button>
+        <button
             class="btn-preset"
             title="Start a new conversation using a system prompt preset."
             disabled={$chatInProgress}
@@ -66,11 +86,18 @@
 <style lang="scss">
     .sessions {
         display: grid;
-        grid-template-columns: 1fr auto;
+        grid-template-columns: 1fr auto auto;
         button {
             &.btn-new-session {
                 border-top-right-radius: 0;
                 border-bottom-right-radius: 0;
+            }
+
+            &.btn-duplicate {
+                border-radius: 0;
+                border-left-color: var(--color-accent-darker);
+                border-left-style: solid;
+                border-left-width: 1px;
             }
 
             &.btn-preset {
@@ -79,8 +106,7 @@
                 border-bottom-left-radius: 0;
                 border-left-color: var(--color-accent-darker);
                 border-left-style: solid;
-                border-left-width: 2px;
-                vertical-align: middle;
+                border-left-width: 1px;
             }
         }
 
