@@ -1,13 +1,15 @@
+import { toast } from "@zerodevx/svelte-toast"
 import yaml from "js-yaml"
 import { get } from "svelte/store"
+import llm from "../../lib/llm/ollama"
 import { appState } from "../appState/appState"
 import {
     chatSetModel,
     chatSetSystemPrompt,
+    chatUpdateSettings,
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
-
 /* ------------------------------------------------ */
 interface Variables {
     char: string
@@ -51,27 +53,57 @@ const defaults: Config = {
     },
 }
 
+function _modelAvailable(model_name: string) {
+    const models = get(get(llm).models)
+
+    const has_model = models.find((m) => m.name === model_name)
+    return has_model
+}
+
 /* ------------------------------------------------ */
 function _doParsePreset(content: string, filename: string = "") {
-    if (filename.endsWith(".json")) {
-        // assume Kobold preset (legacy import)
-        const data = JSON.parse(e.target?.result)
-        const chat_id = get(appState).activeChatId
+    const target_chat_id = get(appState).activeChatId
 
-        if (!chat_id) {
-            throw "Chat session not found: " + chat_id
+    let prompt = undefined
+    let model = undefined
+    let settings = {}
+
+    if (!target_chat_id) {
+        throw "Chat session not found: " + target_chat_id
+    }
+
+    if (filename.endsWith(".json")) {
+        const data = JSON.parse(content)
+
+        if (data.memory) {
+            prompt = data.memory
         }
 
-        chatSetSystemPrompt(chat_id, data.memory)
-        chatSetModel(chat_id, data.savedsettings.model_name)
+        const target_model = data.savedsettings?.model_name
+
+        if (target_model && _modelAvailable(target_model)) {
+            console.info("Model found: " + target_model)
+            // chatSetModel(target_chat_id, model)
+            model = target_model
+        } else {
+            const msg = `Model not found: ${target_model}. Using default model.`
+
+            console.warn(msg)
+            toast.push(msg)
+        }
+
+        if (data.savedsettings?.temperature) {
+            const temperature = parseFloat(data.savedsettings.temperature)
+            if (!isNaN(temperature)) {
+                settings = {
+                    ...settings,
+                    temperature: temperature,
+                }
+            }
+        }
     } else {
         // assume new YAML format
         const data = yaml.load(content) as Config
-        const chat_id = get(appState).activeChatId
-
-        if (!chat_id) {
-            throw "Chat session not found: " + chat_id
-        }
 
         // populate templated vars
         // TODO: later, make these defaults and let user override in front-end
@@ -89,25 +121,41 @@ function _doParsePreset(content: string, filename: string = "") {
         }
 
         if (data.system_prompt) {
-            chatSetSystemPrompt(chat_id, data.system_prompt)
+            chatSetSystemPrompt(target_chat_id, data.system_prompt)
         }
 
         if (data.model_name) {
-            chatSetModel(chat_id, data.model_name)
+            chatSetModel(target_chat_id, data.model_name)
         }
     }
+
+    // now let's pull it together
+
+    if (prompt) {
+        chatSetSystemPrompt(target_chat_id, prompt)
+    }
+
+    if (model) {
+        chatSetModel(target_chat_id, model)
+    }
+
+    if (settings) {
+        chatUpdateSettings(target_chat_id, settings)
+    }
+
+    return prompt
 }
 
 /* ------------------------------------------------ */
 export function loadPresetFromFile() {
     const input = document.createElement("input")
     input.type = "file"
-    input.accept = ".json,.yml,.yaml"
+    input.accept = ".json,.yml,.yaml,.txt"
     input.onchange = (e) => {
         const file = e.target.files[0]
         const reader = new FileReader()
         reader.onload = (e) => {
-            _doParsePreset(e.target?.result, file.name)
+            return _doParsePreset(e.target?.result, file.name)
         }
         reader.readAsText(file)
     }

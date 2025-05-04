@@ -9,7 +9,7 @@
     import { currentChat } from "../../lib/chatSession/chatSession"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
 
-    let mobileToggleOpen = false
+    // let mobileToggleOpen = false
 
     let popupOpen = false
 
@@ -87,6 +87,7 @@
     .sessions {
         display: grid;
         grid-template-columns: 1fr auto auto;
+
         button {
             &.btn-new-session {
                 border-top-right-radius: 0;
@@ -114,7 +115,7 @@
         .preset-popup-container {
             position: absolute;
             bottom: 45px;
-            left: 50px;
+            left: 24px;
             width: 256px;
             z-index: 100;
         }
