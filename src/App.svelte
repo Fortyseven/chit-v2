@@ -3,16 +3,20 @@
 
     import { afterUpdate } from "svelte"
 
+    import { SvelteToast } from "@zerodevx/svelte-toast"
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
     import PageContent from "./app/PageContent.svelte"
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
-
-    import { currentChat } from "./lib/chatSession/chatSession"
+    // import { currentChat } from "./lib/chatSession/chatSession"
 
     import "./lib/appState/appStateStorage"
     import "./lib/audio"
     import "./lib/chatSession/chatStorage"
+
+    const toastOptions = {
+        //...
+    }
 </script>
 
 <AppFramework>
@@ -25,6 +29,7 @@
         <div class="input-bar"><InputBar /></div>
     </div>
 </AppFramework>
+<SvelteToast options={toastOptions} />
 
 <style lang="scss">
     .page {
