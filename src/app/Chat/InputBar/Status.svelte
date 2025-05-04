@@ -5,10 +5,14 @@
     export let systemPromptLength = 0
 
     $: contextLimit = $currentChat?.settings?.num_ctx || 0
-    $: overflow = inputLength + systemPromptLength >= contextLimit
-    $: totalLength = inputLength + systemPromptLength
+    $: systemPromptLength = $currentChat?.system_prompt?.length || 0
+    $: conversationLength =
+        $currentChat?.messages?.reduce((acc, message) => {
+            return acc + (message?.content?.length || 0)
+        }, 0) || 0
 
-    console.log({ inputLength, systemPromptLength })
+    $: fullChatLength = systemPromptLength + conversationLength + inputLength
+    $: overflow = fullChatLength >= contextLimit
 </script>
 
 <div class="status-bar">
@@ -19,9 +23,11 @@
     <span title="System prompt tokens">
         {systemPromptLength}
     </span>
+    +
+    <span title="Current conversation length">{conversationLength}</span>
     <span>=</span>
-    <span class:overflow title="Combined tokens">
-        {totalLength}
+    <span class:overflow title="Proposed combined tokens">
+        {fullChatLength}
     </span>
 </div>
 
