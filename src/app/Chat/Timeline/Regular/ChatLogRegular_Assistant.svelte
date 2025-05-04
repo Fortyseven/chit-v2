@@ -5,7 +5,6 @@
         chatChopLatest,
         chatRunInference,
     } from "../../../../lib/chatSession/chatActions"
-// import { saveAs } from "../../../../vendor/FileSaver.min.js"
     import { hljs } from "../../../../vendor/highlight.min"
 
     export let line = { role: "assistant", content: "🍆" }
@@ -141,7 +140,7 @@
         width: auto;
         font-family: Barlow, Ubuntu;
         line-height: 1.2;
-        border-radius: 0.5em;
+        border-radius: var(--border-radius-standard);
         box-shadow: 0 0.25em 0.25em 0 #000;
         text-align: start;
         padding-inline: 1em;

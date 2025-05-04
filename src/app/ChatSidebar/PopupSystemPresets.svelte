@@ -10,7 +10,10 @@
         chatSetSystemPrompt,
         chatUpdateSettings,
     } from "../../lib/chatSession/chatActions"
-    import { loadPresetFromFile } from "../../lib/presets/presets"
+    import {
+        loadPresetFromFile,
+        savePresetToFile,
+    } from "../../lib/presets/presets"
     import SYSTEM_PROMPTS from "../../preset-prompts/index.js"
 
     const PREVIEW_CUTOFF_LENGTH = 30
@@ -97,8 +100,8 @@
             class="btn-save small"
             title="Save Preset"
             onclick={() => {
-                alert("Saving presets is not yet implemented. One sec...")
-                // presetSave()
+                // alert("Saving presets is not yet implemented. One sec...")
+                savePresetToFile()
                 // pushToRecents($appState.activeChatId.system_prompt)
             }}
         >

@@ -1,7 +1,7 @@
 import { get, writable } from "svelte/store"
 import { appState } from "../appState/appState"
 import llm from "../llm/ollama"
-import { ChatMediaType, chats, Message } from "./chatSession"
+import { ChatMediaType, chats, ChatSession, Message } from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"
 
 export const DEFAULT_CONTEXT = 65536
@@ -205,7 +205,7 @@ export function chatDuplicate(chatId: String = "") {
 }
 
 //--------------------------------------------------------------
-export function chatFind(chatId: String = "") {
+export function chatFind(chatId: String = ""): ChatSession | undefined {
     chatId = _getActiveChatId(chatId)
     return get(chats).find((chat) => chat.id === chatId)
 }
@@ -335,6 +335,7 @@ export async function chatPromoteStreamingPending(chatId: String = "") {
     }
 }
 
+//--------------------------------------------------------------
 export function chatSetPastedMedia(
     chatId: String = "",
     data: Blob | undefined
@@ -355,6 +356,7 @@ export function chatSetPastedMedia(
     )
 }
 
+//--------------------------------------------------------------
 export function chatClearPastedMedia(chatId: String = "") {
     chatSetPastedMedia(chatId, undefined)
 }
