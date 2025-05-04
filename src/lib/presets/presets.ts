@@ -2,8 +2,9 @@ import { toast } from "@zerodevx/svelte-toast"
 import yaml from "js-yaml"
 import { get } from "svelte/store"
 import llm from "../../lib/llm/ollama"
-import { appState } from "../appState/appState"
+import { appActiveChat, appState } from "../appState/appState"
 import {
+    chatFind,
     chatSetModel,
     chatSetSystemPrompt,
     chatUpdateSettings,
@@ -99,10 +100,11 @@ function _legacyLoadJSON(content: string) {
 
 function _loadYAML(content: string) {
     // assume new YAML format
-    const data = yaml.load(content) as Config
     let prompt = undefined
     let model = undefined
     let settings = {}
+
+    const data = yaml.load(content) as Config
 
     // populate templated vars
     // TODO: later, make these defaults and let user override in front-end
@@ -126,6 +128,19 @@ function _loadYAML(content: string) {
     if (data.model_name) {
         model = data.model_name
     }
+
+    if (data.options) {
+        settings = {
+            ...settings,
+            ...data.options,
+        }
+    }
+
+    return {
+        prompt,
+        model,
+        settings,
+    }
 }
 
 /* ------------------------------------------------ */
@@ -147,8 +162,11 @@ function _doParsePreset(content: string, filename: string = "") {
         // really a typical use case, but it is supported because it's
         // super simple and why the fuck not?
         prompt = content
+    } else if (filename.endsWith(".yml") || filename.endsWith(".yaml")) {
+        ;({ prompt, model, settings } = _loadYAML(content))
     } else {
-        _loadYAML(content)
+        console.error("Unsupported file type")
+        toast.push("Unsupported file type: " + filename)
     }
 
     // now let's pull it together
@@ -184,7 +202,7 @@ export function loadPresetFromFile() {
     input.type = "file"
     input.accept = ".json,.yml,.yaml,.txt"
     input.onchange = (e) => {
-        const file = e.target.files[0]
+        const file = e?.target?.files[0]
         const reader = new FileReader()
         reader.onload = (e) => {
             return _doParsePreset(e.target?.result, file.name)
@@ -192,4 +210,41 @@ export function loadPresetFromFile() {
         reader.readAsText(file)
     }
     input.click()
+}
+
+/* ------------------------------------------------ */
+/* -- SAVE ---------------------------------------- */
+/* ------------------------------------------------ */
+
+export function savePresetToFile() {
+    const target_chat_id = get(appState).activeChatId
+
+    if (!target_chat_id) {
+        throw "Chat session not found: " + target_chat_id
+    }
+
+    const active_chat_id = get(appActiveChat)
+
+    const chat = chatFind(active_chat_id)
+
+    const data = {
+        system_prompt: chat?.system_prompt,
+        model_name: chat?.model_name,
+        // variables: chat.variables,
+        options: chat?.settings,
+    }
+
+    // FIXME: should we be asking the user for a base filename?
+    // previous versions kept a unique name for each preset, but
+    // we don't do that anymore... for now, guid is fine; let
+    // them rename it if they want to
+    const filename = `${target_chat_id}.yaml`
+
+    const blob = new Blob([yaml.dump(data)], { type: "text/yaml" })
+    const url = URL.createObjectURL(blob)
+
+    const a = document.createElement("a")
+    a.href = url
+    a.download = filename
+    a.click()
 }
