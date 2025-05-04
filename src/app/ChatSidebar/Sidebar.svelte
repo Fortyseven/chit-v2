@@ -100,7 +100,9 @@
         display: grid;
         grid-template-rows: 1fr auto;
         height: 100%;
-        z-index: 10;
+        z-index: 100;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        position: relative;
         background-color: var(--color-background);
         color: var(--color-text);
 
