@@ -53,11 +53,79 @@ const defaults: Config = {
     },
 }
 
+/* ------------------------------------------------ */
 function _modelAvailable(model_name: string) {
     const models = get(get(llm).models)
 
     const has_model = models.find((m) => m.name === model_name)
     return has_model
+}
+
+function _legacyLoadJSON(content: string) {
+    let prompt = undefined
+    let model = undefined
+    let settings = {}
+
+    const data = JSON.parse(content)
+
+    if (data.memory) {
+        prompt = data.memory
+    }
+
+    const target_model = data.savedsettings?.model_name
+
+    if (target_model) {
+        model = target_model
+    }
+
+    if (data.savedsettings?.temperature) {
+        const temperature = parseFloat(data.savedsettings.temperature)
+        if (!isNaN(temperature)) {
+            settings = {
+                ...settings,
+                temperature: temperature,
+            }
+        }
+    }
+
+    return {
+        prompt,
+        model,
+        settings,
+    }
+}
+
+/* ------------------------------------------------ */
+
+function _loadYAML(content: string) {
+    // assume new YAML format
+    const data = yaml.load(content) as Config
+    let prompt = undefined
+    let model = undefined
+    let settings = {}
+
+    // populate templated vars
+    // TODO: later, make these defaults and let user override in front-end
+    // if (data.variables) {
+    //     for (const [key, value] of Object.entries(data.variables)) {
+    //         if (typeof value === "string") {
+    //             data.system_prompt = data.system_prompt.replace(
+    //                 `{{${key}}}`,
+    //                 value
+    //             )
+    //         } else {
+    //             console.warn("(IGNORED) Invalid variable type: " + key)
+    //         }
+    //     }
+    // }
+
+    if (data.system_prompt) {
+        prompt = data.system_prompt
+    }
+
+    if (data.model_name) {
+        model = data.model_name
+    }
 }
 
 /* ------------------------------------------------ */
@@ -73,73 +141,37 @@ function _doParsePreset(content: string, filename: string = "") {
     }
 
     if (filename.endsWith(".json")) {
-        const data = JSON.parse(content)
-
-        if (data.memory) {
-            prompt = data.memory
-        }
-
-        const target_model = data.savedsettings?.model_name
-
-        if (target_model && _modelAvailable(target_model)) {
-            console.info("Model found: " + target_model)
-            // chatSetModel(target_chat_id, model)
-            model = target_model
-        } else {
-            const msg = `Model not found: ${target_model}. Using default model.`
-
-            console.warn(msg)
-            toast.push(msg)
-        }
-
-        if (data.savedsettings?.temperature) {
-            const temperature = parseFloat(data.savedsettings.temperature)
-            if (!isNaN(temperature)) {
-                settings = {
-                    ...settings,
-                    temperature: temperature,
-                }
-            }
-        }
+        ;({ prompt, model, settings } = _legacyLoadJSON(content))
+    } else if (filename.endsWith(".txt")) {
+        // this is intended to only load a system prompt; this isn't
+        // really a typical use case, but it is supported because it's
+        // super simple and why the fuck not?
+        prompt = content
     } else {
-        // assume new YAML format
-        const data = yaml.load(content) as Config
-
-        // populate templated vars
-        // TODO: later, make these defaults and let user override in front-end
-        if (data.variables) {
-            for (const [key, value] of Object.entries(data.variables)) {
-                if (typeof value === "string") {
-                    data.system_prompt = data.system_prompt.replace(
-                        `{{${key}}}`,
-                        value
-                    )
-                } else {
-                    console.warn("(IGNORED) Invalid variable type: " + key)
-                }
-            }
-        }
-
-        if (data.system_prompt) {
-            chatSetSystemPrompt(target_chat_id, data.system_prompt)
-        }
-
-        if (data.model_name) {
-            chatSetModel(target_chat_id, data.model_name)
-        }
+        _loadYAML(content)
     }
 
     // now let's pull it together
 
     if (prompt) {
+        console.info("Prompt found: " + prompt)
         chatSetSystemPrompt(target_chat_id, prompt)
     }
 
     if (model) {
-        chatSetModel(target_chat_id, model)
+        if (model && _modelAvailable(model)) {
+            console.info("Model found: " + model)
+            chatSetModel(target_chat_id, model)
+        } else {
+            const msg = `Model not found: ${model}. Using default model.`
+
+            console.warn(msg)
+            toast.push(msg)
+        }
     }
 
     if (settings) {
+        console.info("Settings found: " + JSON.stringify(settings))
         chatUpdateSettings(target_chat_id, settings)
     }
 
