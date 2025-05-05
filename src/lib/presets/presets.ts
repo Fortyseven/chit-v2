@@ -11,6 +11,7 @@ import {
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
+import { loadFile } from "../utils"
 /* ------------------------------------------------ */
 interface Variables {
     char: string
@@ -197,19 +198,10 @@ function _doParsePreset(content: string, filename: string = "") {
 }
 
 /* ------------------------------------------------ */
-export function loadPresetFromFile() {
-    const input = document.createElement("input")
-    input.type = "file"
-    input.accept = ".json,.yml,.yaml,.txt"
-    input.onchange = (e) => {
-        const file = e?.target?.files[0]
-        const reader = new FileReader()
-        reader.onload = (e) => {
-            return _doParsePreset(e.target?.result, file.name)
-        }
-        reader.readAsText(file)
-    }
-    input.click()
+export async function loadPresetFromFile() {
+    const { result, file } = await loadFile([".json", ".yml", ".yaml", ".txt"])
+
+    return _doParsePreset(result, file.name)
 }
 
 /* ------------------------------------------------ */

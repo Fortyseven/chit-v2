@@ -15,3 +15,29 @@ export function convertBlobToBase64(blob: Blob): Promise<string> {
         reader.readAsDataURL(blob)
     })
 }
+
+export function loadFile(types: string[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+        const input = document.createElement("input")
+        input.type = "file"
+        input.accept = types.join(",")
+        input.onchange = (e) => {
+            const file = e?.target?.files[0]
+            if (!file) {
+                reject(new Error("No file selected"))
+                return
+            }
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                try {
+                    resolve({ result: e.target?.result, file })
+                } catch (error) {
+                    reject(error)
+                }
+            }
+            reader.onerror = () => reject(new Error("Error reading file"))
+            reader.readAsText(file)
+        }
+        input.click()
+    })
+}
