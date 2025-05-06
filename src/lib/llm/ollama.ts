@@ -11,6 +11,7 @@ import {
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
+import { applySystemPromptTemplates } from "../templating/templating"
 import { convertBlobToBase64 } from "../utils"
 
 export class LLMInterface {
@@ -93,13 +94,17 @@ export class LLMInterface {
 
         let messages: Message[] = []
 
+        // ---- System prompt ----
         if (chat_session.system_prompt) {
             messages.push({
                 role: "system",
-                content: chat_session.system_prompt as string,
+                content: applySystemPromptTemplates(
+                    chat_session.system_prompt as string
+                ),
             })
         }
 
+        // ---- User prompt ----
         for (let message of chat_session.messages) {
             let msg = message.content.trim()
 
@@ -119,6 +124,7 @@ export class LLMInterface {
 
         console.log("🤖📡 Submitting chat session:", messages)
 
+        // ---- setup ollama call ----
         if (!this.ol_instance) {
             console.error("Ollama instance not found")
             return
