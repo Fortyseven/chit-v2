@@ -8,15 +8,12 @@
     export let warning: boolean = false
     export let roundCorner = "" // can be 'ne', 'nw', 'se', 'sw' or empty
 
-    $: buttonClass = `${className} ${secondary ? "secondary" : ""} ${warning ? "warning" : ""} ${roundCorner}`.trim();
+    $: buttonClass =
+        `${className} ${secondary ? "secondary" : ""} ${warning ? "warning" : ""} ${roundCorner}`.trim()
 </script>
 
 <!-- svelte-ignore a11y_consider_explicit_label -->
-<button
-    onclick={onClick}
-    {disabled}
-    class={buttonClass}
->
+<button onclick={onClick} {disabled} class={buttonClass}>
     <svelte:component this={iconComponent} {title}></svelte:component>
 </button>
 

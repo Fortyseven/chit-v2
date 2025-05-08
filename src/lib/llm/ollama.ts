@@ -11,8 +11,9 @@ import {
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
+import { ChatMediaType } from "../chatSession/chatAttachments"
 import { applySystemPromptTemplates } from "../templating/templating"
-import { convertBlobToBase64 } from "../utils"
+import { convertBlobToBase64 as convertFileToBase64 } from "../utils"
 
 export class LLMInterface {
     models: Writable<ModelResponse[]> = writable([])
@@ -110,9 +111,15 @@ export class LLMInterface {
 
             let images: String[] = []
 
-            if (message.media && message.media.size > 0) {
-                let img64 = await convertBlobToBase64(message.media)
-                images.push(img64 as string)
+            if (message.media && message.media.length > 0) {
+                for (let i = 0; i < message.media.length; i++) {
+                    let media = message.media[i]
+                    if (media.type == ChatMediaType.IMAGE) {
+                        // convert blob to base64
+                        let img64 = await convertFileToBase64(media.data)
+                        images.push(img64 as string)
+                    }
+                }
             }
 
             messages.push({

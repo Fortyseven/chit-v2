@@ -1,29 +1,18 @@
-<script>
+<script lang="ts">
     import { afterUpdate } from "svelte"
     import { appState } from "../../../../lib/appState/appState"
     import {
         chatGetStreamingPending,
         chatInProgressWithId,
     } from "../../../../lib/chatSession/chatActions"
+    import { ChatMediaType } from "../../../../lib/chatSession/chatAttachments"
     import { currentChat } from "../../../../lib/chatSession/chatSession"
+    import { memoizeBlobUrl } from "../../../../lib/memoizeBlob"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
 
-    let lastBlobURL = null
-    let lastBlob = null
-
-    function getBlobURL(blob) {
-        // since this is expensive and will be called frequently when the
-        // page is updated, we will cache the blob URL and only create a
-        // new one if the blob is different from the last one
-        if (lastBlob !== blob) {
-            console.log("Revoking lastBlobURL")
-            URL.revokeObjectURL(lastBlobURL)
-            lastBlob = blob
-            lastBlobURL = URL.createObjectURL(blob)
-        }
-
-        return lastBlobURL
+    function isObjectEmpty(obj: any) {
+        return Object.keys(obj).length === 0
     }
 </script>
 
@@ -32,14 +21,18 @@
         {#each $currentChat.messages as message, i}
             {#key message}
                 {#if message.role === "user"}
-                    {#if message.media && message.media.size > 0}
-                        <div class="media-attachment">
-                            <img
-                                src={getBlobURL(message?.media)}
-                                alt="Media Attachment"
-                                class="max-h-48 m-auto"
-                            />
-                        </div>
+                    {#if message.media && message.media.length > 0}
+                        {#each message.media as media}
+                            {#if media.type === ChatMediaType.IMAGE}
+                                <div class="media-attachment">
+                                    <img
+                                        src={memoizeBlobUrl(media?.data)}
+                                        alt="Media Attachment"
+                                        class="max-h-48 m-auto"
+                                    />
+                                </div>
+                            {/if}
+                        {/each}
                     {/if}
                     {#if message.content}
                         <ChatLogRegular_User line={message.content}

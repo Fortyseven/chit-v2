@@ -16,13 +16,24 @@ export function convertBlobToBase64(blob: Blob): Promise<string> {
     })
 }
 
+export function convertBase64ToBlob(base64: string): Blob {
+    const byteCharacters = atob(base64)
+    const byteNumbers = new Array(byteCharacters.length)
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+    }
+    const byteArray = new Uint8Array(byteNumbers)
+    return new Blob([byteArray])
+}
+
+/****************************************************************************/
 export function loadFile(types: string[]): Promise<any> {
     return new Promise((resolve, reject) => {
         const input = document.createElement("input")
         input.type = "file"
         input.accept = types.join(",")
         input.onchange = (e) => {
-            const file = e?.target?.files[0]
+            const file = (e.target as HTMLInputElement)?.files?.[0]
             if (!file) {
                 reject(new Error("No file selected"))
                 return

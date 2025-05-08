@@ -1,28 +1,18 @@
-import { derived, get, writable, type Readable } from "svelte/store"
+import { derived, writable, type Readable } from "svelte/store"
 import { appState } from "../appState/appState"
+import { MediaAttachment } from "./chatAttachments"
 // import { populateTestData } from "./chatTestLoad"
 
 export interface Message {
     content: String
     role: "user" | "assistant" | "system"
     timestamp?: Date
-    media?: Blob
+    media?: MediaAttachment[]
 }
 
 export interface ChatSettings {
     temperature: number
     num_ctx: number
-}
-
-export enum ChatMediaType {
-    IMAGE = "image",
-    AUDIO = "audio",
-    VIDEO = "video",
-}
-
-export interface MediaAttachment {
-    data: String
-    type: ChatMediaType
 }
 
 export interface ChatSession {
@@ -36,7 +26,8 @@ export interface ChatSession {
     response_buffer: String
     settings: ChatSettings
     wasAborted: Boolean
-    pastedMedia: Blob | undefined
+    // pastedMedia: Blob | undefined
+    pastedMedia: MediaAttachment[] | undefined
 }
 
 export const chats = writable<ChatSession[]>([])

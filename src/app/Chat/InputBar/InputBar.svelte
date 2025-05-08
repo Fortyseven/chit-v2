@@ -1,4 +1,6 @@
 <script lang="ts">
+    import InputBar__Attachments from "./InputBar__Attachments.svelte"
+
     import { Renew, SendFilled, TrashCan, Undo } from "carbon-icons-svelte"
     import { derived } from "svelte/store"
     import { appActiveChat, appState } from "../../../lib/appState/appState"
@@ -8,14 +10,13 @@
         chatBack,
         chatChopLatest,
         chatClearConversation,
-        chatClearPastedMedia,
         chatInProgress,
         chatLength,
         chatRunInference,
     } from "../../../lib/chatSession/chatActions"
+    import { chatClearAllPastedMedia } from "../../../lib/chatSession/chatAttachments"
     import { chats, currentChat } from "../../../lib/chatSession/chatSession"
     import IconButton from "../../UI/IconButton.svelte"
-    import Pill from "../../UI/Pill/Pill.svelte"
     import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
     import InputBar__PasteHandler from "./InputBar__PasteHandler.svelte"
@@ -41,7 +42,7 @@
     })
 
     /* ------------------------------------------------------ */
-    async function _submitUserMessage(user_message: String | undefined) {
+    async function _submitUserMessage(user_message: string | undefined) {
         if (!inputBoxEl || !$appState.activeChatId) {
             throw new Error("inputBoxEl is not defined or some such")
         }
@@ -59,11 +60,11 @@
             inputBoxEl.classList.remove("overflow")
             inputBoxEl.disabled = true
 
-            let message = user_message
+            let message: string = user_message
 
             console.log("submit_user_message", message)
 
-            if (!$currentChat?.pastedMedia && message.trim() === "") {
+            if (!$currentChat?.pastedMedia && message?.trim() === "") {
                 return
             }
 
@@ -90,7 +91,7 @@
         if (ev.key === "Enter") {
             if (!ev.shiftKey) {
                 ev.preventDefault()
-                await _submitUserMessage(ev.target.value)
+                await _submitUserMessage(ev.target?.value)
             }
         }
     }
@@ -110,9 +111,9 @@
                 onBtnBack()
             }
 
-            if (ev.key === "Enter" && ev.ctrlKey && ev.target.value) {
+            if (ev.key === "Enter" && ev.ctrlKey && ev.target?.value) {
                 ev.preventDefault()
-                await _submitUserMessage(ev.target.value)
+                await _submitUserMessage(ev.target?.value)
             }
         } else if (ev.key == "Escape") {
             ev.preventDefault()
@@ -140,7 +141,7 @@
         if (inputBoxEl) {
             inputBoxEl.value = ""
         }
-        chatClearPastedMedia()
+        chatClearAllPastedMedia()
         chatClearConversation()
     }
 
@@ -175,24 +176,7 @@
                 ></textarea>
             </div>
             <div class="attachments">
-                {#if $currentChat?.pastedMedia && $currentChat?.pastedMedia instanceof Blob}
-                    <Pill
-                        text="Image"
-                        dismissible
-                        color="var(--color-accent-complement)"
-                        on:dismiss={() => {
-                            chatClearPastedMedia()
-                        }}
-                    >
-                        <!-- svelte-ignore a11y_missing_attribute -->
-                        <img
-                            src={$currentChat?.pastedMedia
-                                ? URL.createObjectURL($currentChat?.pastedMedia)
-                                : ""}
-                            class="btn-image-attach"
-                        />
-                    </Pill>
-                {/if}
+                <InputBar__Attachments {inputBoxEl} />
             </div>
             <div class="chat-controls">
                 <button
@@ -263,6 +247,7 @@
             width: 100%;
             max-width: var(--timeline-max-width);
             margin-inline: auto;
+            border-right: 4px solid red;
 
             .chat-settings {
             }
@@ -345,11 +330,21 @@
         }
     }
 
-    .btn-image-attach {
-        position: relative;
-        right: 0px;
-        top: 0;
-        max-width: 256px;
-        max-height: 256px;
+    .attachments {
+        display: flex;
+        flex-direction: column;
+
+        div {
+            display: block;
+            flex: 0 0 100%;
+            border: 2px solid red;
+        }
+        .btn-image-attach {
+            position: relative;
+            right: 0px;
+            top: 0;
+            max-width: 256px;
+            max-height: 256px;
+        }
     }
 </style>

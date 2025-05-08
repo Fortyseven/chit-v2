@@ -8,6 +8,7 @@
     export let textColor = "#333" // Default text color
     export let color = "" // Hex color value (will override backgroundColor if provided)
     export let dismissible = false // Whether to show an X button to dismiss the pill
+    export let enableTooltip = false // Whether to show a tooltip
 
     // Internal state
     let showTooltip = true
@@ -40,7 +41,6 @@
     <button
         class="pill"
         aria-label={text}
-        role="button"
         tabindex="0"
         style:background-color={bgColor}
         style:color={textColor}
@@ -61,7 +61,7 @@
         {/if}
     </button>
 
-    {#if showTooltip && $$slots.default}
+    {#if enableTooltip && showTooltip && $$slots.default}
         <div
             class="tooltip"
             class:above={tooltipPosition === "above"}
@@ -76,10 +76,11 @@
     .pill-container {
         display: inline-block;
         position: relative;
+        width: 100%;
     }
 
     .pill {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 999px;
@@ -90,6 +91,8 @@
         user-select: none;
         font-weight: 500;
         transition: opacity 0.2s ease;
+        cursor: pointer;
+        width: 100%;
     }
 
     .pill-text {
@@ -125,7 +128,7 @@
         left: 50%;
         transform: translateX(-50%);
         padding: 6px 10px;
-        border-radius: 4px;
+        border-radius: var(--border-radius-standard);
         background-color: rgba(0, 0, 0, 0.85);
         color: #fff;
         font-size: 0.8rem;
