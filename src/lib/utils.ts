@@ -36,7 +36,11 @@ export function loadFile(types: string[]): Promise<any> {
                 }
             }
             reader.onerror = () => reject(new Error("Error reading file"))
-            reader.readAsText(file)
+            if (file.type.startsWith("text/")) {
+                reader.readAsText(file)
+            } else {
+                reader.readAsArrayBuffer(file)
+            }
         }
         input.click()
     })
