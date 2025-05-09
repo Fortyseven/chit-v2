@@ -135,14 +135,19 @@
             let result = loadedFile.result
 
             if (file && type) {
+                console.debug("File type: ", type)
                 if (type.startsWith("text/") && inputBoxEl) {
-                    inputBoxEl.value += result
+                    chatAddPastedMedia(
+                        $currentChat?.id,
+                        result,
+                        ChatMediaType.TEXT,
+                    )
                 } else if (type.startsWith("image/")) {
                     console.log("UPLOADED TYPE", type)
                     const blob = new Blob([result], { type })
 
                     processExifBlob(file)
-                    // console.log("UPLOADED FILE", result)
+
                     chatAddPastedMedia(
                         $currentChat?.id,
                         blob,
@@ -158,46 +163,49 @@
     }
 </script>
 
-<button class="small" onclick={onClickAddContext}>Add Context +</button>
+<div class="input-attachments">
+    <button class="small" onclick={onClickAddContext}>Add Context +</button>
 
-{#if $currentChat?.pastedMedia}
-    {#each $currentChat?.pastedMedia as media, index}
-        {#key index}
-            {#if media.type == ChatMediaType.IMAGE}
-                <Pill
-                    text="Image"
-                    dismissible
-                    enableTooltip
-                    color="var(--color-accent-complement)"
-                    on:dismiss={() => {
-                        chatClearPastedMedia($currentChat?.id, media.id)
-                    }}
-                >
-                    <!-- svelte-ignore a11y_missing_attribute -->
-                    {#if media.data instanceof Blob}
-                        <img
-                            src={memoizeBlobUrl(media.data)}
-                            class="btn-image-attach"
-                        />
-                    {/if}
-                </Pill>
-            {:else if media.type === ChatMediaType.TEXT}
-                <Pill
-                    text="Text"
-                    dismissible
-                    color="var(--color-accent-complement)"
-                    on:dismiss={() => {
-                        chatClearPastedMedia($currentChat?.id, media.id)
-                    }}
-                >
-                    {media}
-                </Pill>
-            {:else}
-                ????
-            {/if}
-        {/key}
-    {/each}
-{/if}
+    {#if $currentChat?.pastedMedia}
+        {#each $currentChat?.pastedMedia as media, index}
+            {#key index}
+                {#if media.type == ChatMediaType.IMAGE}
+                    <Pill
+                        text="Image"
+                        dismissible
+                        enableTooltip
+                        color="var(--color-accent-complement)"
+                        on:dismiss={() => {
+                            chatClearPastedMedia($currentChat?.id, media.id)
+                        }}
+                    >
+                        <!-- svelte-ignore a11y_missing_attribute -->
+                        {#if media.data instanceof Blob}
+                            <img
+                                src={memoizeBlobUrl(media.data)}
+                                class="btn-image-attach"
+                            />
+                        {/if}
+                    </Pill>
+                {:else if media.type === ChatMediaType.TEXT}
+                    <Pill
+                        text="Text"
+                        dismissible
+                        enableTooltip
+                        color="var(--color-accent-complement)"
+                        on:dismiss={() => {
+                            chatClearPastedMedia($currentChat?.id, media.id)
+                        }}
+                    >
+                        <div class="btn-text-attach">{media.data}</div>
+                    </Pill>
+                {:else}
+                    ????
+                {/if}
+            {/key}
+        {/each}
+    {/if}
+</div>
 
 <!-- {#if $currentChat?.pastedMedia && $currentChat?.pastedMedia instanceof File}
     <Pill
@@ -233,11 +241,24 @@
 {/if} -->
 
 <style lang="scss">
-    .btn-image-attach {
-        position: relative;
-        right: 0px;
-        top: 0;
-        max-width: 256px;
-        max-height: 256px;
+    .input-attachments {
+        .btn-text-attach,
+        .btn-image-attach {
+            position: relative;
+            right: 0px;
+            top: 0;
+            max-width: 256px;
+            max-height: 256px;
+        }
+
+        .btn-text-attach {
+            text-wrap: wrap;
+            text-overflow: ellipsis;
+            height: fit-content;
+            overflow: hidden;
+            font-family: monospace;
+            font-size: 0.9em;
+            filter: blur(0.25);
+        }
     }
 </style>

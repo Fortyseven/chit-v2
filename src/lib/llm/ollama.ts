@@ -118,6 +118,8 @@ export class LLMInterface {
                         // convert blob to base64
                         let img64 = await convertFileToBase64(media.data)
                         images.push(img64 as string)
+                    } else if (media.type == ChatMediaType.TEXT && media.data) {
+                        msg += "\n\n```\n" + media.data.trim() + "\n```\n"
                     }
                 }
             }
