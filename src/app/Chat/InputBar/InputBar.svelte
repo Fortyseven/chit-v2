@@ -247,7 +247,7 @@
             width: 100%;
             max-width: var(--timeline-max-width);
             margin-inline: auto;
-            border-right: 4px solid red;
+            // border-right: 4px solid red;
 
             .chat-settings {
             }
