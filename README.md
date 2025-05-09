@@ -1,4 +1,4 @@
-# Chit 2 - Chat Interface for Ollama
+# Chit - Web-based Chat Interface for Ollama
 
 ![Chit Application Screenshot](./docs/screenshot.png)
 
