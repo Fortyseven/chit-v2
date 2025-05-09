@@ -27,7 +27,5 @@ export function applySystemPromptTemplates(prompt: string): string {
         newPrompt = newPrompt.replace(regex, template.resolver())
     }
 
-    console.debug("System prompt after template pass: ", newPrompt)
-
     return newPrompt
 }
