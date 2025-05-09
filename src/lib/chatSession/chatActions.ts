@@ -215,14 +215,17 @@ export function chatFind(chatId: String = ""): ChatSession | undefined {
 }
 
 //--------------------------------------------------------------
-export function chatChopLatest(chatId: String = ""): void {
+export function chatChopLatest(chatId: string = ""): string {
     chatId = getActiveChatId(chatId)
     // this is the entry before the one we're about to remove
+
+    let chopped_prev_msg = ""
 
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
                 const chopped_prev = chat.messages.slice(-1)[0]
+                chopped_prev_msg = chopped_prev.content
                 const updated = {
                     ...chat,
                     messages: chat.messages.slice(0, -1),
@@ -235,6 +238,8 @@ export function chatChopLatest(chatId: String = ""): void {
             return chat
         })
     )
+
+    return chopped_prev_msg
 }
 
 //--------------------------------------------------------------
