@@ -89,7 +89,7 @@
                 )
                 console.log("FILTERED EXIF DATA", filteredMetaData)
 
-                if (inputBoxEl) {
+                if (Object.entries(filteredMetaData).length && inputBoxEl) {
                     inputBoxEl.value += JSON.stringify(
                         filteredMetaData,
                         null,
