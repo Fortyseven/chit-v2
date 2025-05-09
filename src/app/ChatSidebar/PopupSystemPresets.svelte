@@ -52,6 +52,8 @@
             chatNew()
         }
         chatSetSystemPrompt($appState.activeChatId, prompt_def.prompt)
+
+        open = false
     }
 
     function handleKeyDown(event) {
