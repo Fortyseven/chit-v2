@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { derived } from "svelte/store"
     import {
         chatAddPastedMedia,
         chatClearPastedMedia,
@@ -8,9 +7,104 @@
     import { currentChat } from "../../../lib/chatSession/chatSession"
     import { memoizeBlobUrl } from "../../../lib/memoizeBlob"
     import { loadFile } from "../../../lib/utils"
+
+    import { EXIF } from "../../../vendor/exif"
     import Pill from "../../UI/Pill/Pill.svelte"
 
     export let inputBoxEl: HTMLTextAreaElement | undefined = undefined
+
+    const EXIF_IGNORE_TAGS = [
+        "ApertureValue",
+        "CFAPattern",
+        "ColorSpace",
+        "Contrast",
+        "CustomRendered",
+        "ExifIFDPointer",
+        "ExifVersion",
+        "ExposureBias",
+        "ExposureMode",
+        "ExposureProgram",
+        "ExposureTime",
+        "FileSource",
+        "Flash",
+        "FNumber",
+        "FocalLength",
+        "FocalLengthIn35mmFilm",
+        "FocalPlaneResolutionUnit",
+        "FocalPlaneXResolution",
+        "FocalPlaneYResolution",
+        "GainControl",
+        "ISOSpeedRatings",
+        "MaxApertureValue",
+        "MeteringMode",
+        "Orientation",
+        "PixelXDimension",
+        "PixelYDimension",
+        "ResolutionUnit",
+        "Saturation",
+        "SceneCaptureType",
+        "SceneType",
+        "SensingMethod",
+        "Sharpness",
+        "ShutterSpeedValue",
+        "SubjectDistanceRange",
+        "SubsecTime",
+        "SubsecTimeDigitized",
+        "SubsecTimeOriginal",
+        "thumbnail",
+        "undefined",
+        "UserComment",
+        "WhiteBalance",
+        "XResolution",
+        "YResolution",
+        "SamplesPerPixel",
+        "DigitalZoomRation",
+        "BrightnessValue",
+        "BitsPerSample",
+        "ImageWidth",
+        "ImageHeight",
+        "PhotometricInterpretation",
+    ]
+
+    /**
+     * Process the EXIF data from a blob, filtering out unwanted tags.
+     * @param {Blob} blob - The image blob to process
+     */
+
+    function processExifBlob(blob: Blob) {
+        const img = new Image()
+        img.src = URL.createObjectURL(blob)
+        img.onload = function () {
+            EXIF.getData(img, () => {
+                const allMetaData = EXIF.getAllTags(this)
+
+                const filteredMetaData = Object.entries(allMetaData).reduce(
+                    (acc, [key, value]) => {
+                        if (!EXIF_IGNORE_TAGS.includes(key)) {
+                            acc[key] = value
+                        }
+                        return acc
+                    },
+                    {} as Record<string, any>,
+                )
+                console.log("FILTERED EXIF DATA", filteredMetaData)
+
+                if (inputBoxEl) {
+                    inputBoxEl.value += JSON.stringify(
+                        filteredMetaData,
+                        null,
+                        2,
+                    )
+                }
+            })
+            URL.revokeObjectURL(img.src)
+        }
+
+        img.onerror = function (error) {
+            console.error("Error loading image:", error)
+            URL.revokeObjectURL(img.src)
+        }
+    }
 
     /* ------------------------------------------------------ */
     async function onClickAddContext() {
@@ -45,10 +139,13 @@
                     inputBoxEl.value += result
                 } else if (type.startsWith("image/")) {
                     console.log("UPLOADED TYPE", type)
-                    // const blob =
+                    const blob = new Blob([result], { type })
+
+                    processExifBlob(file)
+                    // console.log("UPLOADED FILE", result)
                     chatAddPastedMedia(
                         $currentChat?.id,
-                        new Blob([result], { type }),
+                        blob,
                         ChatMediaType.IMAGE,
                     )
                 } else {
