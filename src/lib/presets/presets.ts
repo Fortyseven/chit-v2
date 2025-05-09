@@ -148,7 +148,7 @@ function _loadYAML(content: string) {
 function _doParsePreset(content: string, filename: string = "") {
     const target_chat_id = get(appState).activeChatId
 
-    let prompt = undefined
+    let sprompt = undefined
     let model = undefined
     let settings = {}
 
@@ -157,25 +157,30 @@ function _doParsePreset(content: string, filename: string = "") {
     }
 
     if (filename.endsWith(".json")) {
-        ;({ prompt, model, settings } = _legacyLoadJSON(content))
+        ;({ prompt: sprompt, model, settings } = _legacyLoadJSON(content))
     } else if (filename.endsWith(".txt")) {
         // this is intended to only load a system prompt; this isn't
         // really a typical use case, but it is supported because it's
         // super simple and why the fuck not?
-        prompt = content
+        sprompt = content
     } else if (filename.endsWith(".yml") || filename.endsWith(".yaml")) {
-        ;({ prompt, model, settings } = _loadYAML(content))
+        ;({ prompt: sprompt, model, settings } = _loadYAML(content))
     } else {
         console.error("Unsupported file type")
         toast.push("Unsupported file type: " + filename)
     }
 
-    // now let's pull it together
+    // now let's pull it together ------------------------------
 
-    if (prompt) {
-        console.info("Prompt found: " + prompt)
-        chatSetSystemPrompt(target_chat_id, prompt)
+    if (sprompt) {
+        console.info("Prompt found: " + sprompt)
+        chatSetSystemPrompt(target_chat_id, sprompt)
+    } else {
+        console.info("No system prompt specified")
+        toast.push("No system prompt specified")
     }
+
+    // --
 
     if (model) {
         if (model && _modelAvailable(model)) {
@@ -187,14 +192,22 @@ function _doParsePreset(content: string, filename: string = "") {
             console.warn(msg)
             toast.push(msg)
         }
+    } else {
+        console.info("No model specified")
+        toast.push("No model specified")
     }
 
-    if (settings) {
+    // --
+
+    if (Object(settings).entries?.length) {
         console.info("Settings found: " + JSON.stringify(settings))
         chatUpdateSettings(target_chat_id, settings)
+    } else {
+        console.info("No settings specified")
+        toast.push("No settings specified")
     }
 
-    return prompt
+    return sprompt
 }
 
 /* ------------------------------------------------ */

@@ -47,10 +47,10 @@ export function loadFile(types: string[]): Promise<any> {
                 }
             }
             reader.onerror = () => reject(new Error("Error reading file"))
-            if (file.type.startsWith("text/")) {
-                reader.readAsText(file)
-            } else {
+            if (file.type.startsWith("image/")) {
                 reader.readAsArrayBuffer(file)
+            } else {
+                reader.readAsText(file)
             }
         }
         input.click()
