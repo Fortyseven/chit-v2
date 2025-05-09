@@ -33,29 +33,6 @@ export function chatAddPastedMedia(
     data: Blob | string,
     type: ChatMediaType
 ) {
-    // dump the first 100 bytes of the blob as hex/ascii
-
-    // if (data instanceof Blob) {
-    //     const reader = new FileReader()
-    //     reader.onload = (e) => {
-    //         const arrayBuffer = e.target?.result as ArrayBuffer
-    //         const uint8Array = new Uint8Array(arrayBuffer)
-    //         const hexString = Array.from(uint8Array)
-    //             .slice(0, 100)
-    //             .map((byte) => byte.toString(16).padStart(2, "0"))
-    //             .join(" ")
-    //         const asciiString = Array.from(uint8Array)
-    //             .slice(0, 100)
-    //             .map((byte) =>
-    //                 byte >= 32 && byte <= 126 ? String.fromCharCode(byte) : "."
-    //             )
-    //             .join("")
-    //         console.log("Blob data (hex):", hexString)
-    //         console.log("Blob data (ascii):", asciiString)
-    //     }
-    //     reader.readAsArrayBuffer(data)
-    // }
-
     chatId = getActiveChatId(chatId)
 
     if (!chatId) throw new Error("chatAddPastedMedia: chatId is required")
