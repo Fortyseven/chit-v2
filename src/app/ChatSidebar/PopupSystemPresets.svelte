@@ -104,6 +104,7 @@
             onclick={() => {
                 // alert("Saving presets is not yet implemented. One sec...")
                 savePresetToFile()
+                open = false
                 // pushToRecents($appState.activeChatId.system_prompt)
             }}
         >
@@ -115,6 +116,7 @@
             onclick={() => {
                 try {
                     loadPresetFromFile()
+                    open = false
                     // pushToRecents($appState.activeChatId.system_prompt)
                 } catch (e) {
                     console.error("Error loading preset:", e)
