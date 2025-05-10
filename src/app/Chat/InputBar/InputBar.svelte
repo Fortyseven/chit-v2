@@ -329,22 +329,4 @@
             }
         }
     }
-
-    .attachments {
-        display: flex;
-        flex-direction: column;
-
-        div {
-            display: block;
-            flex: 0 0 100%;
-            border: 2px solid red;
-        }
-        .btn-image-attach {
-            position: relative;
-            right: 0px;
-            top: 0;
-            max-width: 256px;
-            max-height: 256px;
-        }
-    }
 </style>

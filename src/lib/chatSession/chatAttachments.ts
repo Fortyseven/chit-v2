@@ -14,16 +14,19 @@ export interface MediaAttachment {
     id: string
     data: Blob | string
     type: ChatMediaType
+    filename?: string
 }
 
 function createMediaAttachment(
     data: Blob | string,
-    type: ChatMediaType
+    type: ChatMediaType,
+    filename: string = ""
 ): MediaAttachment {
     return {
         id: crypto.randomUUID(),
         data,
         type,
+        filename,
     }
 }
 
@@ -31,13 +34,14 @@ function createMediaAttachment(
 export function chatAddPastedMedia(
     chatId: String = "",
     data: Blob | string,
-    type: ChatMediaType
+    type: ChatMediaType,
+    filename: string = ""
 ) {
     chatId = getActiveChatId(chatId)
 
     if (!chatId) throw new Error("chatAddPastedMedia: chatId is required")
 
-    const newAttachment = createMediaAttachment(data, type)
+    const newAttachment = createMediaAttachment(data, type, filename)
 
     // add the pasted media to the chat
     chats.update(($chats) =>

@@ -39,7 +39,7 @@
 
 <div class="pill-container" bind:this={pillElement}>
     <button
-        class="pill"
+        class="pill small"
         aria-label={text}
         tabindex="0"
         style:background-color={bgColor}
@@ -87,9 +87,9 @@
         font-size: 0.7rem;
         padding: 2px 8px;
         white-space: nowrap;
-        cursor: default;
+        cursor: pointer;
         user-select: none;
-        font-weight: 500;
+        font-weight: normal;
         transition: opacity 0.2s ease;
         cursor: pointer;
         width: 100%;
@@ -113,6 +113,7 @@
         justify-content: center;
         margin-left: 2px;
         font-weight: bold;
+        color: black;
     }
 
     .dismiss-button:hover {

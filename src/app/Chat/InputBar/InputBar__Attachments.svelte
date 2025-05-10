@@ -141,6 +141,7 @@
                         $currentChat?.id,
                         result,
                         ChatMediaType.TEXT,
+                        file.name,
                     )
                 } else if (type.startsWith("image/")) {
                     console.log("UPLOADED TYPE", type)
@@ -152,6 +153,7 @@
                         $currentChat?.id,
                         blob,
                         ChatMediaType.IMAGE,
+                        file.name,
                     )
                 } else {
                     throw `Unsupported file type:${type}`
@@ -164,7 +166,9 @@
 </script>
 
 <div class="input-attachments">
-    <button class="small" onclick={onClickAddContext}>Add Context +</button>
+    <button class="btnAddContext" onclick={onClickAddContext}
+        >Add Context +</button
+    >
 
     {#if $currentChat?.pastedMedia}
         {#each $currentChat?.pastedMedia as media, index}
@@ -174,7 +178,8 @@
                         text="Image"
                         dismissible
                         enableTooltip
-                        color="var(--color-accent-complement)"
+                        color="var(--color-accent-complement-darker)"
+                        textColor="white"
                         on:dismiss={() => {
                             chatClearPastedMedia($currentChat?.id, media.id)
                         }}
@@ -189,10 +194,12 @@
                     </Pill>
                 {:else if media.type === ChatMediaType.TEXT}
                     <Pill
-                        text="Text"
+                        text={media.filename ||
+                            media.data.substr(0, 14) + "..."}
                         dismissible
                         enableTooltip
-                        color="var(--color-accent-complement)"
+                        color="var(--color-accent-complement-darker)"
+                        textColor="white"
                         on:dismiss={() => {
                             chatClearPastedMedia($currentChat?.id, media.id)
                         }}
@@ -207,41 +214,28 @@
     {/if}
 </div>
 
-<!-- {#if $currentChat?.pastedMedia && $currentChat?.pastedMedia instanceof File}
-    <Pill
-        text="File"
-        dismissible={$currentChat?.pastedMedia instanceof File}
-        color="var(--color-accent-complement)"
-        on:dismiss={() => {
-            chatClearPastedMedia()
-        }}
-    >
-        {$currentChat?.pastedMedia.name}
-    </Pill>
-{/if}
-
-{#if $currentChat?.pastedMedia && $currentChat?.pastedMedia instanceof Blob}
-    <Pill
-        text="Image"
-        dismissible={$currentChat?.pastedMedia &&
-            $currentChat?.pastedMedia instanceof Blob}
-        color="var(--color-accent-complement)"
-        on:dismiss={() => {
-            chatClearPastedMedia()
-        }}
-    >
-
-        <img
-            src={$currentChat?.pastedMedia
-                ? URL.createObjectURL($currentChat?.pastedMedia)
-                : ""}
-            class="btn-image-attach"
-        />
-    </Pill>
-{/if} -->
-
 <style lang="scss">
     .input-attachments {
+        display: flex;
+        gap: 0.25em;
+        flex-direction: column;
+
+        .btnAddContext {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            white-space: nowrap;
+            cursor: default;
+            user-select: none;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+            width: 100%;
+        }
+
         .btn-text-attach,
         .btn-image-attach {
             position: relative;
