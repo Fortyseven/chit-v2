@@ -11,7 +11,7 @@
     export let enableTooltip = false // Whether to show a tooltip
 
     // Internal state
-    let showTooltip = true
+    let showTooltip = false
     let pillElement
 
     const dispatch = createEventDispatcher()
@@ -83,7 +83,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 999px;
         font-size: 0.7rem;
         padding: 2px 8px;
         white-space: nowrap;
@@ -93,6 +92,12 @@
         transition: opacity 0.2s ease;
         cursor: pointer;
         width: 100%;
+        border-radius: 0;
+        border-top-left-radius: var(--border-radius-standard);
+        border-bottom-right-radius: var(--border-radius-standard);
+        border-top-right-radius: 0;
+        background-color: black !important;
+        outline: 1px solid #755;
     }
 
     .pill-text {
@@ -111,9 +116,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-left: 2px;
+        padding-left: 8px;
         font-weight: bold;
-        color: black;
+        color: var(--color-accent);
     }
 
     .dismiss-button:hover {
@@ -121,7 +126,7 @@
     }
 
     .pill:hover {
-        opacity: 0.9;
+        opacity: 0.5;
     }
 
     .tooltip {
