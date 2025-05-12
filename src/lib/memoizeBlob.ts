@@ -1,6 +1,6 @@
 const blobURLCache = new Map<Blob, string>()
 
-const BLOB_TIMEOUT = 5000 // 5 seconds
+const BLOB_TIMEOUT = 30000 // 30 seconds
 
 /**
  * Memoizes the blob URL for a given blob.
