@@ -20,7 +20,7 @@
     import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
     import InputBar__PasteHandler from "./InputBar__PasteHandler.svelte"
-    import Status from "./Status.svelte"
+    import Status from "./Status/Status.svelte"
 
     let inputBoxEl: HTMLTextAreaElement | undefined = undefined
 
@@ -236,7 +236,7 @@
         background: #fb01;
         backdrop-filter: blur(15px);
         filter: drop-shadow(0 0 2em #000);
-        padding-block: 1em;
+        padding-block-start: 1em;
 
         --input-bar-height: 100px;
 

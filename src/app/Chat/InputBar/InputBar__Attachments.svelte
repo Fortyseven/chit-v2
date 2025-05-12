@@ -144,7 +144,6 @@
                         file.name,
                     )
                 } else if (type.startsWith("image/")) {
-                    console.log("UPLOADED TYPE", type)
                     const blob = new Blob([result], { type })
 
                     processExifBlob(file)
@@ -166,9 +165,9 @@
 </script>
 
 <div class="input-attachments">
-    <button class="btnAddContext" onclick={onClickAddContext}
-        >Add Context +</button
-    >
+    <button class="btnAddContext" onclick={onClickAddContext}>
+        Add Context +
+    </button>
 
     {#if $currentChat?.pastedMedia}
         {#each $currentChat?.pastedMedia as media, index}
