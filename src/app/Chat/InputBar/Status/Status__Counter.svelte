@@ -13,53 +13,44 @@
 
     $: fullChatLength = systemPromptLength + conversationLength + inputLength
     $: overflow = fullChatLength >= contextLimit
+
+    $: title =
+        [inputLength, systemPromptLength, conversationLength].join(" + ") +
+        ` = ${fullChatLength} / ${contextLimit} tokens (input, system, conversation)`
 </script>
 
 <div class="counter">
-    {#if inputLength + systemPromptLength > 0}
-        {#if inputLength}
-            <span title="User tokens" class="user-input">
-                {inputLength}
-            </span>
-        {/if}
-        {#if inputLength && systemPromptLength}
-            +
-        {/if}
-        {#if systemPromptLength}
-            <span title="System prompt tokens" class="system-prompt">
-                {systemPromptLength}
-            </span>
-        {/if}
-        {#if systemPromptLength && conversationLength}
-            +
-        {/if}
-        {#if conversationLength}
-            <span title="Current conversation length">
-                {conversationLength}
-            </span>
-        {/if}
-        <span>=</span>
-        <span class:overflow title="Proposed combined tokens" class="total">
-            {fullChatLength}
-        </span>
-    {/if}
+    <meter
+        id="ContextMeter"
+        min="0"
+        max={contextLimit}
+        high={contextLimit * 0.8}
+        value={fullChatLength}
+        {title}
+        class:overflow
+    ></meter>
 </div>
 
 <style lang="scss">
     .counter {
-        text-align: center;
-        font-family: monospace;
-        text-transform: uppercase;
-        letter-spacing: -1px;
+        // text-align: center;
+        // font-family: monospace;
+        // text-transform: uppercase;
+        // letter-spacing: -1px;
 
-        color: var(--color-accent);
+        // color: var(--color-accent);
+        width: 100%;
 
-        .total {
-            color: var(--color-accent-success-lighter);
-
+        #ContextMeter {
+            width: 100%;
+            height: 1em;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(to bottom, #333 25%, #666 100%);
             &.overflow {
                 color: #f00;
-                font-weight: bold;
+                outline: 3px solid #f00;
+
                 // pulse
                 @keyframes pulse {
                     0% {
@@ -74,15 +65,6 @@
                 }
                 animation: pulse 1.5s infinite;
             }
-        }
-        .system-prompt {
-            color: var(--color-accent-complement);
-            font-weight: bold;
-        }
-
-        .user-input {
-            color: var(--color-text);
-            font-weight: bold;
         }
     }
 </style>
