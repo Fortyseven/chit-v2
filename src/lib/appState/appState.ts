@@ -10,6 +10,7 @@ export interface AppState {
     backpackApiEndpoint: String
     soundEnabled: boolean
     defaultPrompt: string
+    backpackHeartbeatTimer: any
 }
 
 export const appStateDefaults: AppState = {
@@ -18,6 +19,7 @@ export const appStateDefaults: AppState = {
     backpackApiEndpoint: DEFAULT_BP_ENDPOINT,
     soundEnabled: true,
     defaultPrompt: "",
+    backpackHeartbeatTimer: null,
 }
 
 export const appState = writable<AppState>({

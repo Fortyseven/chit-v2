@@ -8,10 +8,6 @@
     let backpackAlive = false
     let backpackAdaptiveInterval = RETRY_INTERVAL
 
-    let heartbeat_timer = setTimeout(() => {
-        checkBackpack()
-    }, backpackAdaptiveInterval)
-
     const checkBackpack = async () => {
         if ($appState.backpackApiEndpoint) {
             try {
@@ -24,7 +20,10 @@
                 backpackAdaptiveInterval = RETRY_INTERVAL
                 backpackAlive = false
             } finally {
-                heartbeat_timer = setTimeout(() => {
+                if ($appState.backpackHeartbeatTimer) {
+                    clearTimeout($appState.backpackHeartbeatTimer)
+                }
+                $appState.backpackHeartbeatTimer = setTimeout(() => {
                     checkBackpack()
                 }, backpackAdaptiveInterval)
             }
