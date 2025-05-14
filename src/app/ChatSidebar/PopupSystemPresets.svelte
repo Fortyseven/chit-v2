@@ -112,6 +112,7 @@
             title="Load Preset"
             onclick={() => {
                 try {
+                    chatNew()
                     loadPresetFromFile()
                     open = false
                     // pushToRecents($appState.activeChatId.system_prompt)
