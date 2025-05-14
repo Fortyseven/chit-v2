@@ -14,7 +14,7 @@
         loadPresetFromFile,
         savePresetToFile,
     } from "../../lib/presets/presets"
-    import SYSTEM_PROMPTS from "../../preset-prompts/index.js"
+    import { FUN_PROMPTS, SYSTEM_PROMPTS } from "../../preset-prompts/index.js"
 
     const PREVIEW_CUTOFF_LENGTH = 30
 
@@ -86,16 +86,13 @@
             {p.name}{appendMode ? " +" : ""}
         </button>
     {/each}
-    <!-- <hr />
-    <div class="recents">
-        {#each recents as prompt}
-            <button class="btn-preset" onclick={() => selectPrompt(prompt)}>
-                {prompt.length > PREVIEW_CUTOFF_LENGTH
-                    ? prompt.slice(0, PREVIEW_CUTOFF_LENGTH) + "..."
-                    : prompt}
-            </button>
-        {/each}
-    </div> -->
+    <hr />
+    {#each Object.keys(FUN_PROMPTS) as skey}
+        {@const p = FUN_PROMPTS[skey]}
+        <button class="btn-preset" onclick={() => selectPrompt(p)}>
+            {p.name}{appendMode ? " +" : ""}
+        </button>
+    {/each}
     <hr />
     <div class="btn-load-save">
         <button
