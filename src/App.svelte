@@ -1,5 +1,5 @@
 <script>
-    import ChatHeader from "./app/Chat/ChatHeader.svelte"
+    import ChatHeader from "./app/Chat/Timeline/ChatHeader/ChatHeader.svelte"
 
     import { afterUpdate } from "svelte"
 

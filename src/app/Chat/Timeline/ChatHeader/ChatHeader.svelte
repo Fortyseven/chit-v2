@@ -1,11 +1,11 @@
 <script>
-    import ChatKnobs from "./ChatKnobs/ChatKnobs.svelte"
+    import ChatKnobs from "../../ChatKnobs/ChatKnobs.svelte"
 
-    import { currentChat } from "../../lib/chatSession/chatSession"
+    import { currentChat } from "../../../../lib/chatSession/chatSession"
 
-    import "../../lib/appState/appStateStorage"
-    import "../../lib/audio"
-    import "../../lib/chatSession/chatStorage"
+    import "../../../../lib/appState/appStateStorage"
+    import "../../../../lib/audio"
+    import "../../../../lib/chatSession/chatStorage"
 </script>
 
 <header>
@@ -41,14 +41,6 @@
             text-wrap: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
-            // @media (max-width: 768px) {
-            //     width: 100%;
-            //     font-size: var(--text-2xl) /* 1.5rem = 24px */;
-            //     line-height: var(
-            //         --tw-leading,
-            //         var(--text-2xl--line-height) /* calc(2 / 1.5) ≈ 1.3333 */
-            //     );
-            // }
         }
 
         .knobs {
