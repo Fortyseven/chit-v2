@@ -22,17 +22,19 @@
             {#key message}
                 {#if message.role === "user"}
                     {#if message.media && message.media.length > 0}
-                        {#each message.media as media}
-                            {#if media.type === ChatMediaType.IMAGE}
-                                <div class="media-attachment">
-                                    <img
-                                        src={memoizeBlobUrl(media?.data)}
-                                        alt="Media Attachment"
-                                        class="max-h-48 m-auto"
-                                    />
-                                </div>
-                            {/if}
-                        {/each}
+                        <div class="media-container">
+                            {#each message.media as media}
+                                {#if media.type === ChatMediaType.IMAGE}
+                                    <div class="media-attachment">
+                                        <img
+                                            src={memoizeBlobUrl(media?.data)}
+                                            alt="Media Attachment"
+                                            class="media-attachment-image"
+                                        />
+                                    </div>
+                                {/if}
+                            {/each}
+                        </div>
                     {/if}
                     {#if message.content}
                         <ChatLogRegular_User line={message.content}
@@ -67,16 +69,23 @@
         max-width: var(--timeline-max-width);
         margin-inline: auto;
         font-size: 1.25em;
-        margin-block: 5rem 12rem;
+        margin-block: 6rem 12rem;
         padding-inline: 1em;
 
-        .media-attachment {
-            margin-block-start: 1em;
-            margin-block-end: 0.5em;
-            img {
-                max-width: 50%;
-                border-radius: var(--border-radius-standard);
-                box-shadow: 0 0 20px rgba(0, 0, 0, 1);
+        .media-container {
+            display: flex;
+            gap: 1em;
+            flex-wrap: wrap;
+            .media-attachment {
+                margin-block-start: 1em;
+                margin-block-end: 0.5em;
+                img {
+                    max-width: 512px;
+                    max-height: 512px;
+                    outline: 4px solid var(--color-background-lighter);
+                    border-radius: var(--border-radius-standard);
+                    box-shadow: 0 0 40px rgba(0, 0, 0, 1);
+                }
             }
         }
     }
