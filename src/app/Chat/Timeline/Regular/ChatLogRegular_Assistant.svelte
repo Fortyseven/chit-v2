@@ -31,11 +31,14 @@
 
     // Context menu actions
     const menuItems = [
-        { name: "Copy to clipboard", action: () => copyToClipboard() },
-        { name: "Regenerate response", action: () => regenerateResponse() },
+        { name: "Copy response", action: () => copyToClipboard() },
+        {
+            name: "Regenerate response",
+            action: () => regenerateResponse(),
+        },
         { name: "-" }, // Separator
-        { name: "Save as markdown", action: () => saveAsFile("md") },
-        { name: "Save as text", action: () => saveAsFile("txt") },
+        { name: "Save response as markdown", action: () => saveAsFile("md") },
+        { name: "Save response as text", action: () => saveAsFile("txt") },
     ]
 
     function toggleContextMenu(event) {
@@ -108,13 +111,8 @@
     })
 </script>
 
-<div
-    class="response markdown bot"
-    role="button"
-    tabindex="0"
-    on:contextmenu={toggleContextMenu}
-    class:inprogress
->
+<!-- on:contextmenu={toggleContextMenu} -->
+<div class="response markdown bot" role="button" tabindex="0" class:inprogress>
     <div class="message-controls">
         <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
     </div>
@@ -151,6 +149,8 @@
         border-top: 1px solid #fff2;
         margin: auto;
         position: relative;
+        overflow-y: clip;
+        overflow-x: scroll;
 
         &.inprogress {
             //
@@ -182,6 +182,10 @@
                 }
             }
         }
+
+        pre {
+            overflow: scroll;
+        }
     }
 
     .context-menu {
@@ -189,17 +193,19 @@
         border-radius: var(--border-radius-standard);
         box-shadow: 0 0 10px black;
         z-index: 1000;
-        padding: 0.25em;
-        font-size: 0.8em;
+        padding: 0;
+        font-size: 0.75em;
+        padding-block: 0.5em;
 
         button {
             background: transparent;
             color: var(--color-accent);
-            margin-block: 0.25em;
-            padding-inline: 1em;
+            margin: 0;
+            padding-block: 0.25em;
             display: block;
             width: 100%;
             text-align: left;
+            font-weight: unset;
 
             &:hover {
                 background-color: var(--color-accent);
@@ -209,9 +215,9 @@
 
         hr {
             border: none;
-            border-top: 1px solid var(--color-accent-darker);
+            border-top: 1px solid var(--color-accent-complement-darker);
             opacity: 0.5;
-            margin: 1em 1em !important;
+            margin: 0.5em 1em !important;
         }
     }
 </style>
