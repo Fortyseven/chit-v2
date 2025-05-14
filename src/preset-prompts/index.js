@@ -1,8 +1,8 @@
 import analysis from "./analysis.js"
-import appearanceAssessment from "./fun/appearance-assessment.js"
 import codealyzer from "./codealyzer.js"
 import eli5 from "./eli5.js"
 import extract_and_infer from "./extract-and-infer.js"
+import appearanceAssessment from "./fun/appearance-assessment.js"
 import facial_analysis from "./fun/facial-analysis.js"
 import linux_prompt from "./fun/linux-prompt.js"
 import general from "./general.js"
@@ -28,7 +28,7 @@ export const SYSTEM_PROMPTS = {
 }
 
 export const FUN_PROMPTS = {
-    appearanceAssessment
+    appearanceAssessment,
     facial_analysis,
     linux_prompt,
 }
