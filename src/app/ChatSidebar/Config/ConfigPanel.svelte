@@ -1,8 +1,14 @@
 <script>
     import { appState } from "$lib/appState/appState"
-    import { appStateSetApiEndpoint } from "$lib/appState/appStateActions"
+    import {
+        appStateSetBackpackApiEndpoint,
+        appStateSetChatApiEndpoint,
+    } from "$lib/appState/appStateActions"
     import { onDestroy } from "svelte"
-    import { DEFAULT_OL_ENDPOINT } from "../../../lib/appState/appState"
+    import {
+        DEFAULT_BP_ENDPOINT,
+        DEFAULT_OL_ENDPOINT,
+    } from "../../../lib/appState/appState"
 
     export let open = false
     let keydownHandler
@@ -16,14 +22,6 @@
             closePanel()
         }
     }
-
-    // appState.subscribe((state) => {
-    //     if (!state.apiEndpoint) {
-    //         $appState.apiEndpoint = DEFAULT_OL_ENDPOINT
-    //     } else {
-    //         $appState.apiEndpoint = state.apiEndpoint
-    //     }
-    // })
 
     $: {
         if (open) {
@@ -73,13 +71,28 @@
                     id="ollama-api-endpoint"
                     type="text"
                     placeholder={DEFAULT_OL_ENDPOINT}
-                    value={$appState.apiEndpoint}
-                    on:input={(e) => appStateSetApiEndpoint(e.target.value)}
+                    value={$appState.chatApiEndpoint}
+                    on:input={(e) => appStateSetChatApiEndpoint(e.target.value)}
                     on:focusout={(e) => {
                         if (e.target.value === "") {
-                            appStateSetApiEndpoint(DEFAULT_OL_ENDPOINT)
+                            appStateSetChatApiEndpoint(DEFAULT_OL_ENDPOINT)
                         }
                     }}
+                />
+            </div>
+
+            <div class="form-group">
+                <label
+                    for="backpack-api-endpoint"
+                    title="The API endpoint for Chit Backpack."
+                    >Chit Backpack Endpoint (Enables enhanced mode.)</label
+                >
+                <input
+                    id="ollama-api-endpoint"
+                    type="text"
+                    value={$appState.backpackApiEndpoint}
+                    on:input={(e) =>
+                        appStateSetBackpackApiEndpoint(e.target.value)}
                 />
             </div>
 

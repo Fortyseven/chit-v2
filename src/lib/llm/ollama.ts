@@ -30,14 +30,14 @@ export class LLMInterface {
             // only reinstantiate if the host has changed
             if (
                 this.first_load ||
-                get(this.ol_instance_host) !== get(appState).apiEndpoint
+                get(this.ol_instance_host) !== get(appState).chatApiEndpoint
             ) {
                 this.ol_instance.set(
                     new Ollama({
-                        host: get(appState).apiEndpoint as string,
+                        host: get(appState).chatApiEndpoint as string,
                     })
                 )
-                this.ol_instance_host.set(get(appState).apiEndpoint)
+                this.ol_instance_host.set(get(appState).chatApiEndpoint)
 
                 console.log(
                     "🤖🌎 Updated Ollama instance host to ",
@@ -181,7 +181,7 @@ const llm_instance = new LLMInterface()
 await llm_instance.instantiateOL()
 
 appState.subscribe((state) => {
-    if (state.apiEndpoint !== get(llm_instance.ol_instance_host)) {
+    if (state.chatApiEndpoint !== get(llm_instance.ol_instance_host)) {
         llm_instance.instantiateOL()
     }
 })

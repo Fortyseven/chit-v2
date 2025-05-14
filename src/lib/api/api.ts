@@ -17,15 +17,18 @@ export const wasAborted = writable(false)
  */
 export async function OL_model_details(model_name: String) {
     try {
-        const response = await fetch(`${get(appState).apiEndpoint}/api/show`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: model_name,
-            }),
-        })
+        const response = await fetch(
+            `${get(appState).chatApiEndpoint}/api/show`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: model_name,
+                }),
+            }
+        )
 
         let details = await response.json()
 

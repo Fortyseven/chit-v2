@@ -1,4 +1,5 @@
 <script lang="ts">
+    import BackpackIndicator from "./BackpackIndicator.svelte"
     import Status__Counter from "./Status__Counter.svelte"
 
     export let inputLength = 0
@@ -10,7 +11,9 @@
         <div class="center">
             <Status__Counter {inputLength} />
         </div>
-        <div class="right"></div>
+        <div class="right">
+            <BackpackIndicator />
+        </div>
     </div>
 </div>
 
