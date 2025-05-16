@@ -216,8 +216,13 @@
 <style lang="scss">
     .input-attachments {
         display: flex;
-        gap: 0.25em;
+        gap: 4px;
         flex-direction: column;
+        flex-wrap: wrap;
+        height: 100%;
+        :global(.pill):hover {
+            background: var(--color-background-lighter) !important;
+        }
 
         .btnAddContext {
             display: flex;

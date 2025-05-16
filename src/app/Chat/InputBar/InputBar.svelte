@@ -16,6 +16,7 @@
     } from "../../../lib/chatSession/chatActions"
     import { chatClearAllPastedMedia } from "../../../lib/chatSession/chatAttachments"
     import { chats, currentChat } from "../../../lib/chatSession/chatSession"
+    import { handleCommand } from "../../../lib/inputCommands"
     import IconButton from "../../UI/IconButton.svelte"
     import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
@@ -42,9 +43,39 @@
     })
 
     /* ------------------------------------------------------ */
+    async function launchCommand(command: string): Promise<string> {
+        let result = ""
+        try {
+            result = await handleCommand(command)
+        } finally {
+            if (inputBoxEl) {
+                inputBoxValue = result
+                inputBoxEl.value = result
+                inputBoxEl.focus()
+            }
+        }
+
+        return ""
+    }
+
+    /* ------------------------------------------------------ */
     async function _submitUserMessage(user_message: string | undefined) {
         if (!inputBoxEl || !$appState.activeChatId) {
             throw new Error("inputBoxEl is not defined or some such")
+        }
+
+        if (user_message?.startsWith("/")) {
+            // handle command
+            const command = user_message.substring(1).trim()
+            let result = undefined
+            if ((result = await launchCommand(command))) {
+                inputBoxEl.value = result
+                inputBoxValue = result
+            } else {
+                // if the command is not recognized, just return
+                console.warn("Command not recognized:", command)
+                return
+            }
         }
 
         if (!user_message && !$currentChat?.pastedMedia) {

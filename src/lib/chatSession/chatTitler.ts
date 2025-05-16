@@ -68,11 +68,6 @@ export async function chatGenerateTitle(chatId: String = "") {
         },
     })
 
-    console.log(
-        "🤖📡 Generated title:",
-        Title.parse(JSON.parse(response?.message.content)).short_summary_title
-    )
-
     chatSetTitle(
         chatId,
         Title.parse(JSON.parse(response?.message.content)).short_summary_title
