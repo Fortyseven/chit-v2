@@ -10,9 +10,22 @@
     import { memoizeBlobUrl } from "../../../../lib/memoizeBlob"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
+    import FloatingImage from "./FloatingImage.svelte"
 
     function isObjectEmpty(obj: any) {
         return Object.keys(obj).length === 0
+    }
+
+    // Track floating images
+    let floatingImages = []
+
+    function openFloatingImage(mediaData) {
+        const imageUrl = memoizeBlobUrl(mediaData)
+        floatingImages = [...floatingImages, imageUrl]
+    }
+
+    function closeFloatingImage(imageUrl) {
+        floatingImages = floatingImages.filter((url) => url !== imageUrl)
     }
 </script>
 
@@ -30,6 +43,8 @@
                                             src={memoizeBlobUrl(media?.data)}
                                             alt="Media Attachment"
                                             class="media-attachment-image"
+                                            on:click={() =>
+                                                openFloatingImage(media?.data)}
                                         />
                                     </div>
                                 {/if}
@@ -60,6 +75,15 @@
     {/if}
 </div>
 
+<!-- Floating images container -->
+{#each floatingImages as imageUrl}
+    <FloatingImage
+        src={imageUrl}
+        alt="Floating Media"
+        on:close={() => closeFloatingImage(imageUrl)}
+    />
+{/each}
+
 <style lang="scss">
     #ChatLogRegular {
         width: stretch;
@@ -85,6 +109,12 @@
                     outline: 4px solid var(--color-background-lighter);
                     border-radius: var(--border-radius-standard);
                     box-shadow: 0 0 40px rgba(0, 0, 0, 1);
+                    cursor: pointer;
+                    transition: transform 0.2s;
+
+                    &:hover {
+                        transform: scale(1.02);
+                    }
                 }
             }
         }
