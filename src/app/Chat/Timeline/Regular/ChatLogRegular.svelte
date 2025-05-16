@@ -17,14 +17,14 @@
     }
 
     // Track floating images
-    let floatingImages = []
+    let floatingImages: any[] = []
 
-    function openFloatingImage(mediaData) {
+    function openFloatingImage(mediaData: Blob) {
         const imageUrl = memoizeBlobUrl(mediaData)
         floatingImages = [...floatingImages, imageUrl]
     }
 
-    function closeFloatingImage(imageUrl) {
+    function closeFloatingImage(imageUrl: string) {
         floatingImages = floatingImages.filter((url) => url !== imageUrl)
     }
 </script>
@@ -39,12 +39,18 @@
                             {#each message.media as media}
                                 {#if media.type === ChatMediaType.IMAGE}
                                     <div class="media-attachment">
+                                        <!-- svelte-ignore a11y_click_events_have_key_events -->
+                                        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
                                         <img
-                                            src={memoizeBlobUrl(media?.data)}
+                                            src={memoizeBlobUrl(
+                                                media?.data as Blob,
+                                            )}
                                             alt="Media Attachment"
                                             class="media-attachment-image"
                                             on:click={() =>
-                                                openFloatingImage(media?.data)}
+                                                openFloatingImage(
+                                                    media?.data as Blob,
+                                                )}
                                         />
                                     </div>
                                 {/if}
