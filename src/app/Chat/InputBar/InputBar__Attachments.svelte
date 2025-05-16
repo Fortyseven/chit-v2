@@ -177,6 +177,7 @@
                         text="Image"
                         dismissible
                         enableTooltip
+                        startOpenTooltip
                         color="var(--color-accent-complement-darker)"
                         textColor="white"
                         on:dismiss={() => {
@@ -197,6 +198,7 @@
                             media.data.substr(0, 14) + "..."}
                         dismissible
                         enableTooltip
+                        startOpenTooltip
                         color="var(--color-accent-complement-darker)"
                         textColor="white"
                         on:dismiss={() => {

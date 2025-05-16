@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher } from "svelte"
+    import { createEventDispatcher, onMount } from "svelte"
 
     // Props for customizing the pill
     export let text = "" // Text to display in the pill
@@ -9,9 +9,10 @@
     export let color = "" // Hex color value (will override backgroundColor if provided)
     export let dismissible = false // Whether to show an X button to dismiss the pill
     export let enableTooltip = false // Whether to show a tooltip
+    export let startOpenTooltip = false // Whether to start with the tooltip open
 
     // Internal state
-    let showTooltip = false
+    let showTooltip = startOpenTooltip
     let pillElement
 
     const dispatch = createEventDispatcher()
@@ -32,6 +33,14 @@
         e.stopPropagation() // Prevent triggering the pill click event
         dispatch("dismiss")
     }
+
+    onMount(() => {
+        if (startOpenTooltip) {
+            setTimeout(() => {
+                showTooltip = false
+            }, 5000)
+        }
+    })
 
     // Use color prop if provided, otherwise use backgroundColor
     $: bgColor = color || backgroundColor
