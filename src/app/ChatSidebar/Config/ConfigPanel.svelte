@@ -9,110 +9,98 @@
         DEFAULT_BP_ENDPOINT,
         DEFAULT_OL_ENDPOINT,
     } from "../../../lib/appState/appState"
+    import Modal from "../../UI/Modal.svelte"
 
     export let open = false
-    let keydownHandler
+    // let keydownHandler
 
-    function closePanel() {
-        open = false
-    }
+    // function closePanel() {
+    //     open = false
+    // }
 
-    function handleKeydown(event) {
-        if (event.key === "Escape" && open) {
-            closePanel()
-        }
-    }
+    // function handleKeydown(event) {
+    //     if (event.key === "Escape" && open) {
+    //         closePanel()
+    //     }
+    // }
 
-    $: {
-        if (open) {
-            // Add event listener when panel opens
-            window.addEventListener("keydown", handleKeydown)
-            keydownHandler = handleKeydown
-        } else if (keydownHandler) {
-            // Remove event listener when panel closes
-            window.removeEventListener("keydown", keydownHandler)
-        }
-    }
+    // $: {
+    //     if (open) {
+    //         // Add event listener when panel opens
+    //         window.addEventListener("keydown", handleKeydown)
+    //         keydownHandler = handleKeydown
+    //     } else if (keydownHandler) {
+    //         // Remove event listener when panel closes
+    //         window.removeEventListener("keydown", keydownHandler)
+    //     }
+    // }
 
-    onDestroy(() => {
-        // Clean up event listener when component is destroyed
-        if (keydownHandler) {
-            window.removeEventListener("keydown", keydownHandler)
-        }
-    })
+    // onDestroy(() => {
+    //     // Clean up event listener when component is destroyed
+    //     if (keydownHandler) {
+    //         window.removeEventListener("keydown", keydownHandler)
+    //     }
+    // })
 </script>
 
 {#if open}
-    <div class="config-panel">
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="backdrop" on:click={closePanel}></div>
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="modal" on:click|stopPropagation>
-            <h2>Configuration Panel</h2>
-
-            <div class="form-group">
-                <label
-                    for="audio-feedback"
-                    title="Enable or disable audio feedback."
-                    >Audio feedback</label
-                >
-                <input type="checkbox" bind:checked={$appState.soundEnabled} />
-            </div>
-
-            <div class="form-group">
-                <label
-                    for="ollama-api-endpoint"
-                    title="The API endpoint for Ollama with a specific URL."
-                    >Ollama API Endpoint</label
-                >
-                <input
-                    id="ollama-api-endpoint"
-                    type="text"
-                    placeholder={DEFAULT_OL_ENDPOINT}
-                    value={$appState.chatApiEndpoint}
-                    on:input={(e) => appStateSetChatApiEndpoint(e.target.value)}
-                    on:focusout={(e) => {
-                        if (e.target.value === "") {
-                            appStateSetChatApiEndpoint(DEFAULT_OL_ENDPOINT)
-                        }
-                    }}
-                />
-            </div>
-
-            <div class="form-group">
-                <label
-                    for="backpack-api-endpoint"
-                    title="The API endpoint for Chit Backpack."
-                    >Chit Backpack Endpoint (Enables enhanced mode.)</label
-                >
-                <input
-                    id="ollama-api-endpoint"
-                    type="text"
-                    value={$appState.backpackApiEndpoint}
-                    on:input={(e) =>
-                        appStateSetBackpackApiEndpoint(e.target.value)}
-                />
-            </div>
-
-            <div class="form-group">
-                <label
-                    for="default-prompt"
-                    title="Prompt that populates the system prompt for all new sessions when not loaded from a preset."
-                    >Default Prompt</label
-                >
-                <textarea
-                    id="default-prompt"
-                    rows="4"
-                    placeholder="Enter your default prompt here..."
-                    bind:value={$appState.defaultPrompt}
-                ></textarea>
-            </div>
-
-            <button on:click={closePanel} style="float: right;">Close</button>
+    <Modal title="Configuration Panel" {open} on:close={closePanel}>
+        <div class="form-group">
+            <label
+                for="audio-feedback"
+                title="Enable or disable audio feedback.">Audio feedback</label
+            >
+            <input type="checkbox" bind:checked={$appState.soundEnabled} />
         </div>
-    </div>
+
+        <div class="form-group">
+            <label
+                for="ollama-api-endpoint"
+                title="The API endpoint for Ollama with a specific URL."
+                >Ollama API Endpoint</label
+            >
+            <input
+                id="ollama-api-endpoint"
+                type="text"
+                placeholder={DEFAULT_OL_ENDPOINT}
+                value={$appState.chatApiEndpoint}
+                on:input={(e) => appStateSetChatApiEndpoint(e.target.value)}
+                on:focusout={(e) => {
+                    if (e.target.value === "") {
+                        appStateSetChatApiEndpoint(DEFAULT_OL_ENDPOINT)
+                    }
+                }}
+            />
+        </div>
+
+        <div class="form-group">
+            <label
+                for="backpack-api-endpoint"
+                title="The API endpoint for Chit Backpack."
+                >Chit Backpack Endpoint (Enables enhanced mode.)</label
+            >
+            <input
+                id="ollama-api-endpoint"
+                type="text"
+                value={$appState.backpackApiEndpoint}
+                on:input={(e) => appStateSetBackpackApiEndpoint(e.target.value)}
+            />
+        </div>
+
+        <div class="form-group">
+            <label
+                for="default-prompt"
+                title="Prompt that populates the system prompt for all new sessions when not loaded from a preset."
+                >Default Prompt</label
+            >
+            <textarea
+                id="default-prompt"
+                rows="4"
+                placeholder="Enter your default prompt here..."
+                bind:value={$appState.defaultPrompt}
+            ></textarea>
+        </div>
+    </Modal>
 {/if}
 
 <style>
