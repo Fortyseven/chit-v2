@@ -39,7 +39,7 @@ export async function chatGenerateTitle(chatId: String = "") {
 
     conversation =
         "\n```\n" +
-        chat_session?.system_prompt +
+        chat_session?.systemPrompt +
         "\n\n" +
         conversation +
         "\n```\n"

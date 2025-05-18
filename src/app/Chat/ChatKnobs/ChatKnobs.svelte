@@ -1,7 +1,7 @@
 <script>
     import { appState } from "../../../lib/appState/appState"
     import ModelSelect from "./ModelSelect.svelte"
-    import SystemPrompt from "./SystemPrompt.svelte"
+    import SystemPrompt from "./SystemPrompt/SystemPrompt.svelte"
 </script>
 
 <div id="ChatKnobs">

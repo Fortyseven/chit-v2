@@ -39,7 +39,7 @@ export function populateTestData(reset = true) {
             createdAt: chatCreated,
             updatedAt: messages[messages.length - 1].timestamp,
             model_name: "llama3.2:latest",
-            system_prompt: "This is a system prompt for chat " + i,
+            systemPrompt: "This is a system prompt for chat " + i,
             response_buffer: "",
         })
     }

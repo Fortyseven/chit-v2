@@ -36,14 +36,14 @@ interface Options {
 }
 
 interface Config {
-    system_prompt: string
+    systemPrompt: string
     model_name: string
     variables: Variables
     options: Options
 }
 
 const defaults: Config = {
-    system_prompt: "",
+    systemPrompt: "",
     model_name: "",
     variables: {
         char: "Assistant",
@@ -112,7 +112,7 @@ function _loadYAML(content: string) {
     // if (data.variables) {
     //     for (const [key, value] of Object.entries(data.variables)) {
     //         if (typeof value === "string") {
-    //             data.system_prompt = data.system_prompt.replace(
+    //             data.systemPrompt = data.systemPrompt.replace(
     //                 `{{${key}}}`,
     //                 value
     //             )
@@ -122,8 +122,8 @@ function _loadYAML(content: string) {
     //     }
     // }
 
-    if (data.system_prompt) {
-        prompt = data.system_prompt
+    if (data.systemPrompt) {
+        prompt = data.systemPrompt
     }
 
     if (data.model_name) {
@@ -232,7 +232,7 @@ export function savePresetToFile() {
     const chat = chatFind(active_chat_id)
 
     const data = {
-        system_prompt: chat?.system_prompt,
+        systemPrompt: chat?.systemPrompt,
         model_name: chat?.model_name,
         // variables: chat.variables,
         options: chat?.settings,

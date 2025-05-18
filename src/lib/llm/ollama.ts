@@ -96,11 +96,11 @@ export class LLMInterface {
         let messages: Message[] = []
 
         // ---- System prompt ----
-        if (chat_session.system_prompt) {
+        if (chat_session.systemPrompt) {
             messages.push({
                 role: "system",
                 content: applySystemPromptTemplates(
-                    chat_session.system_prompt as string
+                    chat_session.systemPrompt as string
                 ),
             })
         }

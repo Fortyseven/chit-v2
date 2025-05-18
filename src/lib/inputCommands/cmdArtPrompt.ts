@@ -36,7 +36,7 @@ export default async function (args: string[]): Promise<string> {
 
     conversation =
         "\n```\n" +
-        chat_session?.system_prompt +
+        chat_session?.systemPrompt +
         "\n\n" +
         conversation +
         "\n```\n"

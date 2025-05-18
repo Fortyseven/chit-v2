@@ -56,6 +56,7 @@
     }
 
     function copyToClipboard() {
+        //navigator.clipboard.writeText(line.content)
         navigator.clipboard.writeText(line)
         closeContextMenu()
     }

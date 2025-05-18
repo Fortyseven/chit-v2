@@ -1,11 +1,12 @@
 <script>
     import { onMount } from "svelte"
     import { derived, writable } from "svelte/store"
-    import { appState } from "../../../lib/appState/appState"
-    import { chatSetSystemPrompt } from "../../../lib/chatSession/chatActions"
-    import { currentChat } from "../../../lib/chatSession/chatSession"
+    import { appState } from "../../../../lib/appState/appState"
+    import { chatSetSystemPrompt } from "../../../../lib/chatSession/chatActions"
+    import { currentChat } from "../../../../lib/chatSession/chatSession"
+    import Variables from "./Variables.svelte"
 
-    let sys_prompt_state = writable($currentChat.system_prompt)
+    let sys_prompt_state = writable($currentChat.systemPrompt)
 
     sys_prompt_state.subscribe((value) => {
         chatSetSystemPrompt($appState.activeChatId, value)
@@ -13,7 +14,7 @@
 
     currentChat.subscribe((value) => {
         if ($currentChat) {
-            sys_prompt_state.set($currentChat.system_prompt)
+            sys_prompt_state.set($currentChat.systemPrompt)
         }
     })
 
@@ -97,6 +98,7 @@
                 bind:this={textAreaEl}
             ></textarea>
         </div>
+        <Variables />
         <button class="btnClose" onclick={() => (isOpen = false)}>
             Close
         </button>

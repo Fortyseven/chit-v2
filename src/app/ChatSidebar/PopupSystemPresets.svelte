@@ -102,7 +102,7 @@
                 // alert("Saving presets is not yet implemented. One sec...")
                 savePresetToFile()
                 open = false
-                // pushToRecents($appState.activeChatId.system_prompt)
+                // pushToRecents($appState.activeChatId.systemPrompt)
             }}
         >
             <WatsonHealthSaveAnnotation /> Save
@@ -115,7 +115,7 @@
                     chatNew()
                     loadPresetFromFile()
                     open = false
-                    // pushToRecents($appState.activeChatId.system_prompt)
+                    // pushToRecents($appState.activeChatId.systemPrompt)
                 } catch (e) {
                     console.error("Error loading preset:", e)
                 }

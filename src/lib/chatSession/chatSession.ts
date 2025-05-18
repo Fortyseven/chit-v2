@@ -18,7 +18,7 @@ export interface ChatSettings {
 export interface ChatSession {
     id: String
     title: String
-    system_prompt?: String
+    systemPrompt?: String
     model_name: String
     messages: Message[]
     createdAt: Date

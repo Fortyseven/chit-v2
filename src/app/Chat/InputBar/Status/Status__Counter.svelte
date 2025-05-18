@@ -5,7 +5,7 @@
     export let systemPromptLength = 0
 
     $: contextLimit = $currentChat?.settings?.num_ctx || 0
-    $: systemPromptLength = $currentChat?.system_prompt?.length || 0
+    $: systemPromptLength = $currentChat?.systemPrompt?.length || 0
     $: conversationLength =
         $currentChat?.messages?.reduce((acc, message) => {
             return acc + (message?.content?.length || 0)

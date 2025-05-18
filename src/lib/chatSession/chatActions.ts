@@ -19,7 +19,7 @@ export function chatNew(): String {
         createdAt: new Date(),
         updatedAt: new Date(),
         model_name: "gemma3:12b",
-        system_prompt: get(appState).defaultPrompt,
+        systemPrompt: get(appState).defaultPrompt,
         response_buffer: "",
         settings: {
             temperature: DEFAULT_TEMPERATURE,
@@ -63,7 +63,7 @@ export function chatSetSystemPrompt(chatId: String, systemPrompt: String) {
             if (chat.id === chatId) {
                 return {
                     ...chat,
-                    system_prompt: systemPrompt,
+                    systemPrompt: systemPrompt,
                     updatedAt: new Date(),
                 }
             }

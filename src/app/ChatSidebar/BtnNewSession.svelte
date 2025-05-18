@@ -24,7 +24,7 @@
     }
 
     function duplicateSession() {
-        const currentSystemPrompt = $currentChat.system_prompt
+        const currentSystemPrompt = $currentChat.systemPrompt
         const new_id = chatNew()
         chatSetSystemPrompt(new_id, currentSystemPrompt)
     }
