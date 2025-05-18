@@ -1,12 +1,11 @@
 <script lang="ts">
-    import { afterUpdate } from "svelte"
     import { appState } from "../../../../lib/appState/appState"
     import {
         chatGetStreamingPending,
         chatInProgressWithId,
     } from "../../../../lib/chatSession/chatActions"
     import { ChatMediaType } from "../../../../lib/chatSession/chatAttachments"
-    import { currentChat } from "../../../../lib/chatSession/chatSession"
+    import { chats, currentChat } from "../../../../lib/chatSession/chatSession"
     import { memoizeBlobUrl } from "../../../../lib/memoizeBlob"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
@@ -27,11 +26,39 @@
     function closeFloatingImage(imageUrl: string) {
         floatingImages = floatingImages.filter((url) => url !== imageUrl)
     }
+
+    // Update chat message
+    function updateChatMessage(index: number, message: any) {
+        // Update the chat with the new message
+        const chatId = $appState.activeChatId
+
+        if (chatId) {
+            chats.update((currentChats) => {
+                return currentChats.map((chat) => {
+                    if (chat.id === chatId) {
+                        // Create a new chat object with updated messages
+                        return {
+                            ...chat,
+                            messages: chat.messages.map((msg, i) => {
+                                if (i === index) {
+                                    // Create a new message object with the updated content
+                                    return { ...msg, content: message }
+                                }
+                                return msg
+                            }),
+                        }
+                    }
+                    return chat
+                })
+            })
+        }
+    }
+    // Memoize the blob URL
 </script>
 
 <div class="wrapper" id="ChatLogRegular">
     {#if $appState.activeChatId && $currentChat?.messages}
-        {#each $currentChat.messages as message, i}
+        {#each $currentChat.messages as message, index}
             {#key message}
                 {#if message.role === "user"}
                     {#if message.media && message.media.length > 0}
@@ -64,8 +91,11 @@
                 {:else if message.role === "user" && !message.content}
                     <!-- cont'd -->
                 {:else}
-                    <ChatLogRegular_Assistant line={message.content}
-                    ></ChatLogRegular_Assistant>
+                    <ChatLogRegular_Assistant
+                        line={message.content}
+                        {index}
+                        onUpdatedContent={updateChatMessage}
+                    />
                 {/if}
             {/key}
         {/each}

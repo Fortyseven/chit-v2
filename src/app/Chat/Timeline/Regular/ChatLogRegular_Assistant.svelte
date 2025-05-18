@@ -1,33 +1,20 @@
 <script>
-    import MarkdownIt from "markdown-it"
     import { onMount } from "svelte"
     import {
         chatChopLatest,
         chatRunInference,
     } from "../../../../lib/chatSession/chatActions"
-    import { hljs } from "../../../../vendor/highlight.min"
+    import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
-    export let line = { role: "assistant", content: "🍆" }
+    export let line = { role: "assistant", content: "" }
     export let inprogress = false
-
-    const md = MarkdownIt({
-        highlight: function (str, lang) {
-            if (lang && hljs.getLanguage(lang)) {
-                try {
-                    const hl = hljs.highlight(str, { language: lang }).value
-                    return hl
-                } catch (__) {}
-            }
-
-            return "" // use external default escaping
-        },
-    })
-
-    let processedContent = md.render(line || "_[blank response]_").trim()
+    export let index
+    export let onUpdatedContent = () => {}
 
     // Context menu state
     let contextMenuOpen = false
     let contextMenuPosition = { x: 0, y: 0 }
+    let openEditor = false
 
     // Context menu actions
     const menuItems = [
@@ -36,6 +23,8 @@
             name: "Regenerate response",
             action: () => regenerateResponse(),
         },
+        { name: "-" }, // Separator
+        { name: "Edit message", action: () => (openEditor = true) },
         { name: "-" }, // Separator
         { name: "Save response as markdown", action: () => saveAsFile("md") },
         { name: "Save response as text", action: () => saveAsFile("txt") },
@@ -116,7 +105,14 @@
     <div class="message-controls">
         <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
     </div>
-    {@html processedContent}
+
+    <MarkdownEditor
+        content={line}
+        {index}
+        editorOpen={openEditor}
+        {onUpdatedContent}
+    />
+
     {#if contextMenuOpen}
         <div
             class="context-menu"
