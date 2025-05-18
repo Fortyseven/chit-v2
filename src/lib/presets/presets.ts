@@ -199,8 +199,7 @@ function _doParsePreset(content: string, filename: string = "") {
 
     // --
 
-    if (Object(settings).entries?.length) {
-        console.info("Settings found: " + JSON.stringify(settings))
+    if (Object.keys(settings)?.length) {
         chatUpdateSettings(target_chat_id, settings)
     } else {
         console.info("No settings specified")
