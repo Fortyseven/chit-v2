@@ -81,12 +81,20 @@
                                         />
                                     </div>
                                 {/if}
+                                {#if media.type === ChatMediaType.TEXT}
+                                    <div class="media-attachment">
+                                        <ChatLogRegular_User
+                                            line={media?.data as string}
+                                            isAttachment
+                                        />
+                                    </div>
+                                {/if}
                             {/each}
                         </div>
                     {/if}
+
                     {#if message.content}
-                        <ChatLogRegular_User line={message.content}
-                        ></ChatLogRegular_User>
+                        <ChatLogRegular_User line={message.content as string} />
                     {/if}
                 {:else if message.role === "user" && !message.content}
                     <!-- cont'd -->
@@ -137,6 +145,7 @@
             gap: 1em;
             flex-wrap: wrap;
             .media-attachment {
+                width: 100%;
                 margin-block-start: 1em;
                 margin-block-end: 0.5em;
                 img {
