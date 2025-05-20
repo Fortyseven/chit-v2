@@ -36,14 +36,14 @@ interface Options {
 }
 
 interface Config {
-    systemPrompt: string
+    system_prompt: string
     model_name: string
     variables: Variables
     options: Options
 }
 
 const defaults: Config = {
-    systemPrompt: "",
+    system_prompt: "",
     model_name: "",
     variables: {
         char: "Assistant",
@@ -122,8 +122,8 @@ function _loadYAML(content: string) {
     //     }
     // }
 
-    if (data.systemPrompt) {
-        prompt = data.systemPrompt
+    if (data.system_prompt) {
+        prompt = data.system_prompt
     }
 
     if (data.model_name) {
