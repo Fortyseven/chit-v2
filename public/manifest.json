@@ -1,0 +1,20 @@
+{
+    "short_name": "Chit",
+    "name": "Chit",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "588x588",
+            "type": "image/svg+xml"
+        },
+        {
+            "src": "/favicon.png",
+            "sizes": "441x441",
+            "type": "image/png"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#ffbb00",
+    "background_color": "#222"
+}
