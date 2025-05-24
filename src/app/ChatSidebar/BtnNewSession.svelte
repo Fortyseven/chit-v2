@@ -51,7 +51,7 @@
     })
 </script>
 
-<div class="">
+<div>
     <div class="sessions">
         <button
             class="btn-new-session"

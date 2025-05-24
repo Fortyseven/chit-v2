@@ -16,30 +16,8 @@
     } from "../../lib/presets/presets"
     import { FUN_PROMPTS, SYSTEM_PROMPTS } from "../../preset-prompts/index.js"
 
-    const PREVIEW_CUTOFF_LENGTH = 30
-
     export let open = false
     let appendMode = false
-
-    // const recents = [
-    //     "Recent Prompt 1 that is very long and descriptive",
-    //     "Recent Prompt 2 that is also quite long",
-    //     "Recent Prompt 3 that is a bit shorter",
-    //     "Recent Prompt 4",
-    //     "Recent Prompt 5",
-    // ]
-
-    // function pushToRecents(prompt) {
-    //     if (recents.includes(prompt)) {
-    //         recents.splice(recents.indexOf(prompt), 1)
-    //     }
-
-    //     if (recents.length >= 5) {
-    //         recents.shift()
-    //     }
-
-    //     recents.push(prompt)
-    // }
 
     function selectPrompt(prompt_def) {
         if (prompt_def.temperature) {
@@ -139,26 +117,6 @@
         &.open {
             display: flex;
         }
-
-        // .recents {
-        //     display: grid;
-        //     grid-template-columns: 1fr;
-        //     gap: 1px;
-
-        //     button {
-        //         line-height: 1em;
-        //         vertical-align: middle;
-        //         align-self: center;
-
-        //         :global(svg) {
-        //             vertical-align: middle;
-        //         }
-        //         &:hover {
-        //             background-color: var(--color-accent-lighter);
-        //             color: var(--color-accent-text);
-        //         }
-        //     }
-        // }
 
         button.btn-preset {
             background-color: transparent;

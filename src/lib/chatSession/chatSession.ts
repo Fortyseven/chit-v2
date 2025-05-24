@@ -1,7 +1,6 @@
 import { derived, writable, type Readable } from "svelte/store"
 import { appState } from "../appState/appState"
 import { MediaAttachment } from "./chatAttachments"
-// import { populateTestData } from "./chatTestLoad"
 
 export interface Message {
     content: String

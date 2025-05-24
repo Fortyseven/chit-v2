@@ -1,7 +1,5 @@
-import { get, writable } from "svelte/store"
-import { appState } from "../appState/appState"
 import { getActiveChatId } from "./chatActions"
-import { chats, Message } from "./chatSession"
+import { chats } from "./chatSession"
 
 export enum ChatMediaType {
     IMAGE = "image",

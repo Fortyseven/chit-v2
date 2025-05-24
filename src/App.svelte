@@ -1,10 +1,7 @@
 <script>
-    import ChatHeader from "./app/Chat/Timeline/ChatHeader/ChatHeader.svelte"
-
-    import { afterUpdate } from "svelte"
-
     import { SvelteToast } from "@zerodevx/svelte-toast"
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
+    import ChatHeader from "./app/Chat/Timeline/ChatHeader/ChatHeader.svelte"
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
     import PageContent from "./app/PageContent.svelte"
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"

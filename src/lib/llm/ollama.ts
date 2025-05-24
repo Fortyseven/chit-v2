@@ -1,6 +1,6 @@
 import { ChatRequest, Message, ModelResponse, Ollama } from "ollama/browser"
 import { get, Writable, writable } from "svelte/store"
-import { appState, DEFAULT_OL_ENDPOINT } from "../appState/appState"
+import { appState } from "../appState/appState"
 import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
 import {
     chatAppendStreamingPending,

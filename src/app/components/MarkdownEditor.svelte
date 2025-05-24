@@ -37,50 +37,14 @@
 
     // Compute processed content, only show blank content message when content is truly empty
     $: {
-        // Make sure content is a string and has actual content before rendering
-        // contentStr = content
-        // content != null && content !== undefined ? String(content) : ""
-
-        // const isEmpty = contentStr.trim() === ""
-
-        // Only show blank content message if truly empty (not "", "0", etc)
-        // processedContent =
-        // isEmpty && contentStr !== "0" && contentStr !== "false"
-        // ? md.render("_[blank content]_").trim()
-        // :
-
         markdownStr = md.render(content).trim()
     }
-
-    // // Toggle between viewing and editing modes
-    // function toggleEditMode() {
-    //     if (!editable) return
-
-    //     isEditing = !isEditing
-
-    //     if (isEditing) {
-    //         setTimeout(() => {
-    //             if (editableDiv) {
-    //                 editableDiv.innerText =
-    //                     content !== null && content !== undefined
-    //                         ? String(content)
-    //                         : ""
-    //                 editableDiv.focus()
-    //             }
-    //         }, 0)
-    //     } else {
-    //         // When exiting edit mode, update the content with edited text
-    //         saveChanges()
-    //     }
-    // }
 
     // Save the changes and update the rendered content
     function saveChanges() {
         if (editableDiv) {
             const newContent = editableDiv.innerText
             if (newContent !== content) {
-                // content = newContent
-                // dispatch("change", { content })
                 onUpdatedContent(index, newContent)
             }
         }

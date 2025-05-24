@@ -33,12 +33,6 @@
 
 <style lang="scss">
     .counter {
-        // text-align: center;
-        // font-family: monospace;
-        // text-transform: uppercase;
-        // letter-spacing: -1px;
-
-        // color: var(--color-accent);
         width: 100%;
 
         #ContextMeter {
