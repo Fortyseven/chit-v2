@@ -2,19 +2,21 @@
     import { Recycle as Wait } from "carbon-icons-svelte"
     import { currentChat } from "../../../../lib/chatSession/chatSession"
 
-    let time = 0
+    let time = NaN
 
-    $: if ($currentChat) {
+    $: if ($currentChat && $currentChat?.lastRequestStart) {
         time = $currentChat?.lastRequestFinish - $currentChat?.lastRequestStart
     }
 </script>
 
 <div class="request-timer">
     <div class="timer" title={`${time}ms`}>
-        {#if time > 0}
-            {time / 1000}s
-        {:else}
-            <div class="rotate"><Wait /></div>
+        {#if !isNaN(time)}
+            {#if time > 0}
+                {time / 1000}s
+            {:else}
+                <div class="rotate"><Wait /></div>
+            {/if}
         {/if}
     </div>
 </div>
