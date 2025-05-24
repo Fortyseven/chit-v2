@@ -4,6 +4,7 @@
     import { appState } from "../../../../lib/appState/appState"
     import { chatSetSystemPrompt } from "../../../../lib/chatSession/chatActions"
     import { currentChat } from "../../../../lib/chatSession/chatSession"
+    import { recalculateUserVariables } from "../../../../lib/templating/templating"
     import Variables from "./Variables.svelte"
 
     let sys_prompt_state = writable($currentChat.systemPrompt)
@@ -33,6 +34,7 @@
     let buttonEl
     let dialog = null
     let textAreaEl
+    let hasVariables = false
 
     let dialogPosition = {
         top: 0,
@@ -69,6 +71,14 @@
         textAreaEl.focus()
         textAreaEl.setSelectionRange(0, 0)
     }
+
+    $: if ($currentChat && $currentChat.templateVariables) {
+        hasVariables = Object.keys($currentChat.templateVariables).length
+    }
+
+    $: if ($currentChat.systemPrompt) {
+        recalculateUserVariables($currentChat.id)
+    }
 </script>
 
 <button
@@ -82,7 +92,7 @@
 
 {#if isOpen}
     <div
-        id="sprompt_modal"
+        id="spromptModal"
         class="modal"
         style="position: absolute; left: {dialogPosition.left}px; top: {dialogPosition.top}px; z-index: 1000;"
         bind:this={dialog}
@@ -98,7 +108,9 @@
                 bind:this={textAreaEl}
             ></textarea>
         </div>
-        <Variables />
+        {#if hasVariables}
+            <Variables />
+        {/if}
         <button class="btnClose" onclick={() => (isOpen = false)}>
             Close
         </button>
@@ -111,44 +123,46 @@
         color: var(--color-text);
     }
 
-    #sprompt_modal {
+    #spromptModal {
         background-color: var(--color-background);
         color: var(--color-text);
         border-radius: var(--border-radius-standard);
-        box-shadow: 0 0 1em #000;
+        box-shadow: 0 0 1rem #000;
+        position: relative;
 
-        width: auto;
+        width: 40vw;
         height: auto;
-        margin-bottom: 1em;
+        min-width: 450px;
+        // margin-bottom: 1em;
 
         h2 {
             font-weight: bold;
             font-size: 1.5rem;
             padding: 0;
             margin: 0;
-            margin-top: 1em;
+            margin-top: 1rem;
             color: var(--color-accent);
         }
 
         textarea {
-            width: auto;
+            width: stretch;
             height: 100%;
-            min-width: 400px;
-            max-width: 800px;
+            // min-width: 400px;
+            max-width: stretch;
             min-height: 200px;
             max-height: 400px;
             border-radius: var(--border-radius-standard);
-            margin: 1em;
+            margin: 1rem;
             background-color: var(--color-background-darker);
             color: var(--color-accent);
             border: none;
             font-family: --font-ui;
-            padding: 1em;
+            padding: 1rem;
             font-size: 1.25em;
         }
 
         .btnClose {
-            margin-bottom: 1em;
+            margin-bottom: 1rem;
         }
     }
 </style>

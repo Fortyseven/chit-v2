@@ -27,6 +27,10 @@ export function chatNew(): String {
         },
         wasAborted: false,
         pastedMedia: [],
+        templateVariables: {
+            user: "Human",
+            assistant: "Assistant",
+        },
     }
 
     chats.update(($chats) => [...$chats, newChat])

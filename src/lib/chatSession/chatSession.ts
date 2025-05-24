@@ -16,18 +16,18 @@ export interface ChatSettings {
 }
 
 export interface ChatSession {
-    id: String
-    title: String
-    systemPrompt?: String
-    model_name: String
+    id: string
+    title: string
+    systemPrompt?: string
+    model_name: string
     messages: Message[]
     createdAt: Date
     updatedAt: Date
-    response_buffer: String
+    response_buffer: string
     settings: ChatSettings
     wasAborted: Boolean
-    // pastedMedia: Blob | undefined
     pastedMedia: MediaAttachment[] | undefined
+    templateVariables: { [key: string]: string }
 }
 
 export const chats = writable<ChatSession[]>([])

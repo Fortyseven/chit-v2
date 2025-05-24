@@ -12,7 +12,10 @@ import {
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
 import { ChatMediaType } from "../chatSession/chatAttachments"
-import { applySystemPromptTemplates } from "../templating/templating"
+import {
+    applySystemPromptTemplates,
+    applyUserVariables,
+} from "../templating/templating"
 import { convertBlobToBase64 as convertFileToBase64 } from "../utils"
 
 export class LLMInterface {
@@ -99,8 +102,10 @@ export class LLMInterface {
         if (chat_session.systemPrompt) {
             messages.push({
                 role: "system",
-                content: applySystemPromptTemplates(
-                    chat_session.systemPrompt as string
+                content: applyUserVariables(
+                    applySystemPromptTemplates(
+                        chat_session.systemPrompt as string
+                    )
                 ),
             })
         }
