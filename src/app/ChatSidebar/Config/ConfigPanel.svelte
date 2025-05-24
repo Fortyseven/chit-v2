@@ -44,7 +44,7 @@
 </script>
 
 {#if open}
-    <Modal title="Configuration Panel" {open} on:close={closePanel}>
+    <Modal title="Configuration Panel" {open}>
         <div class="form-group">
             <label
                 for="audio-feedback"
