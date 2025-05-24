@@ -22,6 +22,8 @@ export interface ChatSession {
     messages: Message[]
     createdAt: Date
     updatedAt: Date
+    lastRequestStart: number
+    lastRequestFinish: number
     response_buffer: string
     settings: ChatSettings
     wasAborted: Boolean

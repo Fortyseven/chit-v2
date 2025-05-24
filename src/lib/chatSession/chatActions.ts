@@ -18,6 +18,8 @@ export function chatNew(): String {
         messages: [],
         createdAt: new Date(),
         updatedAt: new Date(),
+        lastRequestStart: 0,
+        lastRequestFinish: 0,
         model_name: "gemma3:12b",
         systemPrompt: get(appState).defaultPrompt,
         response_buffer: "",
@@ -403,6 +405,40 @@ export function chatClearConversation(chatId: String = "") {
                     ...chat,
                     messages: [],
                     updatedAt: new Date(),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+// --------------------------------------------------------------
+export function chatStart(chatId: string = "") {
+    chatId = getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    lastRequestStart: Date.now(),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+// --------------------------------------------------------------
+export function chatFinish(chatId: string = "") {
+    chatId = getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    lastRequestFinish: Date.now(),
                 }
             }
             return chat

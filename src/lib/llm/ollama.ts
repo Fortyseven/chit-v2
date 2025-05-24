@@ -5,9 +5,11 @@ import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
 import {
     chatAppendStreamingPending,
     chatFind,
+    chatFinish,
     chatInProgress,
     chatPromoteStreamingPending,
     chatSetWasAborted,
+    chatStart,
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
@@ -88,13 +90,15 @@ export class LLMInterface {
      *
      * @param {ChatSession} chat_session
      */
-    async chatUpdateSession(chatId: String) {
+    async chatUpdateSession(chatId: string) {
         let chat_session = chatFind(chatId)
 
         if (!chat_session) {
             console.error("Chat session not found: " + chatId)
             return
         }
+
+        chatStart(chatId)
 
         let messages: Message[] = []
 
@@ -177,6 +181,7 @@ export class LLMInterface {
                 chatInProgress.set(false)
                 sndStopTyping()
                 sndPlayResponse()
+                chatFinish(chatId)
             }
         }
     }

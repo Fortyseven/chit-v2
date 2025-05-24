@@ -1,6 +1,7 @@
 <script lang="ts">
     import BackpackIndicator from "./BackpackIndicator.svelte"
     import Status__Counter from "./Status__Counter.svelte"
+    import RequestTimer from "./Status__RequestTimer.svelte"
 
     export let inputLength = 0
 </script>
@@ -12,6 +13,7 @@
             <Status__Counter {inputLength} />
         </div>
         <div class="right">
+            <RequestTimer />
             <BackpackIndicator />
         </div>
     </div>
