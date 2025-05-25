@@ -1,9 +1,9 @@
 <script>
-    import { onMount } from "svelte"
     import {
         chatChopLatest,
         chatRunInference,
     } from "../../../../lib/chatSession/chatActions"
+    import ContextMenu from "../../../UI/ContextMenu.svelte"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
     export let line = { role: "assistant", content: "" }
@@ -67,41 +67,8 @@
         chatRunInference()
         closeContextMenu()
     }
-
-    onMount(() => {
-        // Close menu when clicking outside
-        function handleClickOutside(event) {
-            const menu = document.querySelector(".context-menu")
-            const button = document.querySelector(".dropdown")
-            if (
-                contextMenuOpen &&
-                menu &&
-                !menu.contains(event.target) &&
-                button &&
-                !button.contains(event.target)
-            ) {
-                closeContextMenu()
-            }
-        }
-
-        // Close menu when pressing Escape
-        function handleEscapeKey(event) {
-            if (contextMenuOpen && event.key === "Escape") {
-                closeContextMenu()
-            }
-        }
-
-        document.addEventListener("click", handleClickOutside)
-        document.addEventListener("keydown", handleEscapeKey)
-
-        return () => {
-            document.removeEventListener("click", handleClickOutside)
-            document.removeEventListener("keydown", handleEscapeKey)
-        }
-    })
 </script>
 
-<!-- on:contextmenu={toggleContextMenu} -->
 <div class="response markdown bot" role="button" tabindex="0" class:inprogress>
     <div class="message-controls">
         <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
@@ -114,20 +81,12 @@
         {onUpdatedContent}
     />
 
-    {#if contextMenuOpen}
-        <div
-            class="context-menu"
-            style="position: fixed; left: {contextMenuPosition.x}px; top: {contextMenuPosition.y}px;"
-        >
-            {#each menuItems as item}
-                {#if item.name === "-"}
-                    <hr />
-                {:else}
-                    <button on:click={item.action}>{item.name}</button>
-                {/if}
-            {/each}
-        </div>
-    {/if}
+    <ContextMenu
+        open={contextMenuOpen}
+        position={contextMenuPosition}
+        items={menuItems}
+        onClose={closeContextMenu}
+    />
 </div>
 
 <style lang="scss">
@@ -148,10 +107,6 @@
         position: relative;
         overflow-y: clip;
         overflow-x: scroll;
-
-        &.inprogress {
-            //
-        }
 
         .message-controls {
             position: absolute;
