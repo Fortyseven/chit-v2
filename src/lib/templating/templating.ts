@@ -65,7 +65,7 @@ export function recalculateUserVariables(chatId: string) {
     // make sure we don't have any system variables hanging around,
     // by calculating them here, we remove them as user candidates
 
-    const sptSPrompt = applySystemPromptTemplates(chat.systemPrompt || "")
+    const sptSPrompt = applySystemVariables(chat.systemPrompt || "")
 
     // enumerate user template variables
 
