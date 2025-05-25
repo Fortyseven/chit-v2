@@ -31,7 +31,7 @@
 {#if open}
     <div
         class="context-menu"
-        style="position: fixed; left: {position.x}px; top: {position.y}px;"
+        style="position: absolute; right: {position.x}px; top: {position.y}px;"
     >
         {#each items as item}
             {#if item.name === "-"}
@@ -47,11 +47,13 @@
     .context-menu {
         background-color: var(--color-background);
         border-radius: var(--border-radius-standard);
-        box-shadow: 0 0 10px black;
-        z-index: 1000;
+        box-shadow: 0 1em 2em #0008;
+        z-index: 10000;
         padding: 0;
-        font-size: 0.75em;
+        font-size: 1rem;
         padding-block: 0.5em;
+        position: absolute;
+        width: 220px;
 
         button {
             background: transparent;

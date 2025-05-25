@@ -263,7 +263,6 @@
 <style lang="scss">
     #InputBox {
         width: inherit;
-        // height: 150px;
         background: #fb01;
         backdrop-filter: blur(15px);
         filter: drop-shadow(0 0 2em #000);
@@ -278,10 +277,7 @@
             width: 100%;
             max-width: var(--timeline-max-width);
             margin-inline: auto;
-            // border-right: 4px solid red;
 
-            .chat-settings {
-            }
             .user-prompt {
                 &:disabled {
                     opacity: 0.5;
@@ -356,6 +352,7 @@
                     grid-template-rows: auto auto;
                     gap: 2px;
                     place-content: center;
+                    position: relative;
                 }
             }
         }

@@ -3,6 +3,7 @@
         chatChopLatest,
         chatRunInference,
     } from "../../../../lib/chatSession/chatActions"
+    import { currentChat } from "../../../../lib/chatSession/chatSession"
     import ContextMenu from "../../../UI/ContextMenu.svelte"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
@@ -13,8 +14,19 @@
 
     // Context menu state
     let contextMenuOpen = false
-    let contextMenuPosition = { x: 0, y: 0 }
+    let contextMenuPosition = { x: 50, y: 10 }
     let openEditor = false
+
+    function saveAsFile() {
+        const blob = new Blob([line.content], { type: `text/markdown` })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = url
+        const title = $currentChat.title ? $currentChat.title : "response"
+        a.download = `${title}-fragment-${index}.md`
+        a.click()
+        URL.revokeObjectURL(url)
+    }
 
     // Context menu actions
     const menuItems = [
@@ -26,29 +38,14 @@
         { name: "-" }, // Separator
         { name: "Edit message", action: () => (openEditor = true) },
         { name: "-" }, // Separator
-        { name: "Save response as markdown", action: () => saveAsFile("md") },
-        { name: "Save response as text", action: () => saveAsFile("txt") },
+        { name: "Save response to file", action: saveAsFile },
     ]
 
-    function toggleContextMenu(event) {
-        event.stopPropagation()
-        event.preventDefault()
+    function toggleContextMenu(mEvent) {
         contextMenuOpen = !contextMenuOpen
-        if (contextMenuOpen) {
-            const mouseX = event.clientX
-            const mouseY = event.clientY
 
-            let xOffset = 0
-
-            if (mouseX > window.innerWidth / 2) {
-                xOffset = -180
-            }
-
-            contextMenuPosition = {
-                x: mouseX + xOffset,
-                y: mouseY,
-            }
-        }
+        mEvent.stopPropagation()
+        mEvent.preventDefault()
     }
 
     function closeContextMenu() {
@@ -137,39 +134,6 @@
 
         pre {
             overflow: scroll;
-        }
-    }
-
-    .context-menu {
-        background-color: var(--color-background);
-        border-radius: var(--border-radius-standard);
-        box-shadow: 0 0 10px black;
-        z-index: 1000;
-        padding: 0;
-        font-size: 0.75em;
-        padding-block: 0.5em;
-
-        button {
-            background: transparent;
-            color: var(--color-accent);
-            margin: 0;
-            padding-block: 0.25em;
-            display: block;
-            width: 100%;
-            text-align: left;
-            font-weight: unset;
-
-            &:hover {
-                background-color: var(--color-accent);
-                color: var(--color-accent-text);
-            }
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid var(--color-accent-complement-darker);
-            opacity: 0.5;
-            margin: 0.5em 1em !important;
         }
     }
 </style>

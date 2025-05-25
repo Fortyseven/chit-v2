@@ -1,6 +1,6 @@
 <script lang="ts">
     export let title: string
-    export let onClick: () => void
+    export let onClick: (btn: HTMLButtonElement, ev: MouseEvent) => void
     export let disabled: boolean
     export let iconComponent: any
     export let className: string = ""
@@ -8,12 +8,19 @@
     export let warning: boolean = false
     export let roundCorner = "" // can be 'ne', 'nw', 'se', 'sw' or empty
 
+    let buttonEl: HTMLButtonElement
+
     $: buttonClass =
         `${className} ${secondary ? "secondary" : ""} ${warning ? "warning" : ""} ${roundCorner}`.trim()
 </script>
 
 <!-- svelte-ignore a11y_consider_explicit_label -->
-<button onclick={onClick} {disabled} class={buttonClass}>
+<button
+    bind:this={buttonEl}
+    onclick={(ev) => onClick(buttonEl, ev)}
+    {disabled}
+    class={buttonClass}
+>
     <svelte:component this={iconComponent} {title}></svelte:component>
 </button>
 
