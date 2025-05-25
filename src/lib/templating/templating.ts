@@ -17,12 +17,11 @@ const SYSTEM_PROMPTS: Template[] = [
     },
 ]
 
-export function applySystemPromptTemplates(prompt: string): string {
-    let newPrompt = prompt
-
-    if (!newPrompt) {
-        throw new Error("No system prompt found")
+export function applySystemVariables(prompt: string): string {
+    if (!prompt) {
+        return prompt
     }
+    let newPrompt = prompt
 
     // system template pass
     for (const key in SYSTEM_PROMPTS) {
@@ -35,11 +34,10 @@ export function applySystemPromptTemplates(prompt: string): string {
 }
 
 export function applyUserVariables(prompt: string): string {
-    let newPrompt = prompt
-
-    if (!newPrompt) {
-        throw new Error("No system prompt found")
+    if (!prompt) {
+        return prompt
     }
+    let newPrompt = prompt
 
     // user template pass
     const chat = get(currentChat)

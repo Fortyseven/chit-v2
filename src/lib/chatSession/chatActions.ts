@@ -1,8 +1,12 @@
 import { get, writable } from "svelte/store"
 import { appState } from "../appState/appState"
 import llm from "../llm/ollama"
+import {
+    applySystemVariables,
+    applyUserVariables,
+} from "../templating/templating"
 import { chatClearAllPastedMedia, MediaAttachment } from "./chatAttachments"
-import { chats, ChatSession, Message } from "./chatSession"
+import { chats, ChatSession, currentChat, Message } from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"
 
 export const DEFAULT_CONTEXT = 65536
@@ -443,6 +447,22 @@ export function chatFinish(chatId: string = "") {
             }
             return chat
         })
+    )
+}
+
+// --------------------------------------------------------------
+export function chatGetAllContents(): string | undefined {
+    const curChat = get(currentChat)
+    const sysPrompt = applySystemVariables(
+        applyUserVariables(curChat?.systemPrompt)
+    )
+    return (
+        (sysPrompt ? sysPrompt + "\n\n----\n\n" : "") +
+        curChat?.messages // .filter((msg) => msg.role === "assistant")
+            .map((msg) =>
+                msg.role === "user" ? "> " + msg.content : msg.content
+            )
+            .join("\n\n----\n\n")
     )
 }
 

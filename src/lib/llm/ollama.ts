@@ -15,7 +15,7 @@ import {
 } from "../chatSession/chatActions"
 import { ChatMediaType } from "../chatSession/chatAttachments"
 import {
-    applySystemPromptTemplates,
+    applySystemVariables,
     applyUserVariables,
 } from "../templating/templating"
 import { convertBlobToBase64 as convertFileToBase64 } from "../utils"
@@ -107,9 +107,7 @@ export class LLMInterface {
             messages.push({
                 role: "system",
                 content: applyUserVariables(
-                    applySystemPromptTemplates(
-                        chat_session.systemPrompt as string
-                    )
+                    applySystemVariables(chat_session.systemPrompt as string)
                 ),
             })
         }
