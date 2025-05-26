@@ -6,11 +6,18 @@ import {
     applyUserVariables,
 } from "../templating/templating"
 import { chatClearAllPastedMedia, MediaAttachment } from "./chatAttachments"
-import { chats, ChatSession, currentChat, Message } from "./chatSession"
+import {
+    BackpackMode,
+    chats,
+    ChatSession,
+    currentChat,
+    Message,
+} from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"
 
 export const DEFAULT_CONTEXT = 65536
 export const DEFAULT_TEMPERATURE = 0.7
+export const DEFAULT_MODEL = "gemma3:12b"
 
 //--------------------------------------------------------------
 // Insert a new chat at the end of the list
@@ -37,6 +44,7 @@ export function chatNew(): String {
             user: "Human",
             assistant: "Assistant",
         },
+        backpackMode: BackpackMode.OFF,
     }
 
     chats.update(($chats) => [...$chats, newChat])
@@ -463,6 +471,21 @@ export function chatGetAllContents(): string | undefined {
                 msg.role === "user" ? "> " + msg.content : msg.content
             )
             .join("\n\n----\n\n")
+    )
+}
+
+export function chatSetBackpackMode(mode: BackpackMode) {
+    const chatId = getActiveChatId()
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    backpackMode: mode,
+                }
+            }
+            return chat
+        })
     )
 }
 

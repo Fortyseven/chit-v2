@@ -9,6 +9,12 @@ export interface Message {
     media?: MediaAttachment[]
 }
 
+export enum BackpackMode {
+    OFF = "",
+    SEARCH = "search",
+    GEOLOCATION = "geolocation",
+}
+
 export interface ChatSettings {
     temperature: number
     num_ctx: number
@@ -29,6 +35,7 @@ export interface ChatSession {
     wasAborted: Boolean
     pastedMedia: MediaAttachment[] | undefined
     templateVariables: { [key: string]: string }
+    backpackMode: BackpackMode
 }
 
 export const chats = writable<ChatSession[]>([])

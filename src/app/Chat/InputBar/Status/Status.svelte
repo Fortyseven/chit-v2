@@ -1,5 +1,5 @@
 <script lang="ts">
-    import BackpackIndicator from "./BackpackIndicator.svelte"
+    import BackpackIndicator from "./Status__BackpackIndicator.svelte"
     import Status__Counter from "./Status__Counter.svelte"
     import RequestTimer from "./Status__RequestTimer.svelte"
 

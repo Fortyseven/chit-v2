@@ -26,6 +26,7 @@
         color: var(--color-accent-complement-lighter);
         margin-right: 0.5em;
         font-family: monospace;
+        font-size: 0.8rem;
 
         .rotate {
             animation: rotate 1s linear infinite;
