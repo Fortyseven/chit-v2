@@ -28,7 +28,6 @@ export function chatNew(): String {
         title: "New Chat " + new Date().toLocaleString(),
         messages: [],
         createdAt: new Date(),
-        updatedAt: new Date(),
         lastRequestStart: 0,
         lastRequestFinish: 0,
         model_name: "gemma3:12b",
@@ -63,7 +62,6 @@ export function chatSetModel(chatId: String = "", modelName: string) {
                 return {
                     ...chat,
                     model_name: modelName,
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -82,7 +80,6 @@ export function chatSetSystemPrompt(chatId: String, systemPrompt: String) {
                 return {
                     ...chat,
                     systemPrompt: systemPrompt,
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -99,7 +96,6 @@ export function chatSetWasAborted(chatId: String = "", wasAborted: Boolean) {
                 return {
                     ...chat,
                     wasAborted,
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -117,7 +113,6 @@ export function chatUpdateSettings(chatId: String = "", settings: any) {
                 return {
                     ...chat,
                     settings: { ...(chat.settings || {}), ...settings },
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -198,7 +193,6 @@ export function _chatAddMessage(chatId: String = "", message: Message) {
                 return {
                     ...chat,
                     messages: [...chat.messages, message],
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -218,7 +212,6 @@ export function chatDuplicate(chatId: String = "") {
         id: crypto.randomUUID(),
         title: chat.title + " (copy)",
         createdAt: new Date(),
-        updatedAt: new Date(),
     }
 
     chats.update(($chats) => [...$chats, newChat])
@@ -247,7 +240,6 @@ export function chatChopLatest(chatId: string = ""): string {
                 const updated = {
                     ...chat,
                     messages: chat.messages.slice(0, -1),
-                    updatedAt: new Date(),
                     pastedMedia: chopped_prev.media,
                 }
 
@@ -349,7 +341,6 @@ export async function chatPromoteStreamingPending(chatId: String = "") {
                         },
                     ],
                     response_buffer: "",
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -372,7 +363,6 @@ export function chatSetTitle(chatId: String = "", title: String) {
                 return {
                     ...chat,
                     title,
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -416,7 +406,6 @@ export function chatClearConversation(chatId: String = "") {
                 return {
                     ...chat,
                     messages: [],
-                    updatedAt: new Date(),
                 }
             }
             return chat

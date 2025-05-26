@@ -50,7 +50,6 @@ export function chatAddPastedMedia(
                     pastedMedia: Array.isArray(chat.pastedMedia)
                         ? [...chat.pastedMedia, newAttachment]
                         : [newAttachment],
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -72,7 +71,6 @@ export function chatClearPastedMedia(chatId: String = "", id: String = "") {
                     pastedMedia: chat.pastedMedia
                         ? chat.pastedMedia.filter((media) => media.id !== id)
                         : [],
-                    updatedAt: new Date(),
                 }
             }
             return chat
@@ -93,7 +91,6 @@ export function chatClearAllPastedMedia(chatId: String = "") {
                 return {
                     ...chat,
                     pastedMedia: [],
-                    updatedAt: new Date(),
                 }
             }
             return chat

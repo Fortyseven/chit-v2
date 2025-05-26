@@ -27,7 +27,6 @@ export interface ChatSession {
     model_name: string
     messages: Message[]
     createdAt: Date
-    updatedAt: Date
     lastRequestStart: number
     lastRequestFinish: number
     response_buffer: string
