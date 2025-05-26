@@ -30,7 +30,7 @@ function createMediaAttachment(
 
 //--------------------------------------------------------------
 export function chatAddPastedMedia(
-    chatId: String = "",
+    chatId: string = "",
     data: Blob | string,
     type: ChatMediaType,
     filename: string = ""
@@ -58,7 +58,7 @@ export function chatAddPastedMedia(
 }
 
 //--------------------------------------------------------------
-export function chatClearPastedMedia(chatId: String = "", id: String = "") {
+export function chatClearPastedMedia(chatId: string = "", id: string = "") {
     if (!id) throw new Error("chatClearPastedMedia: id is required")
 
     // remove the pasted media from the chat
@@ -79,7 +79,7 @@ export function chatClearPastedMedia(chatId: String = "", id: String = "") {
 }
 
 //--------------------------------------------------------------
-export function chatClearAllPastedMedia(chatId: String = "") {
+export function chatClearAllPastedMedia(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
     if (!chatId) throw new Error("chatClearAllPastedMedia: chatId is required")

@@ -1,6 +1,6 @@
 import { appState } from "./appState"
 
-export function appStateSetActiveChatId(id: string | String) {
+export function appStateSetActiveChatId(id: string | string) {
     appState.update((state) => ({ ...state, activeChatId: id }))
 }
 

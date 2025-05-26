@@ -21,7 +21,7 @@ export const DEFAULT_MODEL = "gemma3:12b"
 
 //--------------------------------------------------------------
 // Insert a new chat at the end of the list
-export function chatNew(): String {
+export function chatNew(): string {
     const id = crypto.randomUUID()
     const newChat = {
         id,
@@ -53,7 +53,7 @@ export function chatNew(): String {
 }
 
 //--------------------------------------------------------------
-export function chatSetModel(chatId: String = "", modelName: string) {
+export function chatSetModel(chatId: string = "", modelName: string) {
     chatId = getActiveChatId(chatId)
 
     chats.update(($chats) =>
@@ -71,7 +71,7 @@ export function chatSetModel(chatId: String = "", modelName: string) {
 
 //--------------------------------------------------------------
 // Set the system prompt
-export function chatSetSystemPrompt(chatId: String, systemPrompt: String) {
+export function chatSetSystemPrompt(chatId: string, systemPrompt: string) {
     chatId = getActiveChatId(chatId)
 
     chats.update(($chats) =>
@@ -88,7 +88,7 @@ export function chatSetSystemPrompt(chatId: String, systemPrompt: String) {
 }
 
 //--------------------------------------------------------------
-export function chatSetWasAborted(chatId: String = "", wasAborted: Boolean) {
+export function chatSetWasAborted(chatId: string = "", wasAborted: Boolean) {
     chatId = getActiveChatId(chatId)
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -104,7 +104,7 @@ export function chatSetWasAborted(chatId: String = "", wasAborted: Boolean) {
 }
 
 //--------------------------------------------------------------
-export function chatUpdateSettings(chatId: String = "", settings: any) {
+export function chatUpdateSettings(chatId: string = "", settings: any) {
     chatId = getActiveChatId(chatId)
 
     chats.update(($chats) =>
@@ -122,13 +122,13 @@ export function chatUpdateSettings(chatId: String = "", settings: any) {
 
 //--------------------------------------------------------------
 // Change the active chat
-export function chatSwitchTo(chatId: String) {
+export function chatSwitchTo(chatId: string) {
     appState.update((state) => ({ ...state, activeChatId: chatId }))
 }
 
 //--------------------------------------------------------------
 // Delete a chat
-export function chatDelete(chatId: String) {
+export function chatDelete(chatId: string) {
     if (!chatId) {
         alert("BUG: chatDelete: chatId was empty")
         throw new Error("chatDelete: chatId is required")
@@ -145,7 +145,7 @@ export function chatDelete(chatId: String) {
 
 //--------------------------------------------------------------
 // Check if a chat has conversation
-export function chatIsEmpty(chatId: String) {
+export function chatIsEmpty(chatId: string) {
     if (!chatId) {
         // FIXME: I'm being obnoxious here because a couple times I had
         // this happen and I want to know why.
@@ -159,9 +159,9 @@ export function chatIsEmpty(chatId: String) {
 
 //--------------------------------------------------------------
 export function chatAddRoleMessage(
-    chatId: String = "",
+    chatId: string = "",
     role: "user" | "assistant",
-    content: String,
+    content: string,
     pastedMedia: MediaAttachment[] | undefined = undefined
 ) {
     chatId = getActiveChatId(chatId)
@@ -184,7 +184,7 @@ export function chatAddRoleMessage(
 }
 
 //--------------------------------------------------------------
-export function _chatAddMessage(chatId: String = "", message: Message) {
+export function _chatAddMessage(chatId: string = "", message: Message) {
     chatId = getActiveChatId(chatId)
 
     chats.update(($chats) =>
@@ -201,7 +201,7 @@ export function _chatAddMessage(chatId: String = "", message: Message) {
 }
 
 //--------------------------------------------------------------
-export function chatDuplicate(chatId: String = "") {
+export function chatDuplicate(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
     const chat = get(chats).find((chat) => chat.id === chatId)
@@ -220,7 +220,7 @@ export function chatDuplicate(chatId: String = "") {
 }
 
 //--------------------------------------------------------------
-export function chatFind(chatId: String = ""): ChatSession | undefined {
+export function chatFind(chatId: string = ""): ChatSession | undefined {
     chatId = getActiveChatId(chatId)
     return get(chats).find((chat) => chat.id === chatId)
 }
@@ -253,7 +253,7 @@ export function chatChopLatest(chatId: string = ""): string {
 }
 
 //--------------------------------------------------------------
-export function chatBack(chatId: String = ""): String | undefined {
+export function chatBack(chatId: string = ""): string | undefined {
     // if most recent chat is of role assistant, remove it
     // then if the next most recent is of role user, return it
 
@@ -281,13 +281,13 @@ export function chatBack(chatId: String = ""): String | undefined {
 }
 
 //--------------------------------------------------------------
-export function chatRunInference(chatId: String = "") {
+export function chatRunInference(chatId: string = "") {
     chatId = getActiveChatId(chatId)
     get(llm).chatUpdateSession(chatId)
 }
 
 //--------------------------------------------------------------
-export function chatLength(chatId: String = "") {
+export function chatLength(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
     const chat = chatFind(chatId)
@@ -295,7 +295,7 @@ export function chatLength(chatId: String = "") {
 }
 
 //--------------------------------------------------------------
-export function chatGetStreamingPending(chatId: String = "") {
+export function chatGetStreamingPending(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
     const chat = chatFind(chatId)
@@ -304,8 +304,8 @@ export function chatGetStreamingPending(chatId: String = "") {
 
 //--------------------------------------------------------------
 export function chatAppendStreamingPending(
-    chatId: String = "",
-    fragment: String
+    chatId: string = "",
+    fragment: string
 ) {
     chatId = getActiveChatId(chatId)
 
@@ -324,7 +324,7 @@ export function chatAppendStreamingPending(
 }
 
 //--------------------------------------------------------------
-export async function chatPromoteStreamingPending(chatId: String = "") {
+export async function chatPromoteStreamingPending(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
     chats.update(($chats) =>
@@ -354,7 +354,7 @@ export async function chatPromoteStreamingPending(chatId: String = "") {
 }
 
 //--------------------------------------------------------------
-export function chatSetTitle(chatId: String = "", title: String) {
+export function chatSetTitle(chatId: string = "", title: string) {
     chatId = getActiveChatId(chatId)
 
     chats.update(($chats) =>
@@ -389,7 +389,7 @@ export function chatAbort() {
 }
 
 //--------------------------------------------------------------
-export function chatInProgressWithId(chatId: String = ""): Boolean {
+export function chatInProgressWithId(chatId: string = ""): Boolean {
     chatId = getActiveChatId(chatId)
 
     const chat = chatFind(chatId)
@@ -397,7 +397,7 @@ export function chatInProgressWithId(chatId: String = ""): Boolean {
 }
 
 //--------------------------------------------------------------
-export function chatClearConversation(chatId: String = "") {
+export function chatClearConversation(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
     chats.update(($chats) =>
@@ -481,6 +481,6 @@ export function chatSetBackpackMode(mode: BackpackMode) {
 export const chatInProgress = writable(false)
 
 //--------------------------------------------------------------
-export function getActiveChatId(chatId: String = ""): String {
+export function getActiveChatId(chatId: string = ""): string {
     return chatId || get(appState).activeChatId
 }

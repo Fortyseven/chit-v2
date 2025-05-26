@@ -5,9 +5,9 @@ export const DEFAULT_OL_ENDPOINT = "http://localhost:11434"
 export const DEFAULT_BP_ENDPOINT = ""
 
 export interface AppState {
-    activeChatId: String
-    chatApiEndpoint: String
-    backpackApiEndpoint: String
+    activeChatId: string
+    chatApiEndpoint: string
+    backpackApiEndpoint: string
     soundEnabled: boolean
     defaultPrompt: string
     backpackHeartbeatTimer: any

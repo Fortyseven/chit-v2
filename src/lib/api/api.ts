@@ -15,7 +15,7 @@ export const wasAborted = writable(false)
  * @param {*} model_name
  * @returns {Promise} A promise that resolves to the model details.
  */
-export async function OL_model_details(model_name: String) {
+export async function OL_model_details(model_name: string) {
     try {
         const response = await fetch(
             `${get(appState).chatApiEndpoint}/api/show`,

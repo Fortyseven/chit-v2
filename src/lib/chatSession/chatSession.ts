@@ -3,7 +3,7 @@ import { appState } from "../appState/appState"
 import { MediaAttachment } from "./chatAttachments"
 
 export interface Message {
-    content: String
+    content: string
     role: "user" | "assistant" | "system"
     timestamp?: Date
     media?: MediaAttachment[]

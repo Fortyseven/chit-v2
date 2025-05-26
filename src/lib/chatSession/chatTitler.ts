@@ -17,7 +17,7 @@ const Title = z.object({
 const TITLER_PROMPT =
     "Generate a brief title about what this conversation is about."
 
-export async function chatGenerateTitle(chatId: String = "") {
+export async function chatGenerateTitle(chatId: string = "") {
     const chat_session: ChatSession | undefined = chatFind(chatId)
     const _llm: LLMInterface = get(llm)
 

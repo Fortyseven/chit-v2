@@ -23,7 +23,7 @@ import { convertBlobToBase64 as convertFileToBase64 } from "../utils"
 export class LLMInterface {
     models: Writable<ModelResponse[]> = writable([])
     ol_instance: Writable<Ollama | undefined> = writable(undefined)
-    ol_instance_host: Writable<String> = writable("")
+    ol_instance_host: Writable<string> = writable("")
     first_load = true
 
     /***************************************************
@@ -116,7 +116,7 @@ export class LLMInterface {
         for (let message of chat_session.messages) {
             let msg = message.content.trim()
 
-            let images: String[] = []
+            let images: string[] = []
 
             if (message.media && message.media.length > 0) {
                 for (let i = 0; i < message.media.length; i++) {
