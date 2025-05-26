@@ -50,18 +50,24 @@
 
 <div class="status-backpack">
     {#if $appState.backpackApiEndpoint}
-        <div>{backpackModeId}</div>
-        <div>
-            <FlashFilled
-                color={backpackAlive
-                    ? "var(--color-accent-success)"
-                    : "var(--color-accent-warning)"}
-                title={`Backpack enabled on ${$appState.backpackApiEndpoint}`}
-                onclick={() => {
-                    backpackModeOpen = !backpackModeOpen
-                }}
-            />
-        </div>
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <span
+            class="hitbox"
+            onclick={() => {
+                backpackModeOpen = !backpackModeOpen
+            }}
+        >
+            <div>{backpackModeId}</div>
+            <div>
+                <FlashFilled
+                    color={backpackAlive
+                        ? "var(--color-accent-success)"
+                        : "var(--color-accent-warning)"}
+                    title={`Backpack enabled on ${$appState.backpackApiEndpoint}`}
+                />
+            </div>
+        </span>
         <ContextMenu
             items={[
                 {
@@ -95,5 +101,10 @@
         font-size: 0.8rem;
         line-height: 1rem;
         color: var(--color-accent);
+
+        .hitbox {
+            display: contents;
+            cursor: pointer;
+        }
     }
 </style>
