@@ -8,6 +8,7 @@
     import { chats, currentChat } from "../../../../lib/chatSession/chatSession"
     import { memoizeBlobUrl } from "../../../../lib/memoizeBlob"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
+    import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
     import FloatingImage from "./FloatingImage.svelte"
 
@@ -53,7 +54,18 @@
             })
         }
     }
-    // Memoize the blob URL
+    function isMostRecentUserMessage(index: number) {
+        const messages = $currentChat?.messages || []
+        if (messages.length === 0) return false
+
+        // Check if the current message is the most recent user message
+        for (let i = messages.length - 1; i >= 0; i--) {
+            if (messages[i].role === "user") {
+                return i === index
+            }
+        }
+        return false
+    }
 </script>
 
 <div class="wrapper" id="ChatLogRegular">
@@ -95,6 +107,10 @@
 
                     {#if message.content}
                         <ChatLogRegular_User line={message.content as string} />
+                    {/if}
+
+                    {#if isMostRecentUserMessage(index)}
+                        <ChatLogRegular_ReferencesInUse />
                     {/if}
                 {:else if message.role === "user" && !message.content}
                     <!-- cont'd -->

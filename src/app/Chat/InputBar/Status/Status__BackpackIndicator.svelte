@@ -8,8 +8,8 @@
     } from "../../../../lib/chatSession/chatSession"
     import ContextMenu from "../../../UI/ContextMenu.svelte"
 
-    const LIVE_INTERVAL = 10000
-    const RETRY_INTERVAL = 2000
+    const LIVE_INTERVAL = 1000 * 60 * 2
+    const RETRY_INTERVAL = 5000
 
     let backpackAlive = false
     let backpackAdaptiveInterval = RETRY_INTERVAL

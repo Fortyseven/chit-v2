@@ -14,6 +14,7 @@ import {
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
 import { ChatMediaType } from "../chatSession/chatAttachments"
+import { BackpackMode } from "../chatSession/chatSession"
 import {
     applySystemVariables,
     applyUserVariables,
@@ -102,13 +103,35 @@ export class LLMInterface {
 
         let messages: Message[] = []
 
-        // ---- System prompt ----
-        if (chat_session.systemPrompt) {
+        let final_sprompt =
+            applyUserVariables(
+                applySystemVariables(chat_session.systemPrompt as string)
+            ) || ""
+
+        let backpack_context: string = ""
+
+        if (chat_session.backpackMode !== BackpackMode.OFF) {
+            backpack_context = chat_session.backpackReferences
+                ?.map((ref) => {
+                    return `TOOL: ${ref.toolId}\nURL: ${
+                        ref.referenceUrl
+                    }\nCONTEXT:\n${ref.referenceContent.trim()}`
+                })
+                .join("\n#####\n")
+
+            backpack_context =
+                "EXTERNAL CONTEXT START:\n" +
+                backpack_context +
+                "EXTERNAL CONTEXT END\n"
+
+            console.log("REFERENCES ATTACHED", backpack_context)
+        }
+
+        if (final_sprompt) {
+            // ---- System prompt ----
             messages.push({
                 role: "system",
-                content: applyUserVariables(
-                    applySystemVariables(chat_session.systemPrompt as string)
-                ),
+                content: [final_sprompt, backpack_context].join("\n"),
             })
         }
 

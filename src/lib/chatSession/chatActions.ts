@@ -1,5 +1,6 @@
 import { get, writable } from "svelte/store"
 import { appState } from "../appState/appState"
+import { backpackProcess } from "../backpack/backpackActions"
 import llm from "../llm/ollama"
 import {
     applySystemVariables,
@@ -281,8 +282,14 @@ export function chatBack(chatId: string = ""): string | undefined {
 }
 
 //--------------------------------------------------------------
-export function chatRunInference(chatId: string = "") {
+export async function chatRunInference(chatId: string = "") {
     chatId = getActiveChatId(chatId)
+
+    // pass to backpack if present
+
+    if (get(currentChat)?.backpackMode !== BackpackMode.OFF) {
+        await backpackProcess(chatId)
+    }
     get(llm).chatUpdateSession(chatId)
 }
 

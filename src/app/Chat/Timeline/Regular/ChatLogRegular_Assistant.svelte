@@ -1,4 +1,5 @@
 <script>
+    import { onMount } from "svelte"
     import {
         chatChopLatest,
         chatRunInference,
@@ -58,10 +59,10 @@
         closeContextMenu()
     }
 
-    function regenerateResponse() {
+    async function regenerateResponse() {
         // Remove the last assistant response and generate a new one
         chatChopLatest()
-        chatRunInference()
+        await chatRunInference()
         closeContextMenu()
     }
 </script>

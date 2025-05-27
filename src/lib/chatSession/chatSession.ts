@@ -9,15 +9,21 @@ export interface Message {
     media?: MediaAttachment[]
 }
 
+export interface ChatSettings {
+    temperature: number
+    num_ctx: number
+}
+
 export enum BackpackMode {
     OFF = "",
     SEARCH = "search",
     GEOLOCATION = "geolocation",
 }
 
-export interface ChatSettings {
-    temperature: number
-    num_ctx: number
+export interface BackpackReference {
+    toolId: string // e.g. "wikipedia"
+    referenceUrl: string // url where reference was pulled
+    referenceContent: string // actual reference text
 }
 
 export interface ChatSession {
@@ -35,6 +41,7 @@ export interface ChatSession {
     pastedMedia: MediaAttachment[] | undefined
     templateVariables: { [key: string]: string }
     backpackMode: BackpackMode
+    backpackReferences: BackpackReference[] | undefined
 }
 
 export const chats = writable<ChatSession[]>([])

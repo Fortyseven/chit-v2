@@ -79,7 +79,7 @@
         }
 
         if (!user_message && !$currentChat?.pastedMedia) {
-            chatRunInference($currentChat?.id)
+            await chatRunInference($currentChat?.id)
             return
         }
 
@@ -106,7 +106,7 @@
                 $currentChat?.pastedMedia,
             )
 
-            chatRunInference($currentChat?.id) // Pass the current chat ID to chatRunInference
+            await chatRunInference($currentChat?.id) // Pass the current chat ID to chatRunInference
         } catch (e) {
             // restore the message if it fails
             inputBoxEl.value = presubmit_message
@@ -153,9 +153,9 @@
     }
 
     /* ------------------------------------------------------ */
-    function onBtnReroll() {
+    async function onBtnReroll() {
         chatChopLatest()
-        chatRunInference()
+        await chatRunInference()
     }
 
     /* ------------------------------------------------------ */
