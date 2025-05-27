@@ -1,0 +1,1 @@
+This is an experimental server that is not intended for regular use, and is NOT required for use with Chit. It is completely optional.
