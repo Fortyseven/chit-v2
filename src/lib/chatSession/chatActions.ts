@@ -287,9 +287,12 @@ export async function chatRunInference(chatId: string = "") {
 
     // pass to backpack if present
 
-    if (get(currentChat)?.backpackMode !== BackpackMode.OFF) {
+    if (get(appState).backpackApiEndpoint) {
+        // if we don't have a backpack mode, we'll still get
+        // things like URLs resolution, etc.
         await backpackProcess(chatId)
     }
+
     get(llm).chatUpdateSession(chatId)
 }
 

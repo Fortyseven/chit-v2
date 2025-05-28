@@ -92,6 +92,7 @@ export class LLMInterface {
      * @param {ChatSession} chat_session
      */
     async chatUpdateSession(chatId: string) {
+        const backpackApi = get(appState).backpackApiEndpoint
         let chat_session = chatFind(chatId)
 
         if (!chat_session) {
@@ -110,7 +111,7 @@ export class LLMInterface {
 
         let backpack_context: string = ""
 
-        if (chat_session.backpackMode !== BackpackMode.OFF) {
+        if (backpackApi) {
             backpack_context = chat_session.backpackReferences
                 ?.map((ref) => {
                     return `TOOL: ${ref.toolId}\nURL: ${
