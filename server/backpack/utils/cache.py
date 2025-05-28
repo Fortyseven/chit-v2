@@ -8,7 +8,7 @@ from backpack.utils.web import USER_AGENTS
 TTL_SECONDS = 60 * 10 * 3
 
 DEFAULT_HEADERS = {
-    'User-Agent': USER_AGENTS['googlebot'],
+    'User-Agent': USER_AGENTS['firefox']
 }
 
 # Configure logging
