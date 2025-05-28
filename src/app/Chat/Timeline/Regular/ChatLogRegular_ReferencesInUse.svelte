@@ -6,7 +6,7 @@
     import Pill from "../../../UI/Pill/Pill.svelte"
 </script>
 
-{#if $currentChat?.backpackReferences && $currentChat?.backpackMode !== BackpackMode.OFF}
+{#if $currentChat?.backpackReferences}
     <ul class="references">
         {#each $currentChat.backpackReferences as reference, index}
             <li class="reference-item">
