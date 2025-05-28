@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import html2text
 import re
 from ..utils.web import USER_AGENTS
+from backpack.utils.cache import http_cache
 
 def html_to_markdown(html):
     """
@@ -70,16 +71,6 @@ def url_to_markdown(url):
     Returns:
         A string containing the Markdown version of the main content
     """
-    # Fetch the page
-    headers = {
-        # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        # lynx
-        'User-Agent': 'Lynx/2.8.9rel.1 libwww-FM/2.14 SSL-MM/1.4.1 OpenSSL/1.0.2k chit',
-        # google bot
-        # 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-
-
-    }
 
     # is wikipedia? let's call another function
     if 'wikipedia.org' in url:
@@ -87,11 +78,10 @@ def url_to_markdown(url):
         return wikipedia_to_markdown(url)
         # pass
 
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()  # Raise an exception for bad responses
+    response = http_cache.get(url)
 
     # Parse with BeautifulSoup
-    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = BeautifulSoup(response, 'html.parser')
 
     # Remove common non-content elements
     for element in soup.select('nav, header, footer, aside, .ads, .navigation, .menu, .comments, script, style'):
