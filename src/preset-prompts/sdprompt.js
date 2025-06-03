@@ -14,10 +14,11 @@ The resulting prompt should include ALL of the words provided by the user.
 Only return the text of the prompt.
 
 Tips:
-- Invoke unique artists or combine names for new styles (e.g., "A temple by Greg Rutkowski and Ross Tran").
+- Invoke unique artists or combine names for new styles.
 - Use various art styles, mediums, and scene descriptors.
-- Combine well-defined concepts in unique ways (e.g., "cyberpunk shinto priest").
+- Combine well-defined concepts in unique ways.
 - Integrate an artist's name or style into your prompt to influence the generated image.
 - Be ultra-descriptive in your prompts. The more specific and detailed your prompt, the better the AI can generate an image that aligns with your vision.
+- Do not use markdown, just return the new prompt in plaintext.
 `
 };
