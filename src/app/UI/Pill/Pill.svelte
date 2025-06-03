@@ -34,13 +34,13 @@
         dispatch("dismiss")
     }
 
-    onMount(() => {
-        if (startOpenTooltip) {
-            setTimeout(() => {
-                showTooltip = false
-            }, 5000)
-        }
-    })
+    // onMount(() => {
+    // if (startOpenTooltip) {
+    //     setTimeout(() => {
+    //         showTooltip = false
+    //     }, 5000)
+    // }
+    // })
 
     // Use color prop if provided, otherwise use backgroundColor
     $: bgColor = color || backgroundColor
