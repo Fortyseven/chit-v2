@@ -358,8 +358,12 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
     )
     // this is our first response?
     if (chatLength(chatId) == 2) {
-        // user -> assistant
-        await chatGenerateTitle(chatId)
+        setTimeout(async () => {
+            // if we're still sitting on a single user message or there's been more (that's fast!)
+            if (chatLength(chatId) >= 2) {
+                await chatGenerateTitle(chatId)
+            }
+        }, 2500)
     }
 }
 
