@@ -22,7 +22,8 @@ export async function chatGenerateTitle(chatId: string = "") {
     const chat_session: ChatSession | undefined = chatFind(chatId)
     const _llm: LLMInterface = get(llm)
 
-    chatInProgress.set(true)
+    // chatInProgress.set(true)
+
     try {
         if (chatLength(chatId) < 2) {
             console.warn("chatGenerateTitle: chat length < 2")
@@ -75,6 +76,6 @@ export async function chatGenerateTitle(chatId: string = "") {
                 .short_summary_title
         )
     } finally {
-        chatInProgress.set(false)
+        // chatInProgress.set(false)
     }
 }

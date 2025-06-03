@@ -14,7 +14,6 @@ import {
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
 import { ChatMediaType } from "../chatSession/chatAttachments"
-import { BackpackMode } from "../chatSession/chatSession"
 import {
     applySystemVariables,
     applyUserVariables,
