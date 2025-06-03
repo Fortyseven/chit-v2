@@ -160,10 +160,14 @@
 
     /* ------------------------------------------------------ */
     function onBtnBack() {
-        let usermsg = chatBack()
+        if (chatLength() === 0) {
+            chatClearAllPastedMedia()
+        } else {
+            let usermsg = chatBack()
 
-        if (inputBoxEl && usermsg) {
-            inputBoxEl.value = usermsg as string
+            if (inputBoxEl && usermsg) {
+                inputBoxEl.value = usermsg as string
+            }
         }
     }
 
@@ -234,7 +238,8 @@
                         <IconButton
                             title="Go back one response (Ctrl+B)"
                             onClick={onBtnBack}
-                            disabled={!$hasMessages || $chatInProgress}
+                            disabled={(!$hasMessages || $chatInProgress) &&
+                                !$currentChat?.pastedMedia?.length}
                             iconComponent={Undo}
                             roundCorner="sw"
                         />
@@ -243,7 +248,8 @@
                             title="Clear"
                             warning
                             onClick={onBtnClear}
-                            disabled={!$hasMessages || $chatInProgress}
+                            disabled={(!$hasMessages || $chatInProgress) &&
+                                !$currentChat?.pastedMedia?.length}
                             iconComponent={TrashCan}
                             roundCorner="se"
                         />
