@@ -77,6 +77,15 @@
             class:below={tooltipPosition === "below"}
         >
             <slot />
+            <div class="tooltip-dismiss">
+                <button
+                    class="dismiss-button"
+                    on:click={handleDismiss}
+                    aria-label="Remove attachment"
+                >
+                    ×
+                </button>
+            </div>
         </div>
     {/if}
 </div>
@@ -148,11 +157,25 @@
         color: #fff;
         font-size: 0.8rem;
         white-space: nowrap;
-        pointer-events: none;
+        /* pointer-events: none; */
         z-index: 1000;
         min-width: max-content;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         animation: fadeIn 0.2s ease-out;
+
+        .dismiss-button {
+            position: absolute;
+            top: 0.25em;
+            right: 0.5em;
+            background: none;
+            border: none;
+            color: red;
+            font-size: 2rem;
+            line-height: 0.7;
+            padding: 0;
+            cursor: pointer;
+            opacity: 0.7;
+        }
     }
 
     .tooltip.above {
