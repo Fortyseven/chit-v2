@@ -396,17 +396,18 @@ body {
         font-weight: 300;
         /* font-style: italic ; */
         font-synthesis: initial;
-        border-left: 0.25em double white;
+        border-left: 0.25em double #555;
         padding-left: 1.2em;
         border-radius: 10px;
+        position: relative;
 
         &::before {
-            content: '"';
-            color: darkgray;
+            content: '❝';
+            color: #777;
             position: absolute;
-            left: 1.4em;
-            font-size: 2em;
-            bottom: 0.15em;
+            font-size: 1.2em;
+            left: 0.2em;
+            top: -0.2em;
         }
     }
 }
