@@ -7,6 +7,7 @@
     import { ChatMediaType } from "../../../../lib/chatSession/chatAttachments"
     import { chats, currentChat } from "../../../../lib/chatSession/chatSession"
     import { memoizeBlobUrl } from "../../../../lib/memoizeBlob"
+    import { onMount } from "svelte"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
@@ -27,6 +28,22 @@
     function closeFloatingImage(imageUrl: string) {
         floatingImages = floatingImages.filter((url) => url !== imageUrl)
     }
+
+    // Function to clear all floating images
+    function clearAllFloatingImages() {
+        floatingImages = []
+    }
+
+    // Make the clearAllFloatingImages function available through a custom event
+    onMount(() => {
+        window.addEventListener('clearFloatingImages', () => {
+            clearAllFloatingImages()
+        })
+
+        return () => {
+            window.removeEventListener('clearFloatingImages', clearAllFloatingImages)
+        }
+    })
 
     // Update chat message
     function updateChatMessage(index: number, message: any) {

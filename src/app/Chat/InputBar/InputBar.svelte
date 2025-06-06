@@ -178,6 +178,9 @@
         }
         chatClearAllPastedMedia()
         chatClearConversation()
+        
+        // Dispatch custom event to clear all floating images
+        window.dispatchEvent(new CustomEvent('clearFloatingImages'))
     }
 
     /* ------------------------------------------------------ */
