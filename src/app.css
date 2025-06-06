@@ -388,6 +388,27 @@ body {
             }
         }
     }
+
+    blockquote {
+        font-family: serif;
+        color: darkgray;
+        font-size: 0.75em;
+        font-weight: 300;
+        /* font-style: italic ; */
+        font-synthesis: initial;
+        border-left: 0.25em double white;
+        padding-left: 1.2em;
+        border-radius: 10px;
+
+        &::before {
+            content: '"';
+            color: darkgray;
+            position: absolute;
+            left: 1.4em;
+            font-size: 2em;
+            bottom: 0.15em;
+        }
+    }
 }
 
 button {
