@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte"
     import { appState } from "../../../../lib/appState/appState"
     import {
         chatGetStreamingPending,
@@ -7,7 +8,6 @@
     import { ChatMediaType } from "../../../../lib/chatSession/chatAttachments"
     import { chats, currentChat } from "../../../../lib/chatSession/chatSession"
     import { memoizeBlobUrl } from "../../../../lib/memoizeBlob"
-    import { onMount } from "svelte"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
@@ -36,12 +36,15 @@
 
     // Make the clearAllFloatingImages function available through a custom event
     onMount(() => {
-        window.addEventListener('clearFloatingImages', () => {
+        window.addEventListener("clearFloatingImages", () => {
             clearAllFloatingImages()
         })
 
         return () => {
-            window.removeEventListener('clearFloatingImages', clearAllFloatingImages)
+            window.removeEventListener(
+                "clearFloatingImages",
+                clearAllFloatingImages,
+            )
         }
     })
 
