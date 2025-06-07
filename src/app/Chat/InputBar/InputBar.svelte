@@ -205,7 +205,7 @@
                 <textarea
                     name="prompt"
                     id="prompt"
-                    placeholder="Write a message..."
+                    placeholder="Use /help for slash commands, or type your message here..."
                     rows="1"
                     bind:this={inputBoxEl}
                     bind:value={inputBoxValue}
