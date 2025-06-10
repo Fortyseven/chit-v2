@@ -356,8 +356,9 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
             return chat
         })
     )
+
     // this is our first response?
-    if (chatLength(chatId) == 2) {
+    if (get(appState).useTitler && chatLength(chatId) == 2) {
         setTimeout(async () => {
             // if we're still sitting on a single user message or there's been more (that's fast!)
             if (chatLength(chatId) >= 2) {

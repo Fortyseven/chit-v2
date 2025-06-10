@@ -11,6 +11,7 @@ export interface AppState {
     soundEnabled: boolean
     defaultPrompt: string
     backpackHeartbeatTimer: any
+    useTitler: boolean
 }
 
 export const appStateDefaults: AppState = {
@@ -20,6 +21,7 @@ export const appStateDefaults: AppState = {
     soundEnabled: true,
     defaultPrompt: "",
     backpackHeartbeatTimer: null,
+    useTitler: true,
 }
 
 export const appState = writable<AppState>({

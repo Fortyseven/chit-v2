@@ -18,6 +18,12 @@
                 title="Enable or disable audio feedback.">Audio feedback</label
             >
             <input type="checkbox" bind:checked={$appState.soundEnabled} />
+            <label
+                for="use-titler"
+                title="Enable or disable the use of the titler."
+                >Use Titler</label
+            >
+            <input type="checkbox" bind:checked={$appState.useTitler} />
         </div>
 
         <div class="form-group">
