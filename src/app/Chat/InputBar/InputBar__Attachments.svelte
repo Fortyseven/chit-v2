@@ -78,10 +78,16 @@
             EXIF.getData(img, () => {
                 const allMetaData = EXIF.getAllTags(this)
 
+                console.debug("EXIF DATA", allMetaData)
+
                 const filteredMetaData = Object.entries(allMetaData).reduce(
                     (acc, [key, value]) => {
                         if (!EXIF_IGNORE_TAGS.includes(key)) {
                             acc[key] = value
+                        } else {
+                            console.debug(
+                                `Ignoring EXIF tag: ${key} with value: ${value}`,
+                            )
                         }
                         return acc
                     },
