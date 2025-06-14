@@ -13,65 +13,81 @@
 {#if open}
     <Modal title="Configuration Panel" {open}>
         <div class="form-group">
-            <label
-                for="audio-feedback"
-                title="Enable or disable audio feedback.">Audio feedback</label
-            >
-            <input type="checkbox" bind:checked={$appState.soundEnabled} />
-            <label
-                for="use-titler"
-                title="Enable or disable the use of the titler."
-                >Use Titler</label
-            >
-            <input type="checkbox" bind:checked={$appState.useTitler} />
+            <div>
+                <label title="Enable or disable audio feedback.">
+                    Audio feedback
+                    <input
+                        type="checkbox"
+                        bind:checked={$appState.soundEnabled}
+                    />
+                </label>
+            </div>
+            <div>
+                <label title="Enable or disable the use of the titler.">
+                    Use Titler
+                    <input type="checkbox" bind:checked={$appState.useTitler} />
+                </label>
+            </div>
+            <div>
+                <label title="Resize images on paste">
+                    Resize images for inference
+                    <input
+                        type="checkbox"
+                        bind:checked={$appState.resizeImages}
+                    />
+                </label>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label
-                for="ollama-api-endpoint"
-                title="The API endpoint for Ollama with a specific URL."
-                >Ollama API Endpoint</label
-            >
-            <input
-                id="ollama-api-endpoint"
-                type="text"
-                placeholder={DEFAULT_OL_ENDPOINT}
-                value={$appState.chatApiEndpoint}
-                on:input={(e) => appStateSetChatApiEndpoint(e.target.value)}
-                on:focusout={(e) => {
-                    if (e.target.value === "") {
-                        appStateSetChatApiEndpoint(DEFAULT_OL_ENDPOINT)
-                    }
-                }}
-            />
+        <div class="form-row">
+            <div class="form-group">
+                <label
+                    for="ollama-api-endpoint"
+                    title="The API endpoint for Ollama with a specific URL."
+                    >Ollama API Endpoint
+                    <input
+                        id="ollama-api-endpoint"
+                        type="text"
+                        placeholder={DEFAULT_OL_ENDPOINT}
+                        value={$appState.chatApiEndpoint}
+                        on:input={(e) =>
+                            appStateSetChatApiEndpoint(e.target.value)}
+                        on:focusout={(e) => {
+                            if (e.target.value === "") {
+                                appStateSetChatApiEndpoint(DEFAULT_OL_ENDPOINT)
+                            }
+                        }}
+                    />
+                </label>
+            </div>
         </div>
 
         <div class="form-group">
             <label
                 for="backpack-api-endpoint"
                 title="The API endpoint for Chit Backpack."
-                >Chit Backpack Endpoint (Enables enhanced mode.)</label
-            >
-            <input
-                id="ollama-api-endpoint"
-                type="text"
-                value={$appState.backpackApiEndpoint}
-                on:input={(e) => appStateSetBackpackApiEndpoint(e.target.value)}
-            />
+                >Chit Backpack Endpoint (Enables enhanced mode.)
+                <input
+                    id="backpack-api-endpoint"
+                    type="text"
+                    value={$appState.backpackApiEndpoint}
+                    on:input={(e) =>
+                        appStateSetBackpackApiEndpoint(e.target.value)}
+                />
+            </label>
         </div>
 
         <div class="form-group">
             <label
                 for="default-prompt"
                 title="Prompt that populates the system prompt for all new sessions when not loaded from a preset."
-                >Default Prompt</label
-            >
-            <textarea
-                id="default-prompt"
-                rows="4"
-                placeholder="Enter your default prompt here..."
-                bind:value={$appState.defaultPrompt}
-            ></textarea>
+                >Default Prompt
+                <textarea
+                    id="default-prompt"
+                    rows="4"
+                    placeholder="Enter your default prompt here..."
+                    bind:value={$appState.defaultPrompt}
+                ></textarea>
+            </label>
         </div>
     </Modal>
 {/if}
@@ -79,6 +95,12 @@
 <style>
     .form-group {
         margin-bottom: 1rem;
+
+        display: flex;
+
+        > div {
+            flex: 1;
+        }
 
         label {
             display: block;

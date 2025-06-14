@@ -12,6 +12,7 @@ export interface AppState {
     defaultPrompt: string
     backpackHeartbeatTimer: any
     useTitler: boolean
+    resizeImages: boolean
 }
 
 export const appStateDefaults: AppState = {
@@ -22,6 +23,7 @@ export const appStateDefaults: AppState = {
     defaultPrompt: "",
     backpackHeartbeatTimer: null,
     useTitler: true,
+    resizeImages: true,
 }
 
 export const appState = writable<AppState>({

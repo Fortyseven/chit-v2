@@ -93,8 +93,6 @@
 
             let message: string = user_message
 
-            console.log("submit_user_message", message)
-
             if (!$currentChat?.pastedMedia && message?.trim() === "") {
                 return
             }
