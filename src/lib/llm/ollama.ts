@@ -103,12 +103,21 @@ export class LLMInterface {
 
         let messages: Message[] = []
 
-        let final_sprompt =
-            applyUserVariables(
-                applySystemVariables(chat_session.systemPrompt as string)
-            ) || ""
+        let system_prompt = ""
+        let processed_final_sprompt = ""
 
-        let backpack_context: string = ""
+        if (chat_session.systemPrompt?.trim()) {
+            system_prompt = chat_session.systemPrompt.trim()
+        } else {
+            system_prompt = get(appState).defaultPrompt.trim()
+        }
+
+        if (system_prompt) {
+            processed_final_sprompt =
+                applyUserVariables(applySystemVariables(system_prompt)) || ""
+        }
+
+        let backpack_context: string | undefined = ""
 
         if (backpackApi) {
             backpack_context = chat_session.backpackReferences
@@ -127,11 +136,11 @@ export class LLMInterface {
             console.log("REFERENCES ATTACHED", backpack_context)
         }
 
-        if (final_sprompt) {
+        if (processed_final_sprompt) {
             // ---- System prompt ----
             messages.push({
                 role: "system",
-                content: [final_sprompt, backpack_context].join("\n"),
+                content: [processed_final_sprompt, backpack_context].join("\n"),
             })
         }
 
@@ -146,10 +155,15 @@ export class LLMInterface {
                     let media = message.media[i]
                     if (media.type == ChatMediaType.IMAGE) {
                         // convert blob to base64
-                        let img64 = await convertFileToBase64(media.data)
+                        let img64 = await convertFileToBase64(
+                            media.data as Blob
+                        )
                         images.push(img64 as string)
                     } else if (media.type == ChatMediaType.TEXT && media.data) {
-                        msg += "\n\n```\n" + media.data.trim() + "\n```\n"
+                        msg +=
+                            "\n\n```\n" +
+                            (media.data as string).trim() +
+                            "\n```\n"
                     }
                 }
             }
