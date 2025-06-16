@@ -15,6 +15,20 @@ const SYSTEM_PROMPTS: Template[] = [
             return date.toLocaleDateString()
         },
     },
+    {
+        name: "time",
+        resolver: () => {
+            const date = new Date()
+            return date.toLocaleTimeString()
+        },
+    },
+    {
+        name: "now",
+        resolver: () => {
+            const date = new Date()
+            return `${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`
+        },
+    },
 ]
 
 export function applySystemVariables(prompt: string): string {
