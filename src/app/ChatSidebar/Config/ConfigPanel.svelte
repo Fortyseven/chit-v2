@@ -107,6 +107,7 @@
             margin-bottom: 0.5rem;
             font-weight: 500;
             width: 100%;
+            color: var(--color-accent-lighter);
         }
 
         input[type="text"] {
@@ -114,8 +115,8 @@
             padding: 0.5em;
             border-radius: var(--border-radius-standard);
             border: 1px solid #555;
-            background-color: #444;
-            color: white;
+            background-color: #111;
+            color: var(--color-accent);
             font-family: monospace;
             box-sizing: border-box;
         }
@@ -125,8 +126,8 @@
             padding: 0.5em;
             border-radius: var(--border-radius-standard);
             border: 1px solid #555;
-            background-color: #444;
-            color: white;
+            background-color: #111;
+            color: var(--color-accent);
             resize: vertical;
             box-sizing: border-box;
             font-family: monospace;
