@@ -90,7 +90,7 @@
 <style lang="scss">
     .response {
         width: auto;
-        font-family: Barlow, Ubuntu;
+        font-family: var(--font-timeline, monospace);
         line-height: 1.2;
         border-radius: var(--border-radius-standard);
         box-shadow: 0 0.25em 0.25em 0 #000;
