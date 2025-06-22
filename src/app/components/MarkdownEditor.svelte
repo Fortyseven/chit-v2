@@ -21,21 +21,32 @@
         highlight: function (str, lang) {
             if (lang && hljs.getLanguage(lang)) {
                 try {
-                    const hl = hljs.highlight(str, { language: lang }).value
-                    return hl
+                    return (
+                        '<pre class="code-block-wrapper"><div class="copy-button" title="Copy to clipboard">📋</div><code class="hljs">' +
+                        hljs.highlight(str, {
+                            language: lang,
+                            ignoreIllegals: true,
+                        }).value +
+                        "</code></pre>"
+                    )
                 } catch (__) {}
             }
-            return "" // use external default escaping
+
+            return (
+                '<pre class="code-block-wrapper"><div class="copy-button" title="Copy to clipboard">📋</div><code class="hljs">' +
+                md.utils.escapeHtml(str) +
+                "</code></pre>"
+            )
         },
     })
 
     // Component state
     let isEditing = false
     let editableDiv
-    let processedContent
     let markdownStr = ""
 
-    // Compute processed content, only show blank content message when content is truly empty
+    // Compute processed content, only show blank content
+    // message when content is truly empty
     $: {
         markdownStr = md.render(content).trim()
     }
@@ -83,6 +94,47 @@
             }
         })
     }
+
+    onMount(() => {
+        // Add event listeners for copy buttons after the component is mounted
+        function setupCopyButtons() {
+            const copyButtons = document.querySelectorAll(".copy-button")
+            copyButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const codeBlock = button.nextElementSibling
+                    const code = codeBlock.textContent
+
+                    navigator.clipboard
+                        .writeText(code)
+                        .then(() => {
+                            // Show feedback
+                            const originalText = button.textContent
+                            button.textContent = "✓"
+                            button.classList.add("copied")
+
+                            setTimeout(() => {
+                                button.textContent = originalText
+                                button.classList.remove("copied")
+                            }, 2000)
+                        })
+                        .catch((err) => {
+                            console.error("Failed to copy: ", err)
+                        })
+                })
+            })
+        }
+
+        // Initial setup
+        setupCopyButtons()
+
+        // Set up a mutation observer to detect when new code blocks are added
+        const observer = new MutationObserver(setupCopyButtons)
+        observer.observe(document.body, { childList: true, subtree: true })
+
+        return () => {
+            observer.disconnect()
+        }
+    })
 </script>
 
 <div class="markdown-editor">
@@ -132,11 +184,34 @@
         width: 100%;
         min-height: 100%;
 
-        :global(pre) {
+        :global(pre.code-block-wrapper) {
+            position: relative;
             overflow-x: auto;
             background-color: var(--color-background-darkest);
             padding: 0.5em;
             border-radius: var(--border-radius-standard);
+        }
+
+        :global(.copy-button) {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            // border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s ease;
+            z-index: 10;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            &.copied {
+                background-color: rgba(50, 205, 50, 0.3);
+            }
         }
 
         :global(code) {
