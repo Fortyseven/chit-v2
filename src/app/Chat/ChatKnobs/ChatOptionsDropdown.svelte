@@ -3,8 +3,10 @@
     import {
         chatGetAllContents,
         chatInProgress,
+        chatSetTitle,
     } from "../../../lib/chatSession/chatActions"
     import { currentChat } from "../../../lib/chatSession/chatSession"
+    import { chatGenerateTitle } from "../../../lib/chatSession/chatTitler"
     import ContextMenu from "../../UI/ContextMenu.svelte"
     import IconButton from "../../UI/IconButton.svelte"
 
@@ -45,8 +47,31 @@
         isOpen = false
     }
 
+    async function regenerateTitle() {
+        if (!$currentChat) {
+            console.warn("No current chat to regenerate title for.")
+            return
+        }
+
+        try {
+            $chatInProgress = true
+            chatSetTitle($currentChat.id, "...")
+            await chatGenerateTitle($currentChat.id)
+        } catch (error) {
+            console.error("Error regenerating title:", error)
+        } finally {
+            isOpen = false
+            $chatInProgress = false
+        }
+    }
+
     const menuItems = [
         { name: "Copy chat to clipboard", action: copyChatToClipboard },
+        { name: "-" }, // Separator
+        {
+            name: "Regenerate title",
+            action: regenerateTitle,
+        },
         { name: "-" }, // Separator
         { name: "Save chat to file", action: saveChatToFile },
     ]
