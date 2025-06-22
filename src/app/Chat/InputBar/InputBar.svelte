@@ -64,24 +64,38 @@
             throw new Error("inputBoxEl is not defined or some such")
         }
 
-        if (user_message?.startsWith("/")) {
-            // handle command
-            const command = user_message.substring(1).trim()
-            let result = undefined
-            if ((result = await launchCommand(command))) {
-                inputBoxEl.value = result
-                inputBoxValue = result
+        if (user_message) {
+            // process a command only if the user message starts with a slash,
+            // but ignore double slashes and
+            if (
+                user_message.startsWith("/") &&
+                !user_message.startsWith("//")
+            ) {
+                // handle command
+                const command = user_message.substring(1).trim()
+                let result = undefined
+                if ((result = await launchCommand(command))) {
+                    inputBoxEl.value = result
+                    inputBoxValue = result
+                } else {
+                    // if the command is not recognized, just return
+                    console.warn("Command not recognized:", command)
+                    return
+                }
             } else {
-                // if the command is not recognized, just return
-                console.warn("Command not recognized:", command)
-                return
+                // replace the first // with / and let it flow through
+                // to the regular submit, ignore the rest
+                user_message = user_message.replace(/^\//, "")
             }
         }
-
-        if (!user_message && !$currentChat?.pastedMedia) {
+        // if the user message is empty, and we don't have any new media,
+        // continue the prior inference
+        else if (!$currentChat?.pastedMedia) {
             await chatRunInference($currentChat?.id)
             return
         }
+
+        // OTHERWISE...
 
         let presubmit_message = inputBoxEl.value
 
