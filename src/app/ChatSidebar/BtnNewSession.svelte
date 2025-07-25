@@ -59,7 +59,7 @@
             onclick={newConversationClick}
             disabled={$chatInProgress}
         >
-            New Session
+            New
         </button>
         <button
             class="btn-duplicate"
