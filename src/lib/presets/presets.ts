@@ -98,6 +98,60 @@ function _legacyLoadJSON(content: string) {
 }
 
 /* ------------------------------------------------ */
+function _loadMD(content: string) {
+    let prompt = undefined
+    let model = undefined
+    let settings = {}
+
+    console.log("Loading markdown preset...")
+
+    // the body of the markdown file is the system prompt
+    // if there is a YAML front-matter, we will use that
+    // to set the model and settings
+    const frontMatter = content.match(/---\n([\s\S]+?)\n---/)
+
+    if (frontMatter) {
+        const yamlContent = frontMatter[1]
+        const data = yaml.load(yamlContent) as Config
+
+        console.log("Front matter found: ", data)
+        // populate templated vars
+        if (data.variables) {
+            for (const [key, value] of Object.entries(data.variables)) {
+                if (typeof value === "string") {
+                    data.system_prompt = data.system_prompt.replace(
+                        `{{${key}}}`,
+                        value
+                    )
+                } else {
+                    console.warn("(IGNORED) Invalid variable type: " + key)
+                }
+            }
+        }
+        if (data.system_prompt) {
+            prompt = data.system_prompt
+        }
+        if (data.model_name) {
+            model = data.model_name
+        }
+        if (data.options) {
+            settings = {
+                ...settings,
+                ...data.options,
+            }
+        }
+    }
+
+    prompt = prompt || content.replace(/---\n[\s\S]+?\n---/, "").trim()
+
+    return {
+        prompt,
+        model,
+        settings,
+    }
+}
+
+/* ------------------------------------------------ */
 
 function _loadYAML(content: string) {
     // assume new YAML format
@@ -163,6 +217,8 @@ function _doParsePreset(content: string, filename: string = "") {
         // really a typical use case, but it is supported because it's
         // super simple and why the fuck not?
         sprompt = content
+    } else if (filename.endsWith(".yml") || filename.endsWith(".md")) {
+        ;({ prompt: sprompt, model, settings } = _loadMD(content))
     } else if (filename.endsWith(".yml") || filename.endsWith(".yaml")) {
         ;({ prompt: sprompt, model, settings } = _loadYAML(content))
     } else {
@@ -173,7 +229,6 @@ function _doParsePreset(content: string, filename: string = "") {
     // now let's pull it together ------------------------------
 
     if (sprompt) {
-        console.info("Prompt found: " + sprompt)
         chatSetSystemPrompt(target_chat_id, sprompt)
     } else {
         console.info("No system prompt specified")
@@ -211,7 +266,13 @@ function _doParsePreset(content: string, filename: string = "") {
 
 /* ------------------------------------------------ */
 export async function loadPresetFromFile() {
-    const { result, file } = await loadFile([".json", ".yml", ".yaml", ".txt"])
+    const { result, file } = await loadFile([
+        ".json",
+        ".yml",
+        ".yaml",
+        ".txt",
+        ".md",
+    ])
 
     return _doParsePreset(result, file.name)
 }
