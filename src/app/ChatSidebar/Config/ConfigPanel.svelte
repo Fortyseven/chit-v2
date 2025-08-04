@@ -3,8 +3,8 @@
     import {
         appStateSetBackpackApiEndpoint,
         appStateSetChatApiEndpoint,
-        appStateSetDefaultModel,
         appStateSetDefaultContext,
+        appStateSetDefaultModel,
         appStateSetDefaultTemperature,
     } from "$lib/appState/appStateActions"
     import { DEFAULT_OL_ENDPOINT } from "../../../lib/appState/appState"
