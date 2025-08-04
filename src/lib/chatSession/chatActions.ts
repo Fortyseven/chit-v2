@@ -1,4 +1,5 @@
 import { get, writable } from "svelte/store"
+import general_prompt from "../../preset-prompts/general.js"
 import { appState } from "../appState/appState"
 import { backpackProcess } from "../backpack/backpackActions"
 import llm from "../llm/ollama"
@@ -7,6 +8,7 @@ import {
     applyUserVariables,
 } from "../templating/templating"
 import { chatClearAllPastedMedia, MediaAttachment } from "./chatAttachments"
+
 import {
     BackpackMode,
     chats,
@@ -43,7 +45,7 @@ export function chatNew(): string {
         lastRequestStart: 0,
         lastRequestFinish: 0,
         model_name: defaultModel,
-        systemPrompt: get(appState).defaultPrompt,
+        systemPrompt: get(appState).defaultPrompt || general_prompt.prompt,
         response_buffer: "",
         settings: {
             temperature: defaultTemperature,

@@ -71,7 +71,7 @@
                 <label
                     for="default-prompt"
                     title="Prompt that populates the system prompt for all new sessions when not loaded from a preset."
-                    >Default Prompt
+                    >Default Prompt (defaults to 'General Query' if blank)
                     <textarea
                         id="default-prompt"
                         rows="4"
