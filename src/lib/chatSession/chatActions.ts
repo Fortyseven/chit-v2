@@ -26,9 +26,15 @@ export function chatNew(): string {
     const id = crypto.randomUUID()
     const defaultModel = get(appState).defaultModel?.trim() || DEFAULT_MODEL
     const contextValue = get(appState).defaultContext?.trim()
-    const defaultContext = contextValue && !isNaN(Number(contextValue)) ? Number(contextValue) : DEFAULT_CONTEXT
+    const defaultContext =
+        contextValue && !isNaN(Number(contextValue))
+            ? Number(contextValue)
+            : DEFAULT_CONTEXT
     const tempValue = get(appState).defaultTemperature?.trim()
-    const defaultTemperature = tempValue && !isNaN(Number(tempValue)) ? Number(tempValue) : DEFAULT_TEMPERATURE
+    const defaultTemperature =
+        tempValue && !isNaN(Number(tempValue))
+            ? Number(tempValue)
+            : DEFAULT_TEMPERATURE
     const newChat = {
         id,
         title: "New Chat " + new Date().toLocaleString(),
