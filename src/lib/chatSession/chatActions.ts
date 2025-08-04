@@ -24,6 +24,11 @@ export const DEFAULT_MODEL = "gemma3:12b"
 // Insert a new chat at the end of the list
 export function chatNew(): string {
     const id = crypto.randomUUID()
+    const defaultModel = get(appState).defaultModel?.trim() || DEFAULT_MODEL
+    const contextValue = get(appState).defaultContext?.trim()
+    const defaultContext = contextValue && !isNaN(Number(contextValue)) ? Number(contextValue) : DEFAULT_CONTEXT
+    const tempValue = get(appState).defaultTemperature?.trim()
+    const defaultTemperature = tempValue && !isNaN(Number(tempValue)) ? Number(tempValue) : DEFAULT_TEMPERATURE
     const newChat = {
         id,
         title: "New Chat " + new Date().toLocaleString(),
@@ -31,12 +36,12 @@ export function chatNew(): string {
         createdAt: new Date(),
         lastRequestStart: 0,
         lastRequestFinish: 0,
-        model_name: "gemma3:12b",
+        model_name: defaultModel,
         systemPrompt: get(appState).defaultPrompt,
         response_buffer: "",
         settings: {
-            temperature: DEFAULT_TEMPERATURE,
-            num_ctx: DEFAULT_CONTEXT,
+            temperature: defaultTemperature,
+            num_ctx: defaultContext,
         },
         wasAborted: false,
         pastedMedia: [],
@@ -45,6 +50,7 @@ export function chatNew(): string {
             assistant: "Assistant",
         },
         backpackMode: BackpackMode.OFF,
+        backpackReferences: undefined,
     }
 
     chats.update(($chats) => [...$chats, newChat])

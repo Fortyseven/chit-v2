@@ -10,6 +10,9 @@ export interface AppState {
     backpackApiEndpoint: string
     soundEnabled: boolean
     defaultPrompt: string
+    defaultModel: string
+    defaultContext: string // NEW: default context size (freeform)
+    defaultTemperature: string // NEW: default temperature (freeform)
     backpackHeartbeatTimer: any
     useTitler: boolean
     resizeImages: boolean
@@ -21,6 +24,9 @@ export const appStateDefaults: AppState = {
     backpackApiEndpoint: DEFAULT_BP_ENDPOINT,
     soundEnabled: true,
     defaultPrompt: "",
+    defaultModel: "",
+    defaultContext: "", // NEW: default context size
+    defaultTemperature: "", // NEW: default temperature
     backpackHeartbeatTimer: null,
     useTitler: true,
     resizeImages: true,

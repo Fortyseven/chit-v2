@@ -3,6 +3,9 @@
     import {
         appStateSetBackpackApiEndpoint,
         appStateSetChatApiEndpoint,
+        appStateSetDefaultModel,
+        appStateSetDefaultContext,
+        appStateSetDefaultTemperature,
     } from "$lib/appState/appStateActions"
     import { DEFAULT_OL_ENDPOINT } from "../../../lib/appState/appState"
     import Modal from "../../UI/Modal.svelte"
@@ -87,6 +90,51 @@
                     placeholder="Enter your default prompt here..."
                     bind:value={$appState.defaultPrompt}
                 ></textarea>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label
+                for="default-ollama-model"
+                title="Default Ollama model to use for new conversations. Leave blank to use the built-in default."
+                >Default Ollama Model
+                <input
+                    id="default-ollama-model"
+                    type="text"
+                    placeholder="e.g. gemma3:12b, llama3, etc."
+                    value={$appState.defaultModel}
+                    on:input={(e) => appStateSetDefaultModel(e.target.value)}
+                />
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label
+                for="default-context-size"
+                title="Default context size for new conversations. Leave blank to use the built-in default."
+                >Default Context Size
+                <input
+                    id="default-context-size"
+                    type="text"
+                    placeholder="e.g. 65536, 4096, etc."
+                    value={$appState.defaultContext}
+                    on:input={(e) => appStateSetDefaultContext(e.target.value)}
+                />
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label
+                for="default-temperature"
+                title="Default temperature for new conversations. Leave blank to use the built-in default."
+                >Default Temperature
+                <input
+                    id="default-temperature"
+                    type="text"
+                    placeholder="e.g. 0.7, 1.0, etc."
+                    value={$appState.defaultTemperature}
+                    on:input={(e) => appStateSetDefaultTemperature(e.target.value)}
+                />
             </label>
         </div>
     </Modal>

@@ -18,3 +18,15 @@ export function appStateToggleSound(enabled: boolean) {
 export function appStateSetDefaultPrompt(prompt: string) {
     appState.update((state) => ({ ...state, defaultPrompt: prompt }))
 }
+
+export function appStateSetDefaultModel(model: string) {
+    appState.update((state) => ({ ...state, defaultModel: model }))
+}
+
+export function appStateSetDefaultContext(context: string) {
+    appState.update((state) => ({ ...state, defaultContext: context }))
+}
+
+export function appStateSetDefaultTemperature(temp: string) {
+    appState.update((state) => ({ ...state, defaultTemperature: temp }))
+}
