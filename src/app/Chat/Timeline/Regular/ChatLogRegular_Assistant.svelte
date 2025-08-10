@@ -96,7 +96,8 @@
         text-align: start;
         padding-inline: 1em;
         font-size: 1.2em;
-        background-color: var(--color-background-darker);
+        // background-color: var(--color-background-darker);
+        background-color: #1111118a;
         color: var(--color-text-assistant);
         border-bottom: 1px solid #ffffff30;
         border-top: 1px solid #fff2;
