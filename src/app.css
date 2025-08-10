@@ -492,6 +492,10 @@
     --color-surface-900: #1a1c1d;
     --color-surface-950: #161819;
 
+    --thumb-color: var(--color-accent);
+    --track-color: var(--color-background-darker);
+    --track-width: thin;
+
     --toastBackground: var(--color-background-lighter);
     --toastColor: var(--color-text);
     --toastBarBackground: var(--color-accent);
@@ -503,6 +507,8 @@
 html {
     overflow: auto;
     height: unset !important;
+    scrollbar-width: var(--track-width);
+    scrollbar-color: var(--thumb-color) var(--track-color);
 }
 
 html,
@@ -510,7 +516,7 @@ body {
     font-family: var(--font-ui);
     width: 100vw !important;
     height: 100vh !important;
-    text-rendering: optimizeLegibility;
+    text-rendering: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -538,7 +544,6 @@ body {
 #app {
     display: contents;
 }
-
 
 .background-grid {
     background-color: #f0f;

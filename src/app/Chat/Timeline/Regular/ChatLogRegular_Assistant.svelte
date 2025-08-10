@@ -104,7 +104,7 @@
         margin: auto;
         position: relative;
         overflow-y: clip;
-        overflow-x: scroll;
+        overflow-x: auto;
 
         .message-controls {
             position: absolute;

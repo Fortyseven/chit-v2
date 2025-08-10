@@ -34,7 +34,8 @@
         box-sizing: border-box;
         width: inherit;
         height: 100%;
-        overflow-y: scroll;
+        overflow-y: auto;
+
         z-index: 5;
 
         --s: 8px; /* control the size*/

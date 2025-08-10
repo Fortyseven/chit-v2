@@ -5,7 +5,6 @@
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
     import PageContent from "./app/PageContent.svelte"
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
-    // import { currentChat } from "./lib/chatSession/chatSession"
 
     import "./lib/appState/appStateStorage"
     import "./lib/audio"
@@ -32,13 +31,11 @@
     .page {
         box-sizing: border-box;
         width: inherit;
-        overflow-y: scroll;
+        overflow-y: hidden;
         position: relative;
     }
 
     .chat-header {
-        // width: -moz-available;
-        // width: -webkit-fill-available;
         width: stretch;
         height: auto;
         position: fixed;
@@ -47,8 +44,6 @@
     }
 
     .input-bar {
-        // width: -moz-available;
-        // width: -webkit-fill-available;
         width: stretch;
 
         position: fixed;

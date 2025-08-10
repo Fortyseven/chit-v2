@@ -169,7 +169,7 @@
         width: stretch;
         flex-direction: column;
         overflow-y: auto;
-        overflow-x: scroll;
+        overflow-x: auto;
         max-width: var(--timeline-max-width);
         margin-inline: auto;
         font-size: 1.25em;
