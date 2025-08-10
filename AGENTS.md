@@ -1,49 +1,24 @@
 # AGENTS.md
 
-## Build, Lint, and Test
+## Paths
+- `/desktop` is an Electron shell that uses the main Svelte project as the renderer
+- `/src` is a Svelte project
+- `/public` contains top level static content for the `/src` Svelte project
 
-- **Install dependencies:**
-  `npm install`
-- **Start dev server:**
-  `npm run dev`
-- **Build for production:**
-  `npm run build`
-- **Preview production build:**
-  `npm run preview`
-- **Linting:**
-  _No explicit lint script; use Prettier for formatting._
-- **Run a single test:**
-  _No test scripts or test files detected. For Python (server/backpack), run individual files with:_
-  `python server/backpack/<file>.py`
+## Build, Lint, and Test
+- Install deps: `npm install`
+- Dev server: `npm run dev`
+- Production build: `npm run build`
+- Preview build: `npm run preview`
+- Lint: Use Prettier (no explicit lint script)
 
 ## Code Style Guidelines
+- **Formatting:** 4 spaces, no tabs/semicolons, LF endings, trim trailing whitespace, no final newline
+- **Imports:** ES2022 syntax; group by library, then local
+- **Types:** TypeScript strict mode; prefer explicit types
+- **Naming:** camelCase for vars/functions, PascalCase for components/classes, kebab-case for Svelte, camelCase or PascalCase for TS/JS files
+- **Error Handling:** Always handle Promise errors (`.catch`/`try-catch`), provide clear messages
+- **Components:** Svelte in `/src/app`, utilities in `/src/lib`
+- **Comments:** Use JSDoc for functions; keep comments concise and relevant
 
-- **Formatting:**
-  - Use 4 spaces for indentation, no tabs (`.editorconfig`, `.prettierrc`)
-  - No semicolons (`.prettierrc`)
-  - End of line: LF
-  - Trim trailing whitespace
-  - No final newline
-- **Imports:**
-  - Use ES2022 module syntax (`import ... from ...`)
-  - Group imports by library, then local files
-- **Types:**
-  - TypeScript: strict mode enabled (`tsconfig.json`)
-  - Prefer explicit types for function parameters and return values
-- **Naming Conventions:**
-  - Use camelCase for variables and functions
-  - Use PascalCase for components and classes
-  - Filenames: kebab-case for Svelte, camelCase or PascalCase for TS/JS
-- **Error Handling:**
-  - Always handle errors in Promises (use `.catch` or `try/catch`)
-  - Provide clear error messages
-- **Components:**
-  - Svelte components in `/src/app`
-  - Utility logic in `/src/lib`
-- **Comments:**
-  - Use JSDoc for function documentation
-  - Prefer concise, relevant comments
-
----
-
-Let me know if you want to add more details or custom rules!
+_This file is for agentic coding agents. No Cursor or Copilot rules detected._
