@@ -35,6 +35,7 @@
         width: inherit;
         height: 100%;
         overflow-y: scroll;
+        z-index: 5;
 
         --s: 8px; /* control the size*/
         --c1: var(--color-surface-950);
@@ -52,5 +53,59 @@
             var(--g3) var(--s) 0,
             var(--g3) 0 calc(1.73 * var(--s)) var(--c2);
         background-size: calc(2 * var(--s)) calc(3.46 * var(--s));
+
+        :global(*) {
+            z-index: 7;
+            // display: none;
+        }
+
+        &::after {
+            z-index: 6;
+            // overlay image
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            mix-blend-mode: color;
+
+            background: linear-gradient(
+                to bottom,
+                #150e15 0%,
+                #160f15 3.23%,
+                #160f15 6.45%,
+                #160f15 9.68%,
+                #170f15 12.9%,
+                #170f15 16.13%,
+                #170f16 19.35%,
+                #181016 22.58%,
+                #181016 25.81%,
+                #191016 29.03%,
+                #191016 32.26%,
+                #1a1117 35.48%,
+                #1a1117 38.71%,
+                #1b1117 41.94%,
+                #1c1217 45.16%,
+                #1d1218 48.39%,
+                #1d1218 51.61%,
+                #1f1318 54.84%,
+                #201318 58.06%,
+                #211418 61.29%,
+                #221418 64.52%,
+                #241518 67.74%,
+                #261517 70.97%,
+                #281617 74.19%,
+                #2a1616 77.42%,
+                #2c1614 80.65%,
+                #2f1612 83.87%,
+                #31150f 87.1%,
+                #33140b 90.32%,
+                #311007 93.55%,
+                #290b03 96.77%,
+                #170501 100%
+            );
+        }
     }
 </style>
