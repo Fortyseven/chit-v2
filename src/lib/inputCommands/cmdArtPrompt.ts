@@ -8,6 +8,7 @@ import {
 } from "../chatSession/chatActions"
 import { ChatSession } from "../chatSession/chatSession"
 import llm, { LLMDriver, LLMInterface } from "../llm/llm"
+import { GenericMessage } from "../llm/LLMDriver"
 
 const ArtPrompt = z.object({
     art_prompt: z.string(),
@@ -45,25 +46,32 @@ export default async function (args: string[]): Promise<string> {
     try {
         chatInProgress.set(true)
 
-        const response = await get(_llm.ol_instance)?.chat({
-            model: chat_session?.model_name,
-            messages: [
-                {
-                    role: "system",
-                    content: SPROMPT,
-                },
-                {
-                    role: "user",
-                    content: conversation,
-                },
-            ],
-            format: zodToJsonSchema(ArtPrompt),
-            stream: false,
-            options: {
-                temperature: 0.9,
-                num_ctx: cur_context,
+        const driver = await get(_llm.driver)
+
+        if (!driver) {
+            throw Error("cmdArtPrompt: llm driver not present")
+        }
+        const messages: GenericMessage[] = [
+            {
+                role: "system",
+                content: SPROMPT,
             },
-        })
+            {
+                role: "user",
+                content: conversation,
+            },
+        ]
+
+        const response = await driver.chatFormatted(
+            messages,
+            chat_session?.model_name || "",
+            zodToJsonSchema(ArtPrompt),
+            0.9,
+            cur_context
+        )
+
+        console.log("RESPONSE", response)
+        console.log("RESPONSE2", ArtPrompt.parse(response))
 
         if (response) {
             const art_prompt = ArtPrompt.parse(
