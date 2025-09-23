@@ -22,6 +22,72 @@ export class OpenAIDriver implements LLMDriver {
         this.apiKey = apiKey
     }
 
+    async chatFormatted(
+        messages: GenericMessage[],
+        model: string,
+        format: any,
+        temp?: number,
+        ctx?: number
+    ): Promise<any> {
+        console.log("FORMAT", format)
+        // Use OpenAI JSON mode for structured output
+        // If format is provided, append a system prompt to steer the model
+        let oaiMessages = messages.map((m) => {
+            if (m.images && m.images.length > 0) {
+                return {
+                    role: m.role,
+                    content: [
+                        { type: "text", text: m.content },
+                        ...m.images.map((img64) => ({
+                            type: "image_url",
+                            image_url: `data:image/png;base64,${img64}`,
+                        })),
+                    ],
+                }
+            }
+            return { role: m.role, content: m.content }
+        })
+        if (format && typeof format === "object" && format !== null) {
+            const keys = Object.keys(format.properties || {})
+            const example = JSON.stringify(format, null, 2)
+            oaiMessages = [
+                {
+                    role: "system",
+                    content:
+                        `Respond ONLY with a valid JSON object with these property names: ${keys.join(
+                            ", "
+                        )}. ` +
+                        `Format your response exactly as: ${example}. Do not include any extra text or explanation.`,
+                },
+                ...oaiMessages,
+            ]
+        }
+
+        const body: any = {
+            model,
+            messages: oaiMessages,
+            temperature: temp ?? DEFAULT_TEMPERATURE,
+            stream: false,
+            response_format: { type: "json_object" },
+        }
+        if (ctx) {
+            body.num_ctx = ctx
+        }
+
+        const res = await fetch(`${this.baseURL}/chat/completions`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.apiKey}`,
+            },
+            body: JSON.stringify(body),
+        })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json()
+        // OpenAI returns choices[0].message.content as valid JSON
+        return JSON.parse(data.choices?.[0]?.message?.content)
+    }
+
     async refreshModels() {
         try {
             const res = await fetch(`${this.baseURL}/models`, {
