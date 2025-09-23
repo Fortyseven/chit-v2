@@ -1,4 +1,3 @@
-import { Ollama } from "ollama"
 import { get } from "svelte/store"
 import { z } from "zod"
 import zodToJsonSchema from "zod-to-json-schema"
@@ -8,14 +7,14 @@ import {
     DEFAULT_CONTEXT,
 } from "../chatSession/chatActions"
 import { ChatSession } from "../chatSession/chatSession"
-import llm, { LLMInterface } from "../llm/ollama"
+import llm, { LLMDriver, LLMInterface } from "../llm/llm"
 
 const ArtPrompt = z.object({
     art_prompt: z.string(),
 })
 
 export default async function (args: string[]): Promise<string> {
-    const inst = get(get(llm).ol_instance) as Ollama
+    const inst = get(get(llm).driver) as LLMDriver
 
     const SPROMPT =
         "Write a single detailed paragraph visually describing the current moment in a way that can be processed bv an AI art generator. Describe the composition and details using vivid language.  Only respond with the paragraph."

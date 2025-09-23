@@ -30,3 +30,10 @@ export function appStateSetDefaultContext(context: string) {
 export function appStateSetDefaultTemperature(temp: string) {
     appState.update((state) => ({ ...state, defaultTemperature: temp }))
 }
+
+export function appStateSetOpenAIBase(base: string) {
+    appState.update((state) => ({ ...state, openaiApiBase: base }))
+}
+export function appStateSetOpenAIKey(key: string) {
+    appState.update((state) => ({ ...state, openaiApiKey: key }))
+}

@@ -2,7 +2,7 @@ import { get, writable } from "svelte/store"
 import general_prompt from "../../preset-prompts/general.js"
 import { appState } from "../appState/appState"
 import { backpackProcess } from "../backpack/backpackActions"
-import llm from "../llm/ollama"
+import llm from "../llm/llm.js"
 import {
     applySystemVariables,
     applyUserVariables,

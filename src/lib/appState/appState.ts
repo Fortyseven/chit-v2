@@ -16,6 +16,9 @@ export interface AppState {
     backpackHeartbeatTimer: any
     useTitler: boolean
     resizeImages: boolean
+    // NEW: OpenAI-compatible
+    openaiApiBase: string
+    openaiApiKey: string
 }
 
 export const appStateDefaults: AppState = {
@@ -30,6 +33,8 @@ export const appStateDefaults: AppState = {
     backpackHeartbeatTimer: null,
     useTitler: true,
     resizeImages: true,
+    openaiApiBase: "",
+    openaiApiKey: "",
 }
 
 export const appState = writable<AppState>({

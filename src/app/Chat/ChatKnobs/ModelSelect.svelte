@@ -3,7 +3,7 @@
     import { appState } from "../../../lib/appState/appState"
     import { chatSetModel } from "../../../lib/chatSession/chatActions"
     import { currentChat } from "../../../lib/chatSession/chatSession"
-    import llm from "../../../lib/llm/ollama"
+    import llm, { llmModels } from "../../../lib/llm/llm"
 
     let selected_model = writable($currentChat.model_name)
 
@@ -21,8 +21,14 @@
 <div class="model-select">
     {#key selected_model}
         <select bind:value={$selected_model} name="system" id="system">
-            {#each get($llm.models) as { model, name }}
-                <option value={model}>{name}</option>
+            {#each $llmModels as m}
+                {#if typeof m === "string"}
+                    <option value={m}>{m}</option>
+                {:else}
+                    <option value={m.name || m.model}
+                        >{m.name || m.model}</option
+                    >
+                {/if}
             {/each}
         </select>
     {/key}

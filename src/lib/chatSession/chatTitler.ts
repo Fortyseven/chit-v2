@@ -1,7 +1,8 @@
 import { get } from "svelte/store"
 import { z } from "zod"
 import { zodToJsonSchema } from "zod-to-json-schema"
-import llm, { LLMInterface } from "../llm/ollama"
+import llm, { LLMInterface } from "../llm/llm"
+import { GenericMessage } from "../llm/LLMDriver"
 import {
     chatFind,
     chatInProgress,
@@ -23,6 +24,8 @@ export async function chatGenerateTitle(chatId: string = "") {
     const _llm: LLMInterface = get(llm)
 
     // chatInProgress.set(true)
+
+    const current_title = chat_session?.title || ""
 
     try {
         if (chatLength(chatId) < 2) {
@@ -50,31 +53,40 @@ export async function chatGenerateTitle(chatId: string = "") {
 
         const cur_context = chat_session.settings?.num_ctx || DEFAULT_CONTEXT
 
-        const response = await get(_llm.ol_instance)?.chat({
-            model: chat_session?.model_name,
-            messages: [
-                {
-                    role: "system",
-                    content: TITLER_PROMPT,
-                },
-                {
-                    role: "user",
-                    content: conversation,
-                },
-            ],
-            format: zodToJsonSchema(Title),
-            stream: false,
-            options: {
-                temperature: 0.6,
-                num_ctx: cur_context, // TODO: catch the one in ollama.ts
-            },
-        })
+        const llm_instance = get(_llm.driver)
 
-        chatSetTitle(
-            chatId,
-            Title.parse(JSON.parse(response?.message.content))
-                .short_summary_title
+        if (!llm_instance) {
+            throw Error("chatGenerateTitle: llm instance not found")
+        }
+
+        const messages: GenericMessage[] = [
+            {
+                role: "system",
+                content: TITLER_PROMPT,
+            },
+            {
+                role: "user",
+                content: conversation,
+            },
+        ]
+
+        const response = await llm_instance.chatFormatted(
+            messages,
+            chat_session?.model_name,
+            zodToJsonSchema(Title),
+            0.7,
+            cur_context
         )
+
+        console.log("RESPONSE: ", response)
+
+        try {
+            chatSetTitle(chatId, Title.parse(response).short_summary_title)
+        } catch (e) {
+            console.error("chatGenerateTitle: failed to parse title", e)
+            console.error("response:", response)
+            chatSetTitle(chatId, current_title)
+        }
     } finally {
         // chatInProgress.set(false)
     }

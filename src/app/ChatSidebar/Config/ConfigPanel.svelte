@@ -6,6 +6,8 @@
         appStateSetDefaultContext,
         appStateSetDefaultModel,
         appStateSetDefaultTemperature,
+        appStateSetOpenAIBase,
+        appStateSetOpenAIKey,
     } from "$lib/appState/appStateActions"
     import { DEFAULT_OL_ENDPOINT } from "../../../lib/appState/appState"
     import Modal from "../../UI/Modal.svelte"
@@ -15,6 +17,8 @@
 
 {#if open}
     <Modal title="Configuration Panel" {open}>
+        <!-- --------------------------------------------- -->
+
         <div class="form-group">
             <div class="field">
                 <label title="Enable or disable audio feedback.">
@@ -25,12 +29,14 @@
                     />
                 </label>
             </div>
+
             <div class="field">
                 <label title="Enable or disable the use of the titler.">
                     Use Titler
                     <input type="checkbox" bind:checked={$appState.useTitler} />
                 </label>
             </div>
+
             <div class="field">
                 <label title="Resize images on paste">
                     Resize images for inference
@@ -41,24 +47,63 @@
                 </label>
             </div>
         </div>
-        <div class="form-group">
+
+        <!-- --------------------------------------------- -->
+
+        <div class="form-group row">
             <div class="field">
                 <label
                     for="ollama-api-endpoint"
                     title="The API endpoint for Ollama with a specific URL."
-                    >Ollama API Endpoint
+                >
+                    Ollama API Endpoint <button
+                        class="trans"
+                        type="button"
+                        on:click={() =>
+                            appStateSetChatApiEndpoint(DEFAULT_OL_ENDPOINT)}
+                    >
+                        ⏎
+                    </button>
+                    <div>
+                        <input
+                            id="ollama-api-endpoint"
+                            type="text"
+                            placeholder={DEFAULT_OL_ENDPOINT}
+                            value={$appState.chatApiEndpoint}
+                            on:input={(e) =>
+                                appStateSetChatApiEndpoint(e.target.value)}
+                        />
+                    </div>
+                </label>
+            </div>
+
+            <div class="field">
+                <label
+                    for="openai-base"
+                    title="OpenAI-compatible API base URL (e.g., https://api.openai.com/v1)"
+                >
+                    OpenAI Base URL
                     <input
-                        id="ollama-api-endpoint"
+                        id="openai-base"
                         type="text"
-                        placeholder={DEFAULT_OL_ENDPOINT}
-                        value={$appState.chatApiEndpoint}
-                        on:input={(e) =>
-                            appStateSetChatApiEndpoint(e.target.value)}
-                        on:focusout={(e) => {
-                            if (e.target.value === "") {
-                                appStateSetChatApiEndpoint(DEFAULT_OL_ENDPOINT)
-                            }
-                        }}
+                        placeholder="https://api.openai.com/v1"
+                        value={$appState.openaiApiBase}
+                        on:input={(e) => appStateSetOpenAIBase(e.target.value)}
+                    />
+                </label>
+            </div>
+
+            <div class="field">
+                <label
+                    for="openai-key"
+                    title="OpenAI API key or compatible provider key"
+                >
+                    OpenAI API Key
+                    <input
+                        id="openai-key"
+                        type="password"
+                        value={$appState.openaiApiKey}
+                        on:input={(e) => appStateSetOpenAIKey(e.target.value)}
                     />
                 </label>
             </div>
@@ -81,6 +126,8 @@
                 </label>
             </div>
         </div>
+
+        <!-- --------------------------------------------- -->
 
         <div class="form-group row">
             <div class="field">
@@ -154,9 +201,13 @@
 
 <style>
     .form-group {
-        margin-bottom: 1rem;
+        * {
+            box-sizing: border-box !important;
+        }
 
+        margin-bottom: 1rem;
         display: flex;
+        gap: 1rem;
 
         > div {
             flex: 1;
@@ -176,29 +227,30 @@
                 color: var(--color-accent-lighter);
                 input,
                 textarea {
-                    margin-top: 0.5rem;
+                    margin-top: 0.25rem;
                 }
 
-                input[type="text"] {
+                input[type="text"],
+                input[type="password"] {
                     width: 100%;
-                    padding: 0.5em;
+                    padding: 0.5rem;
                     border-radius: var(--border-radius-standard);
                     border: 1px solid #555;
                     background-color: #111;
                     color: var(--color-accent);
                     font-family: monospace;
-                    box-sizing: border-box;
+                    /* box-sizing: border-box; */
                 }
 
                 textarea {
                     width: 100%;
-                    padding: 0.5em;
+                    padding: 0.5rem;
                     border-radius: var(--border-radius-standard);
                     border: 1px solid #555;
                     background-color: #111;
                     color: var(--color-accent);
                     resize: vertical;
-                    box-sizing: border-box;
+                    /* box-sizing: border-box; */
                     font-family: monospace;
                 }
 
