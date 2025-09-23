@@ -127,21 +127,51 @@ export class OpenAIDriver implements LLMDriver {
         chatSetWasAborted(chatId, false)
         const controller = new AbortController()
         try {
-            const oaiMessages = messages.map((m) => {
-                if (m.images && m.images.length > 0) {
-                    return {
-                        role: m.role,
-                        content: [
-                            { type: "text", text: m.content },
-                            ...m.images.map((img64) => ({
-                                type: "image_url",
-                                image_url: `data:image/png;base64,${img64}`,
-                            })),
-                        ],
+            const oaiMessages = await Promise.all(
+                messages.map(async (m) => {
+                    if (m.images && m.images.length > 0) {
+                        // Print image dimensions before sending
+                        const imageBlocks = await Promise.all(
+                            m.images.map(async (img64, idx) => {
+                                // Create an Image object to get dimensions
+                                const img = new Image()
+                                img.src = `data:image/png;base64,${img64}`
+                                await new Promise((resolve) => {
+                                    img.onload = () => {
+                                        console.log(
+                                            `Image ${idx} dimensions:`,
+                                            img.width,
+                                            "x",
+                                            img.height
+                                        )
+                                        resolve(true)
+                                    }
+                                    img.onerror = () => {
+                                        console.warn(
+                                            `Failed to load image ${idx} for dimension check.`
+                                        )
+                                        resolve(false)
+                                    }
+                                })
+                                return {
+                                    type: "image_url",
+                                    image_url: {
+                                        url: `data:image/png;base64,${img64}`,
+                                    },
+                                }
+                            })
+                        )
+                        return {
+                            role: m.role,
+                            content: [
+                                { type: "text", text: m.content },
+                                ...imageBlocks,
+                            ],
+                        }
                     }
-                }
-                return { role: m.role, content: m.content }
-            })
+                    return { role: m.role, content: m.content }
+                })
+            )
 
             const res = await fetch(`${this.baseURL}/chat/completions`, {
                 method: "POST",
