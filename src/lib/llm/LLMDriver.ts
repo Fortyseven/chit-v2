@@ -5,6 +5,7 @@ export type GenericMessage = {
 }
 
 export interface LLMDriver {
+    abort(): void
     refreshModels(): Promise<void>
     listModels(): any[]
 

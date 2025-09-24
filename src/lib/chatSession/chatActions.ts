@@ -407,12 +407,17 @@ export function chatAbort() {
     }
 
     try {
-        get(get(llm).ol_instance).abort()
+        const driverStore = get(llm).driver
+        const driver = driverStore && get(driverStore)
+        if (driver) {
+            if (typeof driver.abort === "function") {
+                driver.abort()
+            }
+        }
     } catch (e) {
         // console.info("Chat aborted:", e)
     } finally {
         const chatId = getActiveChatId()
-
         chatSetWasAborted(chatId, true)
     }
 }

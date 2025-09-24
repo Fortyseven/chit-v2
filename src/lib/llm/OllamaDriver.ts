@@ -16,10 +16,23 @@ export class OllamaDriver implements LLMDriver {
     models: Writable<ModelResponse[]> = writable([])
     ol_instance: Writable<Ollama | undefined> = writable(undefined)
     host = ""
+    currentStream: any = null
+    aborted: boolean = false
 
     constructor(host: string) {
         this.host = host
         this.ol_instance.set(new Ollama({ host }))
+    }
+
+    abort() {
+        this.aborted = true
+        if (
+            this.currentStream &&
+            typeof this.currentStream.return === "function"
+        ) {
+            this.currentStream.return() // Attempt to close the async iterator
+        }
+        this.currentStream = null
     }
 
     async refreshModels() {
@@ -83,15 +96,21 @@ export class OllamaDriver implements LLMDriver {
         } else {
             chatInProgress.set(true)
             chatSetWasAborted(chatId, false)
+            this.aborted = false
             try {
                 const stream = await inst.chat(config)
+                this.currentStream = stream
                 sndPlayTyping()
                 for await (const part of stream) {
+                    if (this.aborted) {
+                        break
+                    }
                     chatAppendStreamingPending(chatId, part.message.content)
                 }
             } catch (e) {
                 console.error("Ollama chat error:", e)
             } finally {
+                this.currentStream = null
                 chatPromoteStreamingPending(chatId)
                 chatInProgress.set(false)
                 sndStopTyping()

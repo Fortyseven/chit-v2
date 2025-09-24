@@ -14,12 +14,20 @@ export class OpenAIDriver implements LLMDriver {
     baseURL: string
     apiKey: string
     models: Writable<string[]> = writable([])
+    currentController: AbortController | null = null
 
     constructor(baseURL: string, apiKey: string) {
         // Normalize: ensure /v1 suffix
         const base = baseURL.replace(/\/+$/, "")
         this.baseURL = base.endsWith("/v1") ? base : `${base}/v1`
         this.apiKey = apiKey
+    }
+
+    abort() {
+        if (this.currentController) {
+            this.currentController.abort()
+            this.currentController = null
+        }
     }
 
     async chatFormatted(
@@ -50,17 +58,23 @@ export class OpenAIDriver implements LLMDriver {
         if (format && typeof format === "object" && format !== null) {
             const keys = Object.keys(format.properties || {})
             const example = JSON.stringify(format, null, 2)
-            oaiMessages = [
-                {
-                    role: "system",
-                    content:
-                        `Respond ONLY with a valid JSON object with these property names: ${keys.join(
-                            ", "
-                        )}. ` +
-                        `Format your response exactly as: ${example}. Do not include any extra text or explanation.`,
-                },
-                ...oaiMessages,
-            ]
+            const jsonInstruction = `Respond ONLY with a valid JSON object with these property names: ${keys.join(
+                ", "
+            )}. Format your response exactly as: ${example}. Do not include any extra text or explanation.`
+            // Check if first message is a system prompt
+            if (oaiMessages.length > 0 && oaiMessages[0].role === "system") {
+                // Append instruction to existing system prompt
+                oaiMessages[0].content = `${oaiMessages[0].content}\n${jsonInstruction}`
+            } else {
+                // Insert new system prompt
+                oaiMessages = [
+                    {
+                        role: "system",
+                        content: jsonInstruction,
+                    },
+                    ...oaiMessages,
+                ]
+            }
         }
 
         const body: any = {
@@ -125,7 +139,8 @@ export class OpenAIDriver implements LLMDriver {
     ) {
         chatInProgress.set(true)
         chatSetWasAborted(chatId, false)
-        const controller = new AbortController()
+        this.currentController = new AbortController()
+        const controller = this.currentController
         try {
             const oaiMessages = messages.map((m) => {
                 if (m.images && m.images.length > 0) {
@@ -189,6 +204,7 @@ export class OpenAIDriver implements LLMDriver {
         } catch (e) {
             console.error("OpenAI chat error:", e)
         } finally {
+            this.currentController = null
             chatPromoteStreamingPending(chatId)
             chatInProgress.set(false)
             sndStopTyping()
