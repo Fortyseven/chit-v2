@@ -1,4 +1,5 @@
 import cmdArtPrompt from "./cmdArtPrompt"
+import cmdRPStats from "./rp/cmdRPStats"
 
 interface Command {
     description: string
@@ -13,6 +14,11 @@ const COMMANDS: CommandList = {
     art: {
         description: "Generate a prompt based on the current conversation.",
         action: cmdArtPrompt,
+    },
+    stats: {
+        description:
+            "Macro for prompting that generates stats for characters in an RP session.",
+        action: cmdRPStats,
     },
     help: {
         description: "List all available commands.",
