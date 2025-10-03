@@ -16,7 +16,8 @@
     } from "../../../lib/chatSession/chatActions"
     import { chatClearAllPastedMedia } from "../../../lib/chatSession/chatAttachments"
     import { chats, currentChat } from "../../../lib/chatSession/chatSession"
-    import { handleCommand } from "../../../lib/inputCommands"
+    import type { CommandResult } from "../../../lib/inputCommands/inputCommands"
+    import { handleCommand } from "../../../lib/inputCommands/inputCommands"
     import IconButton from "../../UI/IconButton.svelte"
     import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
@@ -44,15 +45,12 @@
 
     /* ------------------------------------------------------ */
     async function launchCommand(command: string): Promise<string> {
-        let result = ""
-        try {
-            result = await handleCommand(command)
-        } finally {
-            if (inputBoxEl) {
-                inputBoxValue = result
-                inputBoxEl.value = result
-                inputBoxEl.focus()
-            }
+        if (inputBoxEl) {
+            let result: CommandResult = await handleCommand(command)
+
+            inputBoxValue = result.result
+            inputBoxEl.value = result.result
+            inputBoxEl.focus()
         }
 
         return ""
