@@ -23,10 +23,12 @@ export default async function (args: string[]): Promise<CommandResult> {
     }
 
     const SPROMPT =
-        "Write a single detailed paragraph visually describing the current moment in a way that can be processed by an AI art generator. Describe the composition and details using vivid language.  Only respond with the paragraph."
+        "Write a single detailed paragraph visually describing the current moment in a way that can be processed by an AI art generator. Describe the composition and details using vivid language. Only respond with the prompt paragraph."
 
     const chat_session: ChatSession | undefined = chatFind()
     const _llm: LLMInterface = get(llm)
+
+    const alsoAdd = args.join(" ")
 
     if (!chat_session) {
         throw Error("cmdArtPrompt: chat session not found")
@@ -59,7 +61,7 @@ export default async function (args: string[]): Promise<CommandResult> {
         const messages: GenericMessage[] = [
             {
                 role: "system",
-                content: SPROMPT,
+                content: SPROMPT + (alsoAdd ? "\nAlso, " + alsoAdd : ""),
             },
             {
                 role: "user",
