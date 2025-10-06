@@ -1,7 +1,7 @@
 import { toast } from "@zerodevx/svelte-toast"
 import yaml from "js-yaml"
 import { get } from "svelte/store"
-import llm from "../../lib/llm/llm"
+import { llm } from "../../lib/llm/llm"
 import { appActiveChat, appState } from "../appState/appState"
 import {
     chatFind,

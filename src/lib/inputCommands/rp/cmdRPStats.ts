@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { chatInProgress } from "../../chatSession/chatActions"
+import { CommandResult, commandResult } from "../inputCommands"
 
 const Stats = z.object({
     strength: z.number(),
@@ -12,7 +13,7 @@ const Stats = z.object({
     currentState: z.string(),
 })
 
-export default async function (args: string[]): Promise<string> {
+export default async function (args: string[]): Promise<CommandResult> {
     const SPROMPT =
         "[OOC: generate a raw markdown table; provide an update on your character's state, their physical state, what it's thinking, what's it's focused on, what it intends to do next, and where they intend this story to end; do not use a markdown code block{}]"
 
@@ -27,10 +28,14 @@ export default async function (args: string[]): Promise<string> {
         if (args_full.toLowerCase().includes("/c")) {
             // chop it off
             args_full = args_full.split("/c")[0].trim()
-            return `${SPROMPT_CHRSHEET.replace(
-                "{}",
-                args_full ? `; ${args_full}` : ""
-            )}`
+            return commandResult(
+                `${SPROMPT_CHRSHEET.replace(
+                    "{}",
+                    args_full ? `; ${args_full}` : ""
+                )}`,
+                false,
+                true
+            )
         }
 
         const interpolated = SPROMPT.replace(
@@ -38,7 +43,7 @@ export default async function (args: string[]): Promise<string> {
             args_full ? `; ${args_full}` : ""
         )
 
-        return `${interpolated}`
+        return commandResult(interpolated, false, true)
     } finally {
         chatInProgress.set(false)
     }

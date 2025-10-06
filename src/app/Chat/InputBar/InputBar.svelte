@@ -1,6 +1,5 @@
 <script lang="ts">
-    import InputBar__Attachments from "./InputBar__Attachments.svelte"
-
+    import { toast } from "@zerodevx/svelte-toast"
     import { Renew, SendFilled, TrashCan, Undo } from "carbon-icons-svelte"
     import { derived } from "svelte/store"
     import { appActiveChat, appState } from "../../../lib/appState/appState"
@@ -21,6 +20,7 @@
     import IconButton from "../../UI/IconButton.svelte"
     import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
+    import InputBar__Attachments from "./InputBar__Attachments.svelte"
     import InputBar__PasteHandler from "./InputBar__PasteHandler.svelte"
     import Status from "./Status/Status.svelte"
 
@@ -44,16 +44,42 @@
     })
 
     /* ------------------------------------------------------ */
-    async function launchCommand(command: string): Promise<string> {
-        if (inputBoxEl) {
-            let result: CommandResult = await handleCommand(command)
 
-            inputBoxValue = result.result
-            inputBoxEl.value = result.result
-            inputBoxEl.focus()
+    async function _handleSlashCommand(user_message: string) {
+        // handle command
+        const command = user_message.substring(1).trim()
+        let result: CommandResult | undefined = undefined
+
+        try {
+            result = await handleCommand(command)
+
+            if (result.autoInferResult) {
+                chatAddRoleMessage($currentChat?.id, "user", result.result)
+                await chatRunInference($currentChat?.id)
+            } else if (result.passToInput && inputBoxEl) {
+                inputBoxValue = result.result
+                inputBoxEl.value = result.result
+                inputBoxEl.focus()
+            }
+        } catch (error) {
+            toast.push(`ERR: ${error}`, {
+                theme: {
+                    "--toastBackground": "var(--toastErrorBackground)",
+                    "--toastBarBackground": "var(--toastErrorBarBackground)",
+                    "--toastColor": "var(--toastErrorColor)",
+                },
+            })
+            inputBoxValue = ""
+            inputBoxEl.value = ""
+            console.error("Error launching command", error)
+        } finally {
+            if (result?.passToInput === false) {
+                inputBoxValue = ""
+                inputBoxEl.value = ""
+            } else {
+                return
+            }
         }
-
-        return ""
     }
 
     /* ------------------------------------------------------ */
@@ -69,17 +95,8 @@
                 user_message.startsWith("/") &&
                 !user_message.startsWith("//")
             ) {
-                // handle command
-                const command = user_message.substring(1).trim()
-                let result = undefined
-                if ((result = await launchCommand(command))) {
-                    inputBoxEl.value = result
-                    inputBoxValue = result
-                } else {
-                    // if the command is not recognized, just return
-                    console.warn("Command not recognized:", command)
-                    return
-                }
+                await _handleSlashCommand(user_message)
+                return
             } else {
                 // replace the first // with / and let it flow through
                 // to the regular submit, ignore the rest
@@ -103,7 +120,7 @@
             inputBoxEl.classList.remove("overflow")
             inputBoxEl.disabled = true
 
-            let message: string = user_message
+            let message: string | undefined = user_message
 
             if (!$currentChat?.pastedMedia && message?.trim() === "") {
                 return
@@ -112,7 +129,7 @@
             chatAddRoleMessage(
                 $currentChat?.id,
                 "user",
-                message,
+                message || "",
                 $currentChat?.pastedMedia,
             )
 

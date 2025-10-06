@@ -1,9 +1,15 @@
 import cmdArtPrompt from "./cmdArtPrompt"
 import cmdRPStats from "./rp/cmdRPStats"
 
+export interface CommandResult {
+    result: string
+    passToInput: boolean
+    autoInferResult: boolean
+}
+
 interface Command {
     description: string
-    action: (args: string[]) => Promise<string> | string
+    action: (args: string[]) => Promise<CommandResult>
 }
 
 interface CommandList {
@@ -26,27 +32,53 @@ const COMMANDS: CommandList = {
     },
 }
 
-async function cmdHelp(): Promise<string> {
+export function commandResult(
+    result: string,
+    passToInput: boolean = false,
+    autoInferResult: boolean = false
+): CommandResult {
+    return {
+        result,
+        passToInput,
+        autoInferResult,
+    }
+}
+
+async function cmdHelp(): Promise<CommandResult> {
     let helpText = "Available commands:\n"
     for (const command in COMMANDS) {
         helpText += `- ${command}: ${COMMANDS[command].description}\n`
     }
-    return helpText
+    return commandResult(helpText, true, false)
 }
 
-export async function handleCommand(args: string): Promise<string> {
+/**
+ * Accepts a command string direct from the InputBox contents (minus
+ * opening slash) and executes the corresponding command if it exists.
+ *
+ * Returns a CommandResult object containing the result of the command,
+ * with details on what to do with it.
+ *
+ * @param args
+ * @returns CommandResult
+ * @throws Error if the command does not exist or is not a function
+ */
+export async function handleCommand(args: string): Promise<CommandResult> {
     const command = args.split(" ")[0]
     const commandArgs = args.split(" ").slice(1)
 
     if (command in COMMANDS) {
         const commandObj = COMMANDS[command]
         if (typeof commandObj.action === "function") {
-            return await commandObj.action(commandArgs)
+            const result = await commandObj.action(commandArgs)
+            return result
         } else {
             throw new Error(`Command ${command} is not a function`)
         }
     } else {
-        return `Command ${command} not found. Type 'cmdHelp' for a list of available commands.`
+        throw new Error(
+            `Command ${command} not found; type 'cmdHelp' for a list of available commands.`
+        )
     }
 }
 export function getCommandList() {

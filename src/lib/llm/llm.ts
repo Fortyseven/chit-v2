@@ -184,5 +184,4 @@ appState.subscribe(async (state) => {
     }
 })
 
-let llm: Writable<LLMInterface> = writable(llm_instance)
-export default llm
+export let llm: Writable<LLMInterface> = writable(llm_instance)

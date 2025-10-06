@@ -2,7 +2,7 @@ import { get, writable } from "svelte/store"
 import general_prompt from "../../preset-prompts/general.js"
 import { appState } from "../appState/appState"
 import { backpackProcess } from "../backpack/backpackActions"
-import llm from "../llm/llm.js"
+import { llm } from "../llm/llm.js"
 import {
     applySystemVariables,
     applyUserVariables,
@@ -295,7 +295,11 @@ export function chatBack(chatId: string = ""): string | undefined {
     return undefined
 }
 
-//--------------------------------------------------------------
+/**
+ * Run inference on the active (or indicated) chat, passing the current messages
+ * state to the LLM driver.
+ * @param chatId
+ */
 export async function chatRunInference(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 

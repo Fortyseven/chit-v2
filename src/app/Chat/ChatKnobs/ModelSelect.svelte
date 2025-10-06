@@ -3,7 +3,7 @@
     import { appState } from "../../../lib/appState/appState"
     import { chatSetModel } from "../../../lib/chatSession/chatActions"
     import { currentChat } from "../../../lib/chatSession/chatSession"
-    import llm, { llmModels } from "../../../lib/llm/llm"
+    import { llmModels } from "../../../lib/llm/llm"
 
     let selected_model = writable($currentChat.model_name)
 

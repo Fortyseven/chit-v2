@@ -7,18 +7,23 @@ import {
     DEFAULT_CONTEXT,
 } from "../chatSession/chatActions"
 import { ChatSession } from "../chatSession/chatSession"
-import llm, { LLMDriver, LLMInterface } from "../llm/llm"
-import { GenericMessage } from "../llm/LLMDriver"
+import { llm, LLMInterface } from "../llm/llm"
+import { GenericMessage, LLMDriver } from "../llm/LLMDriver"
+import { CommandResult, commandResult } from "./inputCommands"
 
 const ArtPrompt = z.object({
     art_prompt: z.string(),
 })
 
-export default async function (args: string[]): Promise<string> {
-    const inst = get(get(llm).driver) as LLMDriver
+export default async function (args: string[]): Promise<CommandResult> {
+    const inst: LLMDriver | undefined = get(get(llm).driver)
+
+    if (!inst) {
+        throw Error("cmdArtPrompt: llm driver not present")
+    }
 
     const SPROMPT =
-        "Write a single detailed paragraph visually describing the current moment in a way that can be processed bv an AI art generator. Describe the composition and details using vivid language.  Only respond with the paragraph."
+        "Write a single detailed paragraph visually describing the current moment in a way that can be processed by an AI art generator. Describe the composition and details using vivid language.  Only respond with the paragraph."
 
     const chat_session: ChatSession | undefined = chatFind()
     const _llm: LLMInterface = get(llm)
@@ -70,14 +75,9 @@ export default async function (args: string[]): Promise<string> {
             cur_context
         )
 
-        console.log("RESPONSE", response)
-        console.log("RESPONSE2", ArtPrompt.parse(response))
-
         if (response) {
-            const art_prompt = ArtPrompt.parse(
-                JSON.parse(response?.message.content)
-            ).art_prompt
-            return art_prompt
+            const art_prompt = ArtPrompt.parse(response).art_prompt
+            return commandResult(art_prompt, true, false)
         } else {
             throw new Error("cmdArtPrompt: no response")
         }
