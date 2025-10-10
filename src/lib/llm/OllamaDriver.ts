@@ -26,13 +26,10 @@ export class OllamaDriver implements LLMDriver {
 
     abort() {
         this.aborted = true
-        if (
-            this.currentStream &&
-            typeof this.currentStream.return === "function"
-        ) {
-            this.currentStream.return() // Attempt to close the async iterator
+        if (this.currentStream && this.currentStream.abortController) {
+            this.currentStream.abort() // Attempt to close the async iterator
+            this.currentStream = null
         }
-        this.currentStream = null
     }
 
     async refreshModels() {
@@ -108,6 +105,9 @@ export class OllamaDriver implements LLMDriver {
                     chatAppendStreamingPending(chatId, part.message.content)
                 }
             } catch (e) {
+                if (e instanceof DOMException && e.name === "AbortError") {
+                    return
+                }
                 console.error("Ollama chat error:", e)
             } finally {
                 this.currentStream = null
