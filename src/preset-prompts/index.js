@@ -11,6 +11,7 @@ import extract_and_infer from "./extract-and-infer.js"
 import general from "./general.js"
 import geolocation from "./geolocation.js"
 import idea_feedback from "./idea-feedback.js"
+import llm_prompt from "./llm-prompt.js"
 import retort from "./retort.js"
 import summarize from "./summarize.js"
 import summary_meeting from "./summary-meeting.js"
@@ -25,6 +26,7 @@ export const SYSTEM_PROMPTS = {
     general,
     geolocation,
     idea_feedback,
+    llm_prompt,
     retort,
     summarize,
     summary_meeting,
@@ -35,5 +37,5 @@ export const FUN_PROMPTS = {
     appearanceAssessment,
     facial_analysis,
     linux_prompt,
-    gtei
+    gtei,
 }
