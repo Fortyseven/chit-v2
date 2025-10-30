@@ -61,7 +61,7 @@ export default async function (args: string[]): Promise<CommandResult> {
         const messages: GenericMessage[] = [
             {
                 role: "system",
-                content: SPROMPT + (alsoAdd ? "\nAlso, " + alsoAdd : ""),
+                content: SPROMPT + (alsoAdd ? "\n " + alsoAdd : ""),
             },
             {
                 role: "user",
