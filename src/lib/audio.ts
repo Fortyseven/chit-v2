@@ -46,3 +46,63 @@ export function sndStopTyping() {
         audioTyping.currentTime = 0
     }
 }
+// New tone function
+let sharedAudioCtx: AudioContext | undefined
+// Track currently playing tone so a new call interrupts it
+let activeTone: OscillatorNode | null = null
+
+/**
+ * Play a short synthesized tone, interrupting any previous tone
+ * @param frequency Hertz (> 0)
+ * @param durationMs Duration in ms (> 0)
+ * @param volume Linear gain 0..1 (default 0.5)
+ * @returns Promise resolving after the tone ends (earlier if interrupted by a new call)
+ */
+export function sndPlayTone(
+    frequency: number,
+    durationMs: number,
+    volume: number = 0.5
+): Promise<void> {
+    if (!get(appState).soundEnabled) return Promise.resolve()
+    if (typeof window === "undefined" || typeof AudioContext === "undefined")
+        return Promise.resolve()
+    if (!(frequency > 0) || !(durationMs > 0)) return Promise.resolve()
+    try {
+        // Interrupt any currently playing tone
+        if (activeTone) {
+            try {
+                activeTone.stop()
+            } catch (e) {
+                // ignore if already stopped
+            }
+            activeTone = null
+        }
+        sharedAudioCtx ??= new AudioContext()
+        const ctx = sharedAudioCtx
+        if (ctx.state === "suspended") {
+            ctx.resume().catch((err) =>
+                console.error("sndPlayTone resume failed", err)
+            )
+        }
+        const osc: OscillatorNode = ctx.createOscillator()
+        const gain: GainNode = ctx.createGain()
+        osc.type = "sine"
+        osc.frequency.value = frequency
+        gain.gain.value = Math.min(Math.max(volume, 0), 1)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        activeTone = osc
+        const now: number = ctx.currentTime
+        osc.start(now)
+        osc.stop(now + durationMs / 1000)
+        return new Promise<void>((resolve) => {
+            osc.addEventListener("ended", () => {
+                if (activeTone === osc) activeTone = null
+                resolve()
+            })
+        })
+    } catch (err) {
+        console.error("Failed to play tone", err)
+        return Promise.resolve()
+    }
+}

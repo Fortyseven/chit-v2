@@ -1,6 +1,6 @@
 import { ChatRequest, Message, ModelResponse, Ollama } from "ollama/browser"
 import { get, Writable, writable } from "svelte/store"
-import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
+import { sndPlayResponse, sndPlayTone } from "../audio"
 import {
     chatAppendStreamingPending,
     chatFinish,
@@ -97,12 +97,16 @@ export class OllamaDriver implements LLMDriver {
             try {
                 const stream = await inst.chat(config)
                 this.currentStream = stream
-                sndPlayTyping()
                 for await (const part of stream) {
                     if (this.aborted) {
                         break
                     }
-                    chatAppendStreamingPending(chatId, part.message.content)
+                    chatAppendStreamingPending(
+                        chatId,
+                        part.message.thinking || part.message.content,
+                        !!part.message.thinking
+                    )
+                    sndPlayTone(60 + Math.random() * 150, 250, 0.075)
                 }
             } catch (e) {
                 if (e instanceof DOMException && e.name === "AbortError") {
@@ -113,7 +117,6 @@ export class OllamaDriver implements LLMDriver {
                 this.currentStream = null
                 chatPromoteStreamingPending(chatId)
                 chatInProgress.set(false)
-                sndStopTyping()
                 sndPlayResponse()
                 chatFinish(chatId)
             }
