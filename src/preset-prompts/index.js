@@ -3,9 +3,11 @@ import facial_analysis from "./fun/facial-analysis.js"
 import gtei from "./fun/gtei.js"
 import linux_prompt from "./fun/linux-prompt.js"
 
+import codealyzer from "./coding/codealyzer.js"
+import exploitation from "./coding/exploitation.js"
+
 import analysis from "./analysis.js"
 import art_prompter from "./art_prompter.js"
-import codealyzer from "./codealyzer.js"
 import eli5 from "./eli5.js"
 import extract_and_infer from "./extract-and-infer.js"
 import general from "./general.js"
@@ -20,7 +22,6 @@ import translate from "./translate.js"
 export const SYSTEM_PROMPTS = {
     analysis,
     art_prompter,
-    codealyzer,
     eli5,
     extract_and_infer,
     general,
@@ -31,6 +32,11 @@ export const SYSTEM_PROMPTS = {
     summarize,
     summary_meeting,
     translate,
+}
+
+export const CODING_PROMPTS = {
+    codealyzer,
+    exploitation,
 }
 
 export const FUN_PROMPTS = {

@@ -14,7 +14,11 @@
         loadPresetFromFile,
         savePresetToFile,
     } from "../../lib/presets/presets"
-    import { FUN_PROMPTS, SYSTEM_PROMPTS } from "../../preset-prompts/index.js"
+    import {
+        CODING_PROMPTS,
+        FUN_PROMPTS,
+        SYSTEM_PROMPTS,
+    } from "../../preset-prompts/index.js"
 
     export let open = false
     let appendMode = false
@@ -60,6 +64,13 @@
 <div class="system-presets-popup" class:open>
     {#each Object.keys(SYSTEM_PROMPTS) as skey}
         {@const p = SYSTEM_PROMPTS[skey]}
+        <button class="btn-preset" onclick={() => selectPrompt(p)}>
+            {p.name}{appendMode ? " +" : ""}
+        </button>
+    {/each}
+    <hr />
+    {#each Object.keys(CODING_PROMPTS) as skey}
+        {@const p = CODING_PROMPTS[skey]}
         <button class="btn-preset" onclick={() => selectPrompt(p)}>
             {p.name}{appendMode ? " +" : ""}
         </button>

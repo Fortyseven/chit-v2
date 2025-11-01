@@ -135,6 +135,14 @@
                 {:else if message.role === "user" && !message.content}
                     <!-- cont'd -->
                 {:else}
+                    {#if message.thoughts}
+                        <ChatLogRegular_Assistant
+                            line={message.thoughts}
+                            isThoughts
+                            {index}
+                            onUpdatedContent={updateChatMessage}
+                        />
+                    {/if}
                     <ChatLogRegular_Assistant
                         line={message.content}
                         {index}
