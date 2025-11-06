@@ -157,7 +157,7 @@
                 <ChatLogRegular_Assistant
                     line={chatGetStreamingPending()}
                     inprogress
-                ></ChatLogRegular_Assistant>
+                />
             {/if}
         {/key}
     {/if}

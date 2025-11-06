@@ -15,7 +15,7 @@ const Stats = z.object({
 
 export default async function (args: string[]): Promise<CommandResult> {
     const SPROMPT =
-        "[OOC: generate a raw markdown table; provide an update on your character's state, their physical state, what it's thinking, what's it's focused on, what it intends to do next, and where they intend this story to end; do not use a markdown code block{}]"
+        "[OOC: generate a raw markdown table; provide an update on your character's state: their name, A/S/L, their physical state, mental state, what's it's focusing on, what it intends to do next, and where they intend this story to end; do not use a markdown code block{}]"
 
     const SPROMPT_CHRSHEET =
         "[OOC: generate detailed character sheets for these characters as a raw markdown table: include the usual str/int/chr/age and all that, but also include skills, clothing, a very brief historic backgrounder, and their current state; do not use a markdown code block; use emoji on labels{}]"
