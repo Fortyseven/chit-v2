@@ -1,5 +1,7 @@
+import { DISCLAIMER } from "./_disclaimer"
+
 export default {
-    name: '🥩 Summarize Meeting',
+    name: "🥩 Summarize Meeting",
     temperature: 0.2,
     prompt: `Generate a comprehensive markdown summary the following meeting transcript.
 
@@ -41,5 +43,8 @@ etc
 
 # Topic Keywords
 $keyword, $keyword, etc
-`
-};
+
+---
+${DISCLAIMER}
+`,
+}

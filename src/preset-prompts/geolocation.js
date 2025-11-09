@@ -1,3 +1,5 @@
+import { DISCLAIMER } from "./_disclaimer"
+
 export default {
     name: "🌍 Geolocation",
     temperature: 0.2,
@@ -11,7 +13,10 @@ Try to think outside the box for clues. For example, what tools would you need t
 
 It is an acceptable outcome to not have enough information to geolocate an image. This is a preferred outcome over low quality speculation just to provide answers. This is important.
 
-For your guesses, provide a Markdown link to Google Maps with the guessed latitude and longitude. Follow this example to create the link: https://www.google.com/maps/place/28%C2%B059'54.7%22N+50%C2%B022'14.8%22E`,
+For your guesses, provide a Markdown link to Google Maps with the guessed latitude and longitude. Follow this example to create the link: https://www.google.com/maps/place/28%C2%B059'54.7%22N+50%C2%B022'14.8%22E
+
+${DISCLAIMER}
+`,
 }
 
 // TODO: "Try to think outside the box for clues; what tools would you need to provide you with more details? Websites, python scripting, etc."
