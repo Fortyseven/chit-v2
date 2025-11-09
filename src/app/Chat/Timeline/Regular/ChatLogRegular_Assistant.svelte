@@ -67,33 +67,70 @@
     }
 </script>
 
-<div
-    class="response markdown bot {isThoughts ? 'thoughts' : ''}"
-    role="button"
-    tabindex="0"
-    class:inprogress
-    data-testid="ChatLogRegular_Assistant"
->
-    <div class="message-controls">
-        <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
+{#if isThoughts}
+    <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
+    <details
+        open
+        class="response markdown bot thoughts"
+        role="button"
+        tabindex="0"
+        class:inprogress
+        data-testid="ChatLogRegular_Assistant"
+    >
+        <summary>&lt;THINK&gt;</summary>
+        <!-- <div class="message-controls">
+            <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
+        </div> -->
+        <MarkdownEditor
+            {content}
+            {index}
+            editorOpen={openEditor}
+            {onUpdatedContent}
+        />
+        <!-- <ContextMenu
+            open={contextMenuOpen}
+            position={contextMenuPosition}
+            items={menuItems}
+            onClose={closeContextMenu}
+        /> -->
+    </details>
+{:else}
+    <div
+        class="response markdown bot"
+        role="button"
+        tabindex="0"
+        class:inprogress
+        data-testid="ChatLogRegular_Assistant"
+    >
+        <div class="message-controls">
+            <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
+        </div>
+        <MarkdownEditor
+            {content}
+            {index}
+            editorOpen={openEditor}
+            {onUpdatedContent}
+        />
+        <ContextMenu
+            open={contextMenuOpen}
+            position={contextMenuPosition}
+            items={menuItems}
+            onClose={closeContextMenu}
+        />
     </div>
-
-    <MarkdownEditor
-        {content}
-        {index}
-        editorOpen={openEditor}
-        {onUpdatedContent}
-    />
-
-    <ContextMenu
-        open={contextMenuOpen}
-        position={contextMenuPosition}
-        items={menuItems}
-        onClose={closeContextMenu}
-    />
-</div>
+{/if}
 
 <style lang="scss">
+    details.response {
+        border: 1px solid red;
+        margin-bottom: 1em;
+        summary {
+            cursor: pointer;
+            opacity: 0.5;
+            text-transform: uppercase;
+        }
+    }
+
     .response {
         width: auto;
         font-family: var(--font-timeline, monospace);
