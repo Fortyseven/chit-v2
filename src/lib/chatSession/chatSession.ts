@@ -4,6 +4,7 @@ import { MediaAttachment } from "./chatAttachments"
 
 export interface Message {
     content: string
+    thoughts?: string
     role: "user" | "assistant" | "system"
     timestamp?: Date
     media?: MediaAttachment[]
@@ -34,8 +35,13 @@ export interface ChatSession {
     messages: Message[]
     createdAt: Date
     lastRequestStart: number
-    lastRequestFinish: number
+    // lastRequestFinish: number
+    lastRequestTimer: number
+    lastTokenCount: number
     response_buffer: string
+    thinking_buffer: string
+    hasThoughts: boolean
+    isThinking: boolean
     settings: ChatSettings
     wasAborted: Boolean
     pastedMedia: MediaAttachment[] | undefined

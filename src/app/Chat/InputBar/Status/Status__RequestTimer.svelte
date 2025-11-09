@@ -36,12 +36,17 @@
             {Math.round(cps)} cps
         {/if}
     </div>
+    <div>
+        {$currentChat?.isThinking}
+    </div>
 </div>
 
 <style lang="scss">
     .request-timer {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        & > div {
+            flex: auto;
+        }
         .timer,
         .cps {
             color: var(--color-accent-complement-lighter);

@@ -43,10 +43,14 @@ export function chatNew(): string {
         messages: [],
         createdAt: new Date(),
         lastRequestStart: 0,
-        lastRequestFinish: 0,
+        lastRequestTimer: 0,
+        lastTokenCount: 0,
         model_name: defaultModel,
         systemPrompt: get(appState).defaultPrompt || general_prompt.prompt,
         response_buffer: "",
+        hasThoughts: false,
+        thinking_buffer: "",
+        isThinking: false,
         settings: {
             temperature: defaultTemperature,
             num_ctx: defaultContext,
@@ -175,7 +179,7 @@ export function chatIsEmpty(chatId: string) {
 //--------------------------------------------------------------
 export function chatAddRoleMessage(
     chatId: string = "",
-    role: "user" | "assistant",
+    role: "user" | "assistant" | "system",
     content: string,
     pastedMedia: MediaAttachment[] | undefined = undefined
 ) {
@@ -323,6 +327,13 @@ export function chatLength(chatId: string = "") {
 }
 
 //--------------------------------------------------------------
+export function chatGetStreamingPendingThoughts(chatId: string = "") {
+    chatId = getActiveChatId(chatId)
+
+    const chat = chatFind(chatId)
+    return chat ? chat.thinking_buffer : ""
+}
+//--------------------------------------------------------------
 export function chatGetStreamingPending(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
@@ -333,22 +344,43 @@ export function chatGetStreamingPending(chatId: string = "") {
 //--------------------------------------------------------------
 export function chatAppendStreamingPending(
     chatId: string = "",
-    fragment: string
+    fragment: string,
+    isThinking: boolean
 ) {
     chatId = getActiveChatId(chatId)
 
-    chats.update(($chats) =>
-        $chats.map((chat) => {
-            if (chat.id === chatId) {
-                return {
-                    ...chat,
-                    response_buffer: ((chat.response_buffer as string) +
-                        fragment) as string,
+    if (isThinking) {
+        chats.update(($chats) =>
+            $chats.map((chat: ChatSession) => {
+                if (chat.id === chatId) {
+                    chat.isThinking = true
+                    chat.hasThoughts = true
+                    chat.lastTokenCount += fragment.length
+                    return {
+                        ...chat,
+                        thinking_buffer: ((chat.thinking_buffer as string) +
+                            fragment) as string,
+                    }
                 }
-            }
-            return chat
-        })
-    )
+                return chat
+            })
+        )
+    } else {
+        chats.update(($chats) =>
+            $chats.map((chat: ChatSession) => {
+                if (chat.id === chatId) {
+                    chat.isThinking = false
+                    chat.lastTokenCount += fragment.length
+                    return {
+                        ...chat,
+                        response_buffer: ((chat.response_buffer as string) +
+                            fragment) as string,
+                    }
+                }
+                return chat
+            })
+        )
+    }
 }
 
 //--------------------------------------------------------------
@@ -365,10 +397,13 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
                         {
                             role: "assistant",
                             content: chat.response_buffer as string,
+                            thoughts: chat.thinking_buffer as string,
                             timestamp: new Date(),
                         },
                     ],
                     response_buffer: "",
+                    thinking_buffer: "",
+                    isThinking: false,
                 }
             }
             return chat
@@ -431,7 +466,9 @@ export function chatInProgressWithId(chatId: string = ""): Boolean {
     chatId = getActiveChatId(chatId)
 
     const chat = chatFind(chatId)
-    return chat ? chat.response_buffer.length > 0 : false
+    return chat
+        ? chat.thinking_buffer.length + chat.response_buffer.length > 0
+        : false
 }
 
 //--------------------------------------------------------------
@@ -458,9 +495,11 @@ export function chatStart(chatId: string = "") {
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
+                console.debug("chatStart:", Date.now())
                 return {
                     ...chat,
                     lastRequestStart: Date.now(),
+                    lastTokenCount: 0, // reset per-stream to avoid cumulative CPS inflation
                 }
             }
             return chat
@@ -475,9 +514,10 @@ export function chatFinish(chatId: string = "") {
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
+                console.debug("chatFinish:", Date.now())
                 return {
                     ...chat,
-                    lastRequestFinish: Date.now(),
+                    lastRequestTimer: Date.now(), // Only update here
                 }
             }
             return chat
@@ -501,6 +541,7 @@ export function chatGetAllContents(): string | undefined {
     )
 }
 
+// --------------------------------------------------------------
 export function chatSetBackpackMode(mode: BackpackMode) {
     const chatId = getActiveChatId()
     chats.update(($chats) =>

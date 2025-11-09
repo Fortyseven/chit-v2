@@ -3,6 +3,7 @@
     import { appState } from "../../../../lib/appState/appState"
     import {
         chatGetStreamingPending,
+        chatGetStreamingPendingThoughts,
         chatInProgressWithId,
     } from "../../../../lib/chatSession/chatActions"
     import { ChatMediaType } from "../../../../lib/chatSession/chatAttachments"
@@ -88,7 +89,7 @@
     }
 </script>
 
-<div class="wrapper" id="ChatLogRegular">
+<div class="wrapper" data-testid="ChatLogRegular">
     {#if $appState.activeChatId && $currentChat?.messages}
         {#each $currentChat.messages as message, index}
             {#key message}
@@ -137,14 +138,14 @@
                 {:else}
                     {#if message.thoughts}
                         <ChatLogRegular_Assistant
-                            line={message.thoughts}
+                            content={message.thoughts}
                             isThoughts
                             {index}
                             onUpdatedContent={updateChatMessage}
                         />
                     {/if}
                     <ChatLogRegular_Assistant
-                        line={message.content}
+                        content={message.content}
                         {index}
                         onUpdatedContent={updateChatMessage}
                     />
@@ -154,8 +155,17 @@
 
         {#key $currentChat}
             {#if chatInProgressWithId($appState.activeChatId)}
+                {#if $currentChat.hasThoughts}xxx
+                    <ChatLogRegular_Assistant
+                        content={chatGetStreamingPendingThoughts()}
+                        isThoughts
+                        inprogress
+                    />
+                {:else}
+                    BRAINLESS
+                {/if}
                 <ChatLogRegular_Assistant
-                    line={chatGetStreamingPending()}
+                    content={chatGetStreamingPending()}
                     inprogress
                 />
             {/if}
@@ -173,7 +183,7 @@
 {/each}
 
 <style lang="scss">
-    #ChatLogRegular {
+    .wrapper {
         width: stretch;
         flex-direction: column;
         overflow-y: auto;

@@ -13,11 +13,11 @@
 </script>
 
 {#if isAttachment}
-    <div class="response user is-attachment">
+    <div class="response user is-attachment" data-testid="ChatLogRegular_User">
         {line}
     </div>
 {:else}
-    <div class="response user">
+    <div class="response user" data-testid="ChatLogRegular_User">
         {@html getTruncatedLine()}
     </div>
 {/if}

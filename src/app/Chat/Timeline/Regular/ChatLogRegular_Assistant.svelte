@@ -7,8 +7,9 @@
     import ContextMenu from "../../../UI/ContextMenu.svelte"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
-    export let line = { role: "assistant", content: "" }
+    export let content = { role: "assistant", content: "" }
     export let inprogress = false
+    export let isThoughts = false
     export let index
     export let onUpdatedContent = () => {}
 
@@ -18,7 +19,7 @@
     let openEditor = false
 
     function saveAsFile() {
-        const blob = new Blob([line.content], { type: `text/markdown` })
+        const blob = new Blob([content.content], { type: `text/markdown` })
         const url = URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
@@ -54,7 +55,7 @@
 
     function copyToClipboard() {
         //navigator.clipboard.writeText(line.content)
-        navigator.clipboard.writeText(line)
+        navigator.clipboard.writeText(content)
         closeContextMenu()
     }
 
@@ -66,13 +67,19 @@
     }
 </script>
 
-<div class="response markdown bot" role="button" tabindex="0" class:inprogress>
+<div
+    class="response markdown bot {isThoughts ? 'thoughts' : ''}"
+    role="button"
+    tabindex="0"
+    class:inprogress
+    data-testid="ChatLogRegular_Assistant"
+>
     <div class="message-controls">
         <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
     </div>
 
     <MarkdownEditor
-        content={line}
+        {content}
         {index}
         editorOpen={openEditor}
         {onUpdatedContent}
@@ -135,6 +142,18 @@
 
         pre {
             overflow: scroll;
+        }
+
+        &.thoughts {
+            background-color: #2222228a;
+            font-size: 0.75em;
+            opacity: 0.75;
+            color: var(--color-accent-complement-lighter);
+            background: unset;
+            border: unset;
+            box-shadow: unset;
+            line-height: 0.95;
+            font-family: monospace;
         }
     }
 </style>

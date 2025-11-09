@@ -97,14 +97,23 @@ export class OllamaDriver implements LLMDriver {
             try {
                 const stream = await inst.chat(config)
                 this.currentStream = stream
+                let isThinking = false
                 for await (const part of stream) {
                     if (this.aborted) {
                         break
                     }
+                    if (part.message.content.toLowerCase() == "<think>") {
+                        isThinking = true
+                        continue
+                    }
+                    if (part.message.content.toLowerCase() == "</think>") {
+                        isThinking = false
+                        continue
+                    }
                     chatAppendStreamingPending(
                         chatId,
                         part.message.thinking || part.message.content,
-                        !!part.message.thinking
+                        isThinking
                     )
                     sndPlayTone(60 + Math.random() * 150, 250, 0.075)
                 }
