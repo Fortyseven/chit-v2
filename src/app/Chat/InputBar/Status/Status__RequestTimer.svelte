@@ -36,9 +36,6 @@
             {Math.round(cps)} cps
         {/if}
     </div>
-    <div>
-        {$currentChat?.isThinking}
-    </div>
 </div>
 
 <style lang="scss">
