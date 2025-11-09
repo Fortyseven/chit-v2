@@ -204,7 +204,6 @@ export async function chatAddRoleMessage(
     if (pastedMedia) {
         message.media = pastedMedia.map((media) => ({
             ...media,
-            // id: crypto.randomUUID(),
         }))
     }
 

@@ -3,7 +3,6 @@
         chatAddPastedMedia,
         chatClearPastedMedia,
         ChatMediaType,
-        getMediaBlob,
     } from "../../../lib/chatSession/chatAttachments"
     import { currentChat } from "../../../lib/chatSession/chatSession"
     import { memoizeBlobUrl } from "../../../lib/memoizeBlob"
@@ -218,7 +217,7 @@
                     <Pill
                         text={media.filename ||
                             (typeof media.data === "string"
-                                ? media.data.substr(0, 14) + "..."
+                                ? media.data.substring(0, 14) + "..."
                                 : "Media file")}
                         dismissible
                         enableTooltip

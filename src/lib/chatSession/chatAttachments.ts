@@ -269,27 +269,3 @@ export async function getMediaBlob(
     // Return the direct data for non-IndexedDB media
     return attachment.data
 }
-
-//--------------------------------------------------------------
-/**
- * Create object URLs for media attachments
- * Handles both IndexedDB-stored and in-memory media
- */
-export async function createMediaObjectURL(
-    attachment: MediaAttachment
-): Promise<string | null> {
-    if (attachment.type === ChatMediaType.TEXT) {
-        return null // Text data doesn't need object URLs
-    }
-
-    try {
-        const blob = await getMediaBlob(attachment)
-        if (blob instanceof Blob) {
-            return URL.createObjectURL(blob)
-        }
-        return null
-    } catch (error) {
-        console.error("Failed to create object URL for media:", error)
-        return null
-    }
-}
