@@ -467,7 +467,7 @@ export function chatInProgressWithId(chatId: string = ""): Boolean {
 
     const chat = chatFind(chatId)
     return chat
-        ? chat.thinking_buffer.length + chat.response_buffer.length > 0
+        ? chat.thinking_buffer?.length + chat.response_buffer?.length > 0
         : false
 }
 
