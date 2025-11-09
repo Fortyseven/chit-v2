@@ -155,14 +155,12 @@
 
         {#key $currentChat}
             {#if chatInProgressWithId($appState.activeChatId)}
-                {#if $currentChat.hasThoughts}xxx
+                {#if $currentChat.hasThoughts}
                     <ChatLogRegular_Assistant
                         content={chatGetStreamingPendingThoughts()}
                         isThoughts
                         inprogress
                     />
-                {:else}
-                    BRAINLESS
                 {/if}
                 <ChatLogRegular_Assistant
                     content={chatGetStreamingPending()}
