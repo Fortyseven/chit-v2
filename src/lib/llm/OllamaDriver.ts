@@ -81,7 +81,9 @@ export class OllamaDriver implements LLMDriver {
                     } as Message)
             ),
             stream: true,
+            think: false,
             options: {
+                think: false,
                 temperature: temp ?? DEFAULT_TEMPERATURE,
                 num_ctx: ctx ?? DEFAULT_CONTEXT,
             },
@@ -102,11 +104,17 @@ export class OllamaDriver implements LLMDriver {
                     if (this.aborted) {
                         break
                     }
-                    if (part.message.content.toLowerCase() == "<think>") {
+                    if (
+                        part.message.content.toLowerCase() == "<think>" ||
+                        part.message.thinking
+                    ) {
                         isThinking = true
                         continue
                     }
-                    if (part.message.content.toLowerCase() == "</think>") {
+                    if (
+                        part.message.content.toLowerCase() == "</think>" ||
+                        part.message.thinking === ""
+                    ) {
                         isThinking = false
                         continue
                     }
