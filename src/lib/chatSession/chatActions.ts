@@ -495,7 +495,8 @@ export function chatStart(chatId: string = "") {
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
-                console.debug("chatStart:", Date.now())
+                console.debug("chatStart", chatId)
+                console.time("Inference Time")
                 return {
                     ...chat,
                     lastRequestStart: Date.now(),
@@ -514,7 +515,7 @@ export function chatFinish(chatId: string = "") {
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
-                console.debug("chatFinish:", Date.now())
+                console.timeEnd("Inference Time")
                 return {
                     ...chat,
                     lastRequestTimer: Date.now(), // Only update here
