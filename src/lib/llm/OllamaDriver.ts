@@ -83,7 +83,6 @@ export class OllamaDriver implements LLMDriver {
             stream: true,
             think: false,
             options: {
-                think: false,
                 temperature: temp ?? DEFAULT_TEMPERATURE,
                 num_ctx: ctx ?? DEFAULT_CONTEXT,
             },
@@ -104,23 +103,21 @@ export class OllamaDriver implements LLMDriver {
                     if (this.aborted) {
                         break
                     }
-                    if (
-                        part.message.content.toLowerCase() == "<think>" ||
-                        part.message.thinking
-                    ) {
+
+                    if (part.message.content.toLowerCase() == "<think>") {
                         isThinking = true
+                        console.debug("Thinking start")
                         continue
                     }
-                    if (
-                        part.message.content.toLowerCase() == "</think>" ||
-                        part.message.thinking === ""
-                    ) {
+                    if (part.message.content.toLowerCase() == "</think>") {
                         isThinking = false
+                        console.debug("Thinking ended")
                         continue
                     }
                     chatAppendStreamingPending(
                         chatId,
-                        part.message.thinking || part.message.content,
+                        // part.message.thinking ||
+                        part.message.content,
                         isThinking
                     )
                     sndPlayTone(60 + Math.random() * 150, 250, 0.075)
