@@ -207,6 +207,8 @@
                                 {media}
                                 cssClass="btn-image-attach"
                                 altText="Attached Image"
+                                maxWidth={256}
+                                maxHeight={256}
                             />
                         {:else}
                             <!-- Fallback for invalid media -->

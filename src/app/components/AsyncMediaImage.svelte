@@ -10,6 +10,8 @@
     export let cssClass: string = ""
     export let altText: string = "Media Attachment"
     export let onClick: ((blob: Blob) => void) | undefined = undefined
+    export let maxWidth: number | undefined = undefined
+    export let maxHeight: number | undefined = undefined
 
     let imageUrl: string | null = null
     let loading = true
@@ -69,7 +71,16 @@
 {:else if imageUrl}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <img src={imageUrl} alt={altText} class={cssClass} on:click={handleClick} />
+    <img
+        src={imageUrl}
+        class={cssClass}
+        alt={altText}
+        style="
+            {maxWidth ? `max-width: ${maxWidth}px;` : ''}
+            {maxHeight ? `max-height: ${maxHeight}px;` : ''}
+        "
+        on:click={handleClick}
+    />
 {/if}
 
 <style>

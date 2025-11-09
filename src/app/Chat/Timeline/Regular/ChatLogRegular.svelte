@@ -108,6 +108,8 @@
                                             cssClass="media-attachment-image"
                                             altText="Media Attachment"
                                             onClick={openFloatingImage}
+                                            maxWidth={256}
+                                            maxHeight={256}
                                         />
                                     </div>
                                 {/if}
