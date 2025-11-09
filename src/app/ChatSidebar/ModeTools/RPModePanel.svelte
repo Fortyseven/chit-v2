@@ -61,15 +61,5 @@
             border-color: var(--color-accent-complement);
             color: var(--color-accent-complement-lighter);
         }
-
-        &.default-mode {
-            background-color: color-mix(
-                in srgb,
-                var(--color-background) 90%,
-                var(--color-accent) 10%
-            );
-            border-color: var(--color-accent);
-            color: var(--color-accent-lighter);
-        }
     }
 </style>

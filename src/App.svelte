@@ -4,6 +4,7 @@
     import ChatHeader from "./app/Chat/Timeline/ChatHeader/ChatHeader.svelte"
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
     import PageContent from "./app/PageContent.svelte"
+    import RPSidebar from "./app/RPSidebar/RPSidebar.svelte"
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
 
     import "./lib/appState/appStateStorage"
@@ -14,21 +15,20 @@
     const toastOptions = {
         //...
     }
+
+    $: isRPMode = $currentChatMode === AppMode.RP
 </script>
 
-<AppFramework>
-    <div
-        slot="sidebar"
-        class="sidebar"
-        class:rp-mode={$currentChatMode === AppMode.RP}
-    >
+<AppFramework hasRPSidebar={isRPMode}>
+    <div slot="sidebar" class="sidebar" class:rp-mode={isRPMode}>
         <ConvoSidebar />
     </div>
-    <div
-        slot="content"
-        class="page"
-        class:rp-mode={$currentChatMode === AppMode.RP}
-    >
+    <div slot="rp-sidebar" class="rp-sidebar">
+        {#if isRPMode}
+            <RPSidebar />
+        {/if}
+    </div>
+    <div slot="content" class="page" class:rp-mode={isRPMode}>
         <PageContent />
         <div class="chat-header"><ChatHeader /></div>
         <div class="input-bar"><InputBar /></div>
@@ -63,6 +63,10 @@
                 var(--color-accent-complement) 3%
             );
         }
+    }
+
+    .rp-sidebar {
+        height: 100%;
     }
 
     .chat-header {
