@@ -104,20 +104,24 @@ export class OllamaDriver implements LLMDriver {
                         break
                     }
 
-                    if (part.message.content.toLowerCase() == "<think>") {
+                    if (
+                        part.message.content.toLowerCase() == "<think>" ||
+                        (part.message.hasOwnProperty("thinking") && !isThinking)
+                    ) {
                         isThinking = true
-                        console.debug("Thinking start")
+                        console.debug("Thinking started...")
                         continue
-                    }
-                    if (part.message.content.toLowerCase() == "</think>") {
+                    } else if (
+                        part.message.content.toLowerCase() == "</think>" ||
+                        (!part.message.hasOwnProperty("thinking") && isThinking)
+                    ) {
                         isThinking = false
-                        console.debug("Thinking ended")
+                        console.debug("...thinking ended.")
                         continue
                     }
                     chatAppendStreamingPending(
                         chatId,
-                        // part.message.thinking ||
-                        part.message.content,
+                        part.message?.thinking || part.message.content,
                         isThinking
                     )
                     sndPlayTone(60 + Math.random() * 150, 250, 0.075)
