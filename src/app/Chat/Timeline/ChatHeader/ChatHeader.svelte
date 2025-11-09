@@ -1,5 +1,5 @@
 <script>
-    import ModeIndicator from "../../../components/ModeIndicator.svelte"
+    import RPModePanel from "../../../ChatSidebar/ModeTools/RPModePanel.svelte"
     import ChatKnobs from "../../ChatKnobs/ChatKnobs.svelte"
 
     import { currentChat } from "../../../../lib/chatSession/chatSession"
@@ -22,7 +22,7 @@
     {:else}
         <div class="not-selected">No chat selected</div>
     {/if}
-    <ModeIndicator />
+    <RPModePanel />
 </header>
 
 <style lang="scss">

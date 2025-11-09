@@ -1,5 +1,8 @@
 <script lang="ts">
-    import { AppMode, currentChatMode } from "../../lib/chatSession/chatSession"
+    import {
+        AppMode,
+        currentChatMode,
+    } from "../../../lib/chatSession/chatSession"
 
     $: currentMode = $currentChatMode
 </script>
@@ -13,16 +16,6 @@
         <div class="mode-description">
             Role-playing mode active. UI elements optimized for character
             interactions.
-        </div>
-    </div>
-{:else}
-    <div class="mode-indicator default-mode">
-        <div class="mode-badge">
-            <span class="mode-icon">💬</span>
-            <span class="mode-text">Default Mode</span>
-        </div>
-        <div class="mode-description">
-            Standard chat mode with general-purpose features.
         </div>
     </div>
 {/if}
