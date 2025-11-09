@@ -7,7 +7,8 @@ import {
     applySystemVariables,
     applyUserVariables,
 } from "../templating/templating"
-import { chatClearAllPastedMedia, MediaAttachment } from "./chatAttachments"
+import { MediaAttachment } from "./chatAttachments"
+import { mediaStorage } from "./mediaStorage"
 
 import {
     BackpackMode,
@@ -147,10 +148,19 @@ export function chatSwitchTo(chatId: string) {
 
 //--------------------------------------------------------------
 // Delete a chat
-export function chatDelete(chatId: string) {
+export async function chatDelete(chatId: string) {
     if (!chatId) {
         alert("BUG: chatDelete: chatId was empty")
         throw new Error("chatDelete: chatId is required")
+    }
+
+    // Clean up media from IndexedDB first - this will clean up ALL media for this chat
+    try {
+        await mediaStorage.deleteChatMedia(chatId)
+        console.debug(`Cleaned up media for deleted chat ${chatId}`)
+    } catch (error) {
+        console.error(`Failed to clean up media for chat ${chatId}:`, error)
+        // Continue with chat deletion even if media cleanup fails
     }
 
     chats.update(($chats) => $chats.filter((chat) => chat.id !== chatId))
@@ -177,7 +187,7 @@ export function chatIsEmpty(chatId: string) {
 }
 
 //--------------------------------------------------------------
-export function chatAddRoleMessage(
+export async function chatAddRoleMessage(
     chatId: string = "",
     role: "user" | "assistant" | "system",
     content: string,
@@ -199,7 +209,20 @@ export function chatAddRoleMessage(
     }
 
     _chatAddMessage(chatId, message)
-    chatClearAllPastedMedia(chatId)
+
+    // Clear pasted media references but don't delete from IndexedDB
+    // since the message now owns the media
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    pastedMedia: [], // Clear the references only
+                }
+            }
+            return chat
+        })
+    )
 }
 
 //--------------------------------------------------------------
@@ -472,8 +495,17 @@ export function chatInProgressWithId(chatId: string = ""): Boolean {
 }
 
 //--------------------------------------------------------------
-export function chatClearConversation(chatId: string = "") {
+export async function chatClearConversation(chatId: string = "") {
     chatId = getActiveChatId(chatId)
+
+    // Clean up media from IndexedDB when clearing conversation - this will clean up ALL media for this chat
+    try {
+        await mediaStorage.deleteChatMedia(chatId)
+        console.debug(`Cleaned up media for cleared chat ${chatId}`)
+    } catch (error) {
+        console.error(`Failed to clean up media for chat ${chatId}:`, error)
+        // Continue with conversation clearing even if media cleanup fails
+    }
 
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -481,6 +513,7 @@ export function chatClearConversation(chatId: string = "") {
                 return {
                     ...chat,
                     messages: [],
+                    pastedMedia: [], // Also clear in-memory media references
                 }
             }
             return chat

@@ -6,7 +6,7 @@ import {
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
-import { ChatMediaType } from "../chatSession/chatAttachments"
+import { ChatMediaType, getMediaBlob } from "../chatSession/chatAttachments"
 import {
     applySystemVariables,
     applyUserVariables,
@@ -124,15 +124,32 @@ export class LLMInterface {
             if (message.media && message.media.length > 0) {
                 for (const media of message.media) {
                     if (media.type == ChatMediaType.IMAGE) {
-                        const img64 = await convertFileToBase64(
-                            media.data as Blob
-                        )
-                        images.push(img64 as string)
+                        try {
+                            // Get the actual blob data (from IndexedDB or in-memory)
+                            const blobData = await getMediaBlob(media)
+                            if (blobData instanceof Blob) {
+                                const img64 = await convertFileToBase64(
+                                    blobData
+                                )
+                                images.push(img64 as string)
+                            } else {
+                                console.warn(
+                                    "Media data is not a blob, skipping image:",
+                                    media.id
+                                )
+                            }
+                        } catch (error) {
+                            console.error(
+                                "Failed to load media blob for LLM:",
+                                error
+                            )
+                        }
                     } else if (media.type == ChatMediaType.TEXT && media.data) {
-                        msg +=
-                            "\n\n```\n" +
-                            (media.data as string).trim() +
-                            "\n```\n"
+                        const textData =
+                            typeof media.data === "string" ? media.data : ""
+                        if (textData) {
+                            msg += "\n\n```\n" + textData.trim() + "\n```\n"
+                        }
                     }
                 }
             }

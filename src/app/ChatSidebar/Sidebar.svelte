@@ -24,14 +24,14 @@
         chatSwitchTo(chatId)
     }
 
-    function deleteConvo(chatId) {
+    async function deleteConvo(chatId) {
         if (
             chatIsEmpty(chatId) ||
             confirm(
                 `Are you sure you want to delete this conversation? ${chatId}`,
             )
         ) {
-            chatDelete(chatId)
+            await chatDelete(chatId)
         }
     }
 </script>

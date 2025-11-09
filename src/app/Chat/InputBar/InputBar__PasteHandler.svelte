@@ -24,8 +24,8 @@
                             clipboardItem.size > MAX_DIMENSION)
                     ) {
                         resizeImage(clipboardItem, MAX_DIMENSION).then(
-                            (resizedBlob) => {
-                                chatAddPastedMedia(
+                            async (resizedBlob) => {
+                                await chatAddPastedMedia(
                                     $currentChat?.id,
                                     resizedBlob,
                                     ChatMediaType.IMAGE,
@@ -33,7 +33,7 @@
                             },
                         )
                     } else {
-                        chatAddPastedMedia(
+                        await chatAddPastedMedia(
                             $currentChat?.id,
                             new Blob([clipboardItem], {
                                 type: clipboardItem.type,

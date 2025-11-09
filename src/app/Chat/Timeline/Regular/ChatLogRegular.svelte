@@ -6,9 +6,13 @@
         chatGetStreamingPendingThoughts,
         chatInProgressWithId,
     } from "../../../../lib/chatSession/chatActions"
-    import { ChatMediaType } from "../../../../lib/chatSession/chatAttachments"
+    import {
+        ChatMediaType,
+        getMediaBlob,
+    } from "../../../../lib/chatSession/chatAttachments"
     import { chats, currentChat } from "../../../../lib/chatSession/chatSession"
     import { memoizeBlobUrl } from "../../../../lib/memoizeBlob"
+    import AsyncMediaImage from "../../../components/AsyncMediaImage.svelte"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
@@ -99,27 +103,35 @@
                             {#each message.media as media}
                                 {#if media.type === ChatMediaType.IMAGE}
                                     <div class="media-attachment">
-                                        <!-- svelte-ignore a11y_click_events_have_key_events -->
-                                        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-                                        <img
-                                            src={memoizeBlobUrl(
-                                                media?.data as Blob,
-                                            )}
-                                            alt="Media Attachment"
-                                            class="media-attachment-image"
-                                            on:click={() =>
-                                                openFloatingImage(
-                                                    media?.data as Blob,
-                                                )}
+                                        <AsyncMediaImage
+                                            {media}
+                                            cssClass="media-attachment-image"
+                                            altText="Media Attachment"
+                                            onClick={openFloatingImage}
                                         />
                                     </div>
                                 {/if}
                                 {#if media.type === ChatMediaType.TEXT}
                                     <div class="media-attachment">
-                                        <ChatLogRegular_User
-                                            line={media?.data as string}
-                                            isAttachment
-                                        />
+                                        {#await getMediaBlob(media)}
+                                            <ChatLogRegular_User
+                                                line="Loading..."
+                                                isAttachment
+                                            />
+                                        {:then textData}
+                                            <ChatLogRegular_User
+                                                line={typeof textData ===
+                                                "string"
+                                                    ? textData
+                                                    : "Invalid text data"}
+                                                isAttachment
+                                            />
+                                        {:catch error}
+                                            <ChatLogRegular_User
+                                                line="Failed to load text"
+                                                isAttachment
+                                            />
+                                        {/await}
                                     </div>
                                 {/if}
                             {/each}

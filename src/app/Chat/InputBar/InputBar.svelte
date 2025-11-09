@@ -199,12 +199,12 @@
     }
 
     /* ------------------------------------------------------ */
-    function onBtnClear() {
+    async function onBtnClear() {
         if (inputBoxEl) {
             inputBoxEl.value = ""
         }
-        chatClearAllPastedMedia()
-        chatClearConversation()
+        await chatClearAllPastedMedia()
+        await chatClearConversation()
 
         // Dispatch custom event to clear all floating images
         window.dispatchEvent(new CustomEvent("clearFloatingImages"))

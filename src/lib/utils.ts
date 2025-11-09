@@ -6,6 +6,12 @@
  ******************************************************************************/
 export function convertBlobToBase64(blob: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
+        // Validate input
+        if (!blob || !(blob instanceof Blob)) {
+            reject(new Error("Invalid blob: expected a Blob object"))
+            return
+        }
+
         const reader = new FileReader()
         reader.onloadend = () => {
             const base64String = reader.result?.toString().split(",")[1]

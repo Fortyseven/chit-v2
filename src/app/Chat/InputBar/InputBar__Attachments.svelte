@@ -3,10 +3,12 @@
         chatAddPastedMedia,
         chatClearPastedMedia,
         ChatMediaType,
+        getMediaBlob,
     } from "../../../lib/chatSession/chatAttachments"
     import { currentChat } from "../../../lib/chatSession/chatSession"
     import { memoizeBlobUrl } from "../../../lib/memoizeBlob"
     import { loadFile } from "../../../lib/utils"
+    import AsyncMediaImage from "../../components/AsyncMediaImage.svelte"
 
     import { EXIF } from "../../../vendor/exif"
     import Pill from "../../UI/Pill/Pill.svelte"
@@ -186,29 +188,48 @@
                         startOpenTooltip
                         color="var(--color-accent-complement-darker)"
                         textColor="white"
-                        on:dismiss={() => {
-                            chatClearPastedMedia($currentChat?.id, media.id)
+                        on:dismiss={async () => {
+                            await chatClearPastedMedia(
+                                $currentChat?.id,
+                                media.id,
+                            )
                         }}
                     >
                         <!-- svelte-ignore a11y_missing_attribute -->
                         {#if media.data instanceof Blob}
+                            <!-- Legacy in-memory blob -->
                             <img
                                 src={memoizeBlobUrl(media.data)}
                                 class="btn-image-attach"
                             />
+                        {:else if media.isStored && media.blobId}
+                            <!-- IndexedDB stored blob -->
+                            <AsyncMediaImage
+                                {media}
+                                cssClass="btn-image-attach"
+                                altText="Attached Image"
+                            />
+                        {:else}
+                            <!-- Fallback for invalid media -->
+                            <span class="media-error">Invalid media</span>
                         {/if}
                     </Pill>
                 {:else if media.type === ChatMediaType.TEXT}
                     <Pill
                         text={media.filename ||
-                            media.data.substr(0, 14) + "..."}
+                            (typeof media.data === "string"
+                                ? media.data.substr(0, 14) + "..."
+                                : "Media file")}
                         dismissible
                         enableTooltip
                         startOpenTooltip
                         color="var(--color-accent-complement-darker)"
                         textColor="white"
-                        on:dismiss={() => {
-                            chatClearPastedMedia($currentChat?.id, media.id)
+                        on:dismiss={async () => {
+                            await chatClearPastedMedia(
+                                $currentChat?.id,
+                                media.id,
+                            )
                         }}
                     >
                         <div class="btn-text-attach">{media.data}</div>
@@ -265,6 +286,12 @@
             font-family: monospace;
             font-size: 0.9em;
             filter: blur(0.25);
+        }
+
+        .media-error {
+            color: var(--color-error, #cc0000);
+            font-size: 0.8em;
+            padding: 4px;
         }
     }
 </style>
