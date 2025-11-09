@@ -81,7 +81,7 @@ export class OllamaDriver implements LLMDriver {
                     } as Message)
             ),
             stream: true,
-            think: false,
+            // think: false,
             options: {
                 temperature: temp ?? DEFAULT_TEMPERATURE,
                 num_ctx: ctx ?? DEFAULT_CONTEXT,
