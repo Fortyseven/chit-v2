@@ -2,6 +2,11 @@ import { derived, writable, type Readable } from "svelte/store"
 import { appState } from "../appState/appState"
 import { MediaAttachment } from "./chatAttachments"
 
+export enum AppMode {
+    DEFAULT = "DEFAULT",
+    RP = "RP",
+}
+
 export interface Message {
     content: string
     thoughts?: string
@@ -48,6 +53,7 @@ export interface ChatSession {
     templateVariables: { [key: string]: string }
     backpackMode: BackpackMode
     backpackReferences: BackpackReference[] | undefined
+    currentMode: AppMode
 }
 
 export const chats = writable<ChatSession[]>([])
@@ -56,4 +62,9 @@ export const currentChat: Readable<ChatSession | null> = derived(
     [chats, appState],
     ([$chats, $appState]) =>
         $chats.find((chat) => chat.id === $appState.activeChatId) || null
+)
+
+export const currentChatMode: Readable<AppMode> = derived(
+    currentChat,
+    ($currentChat) => $currentChat?.currentMode || AppMode.DEFAULT
 )

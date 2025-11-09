@@ -11,6 +11,7 @@ import { MediaAttachment } from "./chatAttachments"
 import { mediaStorage } from "./mediaStorage"
 
 import {
+    AppMode,
     BackpackMode,
     chats,
     ChatSession,
@@ -64,6 +65,7 @@ export function chatNew(): string {
         },
         backpackMode: BackpackMode.OFF,
         backpackReferences: undefined,
+        currentMode: AppMode.DEFAULT,
     }
 
     chats.update(($chats) => [...$chats, newChat])
@@ -583,6 +585,22 @@ export function chatSetBackpackMode(mode: BackpackMode) {
                 return {
                     ...chat,
                     backpackMode: mode,
+                }
+            }
+            return chat
+        })
+    )
+}
+
+// --------------------------------------------------------------
+export function chatSetCurrentMode(mode: AppMode, chatId: string = "") {
+    chatId = getActiveChatId(chatId)
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    currentMode: mode,
                 }
             }
             return chat
