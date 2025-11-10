@@ -11,7 +11,7 @@
 <main id="App" style="grid-template-columns: {gridColumns};">
     <slot name="sidebar"></slot>
     {#if hasModeSidebar}
-        <slot name="rp-sidebar"></slot>
+        <slot name="mode-sidebar"></slot>
     {/if}
     <slot name="content"></slot>
 </main>

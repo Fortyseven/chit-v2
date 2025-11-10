@@ -42,7 +42,7 @@
 </script>
 
 <div id="ModeSidebar" style="width: {$modeSidebarWidth}px;">
-    <div class="rp-content">
+    <div class="panel-content">
         <RPModePanel />
     </div>
     <button
@@ -70,9 +70,10 @@
             var(--color-background) 95%,
             var(--color-accent-complement) 5%
         );
+
         border-right-color: var(--color-accent-complement);
 
-        .rp-content {
+        .panel-content {
             padding: 1em;
             height: 100%;
             overflow-y: auto;

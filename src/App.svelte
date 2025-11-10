@@ -23,7 +23,7 @@
     <div slot="sidebar" class="sidebar" class:rp-mode={isRPMode}>
         <ConvoSidebar />
     </div>
-    <div slot="rp-sidebar" class="rp-sidebar">
+    <div slot="mode-sidebar" class="mode-sidebar">
         {#if isRPMode}
             <ModeSidebar />
         {/if}
@@ -65,7 +65,7 @@
         }
     }
 
-    .rp-sidebar {
+    .mode-sidebar {
         height: 100%;
     }
 
