@@ -1,8 +1,14 @@
 <script lang="ts">
+    import { modeSidebarWidth } from "../../../lib/appState/modeSidebarState"
+
     export let hasModeSidebar = false
+
+    $: gridColumns = hasModeSidebar
+        ? `300px ${$modeSidebarWidth}px auto`
+        : "300px auto"
 </script>
 
-<main id="App" class:three-column={hasModeSidebar}>
+<main id="App" style="grid-template-columns: {gridColumns};">
     <slot name="sidebar"></slot>
     {#if hasModeSidebar}
         <slot name="rp-sidebar"></slot>
@@ -13,13 +19,8 @@
 <style lang="scss">
     #App {
         display: grid;
-        grid-template-columns: 300px auto;
         width: 100%;
         height: 100%;
         overflow: none;
-
-        &.three-column {
-            grid-template-columns: 300px 250px auto;
-        }
     }
 </style>
