@@ -10,12 +10,15 @@
     export let cssClass: string = ""
     export let altText: string = "Media Attachment"
     export let onClick: ((blob: Blob) => void) | undefined = undefined
-    export let maxWidth: number | undefined = undefined
-    export let maxHeight: number | undefined = undefined
+    export let maxWidth: number | string | undefined = undefined
+    export let maxHeight: number | string | undefined = undefined
 
     let imageUrl: string | null = null
     let loading = true
     let error = false
+
+    $: maxWidth = typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth
+    $: maxHeight = typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight
 
     onMount(async () => {
         try {
@@ -76,8 +79,8 @@
         class={cssClass}
         alt={altText}
         style="
-            {maxWidth ? `max-width: ${maxWidth}px;` : ''}
-            {maxHeight ? `max-height: ${maxHeight}px;` : ''}
+            {maxWidth ? `max-width: ${maxWidth};` : ''}
+            {maxHeight ? `max-height: ${maxHeight};` : ''}
         "
         on:click={handleClick}
     />
