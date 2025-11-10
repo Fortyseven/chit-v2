@@ -16,40 +16,86 @@ class MediaStorageDB {
     private dbVersion = 1
     private storeName = "media"
     private db: IDBDatabase | null = null
+    private initPromise: Promise<void> | null = null
 
-    async init(): Promise<void> {
+    constructor() {
+        if (typeof window !== "undefined") {
+            this.initPromise = this.init()
+        }
+    }
+
+    private init(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.dbName, this.dbVersion)
+            // We don't specify a version here initially, to check existence first
+            const request = indexedDB.open(this.dbName)
 
-            request.onerror = () => {
+            request.onerror = (event) => {
                 console.error("Failed to open IndexedDB:", request.error)
                 reject(request.error)
             }
 
-            request.onsuccess = () => {
+            request.onsuccess = (event) => {
                 this.db = request.result
-                resolve()
-            }
+                const currentVersion = this.db.version
 
-            request.onupgradeneeded = (event) => {
-                const db = (event.target as IDBOpenDBRequest).result
+                if (this.db.objectStoreNames.contains(this.storeName)) {
+                    // Everything is fine, just resolve
+                    console.debug("Media storage initialized")
+                    resolve()
+                } else {
+                    // Object store is missing, we need to trigger an upgrade
+                    console.warn(
+                        `Object store '${this.storeName}' not found. Triggering DB upgrade.`
+                    )
+                    this.db.close() // Must close before upgrading
 
-                // Create object store if it doesn't exist
-                if (!db.objectStoreNames.contains(this.storeName)) {
-                    const store = db.createObjectStore(this.storeName, {
-                        keyPath: "id",
-                    })
+                    const newVersion =
+                        Math.max(currentVersion, this.dbVersion) + 1
+                    const upgradeRequest = indexedDB.open(
+                        this.dbName,
+                        newVersion
+                    )
 
-                    // Create index for efficient chatId lookups
-                    store.createIndex("chatId", "chatId", { unique: false })
+                    upgradeRequest.onupgradeneeded = (upgradeEvent) => {
+                        const db = (upgradeEvent.target as IDBOpenDBRequest)
+                            .result
+                        if (!db.objectStoreNames.contains(this.storeName)) {
+                            console.log(
+                                `Creating object store: ${this.storeName}`
+                            )
+                            const store = db.createObjectStore(this.storeName, {
+                                keyPath: "id",
+                            })
+                            store.createIndex("chatId", "chatId", {
+                                unique: false,
+                            })
+                        }
+                    }
+
+                    upgradeRequest.onsuccess = () => {
+                        this.db = upgradeRequest.result
+                        console.debug("Media storage re-initialized")
+                        resolve()
+                    }
+
+                    upgradeRequest.onerror = () => {
+                        console.error(
+                            "Failed to upgrade IndexedDB:",
+                            upgradeRequest.error
+                        )
+                        reject(upgradeRequest.error)
+                    }
                 }
             }
         })
     }
 
-    private ensureDB(): IDBDatabase {
+    private async ensureDB(): Promise<IDBDatabase> {
+        if (this.initPromise) {
+            await this.initPromise
+        }
         if (!this.db) {
-            throw new Error("Database not initialized. Call init() first.")
+            throw new Error("Database not initialized.")
         }
         return this.db
     }
@@ -63,7 +109,7 @@ class MediaStorageDB {
         blob: Blob,
         filename?: string
     ): Promise<void> {
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([this.storeName], "readwrite")
@@ -95,7 +141,7 @@ class MediaStorageDB {
      * Retrieve a media blob by ID
      */
     async getMedia(id: string): Promise<Blob | null> {
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([this.storeName], "readonly")
@@ -118,7 +164,7 @@ class MediaStorageDB {
      * Get all media items for a specific chat session
      */
     async getChatMedia(chatId: string): Promise<StoredMediaItem[]> {
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([this.storeName], "readonly")
@@ -144,7 +190,7 @@ class MediaStorageDB {
      * Delete a specific media item
      */
     async deleteMedia(id: string): Promise<void> {
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([this.storeName], "readwrite")
@@ -168,7 +214,7 @@ class MediaStorageDB {
      * CRITICAL: This must be called when a chat is cleared or deleted
      */
     async deleteChatMedia(chatId: string): Promise<void> {
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
 
         return new Promise(async (resolve, reject) => {
             try {
@@ -227,7 +273,7 @@ class MediaStorageDB {
         totalItems: number
         totalSize: number
     }> {
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([this.storeName], "readonly")
@@ -260,7 +306,7 @@ class MediaStorageDB {
     async cleanupOldMedia(
         maxAge: number = 30 * 24 * 60 * 60 * 1000
     ): Promise<number> {
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
         const cutoffTime = Date.now() - maxAge
 
         return new Promise((resolve, reject) => {
@@ -308,7 +354,7 @@ class MediaStorageDB {
     async validateMediaReferences(attachmentIds: string[]): Promise<string[]> {
         if (attachmentIds.length === 0) return []
 
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
         const validIds: string[] = []
 
         return new Promise((resolve, reject) => {
@@ -357,7 +403,7 @@ class MediaStorageDB {
      * Clean up orphaned media (media not referenced by any active chat)
      */
     async cleanupOrphanedMedia(activeChatIds: string[]): Promise<number> {
-        const db = this.ensureDB()
+        const db = await this.ensureDB()
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([this.storeName], "readwrite")
@@ -403,22 +449,5 @@ class MediaStorageDB {
 
 // Singleton instance
 const mediaStorage = new MediaStorageDB()
-
-// Initialize on first import
-let initialized = false
-const initPromise = async () => {
-    if (!initialized && typeof window !== "undefined") {
-        try {
-            await mediaStorage.init()
-            initialized = true
-            console.debug("Media storage initialized")
-        } catch (error) {
-            console.error("Failed to initialize media storage:", error)
-        }
-    }
-}
-
-// Auto-initialize
-initPromise()
 
 export { mediaStorage }
