@@ -3,8 +3,8 @@
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ChatHeader from "./app/Chat/Timeline/ChatHeader/ChatHeader.svelte"
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
+    import ModeSidebar from "./app/ModeSidebar/ModeSidebar.svelte"
     import PageContent from "./app/PageContent.svelte"
-    import RPSidebar from "./app/RPSidebar/RPSidebar.svelte"
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
 
     import "./lib/appState/appStateStorage"
@@ -19,13 +19,13 @@
     $: isRPMode = $currentChatMode === AppMode.RP
 </script>
 
-<AppFramework hasRPSidebar={isRPMode}>
+<AppFramework hasModeSidebar={isRPMode}>
     <div slot="sidebar" class="sidebar" class:rp-mode={isRPMode}>
         <ConvoSidebar />
     </div>
     <div slot="rp-sidebar" class="rp-sidebar">
         {#if isRPMode}
-            <RPSidebar />
+            <ModeSidebar />
         {/if}
     </div>
     <div slot="content" class="page" class:rp-mode={isRPMode}>

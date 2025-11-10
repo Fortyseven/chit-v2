@@ -2,14 +2,14 @@
     import RPModePanel from "../ChatSidebar/ModePanels/RPModePanel.svelte"
 </script>
 
-<div id="RPSidebar">
+<div id="ModeSidebar">
     <div class="rp-content">
         <RPModePanel />
     </div>
 </div>
 
 <style lang="scss">
-    #RPSidebar {
+    #ModeSidebar {
         height: 100%;
         background-color: var(--color-background);
         border-right: 1px solid var(--color-border, #333);

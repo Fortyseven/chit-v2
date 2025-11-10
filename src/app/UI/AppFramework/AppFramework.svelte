@@ -1,10 +1,10 @@
 <script lang="ts">
-    export let hasRPSidebar = false
+    export let hasModeSidebar = false
 </script>
 
-<main id="App" class:three-column={hasRPSidebar}>
+<main id="App" class:three-column={hasModeSidebar}>
     <slot name="sidebar"></slot>
-    {#if hasRPSidebar}
+    {#if hasModeSidebar}
         <slot name="rp-sidebar"></slot>
     {/if}
     <slot name="content"></slot>
