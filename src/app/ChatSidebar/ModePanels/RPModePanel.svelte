@@ -45,12 +45,6 @@
     .rp-mode-panel {
         transition: all 0.2s ease;
 
-        background-color: color-mix(
-            in srgb,
-            var(--color-background) 85%,
-            var(--color-accent-complement) 15%
-        );
-        border-color: var(--color-accent-complement);
         color: var(--color-accent-complement-lighter);
     }
 
@@ -70,17 +64,14 @@
             display: flex;
             flex-direction: column;
             gap: 0.5em;
+            padding-inline: 0.5rem;
 
             :global(.media-thumb) {
-                border-radius: 4px;
+                border-radius: 10px;
                 cursor: pointer;
                 transition: transform 0.2s ease;
                 width: 100%;
                 height: auto;
-
-                &:hover {
-                    transform: scale(1.05);
-                }
             }
         }
     }

@@ -57,25 +57,16 @@
     #ModeSidebar {
         height: 100%;
         background-color: var(--color-background);
-        border-right: 1px solid var(--color-border, #333);
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+
         position: relative;
         z-index: 50;
         min-width: 200px;
         max-width: 600px;
         overflow-y: auto;
-
-        // RP mode specific styling
-        background-color: color-mix(
-            in srgb,
-            var(--color-background) 95%,
-            var(--color-accent-complement) 5%
-        );
-
-        border-right-color: var(--color-accent-complement);
+        background: linear-gradient(to right, #161616, #000 100%);
 
         .panel-content {
-            padding: 1em;
+            padding: 1rem;
         }
 
         .resize-handle {
