@@ -21,4 +21,10 @@
 - **Components:** Svelte in `/src/app`, utilities in `/src/lib`
 - **Comments:** Use JSDoc for functions; keep comments concise and relevant
 
+## Task Focus Guidelines
+- **Stay on Task:** Only implement the specific features or changes that were explicitly requested
+- **No Unsolicited Features:** Do not add additional features, optimizations, or improvements unless they were specifically asked for
+- **Ask Before Expanding:** If you think additional changes would be beneficial, ask for permission first before implementing them
+- **Scope Clarity:** If the requested task is unclear or could be interpreted multiple ways, ask for clarification rather than making assumptions
+
 _This file is for agentic coding agents. No Cursor or Copilot rules detected._

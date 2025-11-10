@@ -33,6 +33,13 @@ This guide provides essential knowledge for AI agents working in the Chit codeba
 -   **Comments:** Use JSDoc for functions; keep comments concise and relevant
 -   **Code Design:** Prefer modular, reusable functions and components; separate UI from logic; prefer simple over more complex solutions, they should be maintainable and self-documenting
 
+## Task Focus Guidelines
+
+-   **Stay on Task:** Only implement the specific features or changes that were explicitly requested
+-   **No Unsolicited Features:** Do not add additional features, optimizations, or improvements unless they were specifically asked for
+-   **Ask Before Expanding:** If you think additional changes would be beneficial, ask for permission first before implementing them
+-   **Scope Clarity:** If the requested task is unclear or could be interpreted multiple ways, ask for clarification rather than making assumptions
+
 ## Project Patterns & Integration
 
 -   **Preset Prompts:** `/src/preset-prompts` contains reusable system prompts for chat sessions
