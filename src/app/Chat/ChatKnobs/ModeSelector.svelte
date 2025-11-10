@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { chatSetCurrentMode } from "../../../../lib/chatSession/chatActions"
+    import { chatSetCurrentMode } from "../../../lib/chatSession/chatActions"
     import {
         AppMode,
         currentChatMode,
-    } from "../../../../lib/chatSession/chatSession"
+    } from "../../../lib/chatSession/chatSession"
 
     function handleModeChange(event: Event) {
         const target = event.target as HTMLSelectElement
@@ -21,10 +21,30 @@
                 return mode
         }
     }
+
+    // Keyboard handler for CTRL+1, CTRL+2, etc.
+    function handleKeydown(event: KeyboardEvent) {
+        if (!event.ctrlKey) return
+        // Only handle number keys 1-9
+        const num = parseInt(event.key)
+        if (isNaN(num) || num < 1) return
+        const modes = Object.values(AppMode)
+        if (num > modes.length) return
+        const selectedMode = modes[num - 1]
+        chatSetCurrentMode(selectedMode)
+        event.preventDefault()
+    }
+
+    import { onDestroy, onMount } from "svelte"
+    onMount(() => {
+        window.addEventListener("keydown", handleKeydown)
+    })
+    onDestroy(() => {
+        window.removeEventListener("keydown", handleKeydown)
+    })
 </script>
 
 <div class="mode-selector">
-    <label for="mode-select">Mode:</label>
     <select
         id="mode-select"
         value={$currentChatMode}
@@ -52,10 +72,11 @@
         }
 
         select {
-            background-color: var(--color-surface-700);
-            color: var(--color-accent);
-            border: 1px solid var(--color-accent-complement-darker);
-            border-radius: 4px;
+            background-color: var(--color-accent-darker);
+            color: black;
+            border: none;
+            height: 100%;
+            border-radius: var(--border-radius-standard);
             padding: 0.25em 0.5em;
             font-size: 0.8rem;
             outline: none;

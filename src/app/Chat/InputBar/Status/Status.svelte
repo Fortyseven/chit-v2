@@ -1,7 +1,6 @@
 <script lang="ts">
     import BackpackIndicator from "./Status__BackpackIndicator.svelte"
     import Status__Counter from "./Status__Counter.svelte"
-    import ModeSelector from "./Status__ModeSelector.svelte"
     import RequestTimer from "./Status__RequestTimer.svelte"
 
     export let inputLength = 0
@@ -9,9 +8,7 @@
 
 <div class="status-bar">
     <div class="wrapper">
-        <div class="left">
-            <ModeSelector />
-        </div>
+        <div class="left"></div>
         <div class="center">
             <Status__Counter {inputLength} />
         </div>
