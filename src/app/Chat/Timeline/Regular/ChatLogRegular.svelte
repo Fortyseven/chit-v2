@@ -16,42 +16,6 @@
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
-    import FloatingImage from "./FloatingImage.svelte"
-
-    function isObjectEmpty(obj: any) {
-        return Object.keys(obj).length === 0
-    }
-
-    // Track floating images
-    let floatingImages: any[] = []
-
-    function openFloatingImage(mediaData: Blob) {
-        const imageUrl = memoizeBlobUrl(mediaData)
-        floatingImages = [...floatingImages, imageUrl]
-    }
-
-    function closeFloatingImage(imageUrl: string) {
-        floatingImages = floatingImages.filter((url) => url !== imageUrl)
-    }
-
-    // Function to clear all floating images
-    function clearAllFloatingImages() {
-        floatingImages = []
-    }
-
-    // Make the clearAllFloatingImages function available through a custom event
-    onMount(() => {
-        window.addEventListener("clearFloatingImages", () => {
-            clearAllFloatingImages()
-        })
-
-        return () => {
-            window.removeEventListener(
-                "clearFloatingImages",
-                clearAllFloatingImages,
-            )
-        }
-    })
 
     // Update chat message
     function updateChatMessage(index: number, message: any) {
@@ -107,7 +71,6 @@
                                             {media}
                                             cssClass="media-attachment-image"
                                             altText="Media Attachment"
-                                            onClick={openFloatingImage}
                                             maxWidth={256}
                                             maxHeight={256}
                                         />
@@ -184,15 +147,6 @@
         {/key}
     {/if}
 </div>
-
-<!-- Floating images container -->
-{#each floatingImages as imageUrl}
-    <FloatingImage
-        src={imageUrl}
-        alt="Floating Media"
-        on:close={() => closeFloatingImage(imageUrl)}
-    />
-{/each}
 
 <style lang="scss">
     .wrapper {
