@@ -44,7 +44,6 @@
 <style lang="scss">
     .rp-mode-panel {
         transition: all 0.2s ease;
-
         color: var(--color-accent-complement-lighter);
     }
 

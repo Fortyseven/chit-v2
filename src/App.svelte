@@ -20,7 +20,7 @@
 </script>
 
 <AppFramework hasModeSidebar={isRPMode}>
-    <div slot="sidebar" class="sidebar" class:rp-mode={isRPMode}>
+    <div slot="sidebar" class="sidebar">
         <ConvoSidebar />
     </div>
     <div slot="mode-sidebar" class="mode-sidebar">
@@ -28,7 +28,7 @@
             <ModeSidebar />
         {/if}
     </div>
-    <div slot="content" class="page" class:rp-mode={isRPMode}>
+    <div slot="content" class="page">
         <PageContent />
         <div class="chat-header"><ChatHeader /></div>
         <div class="input-bar"><InputBar /></div>
@@ -42,27 +42,6 @@
         width: inherit;
         overflow-y: hidden;
         position: relative;
-
-        &.rp-mode {
-            // Add subtle RP mode styling
-            border-left: 3px solid var(--color-accent-complement);
-            background-color: color-mix(
-                in srgb,
-                var(--color-background) 95%,
-                var(--color-accent-complement) 5%
-            );
-        }
-    }
-
-    .sidebar {
-        &.rp-mode {
-            // RP mode styling for sidebar
-            background-color: color-mix(
-                in srgb,
-                var(--color-background) 97%,
-                var(--color-accent-complement) 3%
-            );
-        }
     }
 
     .mode-sidebar {
