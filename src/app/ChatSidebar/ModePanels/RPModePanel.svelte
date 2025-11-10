@@ -17,7 +17,7 @@
 </script>
 
 {#if currentMode === AppMode.RP}
-    <div class="mode-indicator rp-mode">
+    <div class="rp-mode-panel">
         <div class="mode-badge">
             <span class="mode-icon">🎭</span>
             <span class="mode-text">RP Mode</span>
@@ -42,40 +42,21 @@
 {/if}
 
 <style lang="scss">
-    .mode-indicator {
+    .rp-mode-panel {
         // padding: 0.75em 1em;
         // border-radius: 8px;
         // margin: 1em;
         // border: 1px solid transparent;
         transition: all 0.2s ease;
 
-        .mode-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5em;
-            font-weight: 600;
-            margin-bottom: 0.25em;
-
-            .mode-icon {
-                font-size: 1.2em;
-            }
-
-            .mode-text {
-                font-size: 0.9em;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-            }
-        }
-
-        &.rp-mode {
-            background-color: color-mix(
-                in srgb,
-                var(--color-background) 85%,
-                var(--color-accent-complement) 15%
-            );
-            border-color: var(--color-accent-complement);
-            color: var(--color-accent-complement-lighter);
-        }
+        background-color: color-mix(
+            in srgb,
+            var(--color-background) 85%,
+            var(--color-accent-complement) 15%
+        );
+        border-color: var(--color-accent-complement);
+        color: var(--color-accent-complement-lighter);
+        // overflow: clip;
     }
 
     .media-thumbnails {
