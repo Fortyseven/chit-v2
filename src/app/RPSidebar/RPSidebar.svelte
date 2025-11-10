@@ -1,5 +1,5 @@
 <script lang="ts">
-    import RPModePanel from "../ChatSidebar/ModeTools/RPModePanel.svelte"
+    import RPModePanel from "../ChatSidebar/ModePanels/RPModePanel.svelte"
 </script>
 
 <div id="RPSidebar">
