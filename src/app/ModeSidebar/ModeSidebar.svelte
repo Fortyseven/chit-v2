@@ -63,6 +63,7 @@
         z-index: 50;
         min-width: 200px;
         max-width: 600px;
+        overflow-y: auto;
 
         // RP mode specific styling
         background-color: color-mix(
@@ -75,9 +76,6 @@
 
         .panel-content {
             padding: 1em;
-            height: 100%;
-            overflow-y: auto;
-            padding-right: calc(1em + 8px); // Account for resize handle
         }
 
         .resize-handle {

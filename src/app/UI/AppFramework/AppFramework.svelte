@@ -21,6 +21,6 @@
         display: grid;
         width: 100%;
         height: 100%;
-        overflow: clip;
+        grid-template-rows: minmax(0, 1fr);
     }
 </style>

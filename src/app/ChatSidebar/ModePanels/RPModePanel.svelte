@@ -43,10 +43,6 @@
 
 <style lang="scss">
     .rp-mode-panel {
-        // padding: 0.75em 1em;
-        // border-radius: 8px;
-        // margin: 1em;
-        // border: 1px solid transparent;
         transition: all 0.2s ease;
 
         background-color: color-mix(
@@ -56,7 +52,6 @@
         );
         border-color: var(--color-accent-complement);
         color: var(--color-accent-complement-lighter);
-        // overflow: clip;
     }
 
     .media-thumbnails {
@@ -73,15 +68,15 @@
 
         .media-grid {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 0.5em;
 
             :global(.media-thumb) {
-                // max-width: 256px;
-                // max-height: 256px;
                 border-radius: 4px;
                 cursor: pointer;
                 transition: transform 0.2s ease;
+                width: 100%;
+                height: auto;
 
                 &:hover {
                     transform: scale(1.05);
