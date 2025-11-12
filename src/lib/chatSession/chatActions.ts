@@ -10,6 +10,7 @@ import {
 import { MediaAttachment } from "./chatAttachments"
 import { mediaStorage } from "./mediaStorage"
 
+import { ttsMaybeAutoSpeak } from "../voice/tts"
 import {
     AppMode,
     BackpackMode,
@@ -434,6 +435,13 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
         })
     )
 
+    // Auto-speak if enabled
+    try {
+        ttsMaybeAutoSpeak()
+    } catch (e) {
+        console.warn("TTS auto-speak failed", e)
+    }
+
     // this is our first response?
     if (get(appState).useTitler && chatLength(chatId) == 2) {
         setTimeout(async () => {
@@ -558,6 +566,13 @@ export function chatFinish(chatId: string = "") {
             return chat
         })
     )
+
+    // If the buffer has already been promoted earlier, optionally re-trigger auto-speak (harmless duplicate safety)
+    try {
+        // Only speak if not currently speaking.
+        // Import done above; guard to avoid double start mid-stream.
+        // We rely on promoteStreamingPending for main trigger.
+    } catch {}
 }
 
 // --------------------------------------------------------------

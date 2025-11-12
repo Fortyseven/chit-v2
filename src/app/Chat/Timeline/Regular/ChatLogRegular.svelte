@@ -118,12 +118,15 @@
                             content={message.thoughts}
                             isThoughts
                             {index}
+                            isLatest={index ===
+                                $currentChat.messages.length - 1}
                             onUpdatedContent={updateChatMessage}
                         />
                     {/if}
                     <ChatLogRegular_Assistant
                         content={message.content}
                         {index}
+                        isLatest={index === $currentChat.messages.length - 1}
                         onUpdatedContent={updateChatMessage}
                     />
                 {/if}
@@ -137,11 +140,13 @@
                         content={chatGetStreamingPendingThoughts()}
                         isThoughts
                         inprogress
+                        isLatest={false}
                     />
                 {/if}
                 <ChatLogRegular_Assistant
                     content={chatGetStreamingPending()}
                     inprogress
+                    isLatest={false}
                 />
             {/if}
         {/key}

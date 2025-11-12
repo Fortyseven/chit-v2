@@ -4,6 +4,12 @@
         chatRunInference,
     } from "../../../../lib/chatSession/chatActions"
     import { currentChat } from "../../../../lib/chatSession/chatSession"
+    import {
+        ttsSpeak,
+        ttsSpeaking,
+        ttsStop,
+        voiceSettings,
+    } from "../../../../lib/voice/tts"
     import ContextMenu from "../../../UI/ContextMenu.svelte"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
@@ -12,6 +18,7 @@
     export let isThoughts = false
     export let index
     export let onUpdatedContent = () => {}
+    export let isLatest = false
 
     // Context menu state
     let contextMenuOpen = false
@@ -65,6 +72,17 @@
         await chatRunInference()
         closeContextMenu()
     }
+
+    // TTS controls
+    function speak() {
+        // content can be string or object with content
+        const text = typeof content === "string" ? content : content.content
+        if (!text) return
+        ttsSpeak(text)
+    }
+    function stopSpeak() {
+        ttsStop()
+    }
 </script>
 
 {#if isThoughts}
@@ -104,6 +122,19 @@
     >
         <div class="message-controls">
             <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
+            {#if isLatest && $voiceSettings.enabled}
+                {#if $ttsSpeaking}
+                    <button
+                        title="Stop speaking"
+                        class="tts"
+                        on:click={stopSpeak}>⏹</button
+                    >
+                {:else}
+                    <button title="Speak" class="tts" on:click={speak}
+                        >🔊</button
+                    >
+                {/if}
+            {/if}
         </div>
         <MarkdownEditor
             {content}
@@ -171,6 +202,20 @@
                 border-radius: var(--border-radius-standard);
                 cursor: pointer;
 
+                &:hover {
+                    background-color: var(--color-background-lighter);
+                }
+            }
+
+            button.tts {
+                background: transparent;
+                color: var(--color-accent-complement);
+                font-size: 1.1em;
+                font-weight: bold;
+                padding: 0.2em 0.5em;
+                border-radius: var(--border-radius-standard);
+                cursor: pointer;
+                margin-left: 0.25em;
                 &:hover {
                     background-color: var(--color-background-lighter);
                 }
