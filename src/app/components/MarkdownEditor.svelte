@@ -11,7 +11,7 @@
     export let index
     export let onUpdatedContent = (content) => {}
 
-    export let open = function () {
+    export const open = function () {
         openEditor = true
     }
 
