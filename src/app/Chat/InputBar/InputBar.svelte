@@ -295,40 +295,6 @@
                     }
                 }
             }
-            .chat-controls {
-                display: flex;
-                gap: 0.5em;
-
-                button {
-                    background-color: var(--color-primary-500);
-                    flex: auto;
-                    text-align: center;
-                    width: calc(var(--spacing) * 24);
-                    height: 100%;
-                    line-height: 1;
-                    &:disabled {
-                        opacity: 50%;
-                    }
-                }
-
-                button.btn-send div {
-                    display: flex;
-                    flex-direction: row;
-                    place-content: center;
-                    gap: calc(var(--spacing) * 2);
-                }
-
-                .btn-grid {
-                    width: 100px;
-                    height: 100%;
-                    display: grid;
-                    grid-template-columns: auto auto;
-                    grid-template-rows: auto auto;
-                    gap: 2px;
-                    place-content: center;
-                    position: relative;
-                }
-            }
         }
     }
 </style>
