@@ -145,7 +145,8 @@
         if (ev.key === "Enter") {
             if (!ev.shiftKey) {
                 ev.preventDefault()
-                await _submitUserMessage(ev.target?.value)
+                const value = (ev.target as HTMLTextAreaElement)?.value
+                await _submitUserMessage(value)
             }
         }
     }
@@ -165,9 +166,12 @@
                 onBtnBack()
             }
 
-            if (ev.key === "Enter" && ev.ctrlKey && ev.target?.value) {
-                ev.preventDefault()
-                await _submitUserMessage(ev.target?.value)
+            if (ev.key === "Enter" && ev.ctrlKey) {
+                const target = ev.target as HTMLTextAreaElement | null
+                if (target?.value) {
+                    ev.preventDefault()
+                    await _submitUserMessage(target.value)
+                }
             }
         } else if (ev.key == "Escape") {
             ev.preventDefault()
