@@ -1,6 +1,8 @@
 <script>
     import MarkdownIt from "markdown-it"
     import { createEventDispatcher, onMount } from "svelte"
+    import { isRPMode } from "../../lib/modes/modeUtils"
+    import { wrapQuotesStreaming } from "../../lib/text/quoteWrap"
     import { hljs } from "../../vendor/highlight.min.js"
 
     // Props
@@ -18,6 +20,7 @@
 
     // Markdown rendering
     const md = MarkdownIt({
+        html: true,
         highlight: function (str, lang) {
             if (lang && hljs.getLanguage(lang)) {
                 try {
@@ -47,8 +50,10 @@
 
     // Compute processed content, only show blank content
     // message when content is truly empty
+    // Process content to wrap quoted sections before markdown render
     $: {
-        markdownStr = md.render(content).trim()
+        const processed = isRPMode() ? wrapQuotesStreaming(content) : content
+        markdownStr = md.render(processed).trim()
     }
 
     // Save the changes and update the rendered content
@@ -216,6 +221,11 @@
 
         :global(code) {
             font-family: monospace;
+        }
+
+        :global(.quote) {
+            color: white;
+            font-family: serif;
         }
     }
 </style>
