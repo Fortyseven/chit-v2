@@ -21,15 +21,15 @@
     $: $ctx = $currentChat?.settings?.num_ctx || 8192
     $: $temp = $currentChat?.settings?.temperature || 0.6
 
-    function handleContextBlur(event) {
-        const value = parseInt(event.target.value);
+    function handleContextBlur(event: Event) {
+        const value = parseInt((event.target as HTMLInputElement).value, 10)
         if (value < 1024) {
-            $ctx = value * 1024;
+            $ctx = value * 1024
         }
     }
 </script>
 
-<div id="ChatInfSettings">
+<div id="ChatInferenceSettings">
     <!-- {#key $currentChat} -->
     <div>
         <label for="context">Cntx 📜</label>
@@ -58,7 +58,7 @@
 </div>
 
 <style lang="scss">
-    #ChatInfSettings {
+    #ChatInferenceSettings {
         display: flex;
         flex-direction: column;
         gap: 0.25em;
