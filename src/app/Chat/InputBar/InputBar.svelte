@@ -1,26 +1,22 @@
 <script lang="ts">
     import { toast } from "@zerodevx/svelte-toast"
-    import { Renew, SendFilled, TrashCan, Undo } from "carbon-icons-svelte"
-    import { derived } from "svelte/store"
     import { appActiveChat, appState } from "../../../lib/appState/appState"
     import {
         chatAbort,
         chatAddRoleMessage,
         chatBack,
         chatChopLatest,
-        chatClearConversation,
         chatInProgress,
         chatLength,
         chatRunInference,
     } from "../../../lib/chatSession/chatActions"
     import { chatClearAllPastedMedia } from "../../../lib/chatSession/chatAttachments"
-    import { chats, currentChat } from "../../../lib/chatSession/chatSession"
+    import { currentChat } from "../../../lib/chatSession/chatSession"
     import type { CommandResult } from "../../../lib/inputCommands/inputCommands"
     import { handleCommand } from "../../../lib/inputCommands/inputCommands"
-    import IconButton from "../../UI/IconButton.svelte"
-    import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
     import InputBar__Attachments from "./InputBar__Attachments.svelte"
+    import InputBar__ChatControls from "./InputBar__ChatControls.svelte"
     import InputBar__PasteHandler from "./InputBar__PasteHandler.svelte"
     import Status from "./Status/Status.svelte"
 
@@ -197,26 +193,6 @@
             }
         }
     }
-
-    /* ------------------------------------------------------ */
-    async function onBtnClear() {
-        if (inputBoxEl) {
-            inputBoxEl.value = ""
-        }
-        await chatClearAllPastedMedia()
-        await chatClearConversation()
-
-        // Dispatch custom event to clear all floating images
-        window.dispatchEvent(new CustomEvent("clearFloatingImages"))
-    }
-
-    /* ------------------------------------------------------ */
-    const hasMessages = derived(
-        [chats, appActiveChat],
-        ([$chats, $appActiveChat]) => {
-            return chatLength() > 0
-        },
-    )
 </script>
 
 <svelte:window onkeydown={onGlobalKeypress} />
@@ -243,49 +219,11 @@
             <div class="attachments">
                 <InputBar__Attachments {inputBoxEl} />
             </div>
-            <div class="chat-controls">
-                <button
-                    onclick={() => _submitUserMessage(inputBoxEl?.value)}
-                    disabled={$chatInProgress}
-                    class="btn-send"
-                >
-                    <div>
-                        Send&nbsp;<SendFilled />
-                    </div>
-                </button>
-                {#key $hasMessages}
-                    <div class="btn-grid">
-                        <IconButton
-                            title="Reroll last response (Ctrl+E)"
-                            onClick={onBtnReroll}
-                            disabled={!$hasMessages || $chatInProgress}
-                            iconComponent={Renew}
-                            roundCorner="nw"
-                        />
-
-                        <ChatOptionsDropdown></ChatOptionsDropdown>
-
-                        <IconButton
-                            title="Go back one response (Ctrl+B)"
-                            onClick={onBtnBack}
-                            disabled={(!$hasMessages || $chatInProgress) &&
-                                !$currentChat?.pastedMedia?.length}
-                            iconComponent={Undo}
-                            roundCorner="sw"
-                        />
-
-                        <IconButton
-                            title="Clear"
-                            warning
-                            onClick={onBtnClear}
-                            disabled={(!$hasMessages || $chatInProgress) &&
-                                !$currentChat?.pastedMedia?.length}
-                            iconComponent={TrashCan}
-                            roundCorner="se"
-                        />
-                    </div>
-                {/key}
-            </div>
+            <InputBar__ChatControls
+                {inputBoxEl}
+                {chatInProgress}
+                doInputBarSubmit={() => _submitUserMessage(inputBoxEl?.value)}
+            />
         </div>
         <div class="under">
             <Status
