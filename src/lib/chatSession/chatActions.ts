@@ -10,7 +10,7 @@ import {
 import { MediaAttachment } from "./chatAttachments"
 import { mediaStorage } from "./mediaStorage"
 
-import { ttsMaybeAutoSpeak } from "../voice/tts"
+import { ttsMaybeAutoSpeak, ttsStop } from "../voice/tts"
 import {
     AppMode,
     BackpackMode,
@@ -332,6 +332,8 @@ export function chatBack(chatId: string = ""): string | undefined {
 export async function chatRunInference(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
+    ttsStop()
+
     // pass to backpack if present
 
     if (get(appState).backpackApiEndpoint) {
@@ -472,6 +474,8 @@ export function chatSetTitle(chatId: string = "", title: string) {
 
 //--------------------------------------------------------------
 export function chatAbort() {
+    ttsStop()
+
     // check if we're running inference
     if (!get(chatInProgress)) {
         return
@@ -507,6 +511,8 @@ export function chatInProgressWithId(chatId: string = ""): Boolean {
 export async function chatClearConversation(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
+    ttsStop()
+
     // Clean up media from IndexedDB when clearing conversation - this will clean up ALL media for this chat
     try {
         await mediaStorage.deleteChatMedia(chatId)
@@ -533,6 +539,7 @@ export async function chatClearConversation(chatId: string = "") {
 // --------------------------------------------------------------
 export function chatStart(chatId: string = "") {
     chatId = getActiveChatId(chatId)
+    ttsStop()
 
     chats.update(($chats) =>
         $chats.map((chat) => {
