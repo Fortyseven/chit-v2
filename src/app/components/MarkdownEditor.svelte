@@ -1,18 +1,21 @@
-<script>
+<script lang="ts">
+    // @ts-ignore
     import MarkdownIt from "markdown-it"
     import { createEventDispatcher, onMount } from "svelte"
     import { isRPMode } from "../../lib/modes/modeUtils"
     import { wrapQuotesStreaming } from "../../lib/text/quoteWrap"
+    // @ts-ignore
     import { hljs } from "../../vendor/highlight.min.js"
 
     // Props
     export let content = ""
     export let editorOpen = false
-    export let index
-    export let onUpdatedContent = (content) => {}
+    export let index: number
+    export let onUpdatedContent = (index: number, content: string) => {}
+    export let renderHtml = false
 
     export const open = function () {
-        openEditor = true
+        editorOpen = true
     }
 
     // Event dispatcher
@@ -20,8 +23,9 @@
 
     // Markdown rendering
     const md = MarkdownIt({
-        html: true,
-        highlight: function (str, lang) {
+        typographer: false,
+        linkify: true,
+        highlight: function (str: any, lang: any) {
             if (lang && hljs.getLanguage(lang)) {
                 try {
                     return (
@@ -45,7 +49,7 @@
 
     // Component state
     let isEditing = false
-    let editableDiv
+    let editableDiv: HTMLDivElement
     let markdownStr = ""
 
     // Compute processed content, only show blank content
@@ -53,13 +57,14 @@
     // Process content to wrap quoted sections before markdown render
     $: {
         const processed = isRPMode() ? wrapQuotesStreaming(content) : content
+        md.options.html = renderHtml
         markdownStr = md.render(processed).trim()
     }
 
     // Save the changes and update the rendered content
     function saveChanges() {
         if (editableDiv) {
-            const newContent = editableDiv.innerText
+            const newContent: string = editableDiv.innerText
             if (newContent !== content) {
                 onUpdatedContent(index, newContent)
             }
@@ -68,7 +73,7 @@
     }
 
     // Handle key events in the editor
-    function handleKeyDown(event) {
+    function handleKeyDown(event: KeyboardEvent) {
         // Ctrl+Enter or Cmd+Enter to save
         if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
             event.preventDefault()
@@ -86,8 +91,11 @@
     if (editorOpen) {
         onMount(() => {
             // Set up click outside to save changes
-            function handleClickOutside(event) {
-                if (editableDiv && !editableDiv.contains(event.target)) {
+            function handleClickOutside(event: MouseEvent) {
+                if (
+                    editableDiv &&
+                    !editableDiv.contains(event.target as Node)
+                ) {
                     saveChanges()
                 }
             }
@@ -107,10 +115,10 @@
             copyButtons.forEach((button) => {
                 button.addEventListener("click", () => {
                     const codeBlock = button.nextElementSibling
-                    const code = codeBlock.textContent
+                    const code: string | undefined = codeBlock?.textContent
 
                     navigator.clipboard
-                        .writeText(code)
+                        .writeText(code ?? "???")
                         .then(() => {
                             // Show feedback
                             const originalText = button.textContent

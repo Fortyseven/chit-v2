@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import {
         chatChopLatest,
         chatRunInference,
@@ -10,27 +10,29 @@
         ttsStop,
         voiceSettings,
     } from "../../../../lib/voice/tts"
+    // @ts-ignore
     import ContextMenu from "../../../UI/ContextMenu.svelte"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
     export let content = { role: "assistant", content: "" }
     export let inprogress = false
     export let isThoughts = false
-    export let index
-    export let onUpdatedContent = () => {}
+    export let index: number
+    export let onUpdatedContent = (_index: number, _content: string) => {}
     export let isLatest = false
 
     // Context menu state
     let contextMenuOpen = false
     let contextMenuPosition = { x: 50, y: 10 }
     let openEditor = false
+    let renderHtml: boolean = false
 
     function saveAsFile() {
         const blob = new Blob([content.content], { type: `text/markdown` })
         const url = URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
-        const title = $currentChat.title ? $currentChat.title : "response"
+        const title = $currentChat?.title ? $currentChat.title : "response"
         a.download = `${title}-fragment-${index}.md`
         a.click()
         URL.revokeObjectURL(url)
@@ -141,6 +143,7 @@
             {index}
             editorOpen={openEditor}
             {onUpdatedContent}
+            {renderHtml}
         />
         <ContextMenu
             open={contextMenuOpen}
@@ -148,6 +151,12 @@
             items={menuItems}
             onClose={closeContextMenu}
         />
+    </div>
+    <div class="mini-toolbar">
+        <button
+            on:click={() => (renderHtml = !renderHtml)}
+            class:on={renderHtml}>HTML</button
+        >
     </div>
 {/if}
 
@@ -236,6 +245,31 @@
             box-shadow: unset;
             line-height: 0.95;
             font-family: monospace;
+        }
+    }
+    .mini-toolbar {
+        display: flex;
+        padding-block: 1em;
+        justify-content: right;
+
+        button {
+            flex: 0 0 auto;
+            font-size: 0.5em;
+            background-color: transparent;
+            color: var(--color-accent-darker);
+            border-radius: 5px;
+            border: 2px solid var(--color-accent-darker);
+            padding-inline: 0.5em;
+            transition: all 0.2s;
+            &:hover {
+                color: var(--color-accent);
+                border-color: var(--color-accent);
+            }
+            &.on {
+                background-color: var(--color-accent);
+                border: none;
+                color: black;
+            }
         }
     }
 </style>
