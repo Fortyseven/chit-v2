@@ -57,7 +57,6 @@
     // Process content to wrap quoted sections before markdown render
     $: {
         const processed = isRPMode() ? wrapQuotesStreaming(content) : content
-        md.options.html = renderHtml
         markdownStr = md.render(processed).trim()
     }
 
@@ -167,7 +166,11 @@
         </div>
     {:else}
         <div class="rendered-content">
-            {@html markdownStr}
+            {#if renderHtml}
+                {@html content.trim()}
+            {:else}
+                {@html markdownStr}
+            {/if}
         </div>
     {/if}
 </div>
