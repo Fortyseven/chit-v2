@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { Copy, Renew, Save } from "carbon-icons-svelte"
     import {
         chatChopLatest,
         chatRunInference,
@@ -14,7 +15,7 @@
     import ContextMenu from "../../../UI/ContextMenu.svelte"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
-    export let content = { role: "assistant", content: "" }
+    export let content = ""
     export let inprogress = false
     export let isThoughts = false
     export let index: number
@@ -22,13 +23,12 @@
     export let isLatest = false
 
     // Context menu state
-    let contextMenuOpen = false
-    let contextMenuPosition = { x: 50, y: 10 }
     let openEditor = false
     let renderHtml: boolean = false
 
     function saveAsFile() {
-        const blob = new Blob([content.content], { type: `text/markdown` })
+        console.log("content", content)
+        const blob = new Blob([content], { type: `text/markdown` })
         const url = URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
@@ -38,41 +38,15 @@
         URL.revokeObjectURL(url)
     }
 
-    // Context menu actions
-    const menuItems = [
-        { name: "Copy response", action: () => copyToClipboard() },
-        {
-            name: "Regenerate response",
-            action: () => regenerateResponse(),
-        },
-        { name: "-" }, // Separator
-        { name: "Edit message", action: () => (openEditor = true) },
-        { name: "-" }, // Separator
-        { name: "Save response to file", action: saveAsFile },
-    ]
-
-    function toggleContextMenu(mEvent) {
-        contextMenuOpen = !contextMenuOpen
-
-        mEvent.stopPropagation()
-        mEvent.preventDefault()
-    }
-
-    function closeContextMenu() {
-        contextMenuOpen = false
-    }
-
     function copyToClipboard() {
         //navigator.clipboard.writeText(line.content)
         navigator.clipboard.writeText(content)
-        closeContextMenu()
     }
 
     async function regenerateResponse() {
         // Remove the last assistant response and generate a new one
         chatChopLatest()
         await chatRunInference()
-        closeContextMenu()
     }
 
     // TTS controls
@@ -107,23 +81,17 @@
             editorOpen={openEditor}
             {onUpdatedContent}
         />
-        <!-- <ContextMenu
-            open={contextMenuOpen}
-            position={contextMenuPosition}
-            items={menuItems}
-            onClose={closeContextMenu}
-        /> -->
     </details>
 {:else}
     <div
         class="response markdown bot"
+        class:html={renderHtml}
         role="button"
         tabindex="0"
         class:inprogress
         data-testid="ChatLogRegular_Assistant"
     >
         <div class="message-controls">
-            <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
             {#if isLatest && $voiceSettings.enabled}
                 {#if $ttsSpeaking}
                     <button
@@ -145,18 +113,20 @@
             {onUpdatedContent}
             {renderHtml}
         />
-        <ContextMenu
-            open={contextMenuOpen}
-            position={contextMenuPosition}
-            items={menuItems}
-            onClose={closeContextMenu}
-        />
     </div>
     <div class="mini-toolbar">
-        <button
-            on:click={() => (renderHtml = !renderHtml)}
-            class:on={renderHtml}>HTML</button
-        >
+        <div class="left">
+            <button on:click={() => (openEditor = true)}>Edit</button>
+        </div>
+        <div class="right">
+            <button
+                on:click={() => (renderHtml = !renderHtml)}
+                class:on={renderHtml}>HTML</button
+            >
+            <button on:click={saveAsFile}><Save /></button>
+            <button on:click={regenerateResponse}><Renew /></button>
+            <button on:click={() => copyToClipboard()}><Copy /></button>
+        </div>
     </div>
 {/if}
 
@@ -189,6 +159,27 @@
         position: relative;
         overflow-y: clip;
         overflow-x: auto;
+
+        &:first-of-type {
+            margin-top: 1em;
+        }
+
+        &.html {
+            background-color: white;
+            color: black;
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Oxygen,
+                Ubuntu,
+                Cantarell,
+                "Open Sans",
+                "Helvetica Neue",
+                sans-serif;
+        }
 
         .message-controls {
             position: absolute;
@@ -251,19 +242,31 @@
         display: flex;
         padding-block: 1em;
         justify-content: right;
-
+        .left,
+        .right {
+            flex: 1 1 auto;
+            gap: 0.5rem;
+            display: flex;
+        }
+        .left {
+            justify-content: left;
+        }
+        .right {
+            justify-content: right;
+        }
         button {
             flex: 0 0 auto;
             font-size: 0.5em;
+            height: 1.9rem;
             background-color: transparent;
-            color: var(--color-accent-darker);
+            color: var(--color-accent-lighter);
             border-radius: 5px;
             border: 2px solid var(--color-accent-darker);
             padding-inline: 0.5em;
             transition: all 0.2s;
             &:hover {
-                color: var(--color-accent);
-                border-color: var(--color-accent);
+                color: white;
+                border-color: white;
             }
             &.on {
                 background-color: var(--color-accent);
