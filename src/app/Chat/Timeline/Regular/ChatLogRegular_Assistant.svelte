@@ -5,6 +5,7 @@
         chatRunInference,
     } from "../../../../lib/chatSession/chatActions"
     import { currentChat } from "../../../../lib/chatSession/chatSession"
+    import toast from "../../../../lib/toast"
     import {
         ttsSpeak,
         ttsSpeaking,
@@ -12,7 +13,6 @@
         voiceSettings,
     } from "../../../../lib/voice/tts"
     // @ts-ignore
-    import ContextMenu from "../../../UI/ContextMenu.svelte"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
     export let content = ""
@@ -41,6 +41,7 @@
     function copyToClipboard() {
         //navigator.clipboard.writeText(line.content)
         navigator.clipboard.writeText(content)
+        toast("Copied response to clipboard")
     }
 
     async function regenerateResponse() {

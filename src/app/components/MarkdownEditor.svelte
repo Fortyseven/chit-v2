@@ -23,6 +23,7 @@
 
     // Markdown rendering
     const md = MarkdownIt({
+        html: isRPMode(),
         typographer: false,
         linkify: true,
         highlight: function (str: any, lang: any) {
@@ -166,7 +167,7 @@
         </div>
     {:else}
         <div class="rendered-content">
-            {#if renderHtml}
+            {#if !isRPMode() && renderHtml}
                 {@html content.trim()}
             {:else}
                 {@html markdownStr}

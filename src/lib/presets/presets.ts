@@ -1,4 +1,3 @@
-import { toast } from "@zerodevx/svelte-toast"
 import yaml from "js-yaml"
 import { get } from "svelte/store"
 import { llm } from "../../lib/llm/llm"
@@ -11,6 +10,7 @@ import {
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
+import toast from "../toast"
 import { loadFile } from "../utils"
 /* ------------------------------------------------ */
 interface Variables {
@@ -223,7 +223,7 @@ function _doParsePreset(content: string, filename: string = "") {
         ;({ prompt: sprompt, model, settings } = _loadYAML(content))
     } else {
         console.error("Unsupported file type")
-        toast.push("Unsupported file type: " + filename)
+        toast("Unsupported file type: " + filename)
     }
 
     // now let's pull it together ------------------------------
@@ -232,7 +232,7 @@ function _doParsePreset(content: string, filename: string = "") {
         chatSetSystemPrompt(target_chat_id, sprompt)
     } else {
         console.info("No system prompt specified")
-        toast.push("No system prompt specified")
+        toast("No system prompt specified")
     }
 
     // --
@@ -245,11 +245,11 @@ function _doParsePreset(content: string, filename: string = "") {
             const msg = `Model not found: ${model}. Using default model.`
 
             console.warn(msg)
-            toast.push(msg)
+            toast(msg)
         }
     } else {
         console.info("No model specified")
-        toast.push("No model specified")
+        toast("No model specified")
     }
 
     // --
@@ -258,7 +258,7 @@ function _doParsePreset(content: string, filename: string = "") {
         chatUpdateSettings(target_chat_id, settings)
     } else {
         console.info("No settings specified")
-        toast.push("No settings specified")
+        toast("No settings specified")
     }
 
     return sprompt
