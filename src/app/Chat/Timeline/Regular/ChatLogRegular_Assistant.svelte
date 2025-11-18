@@ -116,14 +116,14 @@
         />
     </div>
     <div class="mini-toolbar">
-        <div class="left">
-            <button on:click={() => (openEditor = true)}>Edit</button>
-        </div>
+        <div class="left"></div>
         <div class="right">
             <button
                 on:click={() => (renderHtml = !renderHtml)}
                 class:on={renderHtml}>HTML</button
             >
+            <button on:click={() => (openEditor = true)}>Edit</button>
+            <div class="divider" aria-hidden="true">|</div>
             <button on:click={saveAsFile}><Save /></button>
             <button on:click={regenerateResponse}><Renew /></button>
             <button on:click={() => copyToClipboard()}><Copy /></button>
@@ -255,6 +255,11 @@
         .right {
             justify-content: right;
         }
+
+        .divider {
+            color: var(--color-accent-darker);
+        }
+
         button {
             flex: 0 0 auto;
             font-size: 0.5em;
