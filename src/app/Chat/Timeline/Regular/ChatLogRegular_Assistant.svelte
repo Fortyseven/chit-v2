@@ -165,21 +165,26 @@
             margin-top: 1em;
         }
 
-        &.html {
-            background-color: white;
-            color: black;
-            font-family:
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                Oxygen,
-                Ubuntu,
-                Cantarell,
-                "Open Sans",
-                "Helvetica Neue",
-                sans-serif;
+        &.markdown.html {
+            background-color: #fff;
+            color: #000;
+
+            .rendered-content table > tbody > tr > td {
+                .markdown-editor .rendered-content {
+                    font-family:
+                        system-ui,
+                        -apple-system,
+                        BlinkMacSystemFont,
+                        "Segoe UI",
+                        Roboto,
+                        Oxygen,
+                        Ubuntu,
+                        Cantarell,
+                        "Open Sans",
+                        "Helvetica Neue",
+                        sans-serif;
+                }
+            }
         }
 
         .message-controls {

@@ -799,7 +799,7 @@ body {
 
         tr {
             background-color: --color-background-darker;
-            color: white;
+            color: currentColor;
 
             td {
                 outline: 1px solid var(--color-background-darker);
