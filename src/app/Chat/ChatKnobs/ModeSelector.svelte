@@ -44,7 +44,7 @@
     })
 </script>
 
-<div class="mode-selector">
+<!-- <div class="mode-selector">
     <select
         id="mode-select"
         value={$currentChatMode}
@@ -56,45 +56,36 @@
             </option>
         {/each}
     </select>
-</div>
+</div> -->
 
 <style lang="scss">
-    .mode-selector {
-        display: flex;
-        align-items: center;
-        gap: 0.5em;
-        font-size: 0.8rem;
-        color: var(--color-accent);
+    // .mode-selector {
+    //     display: flex;
+    //     align-items: center;
+    //     gap: 0.5em;
+    //     font-size: 0.8rem;
+    //     color: var(--color-accent);
 
-        label {
-            color: var(--color-accent-complement-lighter);
-            font-weight: 500;
-        }
+    //     label {
+    //         color: var(--color-accent-complement-lighter);
+    //         font-weight: 500;
+    //     }
 
-        select {
-            background-color: var(--color-accent-darker);
-            color: black;
-            border: none;
-            height: 100%;
-            border-radius: var(--border-radius-standard);
-            padding: 0.25em 0.5em;
-            font-size: 0.8rem;
-            outline: none;
-            cursor: pointer;
+    //     select {
+    //         background-color: var(--color-accent-darker);
+    //         color: var(--color-accent-text);
+    //         border: none;
+    //         height: 100%;
+    //         border-radius: var(--border-radius-standard);
+    //         padding: 0.25em 0.5em;
+    //         font-size: 0.8rem;
+    //         outline: none;
+    //         cursor: pointer;
 
-            &:hover {
-                border-color: var(--color-accent);
-            }
-
-            &:focus {
-                border-color: var(--color-accent);
-                box-shadow: 0 0 0 2px rgba(var(--color-accent-rgb), 0.2);
-            }
-
-            option {
-                background-color: var(--color-surface-700);
-                color: var(--color-text);
-            }
-        }
-    }
+    //         option {
+    //             background-color: var(--color-background-darkest);
+    //             color: var(--color-accent-text);
+    //         }
+    //     }
+    // }
 </style>
