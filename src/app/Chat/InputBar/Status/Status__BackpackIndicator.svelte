@@ -59,8 +59,8 @@
             <div>
                 <FlashFilled
                     color={backpackAlive
-                        ? "var(--color-accent-success)"
-                        : "var(--color-accent-warning)"}
+                        ? "var(--color-success)"
+                        : "var(--color-warning)"}
                     title={`Backpack enabled on ${$appState.backpackApiEndpoint}`}
                 />
             </div>

@@ -88,7 +88,7 @@
             width: 6.4em;
 
             &:focus {
-                color: var(--color-primary-400);
+                color: var(--color-accent);
                 outline: none;
             }
         }

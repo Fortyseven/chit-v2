@@ -56,7 +56,7 @@
                 --tw-leading,
                 var(--text-lg--line-height) /* calc(1.75 / 1.125) ≈ 1.5556 */
             );
-            color: var(--color-primary-500);
+            color: var(--color-accent);
             font-weight: bold;
         }
     }
