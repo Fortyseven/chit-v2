@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { onDestroy, onMount } from "svelte"
-    import { appState } from "../../../lib/appState/appState"
+    import { appState } from "$lib/appState/appState"
     import {
         chatAddPastedMedia,
         ChatMediaType,
         MAX_DIMENSION,
         resizeImage,
-    } from "../../../lib/chatSession/chatAttachments"
-    import { currentChat } from "../../../lib/chatSession/chatSession"
+    } from "$lib/chatSession/chatAttachments"
+    import { currentChat } from "$lib/chatSession/chatSession"
+    import { onDestroy, onMount } from "svelte"
 
     async function handlePaste(ev: ClipboardEvent) {
         if (ev.clipboardData?.files && ev.clipboardData?.files.length > 0) {

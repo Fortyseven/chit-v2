@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { currentChat } from "../../../../lib/chatSession/chatSession"
-    import { chatUpdateTemplateVariableValue } from "../../../../lib/templating/templating"
+    import { currentChat } from "$lib/chatSession/chatSession"
+    import { chatUpdateTemplateVariableValue } from "$lib/templating/templating"
 
     /* if this is rendered, it means we can has variables */
 

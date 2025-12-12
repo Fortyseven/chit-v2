@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { currentChat } from "../../../../lib/chatSession/chatSession"
+    import { currentChat } from "$lib/chatSession/chatSession"
 
     export let inputLength = 0
     export let systemPromptLength = 0

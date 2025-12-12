@@ -1,19 +1,16 @@
 <script>
+    import { appState } from "$lib/appState/appState"
+    import {
+        chatNew,
+        chatSetSystemPrompt,
+        chatUpdateSettings,
+    } from "$lib/chatSession/chatActions"
+    import { loadPresetFromFile, savePresetToFile } from "$lib/presets/presets"
     import {
         CloudUpload,
         WatsonHealthSaveAnnotation,
     } from "carbon-icons-svelte"
     import { onDestroy, onMount } from "svelte"
-    import { appState } from "../../lib/appState/appState"
-    import {
-        chatNew,
-        chatSetSystemPrompt,
-        chatUpdateSettings,
-    } from "../../lib/chatSession/chatActions"
-    import {
-        loadPresetFromFile,
-        savePresetToFile,
-    } from "../../lib/presets/presets"
     import {
         CODING_PROMPTS,
         FUN_PROMPTS,

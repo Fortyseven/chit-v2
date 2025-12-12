@@ -1,6 +1,6 @@
 <script lang="ts">
+    import { currentChat } from "$lib/chatSession/chatSession"
     import { Recycle as Wait } from "carbon-icons-svelte"
-    import { currentChat } from "../../../../lib/chatSession/chatSession"
 
     let time = NaN
     let cps = NaN

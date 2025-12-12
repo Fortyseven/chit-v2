@@ -1,5 +1,5 @@
 <script>
-    import { appState } from "$lib/appState/appState"
+    import { appState, DEFAULT_OL_ENDPOINT } from "$lib/appState/appState"
     import {
         appStateSetBackpackApiEndpoint,
         appStateSetChatApiEndpoint,
@@ -16,7 +16,6 @@
         ttsStop,
         voiceSettings,
     } from "$lib/voice/tts"
-    import { DEFAULT_OL_ENDPOINT } from "../../../lib/appState/appState"
     import Modal from "../../UI/Modal.svelte"
 
     export let open = false

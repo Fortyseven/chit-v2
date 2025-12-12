@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { Renew, SendFilled, TrashCan, Undo } from "carbon-icons-svelte"
-    import { derived, writable } from "svelte/store"
-    import { appActiveChat } from "../../../lib/appState/appState"
+    import ChatOptionsDropdown from "$app/Chat/Timeline/ChatHeader/ChatKnobs/ChatOptionsDropdown.svelte"
+    import IconButton from "$app/UI/IconButton.svelte"
+    import { appActiveChat } from "$lib/appState/appState"
     import {
         chatBack,
         chatChopLatest,
@@ -9,11 +9,11 @@
         // $chatInProgress,
         chatLength,
         chatRunInference,
-    } from "../../../lib/chatSession/chatActions"
-    import { chatClearAllPastedMedia } from "../../../lib/chatSession/chatAttachments"
-    import { chats, currentChat } from "../../../lib/chatSession/chatSession"
-    import IconButton from "../../UI/IconButton.svelte"
-    import ChatOptionsDropdown from "../ChatKnobs/ChatOptionsDropdown.svelte"
+    } from "$lib/chatSession/chatActions"
+    import { chatClearAllPastedMedia } from "$lib/chatSession/chatAttachments"
+    import { chats, currentChat } from "$lib/chatSession/chatSession"
+    import { Renew, SendFilled, TrashCan, Undo } from "carbon-icons-svelte"
+    import { derived, writable } from "svelte/store"
 
     export let inputBoxEl: HTMLTextAreaElement | undefined = undefined
     export let chatInProgress: {

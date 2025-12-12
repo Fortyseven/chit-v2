@@ -1,9 +1,6 @@
 <script lang="ts">
-    import { chatSetCurrentMode } from "../../../lib/chatSession/chatActions"
-    import {
-        AppMode,
-        currentChatMode,
-    } from "../../../lib/chatSession/chatSession"
+    import { chatSetCurrentMode } from "$lib/chatSession/chatActions"
+    import { AppMode, currentChatMode } from "$lib/chatSession/chatSession"
 
     function handleModeChange(event: Event) {
         const target = event.target as HTMLSelectElement

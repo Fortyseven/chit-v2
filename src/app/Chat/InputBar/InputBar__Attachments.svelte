@@ -3,10 +3,10 @@
         chatAddPastedMedia,
         chatClearPastedMedia,
         ChatMediaType,
-    } from "../../../lib/chatSession/chatAttachments"
-    import { currentChat } from "../../../lib/chatSession/chatSession"
-    import { memoizeBlobUrl } from "../../../lib/memoizeBlob"
-    import { loadFile } from "../../../lib/utils"
+    } from "$lib/chatSession/chatAttachments"
+    import { currentChat } from "$lib/chatSession/chatSession"
+    import { memoizeBlobUrl } from "$lib/memoizeBlob"
+    import { loadFile } from "$lib/utils"
     import AsyncMediaImage from "../../components/AsyncMediaImage.svelte"
 
     import { EXIF } from "../../../vendor/exif"

@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "no-implicit-any-type-warnings": true,
         "moduleResolution": "Bundler",
         "target": "ESNext",
         "module": "ESNext",

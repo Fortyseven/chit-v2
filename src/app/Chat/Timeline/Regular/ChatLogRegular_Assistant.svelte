@@ -1,17 +1,17 @@
 <script lang="ts">
-    import { Copy, Renew, Save } from "carbon-icons-svelte"
     import {
         chatChopLatest,
         chatRunInference,
-    } from "../../../../lib/chatSession/chatActions"
-    import { currentChat } from "../../../../lib/chatSession/chatSession"
-    import toast from "../../../../lib/toast"
+    } from "$lib/chatSession/chatActions"
+    import { currentChat } from "$lib/chatSession/chatSession"
+    import toast from "$lib/toast"
     import {
         ttsSpeak,
         ttsSpeaking,
         ttsStop,
         voiceSettings,
-    } from "../../../../lib/voice/tts"
+    } from "$lib/voice/tts"
+    import { Copy, Renew, Save } from "carbon-icons-svelte"
     // @ts-ignore
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 

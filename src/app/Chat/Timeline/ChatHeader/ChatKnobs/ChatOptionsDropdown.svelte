@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { Gears } from "carbon-icons-svelte"
+    import ContextMenu from "$app/UI/ContextMenu.svelte"
+    import IconButton from "$app/UI/IconButton.svelte"
     import {
         chatGetAllContents,
         chatInProgress,
         chatSetTitle,
-    } from "../../../lib/chatSession/chatActions"
-    import { currentChat } from "../../../lib/chatSession/chatSession"
-    import { chatGenerateTitle } from "../../../lib/chatSession/chatTitler"
-    import ContextMenu from "../../UI/ContextMenu.svelte"
-    import IconButton from "../../UI/IconButton.svelte"
+    } from "$lib/chatSession/chatActions"
+    import { currentChat } from "$lib/chatSession/chatSession"
+    import { chatGenerateTitle } from "$lib/chatSession/chatTitler"
+    import { Gears } from "carbon-icons-svelte"
 
     //TODO: convert this to a general component
 

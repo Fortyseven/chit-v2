@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { onMount } from "svelte"
     import {
         type MediaAttachment,
         getMediaBlob,
-    } from "../../lib/chatSession/chatAttachments"
-    import { memoizeBlobUrl } from "../../lib/memoizeBlob"
+    } from "$lib/chatSession/chatAttachments"
+    import { memoizeBlobUrl } from "$lib/memoizeBlob"
+    import { onMount } from "svelte"
 
     export let media: MediaAttachment
     export let cssClass: string = ""

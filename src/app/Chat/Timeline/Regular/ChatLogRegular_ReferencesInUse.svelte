@@ -1,8 +1,5 @@
 <script lang="ts">
-    import {
-        BackpackMode,
-        currentChat,
-    } from "../../../../lib/chatSession/chatSession"
+    import { BackpackMode, currentChat } from "$lib/chatSession/chatSession"
     import Pill from "../../../UI/Pill/Pill.svelte"
 </script>
 

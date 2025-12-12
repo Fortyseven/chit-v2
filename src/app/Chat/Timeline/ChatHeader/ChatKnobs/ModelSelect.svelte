@@ -1,9 +1,9 @@
 <script>
-    import { get, writable } from "svelte/store"
-    import { appState } from "../../../lib/appState/appState"
-    import { chatSetModel } from "../../../lib/chatSession/chatActions"
-    import { currentChat } from "../../../lib/chatSession/chatSession"
-    import { llmModels } from "../../../lib/llm/llm"
+    import { appState } from "$lib/appState/appState"
+    import { chatSetModel } from "$lib/chatSession/chatActions"
+    import { currentChat } from "$lib/chatSession/chatSession"
+    import { llmModels } from "$lib/llm/llm"
+    import { writable } from "svelte/store"
 
     let selected_model = writable($currentChat.model_name)
 
@@ -53,12 +53,19 @@
         flex-shrink: 1;
         // appearance: none;
         align-items: center;
-        background-color: var(--color-accent-complement-darker2);
-        color: var(--color-text);
+        background-color: var(--color-accent-tertiary-darker);
+        color: var(--color-accent-tertiary-text);
         padding-inline: 1em;
         font-size: 1em;
         border-radius: var(--border-radius-standard);
+        font-family: var(--font-ui);
         text-overflow: ellipsis;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background-color: var(--color-accent-tertiary);
+        }
 
         option {
             background-color: red;

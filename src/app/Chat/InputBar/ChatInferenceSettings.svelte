@@ -1,7 +1,7 @@
 <script lang="ts">
+    import { chatUpdateSettings } from "$lib/chatSession/chatActions"
+    import { currentChat } from "$lib/chatSession/chatSession"
     import { writable } from "svelte/store"
-    import { chatUpdateSettings } from "../../../lib/chatSession/chatActions"
-    import { currentChat } from "../../../lib/chatSession/chatSession"
 
     let ctx = writable($currentChat?.settings?.num_ctx || 8192)
     let temp = writable($currentChat?.settings?.temperature || 0.6)

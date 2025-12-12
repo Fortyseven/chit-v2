@@ -1,10 +1,10 @@
 <script>
+    import { appState } from "$lib/appState/appState"
+    import { chatSetSystemPrompt } from "$lib/chatSession/chatActions"
+    import { currentChat } from "$lib/chatSession/chatSession"
+    import { recalculateUserVariables } from "$lib/templating/templating"
     import { onMount } from "svelte"
     import { derived, writable } from "svelte/store"
-    import { appState } from "../../../../lib/appState/appState"
-    import { chatSetSystemPrompt } from "../../../../lib/chatSession/chatActions"
-    import { currentChat } from "../../../../lib/chatSession/chatSession"
-    import { recalculateUserVariables } from "../../../../lib/templating/templating"
     import Variables from "./Variables.svelte"
 
     let sys_prompt_state = writable($currentChat.systemPrompt)
@@ -119,8 +119,8 @@
 
 <style lang="scss">
     .btn-prompt {
-        background-color: var(--color-accent-darker2);
-        color: var(--color-text);
+        background-color: var(--color-accent-darkest);
+        color: var(--color-accent-text);
     }
 
     #spromptModal {

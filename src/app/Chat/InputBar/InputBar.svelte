@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { toast } from "@zerodevx/svelte-toast"
-    import { appActiveChat, appState } from "../../../lib/appState/appState"
+    import { appActiveChat, appState } from "$lib/appState/appState"
     import {
         chatAbort,
         chatAddRoleMessage,
@@ -9,11 +8,12 @@
         chatInProgress,
         chatLength,
         chatRunInference,
-    } from "../../../lib/chatSession/chatActions"
-    import { chatClearAllPastedMedia } from "../../../lib/chatSession/chatAttachments"
-    import { currentChat } from "../../../lib/chatSession/chatSession"
-    import type { CommandResult } from "../../../lib/inputCommands/inputCommands"
-    import { handleCommand } from "../../../lib/inputCommands/inputCommands"
+    } from "$lib/chatSession/chatActions"
+    import { chatClearAllPastedMedia } from "$lib/chatSession/chatAttachments"
+    import { currentChat } from "$lib/chatSession/chatSession"
+    import type { CommandResult } from "$lib/inputCommands/inputCommands"
+    import { handleCommand } from "$lib/inputCommands/inputCommands"
+    import { toast } from "@zerodevx/svelte-toast"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
     import InputBar__Attachments from "./InputBar__Attachments.svelte"
     import InputBar__ChatControls from "./InputBar__ChatControls.svelte"

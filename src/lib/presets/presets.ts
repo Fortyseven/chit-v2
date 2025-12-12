@@ -1,6 +1,6 @@
+import { llm } from "$lib/llm/llm"
 import yaml from "js-yaml"
 import { get } from "svelte/store"
-import { llm } from "../../lib/llm/llm"
 import { appActiveChat, appState } from "../appState/appState"
 import {
     chatFind,

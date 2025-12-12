@@ -3,11 +3,11 @@
 
     import ChatLogRegular from "./Chat/Timeline/Regular/ChatLogRegular.svelte"
 
-    import { currentChat } from "../lib/chatSession/chatSession"
+    import { currentChat } from "$lib/chatSession/chatSession"
 
-    import "../lib/appState/appStateStorage"
-    import "../lib/audio"
-    import "../lib/chatSession/chatStorage"
+    import "$lib/appState/appStateStorage"
+    import "$lib/audio"
+    import "$lib/chatSession/chatStorage"
 
     /* This allows the page to scroll when the chat is updated. */
 

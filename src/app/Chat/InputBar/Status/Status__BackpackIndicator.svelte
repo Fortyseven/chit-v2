@@ -1,11 +1,8 @@
 <script lang="ts">
+    import { appState } from "$lib/appState/appState"
+    import { chatSetBackpackMode } from "$lib/chatSession/chatActions"
+    import { BackpackMode, currentChat } from "$lib/chatSession/chatSession"
     import { FlashFilled, FlashOffFilled } from "carbon-icons-svelte"
-    import { appState } from "../../../../lib/appState/appState"
-    import { chatSetBackpackMode } from "../../../../lib/chatSession/chatActions"
-    import {
-        BackpackMode,
-        currentChat,
-    } from "../../../../lib/chatSession/chatSession"
     import ContextMenu from "../../../UI/ContextMenu.svelte"
 
     const LIVE_INTERVAL = 1000 * 60 * 2

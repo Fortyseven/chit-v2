@@ -1,5 +1,5 @@
 <script>
-    import { appState } from "../../../lib/appState/appState"
+    import { appState } from "$lib/appState/appState"
     import ModelSelect from "./ModelSelect.svelte"
     import ModeSelector from "./ModeSelector.svelte"
     import SystemPrompt from "./SystemPrompt/SystemPrompt.svelte"

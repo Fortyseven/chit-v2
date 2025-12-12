@@ -29,7 +29,7 @@ import { chatSetCurrentMode } from "path/to/lib/chatSession/chatActions"
 
 ```svelte
 <script>
-    import { AppMode, currentChatMode } from "../../lib/chatSession/chatSession"
+    import { AppMode, currentChatMode } from "$lib/chatSession/chatSession"
 
     // Reactive statement that updates when mode changes
     $: isRPMode = $currentChatMode === AppMode.RP

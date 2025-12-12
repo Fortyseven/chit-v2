@@ -1,14 +1,14 @@
 <script>
     // @ts-nocheck
-    import { appState } from "../../lib/appState/appState"
+    import { appState } from "$lib/appState/appState"
     import {
         chatDelete,
         chatDuplicate,
         chatInProgress,
         chatIsEmpty,
         chatSwitchTo,
-    } from "../../lib/chatSession/chatActions"
-    import { chats, currentChat } from "../../lib/chatSession/chatSession"
+    } from "$lib/chatSession/chatActions"
+    import { chats, currentChat } from "$lib/chatSession/chatSession"
     import BtnNewSession from "./BtnNewSession.svelte"
     import ConfigPanel from "./Config/ConfigPanel.svelte"
 

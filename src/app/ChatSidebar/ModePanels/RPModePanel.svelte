@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { ChatMediaType } from "../../../lib/chatSession/chatAttachments"
+    import { ChatMediaType } from "$lib/chatSession/chatAttachments"
     import {
         AppMode,
         currentChat,
         currentChatMode,
-    } from "../../../lib/chatSession/chatSession"
+    } from "$lib/chatSession/chatSession"
     import AsyncMediaImage from "../../components/AsyncMediaImage.svelte"
 
     $: currentMode = $currentChatMode

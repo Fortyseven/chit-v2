@@ -5,8 +5,8 @@
         chatInProgress,
         chatNew,
         chatSetSystemPrompt,
-    } from "../../lib/chatSession/chatActions"
-    import { currentChat } from "../../lib/chatSession/chatSession"
+    } from "$lib/chatSession/chatActions"
+    import { currentChat } from "$lib/chatSession/chatSession"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
 
     // let mobileToggleOpen = false

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { modeSidebarWidth } from "../../../lib/appState/modeSidebarState"
+    import { modeSidebarWidth } from "$lib/appState/modeSidebarState"
 
     export let hasModeSidebar = false
 

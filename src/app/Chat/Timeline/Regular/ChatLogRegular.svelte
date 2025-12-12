@@ -1,17 +1,15 @@
 <script lang="ts">
-    import { onMount } from "svelte"
-    import { appState } from "../../../../lib/appState/appState"
+    import { appState } from "$lib/appState/appState"
     import {
         chatGetStreamingPending,
         chatGetStreamingPendingThoughts,
         chatInProgressWithId,
-    } from "../../../../lib/chatSession/chatActions"
+    } from "$lib/chatSession/chatActions"
     import {
         ChatMediaType,
         getMediaBlob,
-    } from "../../../../lib/chatSession/chatAttachments"
-    import { chats, currentChat } from "../../../../lib/chatSession/chatSession"
-    import { memoizeBlobUrl } from "../../../../lib/memoizeBlob"
+    } from "$lib/chatSession/chatAttachments"
+    import { chats, currentChat } from "$lib/chatSession/chatSession"
     import AsyncMediaImage from "../../../components/AsyncMediaImage.svelte"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"

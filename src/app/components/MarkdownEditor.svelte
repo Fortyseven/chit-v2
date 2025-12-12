@@ -1,9 +1,9 @@
 <script lang="ts">
     // @ts-ignore
+    import { isRPMode } from "$lib/modes/modeUtils"
+    import { wrapQuotesStreaming } from "$lib/text/quoteWrap"
     import MarkdownIt from "markdown-it"
     import { createEventDispatcher, onMount } from "svelte"
-    import { isRPMode } from "../../lib/modes/modeUtils"
-    import { wrapQuotesStreaming } from "../../lib/text/quoteWrap"
     // @ts-ignore
     import { hljs } from "../../vendor/highlight.min.js"
 

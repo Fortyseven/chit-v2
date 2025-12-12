@@ -1,11 +1,11 @@
 <script>
-    import ChatKnobs from "../../ChatKnobs/ChatKnobs.svelte"
+    import ChatKnobs from "./ChatKnobs/ChatKnobs.svelte"
 
-    import { currentChat } from "../../../../lib/chatSession/chatSession"
+    import { currentChat } from "$lib/chatSession/chatSession"
 
-    import "../../../../lib/appState/appStateStorage"
-    import "../../../../lib/audio"
-    import "../../../../lib/chatSession/chatStorage"
+    import "$lib/appState/appStateStorage"
+    import "$lib/audio"
+    import "$lib/chatSession/chatStorage"
 </script>
 
 <header>
