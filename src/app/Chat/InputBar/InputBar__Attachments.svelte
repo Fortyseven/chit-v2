@@ -236,7 +236,25 @@
                         <div class="btn-text-attach">{media.data}</div>
                     </Pill>
                 {:else}
-                    ????
+                    <Pill
+                        text={media.filename ||
+                            (typeof media.data === "string"
+                                ? media.data.substring(0, 14) + "..."
+                                : "Unknown media file")}
+                        dismissible
+                        enableTooltip
+                        startOpenTooltip
+                        color="var(--color-accent-complement-darker)"
+                        textColor="white"
+                        on:dismiss={async () => {
+                            await chatClearPastedMedia(
+                                $currentChat?.id,
+                                media.id,
+                            )
+                        }}
+                    >
+                        <div class="btn-text-attach">{media.filename}</div>
+                    </Pill>
                 {/if}
             {/key}
         {/each}
