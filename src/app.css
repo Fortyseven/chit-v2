@@ -412,34 +412,43 @@
 
 :root {
     --timeline-max-width: 1280px;
-    --border-radius-standard: 8px;
+    --border-radius-standard: 6px;
 
-    --color-accent-lighter2: #fcf1af;
-    --color-accent-lighter: #ffd799;
+    --color-accent-lightest: #FFD664;
+    --color-accent-lighter: #FFCA39;
     --color-accent: #ffaa00;
-    --color-accent-darker: #876300;
-    --color-accent-darker2: #5b4301;
+    --color-accent-darker: #C69100;
+    --color-accent-darkest: #9B7200;
     --color-accent-text: #000;
 
-    --color-accent-complement-lighter2: rgb(130, 238, 255);
-    --color-accent-complement-lighter: #0df;
-    --color-accent-complement: #0af;
-    --color-accent-complement-darker: #07d;
-    --color-accent-complement-darker2: rgb(0, 80, 150);
-    --color-accent-complement-text: #000;
+    --color-accent-complement-lightest: #77abff;
+    --color-accent-complement-lighter: #3e6bff;
+    --color-accent-complement: #2356ff;
+    --color-accent-complement-darker: #0053d8;
+    --color-accent-complement-darkest: #00378f;
+    --color-accent-complement-text: #fff;
 
-    --color-neutral-darker3: #333;
-    --color-neutral-darker2: #666;
-    --color-neutral-darker: #aaa;
-    --color-neutral: #eee;
-    --color-neutral-lighter: #fff;
+    --color-accent-tertiary-lightest: var(--color-accent-complement-lightest); /*#8157C2;*/
+    --color-accent-tertiary-lighter: var(--color-accent-complement-lighter);
+    --color-accent-tertiary: var(--color-accent-complement); /*#4B0ED9;*/
+    --color-accent-tertiary-darker: var(--color-accent-complement); /*#3B0B87;*/
+    --color-accent-tertiary-darkest: var(--color-accent-complement-darkest);/*#2E076A;*/
+    --color-accent-tertiary-text:var(--color-accent-complement-text); /* #fff;*/
+
+    --color-neutral-darkest: #333;
+    --color-neutral-darker: #666;
+    --color-neutral: #aaa;
+    --color-neutral-lighter: #eee;
+    --color-neutral-lightest: #fff;
 
     --color-text: var(--color-neutral);
     --color-text-assistant: #ffd799;
 
+    --color-background-darkest: #000;
     --color-background-darker: #111;
     --color-background: #222;
     --color-background-lighter: #333;
+    --color-background-lightest: #444;
 
     --color-accent-warning-darker: #a52f2f;
     --color-accent-warning: #d65252;
@@ -451,7 +460,7 @@
 
     /* ---- */
 
-    --color-primary-50: #fbeed9;
+    /* --color-primary-50: #fbeed9;
     --color-primary-100: #fae8cc;
     --color-primary-200: #f9e2bf;
     --color-primary-300: #f5d199;
@@ -480,7 +489,7 @@
     --color-tertiary-600: #473fce;
     --color-tertiary-700: #3b35ac;
     --color-tertiary-800: #2f2a89;
-    --color-tertiary-900: #272270;
+    --color-tertiary-900: #272270; */
     --color-success-50: #edf7dc;
     --color-success-100: #e6f5d0;
     --color-success-200: #e0f2c5;
@@ -511,17 +520,6 @@
     --color-error-700: #a8141b;
     --color-error-800: #861016;
     --color-error-900: #6e0d12;
-    --color-surface-50: #e1e1e2;
-    --color-surface-100: #d7d7d8;
-    --color-surface-200: #cdcece;
-    --color-surface-300: #aeb0b1;
-    --color-surface-400: #727476;
-    --color-surface-500: #35393b;
-    --color-surface-600: #303335;
-    --color-surface-700: #282b2c;
-    --color-surface-800: #202223;
-    --color-surface-900: #1a1c1d;
-    --color-surface-950: #161819;
 
     --thumb-color: var(--color-accent);
     --track-color: var(--color-background-darker);
@@ -775,13 +773,13 @@ body {
     }
 
     table {
-        outline: 1px solid var(--color-neutral-darker2);
+        outline: 1px solid var(--color-neutral-darkest);
         box-shadow: 0 0 20px black;
         width: 100%;
         margin-block: 1em;
 
         th {
-            background-color: var(--color-accent-darker2);
+            background-color: var(--color-accent-darkest);
             font-weight: bold;
             padding: 0.5em;
             text-align: center !important;
@@ -836,15 +834,17 @@ body {
 button {
     background-color: var(--color-accent);
     color: var(--color-accent-text);
-
+    font-family: var(--font-ui);
+    font-weight: 500;
     border: none;
     padding: 0.5em 0.75em;
     border-radius: var(--border-radius-standard);
-    font-size: 1em;
+    font-size: 1.1rem;
     cursor: pointer;
     display: inline-block;
     place-content: center;
     text-align: center;
+    transition: background-color 0.15s ease-in-out;
 
     &:hover {
         background-color: var(--color-accent-lighter);

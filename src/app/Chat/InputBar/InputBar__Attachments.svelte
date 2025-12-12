@@ -172,7 +172,7 @@
 </script>
 
 <div class="input-attachments">
-    <button class="btnAddContext" onclick={onClickAddContext}>
+    <button class="btn-add-context" onclick={onClickAddContext}>
         Add Context +
     </button>
 
@@ -254,7 +254,8 @@
             background: var(--color-background-lighter) !important;
         }
 
-        .btnAddContext {
+        .btn-add-context {
+            background-color: var(--color-accent-tertiary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -268,6 +269,10 @@
             transition: opacity 0.2s ease;
             cursor: pointer;
             width: 100%;
+            transition: background-color 0.15s ease;
+            &:hover {
+                background-color: var(--color-accent-tertiary-lighter);
+            }
         }
 
         .btn-text-attach,

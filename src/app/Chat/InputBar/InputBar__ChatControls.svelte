@@ -111,7 +111,6 @@
         gap: 0.5em;
 
         button {
-            background-color: var(--color-primary-500);
             flex: auto;
             text-align: center;
             width: calc(var(--spacing) * 24);

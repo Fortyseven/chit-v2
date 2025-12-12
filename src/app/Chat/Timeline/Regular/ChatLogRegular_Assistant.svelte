@@ -236,7 +236,7 @@
             background-color: #2222228a;
             font-size: 0.75em;
             opacity: 0.75;
-            color: var(--color-accent-complement-lighter);
+            color: var(--color-accent-complement-lightest);
             background: unset;
             border: unset;
             box-shadow: unset;

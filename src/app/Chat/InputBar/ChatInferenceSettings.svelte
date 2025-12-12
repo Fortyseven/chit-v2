@@ -80,10 +80,10 @@
 
         input {
             font-family: monospace;
-            background: var(--color-background-darker);
+            background: var(--color-background-darkest);
             border: 0;
             padding: 0.25em;
-            color: var(--color-accent-complement);
+            color: var(--color-accent-tertiary-lightest);
             display: inline;
             width: 6.4em;
 

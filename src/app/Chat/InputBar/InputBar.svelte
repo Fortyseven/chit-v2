@@ -263,13 +263,12 @@
 
                 textarea {
                     box-sizing: border-box;
-                    background-color: black;
-                    color: var(--color-neutral-darker);
+                    background-color: var(--color-background-darkest);
+                    color: var(--color-neutral);
                     border-radius: var(--border-radius-standard);
                     font-family: var(--font-ui);
                     font-size: 1.2em;
                     height: calc(var(--input-bar-height) - 0.5em);
-                    // outline-style: none;
                     width: 100%;
                     height: 100%;
                     border-top: 1px solid #fff4;
@@ -281,21 +280,15 @@
                     &:focus {
                         color: var(--color-neutral);
                         outline: 1px solid var(--color-accent-darker);
-                        // border-color: ;
                     }
 
                     &:disabled {
                         opacity: 0.5;
                     }
 
-                    // &.overflow {
-                    //     color: #f44;
-                    // }
-
                     &::placeholder {
-                        color: #292929;
+                        color: var(--color-background-lighter);
                         font-style: italic;
-                        font-family: sans-serif;
                     }
                 }
             }

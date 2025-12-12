@@ -1,4 +1,6 @@
 <script>
+    import { CloseFilled, Replicate } from "carbon-icons-svelte"
+
     // @ts-nocheck
     import { appState } from "$lib/appState/appState"
     import {
@@ -62,7 +64,7 @@
                     title="Duplicate"
                     aria-label={`Duplicate: ${chat.title}`}
                 >
-                    D
+                    <Replicate />
                 </button>
                 <button
                     class="delete"
@@ -71,7 +73,7 @@
                     title="Delete"
                     aria-label={`Delete: ${chat.title}`}
                 >
-                    🗑
+                    <CloseFilled />
                 </button>
             </div>
         {/each}
@@ -103,7 +105,7 @@
         z-index: 100;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         position: relative;
-        background-color: var(--color-background);
+        background-color: var(--color-background-darker);
         color: var(--color-text);
 
         .top {
@@ -122,7 +124,7 @@
                 }
 
                 button.chat-title {
-                    color: var(--color-text);
+                    color: var(--color-accent-darkest);
                     background: transparent;
                     padding: 0.5em 1em;
                     white-space: nowrap;
@@ -136,12 +138,15 @@
 
                 button.duplicate,
                 button.delete {
-                    color: var(--color-accent-complement);
+                    color: var(--color-neutral-darkest);
                     &:hover {
-                        color: white;
+                        color: var(--color-accent-complement-lightest);
                         background-color: var(--color-accent-complement-darker);
                     }
                     background: transparent;
+                }
+                button.duplicate {
+                    color: var(--color-neutral-darker);
                 }
 
                 &.active {

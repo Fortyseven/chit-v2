@@ -39,8 +39,8 @@
         z-index: 5;
 
         --s: 8px; /* control the size*/
-        --c1: var(--color-surface-950);
-        --c2: var(--color-surface-800);
+        --c1: var(--color-background-darker);
+        --c2: var(--color-background);
         --c: #0000, var(--c1) 0.5deg 119.5deg, #0000 120deg;
         --g1: conic-gradient(from 60deg at 56.25% calc(425% / 6), var(--c));
         --g2: conic-gradient(from 180deg at 43.75% calc(425% / 6), var(--c));
