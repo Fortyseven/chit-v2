@@ -2,6 +2,9 @@
     import { modeSidebarWidth } from "$lib/appState/modeSidebarState"
     import RPModePanel from "../ChatSidebar/ModePanels/RPModePanel.svelte"
 
+    const MIN_WIDTH = 200
+    const MAX_WIDTH = 800
+
     let isResizing = false
     let startX = 0
     let startWidth = 0
@@ -26,11 +29,7 @@
         const deltaX = e.clientX - startX
         const newWidth = startWidth + deltaX
 
-        // Set min and max width constraints
-        const minWidth = 200
-        const maxWidth = 600
-
-        modeSidebarWidth.set(Math.max(minWidth, Math.min(maxWidth, newWidth)))
+        modeSidebarWidth.set(Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, newWidth)))
     }
 
     function stopResize() {
@@ -41,7 +40,7 @@
     }
 </script>
 
-<div id="ModeSidebar" style="width: {$modeSidebarWidth}px;">
+<div id="ModeSidebar" style="width: {$modeSidebarWidth}px;" style:min-width="{MIN_WIDTH}px" style:max-width="{MAX_WIDTH}px">
     <div class="panel-content">
         <RPModePanel />
     </div>
@@ -60,8 +59,8 @@
 
         position: relative;
         z-index: 50;
-        min-width: 200px;
-        max-width: 600px;
+        // min-width: 200px;
+        // max-width: 800px;
         overflow-y: auto;
         background: linear-gradient(to right, #161616, #000 100%);
 
