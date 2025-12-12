@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap');
+
 @font-face {
     font-family: "Barlow";
     font-style: normal;
@@ -410,30 +412,36 @@
         format("woff2");
 }
 
+$color-accent-base: #ffaa00;
+$color-accent-complement-base: #00aaff; //#2356ff;
+$color-accent-tertiary-base: #00aaff;
+$color-spread: 15;
+
 :root {
     --timeline-max-width: 1280px;
     --border-radius-standard: 6px;
 
-    --color-accent-lightest: #FFD664;
-    --color-accent-lighter: #FFCA39;
-    --color-accent: #ffaa00;
-    --color-accent-darker: #C69100;
-    --color-accent-darkest: #9B7200;
+    --color-accent-lightest: #{lighten($color-accent-base, $color-spread * 2)};
+    --color-accent-lighter: #{lighten($color-accent-base, $color-spread)};
+    --color-accent: #{$color-accent-base};
+    --color-accent-darker: #{darken($color-accent-base, $color-spread)};
+    --color-accent-darkest: #{darken($color-accent-base, $color-spread * 1.5)};
     --color-accent-text: #000;
 
-    --color-accent-complement-lightest: #77abff;
-    --color-accent-complement-lighter: #3e6bff;
-    --color-accent-complement: #2356ff;
-    --color-accent-complement-darker: #0053d8;
-    --color-accent-complement-darkest: #00378f;
+
+    --color-accent-complement-lightest: #{lighten($color-accent-complement-base, $color-spread * 2)};
+    --color-accent-complement-lighter: #{lighten($color-accent-complement-base, $color-spread)};
+    --color-accent-complement: #{$color-accent-complement-base};
+    --color-accent-complement-darker: #{darken($color-accent-complement-base, $color-spread)};
+    --color-accent-complement-darkest: #{darken($color-accent-complement-base, $color-spread * 1.5)};
     --color-accent-complement-text: #fff;
 
-    --color-accent-tertiary-lightest: var(--color-accent-complement-lightest); /*#8157C2;*/
-    --color-accent-tertiary-lighter: var(--color-accent-complement-lighter);
-    --color-accent-tertiary: var(--color-accent-complement); /*#4B0ED9;*/
-    --color-accent-tertiary-darker: var(--color-accent-complement); /*#3B0B87;*/
-    --color-accent-tertiary-darkest: var(--color-accent-complement-darkest);/*#2E076A;*/
-    --color-accent-tertiary-text:var(--color-accent-complement-text); /* #fff;*/
+    --color-accent-tertiary-lightest: #{lighten($color-accent-tertiary-base, $color-spread * 2)};
+    --color-accent-tertiary-lighter: #{lighten($color-accent-tertiary-base, $color-spread)};
+    --color-accent-tertiary: #{$color-accent-tertiary-base};
+    --color-accent-tertiary-darker: #{darken($color-accent-tertiary-base, $color-spread)};
+    --color-accent-tertiary-darkest: #{darken($color-accent-tertiary-base, $color-spread * 1.5)};
+    --color-accent-tertiary-text: #000;
 
     --color-neutral-darkest: #333;
     --color-neutral-darker: #666;
@@ -533,10 +541,10 @@
     --toastErrorColor: var(#fff);
     --toastErrorBarBackground: var(--color-error-300);
 
-    --font-ui: "Barlow Condensed", system-ui, -apple-system, BlinkMacSystemFont,
+    --font-ui: "Google Sans Flex","Barlow Condensed", system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans",
         "Helvetica Neue", sans-serif;
-    --font-timeline: "Barlow", system-ui, -apple-system, BlinkMacSystemFont,
+    --font-timeline: "Google Sans Flex","Barlow", system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Open Sans",
         "Helvetica Neue", sans-serif;
 }

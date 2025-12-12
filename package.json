@@ -16,6 +16,7 @@
         "@zerodevx/svelte-toast": "^0.9.6",
         "carbon-icons-svelte": "^13.3.0",
         "js-yaml": "^4.1.0",
+        "sass": "^1.96.0",
         "sass-embedded": "^1.80.4",
         "svelte": "^5.0.3",
         "svelte-persisted-store": "^0.11.0",
