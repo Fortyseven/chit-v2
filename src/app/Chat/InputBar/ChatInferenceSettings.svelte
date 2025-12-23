@@ -1,10 +1,10 @@
 <script lang="ts">
     import { chatUpdateSettings } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
-    import { writable } from "svelte/store"
+    import { Writable, writable } from "svelte/store"
 
-    let ctx = writable($currentChat?.settings?.num_ctx || 8192)
-    let temp = writable($currentChat?.settings?.temperature || 0.6)
+    let ctx : Writable<number|undefined> = writable($currentChat?.settings?.num_ctx || 8192)
+    let temp : Writable<number|undefined> = writable($currentChat?.settings?.temperature || 0.6)
 
     ctx.subscribe((value) => {
         chatUpdateSettings("", {
@@ -19,7 +19,7 @@
     })
 
     $: $ctx = $currentChat?.settings?.num_ctx || 8192
-    $: $temp = $currentChat?.settings?.temperature || 0.6
+    $: $temp = $currentChat?.settings?.temperature
 
     function handleContextBlur(event: Event) {
         const value = parseInt((event.target as HTMLInputElement).value, 10)
@@ -32,7 +32,7 @@
 <div id="ChatInferenceSettings">
     <!-- {#key $currentChat} -->
     <div>
-        <label for="context">Cntx 📜</label>
+        <label for="context">CNTX 📜</label>
         <input
             name="context"
             type="number"
@@ -44,7 +44,7 @@
         />
     </div>
     <div>
-        <label for="temp">Temp 🌡</label>
+        <label for="temp">TEMP 🌡</label>
         <input
             name="temp"
             type="number"
