@@ -51,10 +51,9 @@
         position: relative;
         display: inline-flex;
         flex-shrink: 1;
-        // appearance: none;
         align-items: center;
-        background-color: var(--color-accent-tertiary-darker);
-        color: var(--color-accent-tertiary-text);
+        background-color: var(--color-accent-complement-darkest);
+        color: white;
         padding-inline: 1em;
         font-size: 1em;
         border-radius: var(--border-radius-standard);
@@ -64,12 +63,14 @@
         transition: background-color 0.15s ease;
 
         &:hover {
-            background-color: var(--color-accent-tertiary);
+            background-color: var(--color-accent-complement-darker);
         }
 
         option {
-            background-color: red;
-            color: white;
+            background-color: var(--color-accent-complement-darkest);
+            color: var(--color-text);
+            padding: 0.5em;
+            font-size: 0.8em;
         }
     }
 </style>
