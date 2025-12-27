@@ -170,13 +170,11 @@ export class LLMInterface {
         const temp = chat_session.settings?.temperature || DEFAULT_TEMPERATURE
         const ctx = chat_session.settings?.num_ctx || DEFAULT_CONTEXT
 
-        await driver.chat(
-            chatId,
-            messages,
-            chat_session.model_name as string,
+        await driver.chat(chatId, messages, chat_session.model_name as string, {
+            stream: true,
             temp,
-            ctx
-        )
+            ctx,
+        })
     }
 }
 

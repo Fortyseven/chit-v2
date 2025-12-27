@@ -73,8 +73,11 @@ export default async function (args: string[]): Promise<CommandResult> {
             messages,
             chat_session?.model_name || "",
             zodToJsonSchema(ArtPrompt),
-            0.9,
-            cur_context
+            {
+                stream: false,
+                temp: 0.9,
+                ctx: cur_context,
+            }
         )
 
         if (response) {

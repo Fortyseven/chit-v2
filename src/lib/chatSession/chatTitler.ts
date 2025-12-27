@@ -74,8 +74,11 @@ export async function chatGenerateTitle(chatId: string = "") {
             messages,
             chat_session?.model_name,
             zodToJsonSchema(Title),
-            0.7,
-            cur_context
+            {
+                stream: false,
+                temp: 0.7,
+                ctx: cur_context,
+            }
         )
 
         console.log("RESPONSE: ", response)

@@ -8,7 +8,7 @@ import {
     chatSetWasAborted,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
-import type { GenericMessage, LLMDriver } from "./LLMDriver"
+import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
 
 export class OpenAIDriver implements LLMDriver {
     baseURL: string
@@ -34,9 +34,8 @@ export class OpenAIDriver implements LLMDriver {
         messages: GenericMessage[],
         model: string,
         format: any,
-        temp?: number,
-        ctx?: number
-    ): Promise<any> {
+        config: ChatConfig = {}
+    ): Promise<string> {
         console.log("FORMAT", format)
         // Use OpenAI JSON mode for structured output
         // If format is provided, append a system prompt to steer the model
@@ -80,12 +79,10 @@ export class OpenAIDriver implements LLMDriver {
         const body: any = {
             model,
             messages: oaiMessages,
-            temperature: temp ?? DEFAULT_TEMPERATURE,
-            stream: false,
+            temperature: config.temp ?? DEFAULT_TEMPERATURE,
+            // num_ctx: config.ctx ?? DEFAULT_CONTEXT,
+            stream: config.stream ?? false,
             response_format: { type: "json_object" },
-        }
-        if (ctx) {
-            body.num_ctx = ctx
         }
 
         const res = await fetch(`${this.baseURL}/chat/completions`, {
@@ -135,8 +132,8 @@ export class OpenAIDriver implements LLMDriver {
         chatId: string,
         messages: GenericMessage[],
         model: string,
-        temp?: number
-    ) {
+        config: ChatConfig = {}
+    ): Promise<void | string> {
         chatInProgress.set(true)
         chatSetWasAborted(chatId, false)
         this.currentController = new AbortController()
@@ -168,8 +165,8 @@ export class OpenAIDriver implements LLMDriver {
                 body: JSON.stringify({
                     model,
                     messages: oaiMessages,
-                    temperature: temp ?? DEFAULT_TEMPERATURE,
-                    stream: true,
+                    temperature: config.temp ?? DEFAULT_TEMPERATURE,
+                    stream: config.stream ?? true,
                 }),
                 signal: controller.signal,
             })
@@ -197,7 +194,7 @@ export class OpenAIDriver implements LLMDriver {
                     try {
                         const json = JSON.parse(payload)
                         const delta = json.choices?.[0]?.delta?.content || ""
-                        if (delta) chatAppendStreamingPending(chatId, delta)
+                        if (delta) chatAppendStreamingPending(chatId, delta, false)
                     } catch {}
                 }
             }

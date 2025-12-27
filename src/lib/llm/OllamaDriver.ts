@@ -10,7 +10,7 @@ import {
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
-import type { GenericMessage, LLMDriver } from "./LLMDriver"
+import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
 
 export class OllamaDriver implements LLMDriver {
     models: Writable<ModelResponse[]> = writable([])
@@ -61,16 +61,15 @@ export class OllamaDriver implements LLMDriver {
         chatId: string, // false if not for chat
         messages: GenericMessage[],
         model: string,
-        temp?: number,
-        ctx?: number
-    ) {
+        config: ChatConfig = {}
+    ): Promise<void | string> {
+        // debugger
         const inst = get(this.ol_instance)
         if (!inst) {
-            console.error("Ollama instance not found")
-            return
+            throw "Ollama instance not found"
         }
 
-        const config: ChatRequest = {
+        const payload: ChatRequest = {
             model,
             messages: messages.map(
                 (m) =>
@@ -80,23 +79,36 @@ export class OllamaDriver implements LLMDriver {
                         images: m.images,
                     } as Message)
             ),
-            stream: true,
+            stream: config.stream ?? true,
             // think: false,
             options: {
-                temperature: temp ?? DEFAULT_TEMPERATURE,
-                num_ctx: ctx ?? DEFAULT_CONTEXT,
+                temperature: config.temp || DEFAULT_TEMPERATURE,
+                num_ctx: config.ctx || DEFAULT_CONTEXT,
             },
         }
+
         if (!chatId) {
             // non-stream, non-chat
-            const result = await inst.chat(config)
-            return result.response
+            chatInProgress.set(false)
+            const result = await inst.chat(payload)
+            sndPlayResponse()
+            return result.message.content
         } else {
             chatInProgress.set(true)
             chatSetWasAborted(chatId, false)
             this.aborted = false
+
+            if (config.stream === false) {
+                // non-stream chat
+                const result = await inst.chat(payload)
+                chatInProgress.set(false)
+                sndPlayResponse()
+                chatFinish(chatId)
+                return result
+            }
+
             try {
-                const stream = await inst.chat(config)
+                const stream = await inst.chat(payload)
                 this.currentStream = stream
                 let isThinking = false
                 for await (const part of stream) {
@@ -145,16 +157,14 @@ export class OllamaDriver implements LLMDriver {
         messages: GenericMessage[],
         model: string,
         format: any,
-        temp?: number,
-        ctx?: number
-    ): Promise<void> {
+        config: ChatConfig = {}
+    ): Promise<any> {
         const inst = get(this.ol_instance)
         if (!inst) {
-            console.error("Ollama instance not found")
-            return
+            throw "Ollama instance not found"
         }
 
-        const config: ChatRequest = {
+        const payload: ChatRequest = {
             model,
             messages: messages.map(
                 (m) =>
@@ -167,12 +177,14 @@ export class OllamaDriver implements LLMDriver {
             stream: false,
             format: format,
             options: {
-                temperature: temp ?? DEFAULT_TEMPERATURE,
-                num_ctx: ctx ?? DEFAULT_CONTEXT,
+                temperature: config.temp ?? DEFAULT_TEMPERATURE,
+                num_ctx: config.ctx ?? DEFAULT_CONTEXT,
             },
         }
 
-        const result = await inst.chat(config)
+        const result = await inst.chat(payload)
+
+        console.log("chatFormatted result:", result)
 
         return JSON.parse(result.message.content)
     }

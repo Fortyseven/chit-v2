@@ -4,6 +4,12 @@ export type GenericMessage = {
     images?: string[]
 }
 
+export interface ChatConfig {
+    temp?: number
+    ctx?: number
+    stream?: boolean
+}
+
 export interface LLMDriver {
     abort(): void
     refreshModels(): Promise<void>
@@ -13,17 +19,15 @@ export interface LLMDriver {
         chatId: string,
         messages: GenericMessage[],
         model: string,
-        temp?: number,
-        ctx?: number
-    ): Promise<void>
+        config: ChatConfig
+    ): Promise<void | string>
 
     chatFormatted(
         messages: GenericMessage[],
         model: string,
         format: any,
-        temp?: number,
-        ctx?: number
-    ): Promise<void>
+        config: ChatConfig
+    ): Promise<string>
 
     kind(): "ollama" | "openai"
 }

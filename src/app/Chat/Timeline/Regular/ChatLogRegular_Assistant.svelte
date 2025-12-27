@@ -150,7 +150,7 @@
         box-shadow: 0 0.25em 0.25em 0 #000;
         text-align: start;
         padding-inline: 1em;
-        font-size: 1.2em;
+        font-size: 1.1em;
         // background-color: var(--color-background-darker);
         background-color: #1111118a;
         color: var(--color-text-assistant);
