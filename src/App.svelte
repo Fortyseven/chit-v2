@@ -6,17 +6,39 @@
     import ModeSidebar from "./app/ModeSidebar/ModeSidebar.svelte"
     import PageContent from "./app/PageContent.svelte"
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
+    import ConfirmationDialog from "./app/UI/ConfirmationDialog.svelte"
 
     import "./lib/appState/appStateStorage"
     import "./lib/audio"
+    import { chatCompactConversation } from "./lib/chatSession/chatActions"
     import { AppMode, currentChatMode } from "./lib/chatSession/chatSession"
     import "./lib/chatSession/chatStorage"
+    import {
+        closeCompactConversationDialog,
+        compactConversationDialog,
+    } from "./lib/chatSession/compactConversationDialog"
 
     const toastOptions = {
         //...
     }
 
     $: isRPMode = $currentChatMode === AppMode.RP
+
+    async function confirmCompactConversation() {
+        const state = $compactConversationDialog
+        if (!state.chatId || !state.summary) {
+            closeCompactConversationDialog()
+            return
+        }
+
+        try {
+            await chatCompactConversation(state.chatId, state.summary)
+        } catch (error) {
+            console.error("Error compacting conversation:", error)
+        } finally {
+            closeCompactConversationDialog()
+        }
+    }
 </script>
 
 <AppFramework hasModeSidebar={isRPMode}>
@@ -34,6 +56,16 @@
         <div class="input-bar"><InputBar /></div>
     </div>
 </AppFramework>
+
+<ConfirmationDialog
+    open={$compactConversationDialog.open}
+    title="Compact Conversation"
+    message={$compactConversationDialog.summary}
+    confirmText="Apply Summary"
+    cancelText="Cancel"
+    onConfirm={confirmCompactConversation}
+    onCancel={closeCompactConversationDialog}
+/>
 <SvelteToast options={toastOptions} />
 
 <style lang="scss">

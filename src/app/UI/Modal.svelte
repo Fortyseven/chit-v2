@@ -2,7 +2,6 @@
     import { onDestroy } from "svelte"
 
     export let title = "Untitled Modal"
-
     export let open = false
     let keydownHandler
 
@@ -51,7 +50,7 @@
     </div>
 {/if}
 
-<style>
+<style lang="scss">
     .config-panel {
         position: fixed;
         top: 0;
@@ -61,7 +60,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1000;
+        z-index: 9999;
         pointer-events: none;
 
         .backdrop {
@@ -88,6 +87,7 @@
             overflow-y: auto;
             pointer-events: auto;
             box-sizing: border-box;
+            outline: 2px solid #e74c3c; /* debug: make modal visually obvious */
 
             h2 {
                 padding: 0;
@@ -104,40 +104,5 @@
         }
     }
 
-    :global(.form-group) {
-        margin-bottom: 1rem;
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 0.5em;
-            border-radius: var(--border-radius-standard);
-            border: 1px solid #555;
-            background-color: #444;
-            color: white;
-            font-family: monospace;
-            box-sizing: border-box;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 0.5em;
-            border-radius: var(--border-radius-standard);
-            border: 1px solid #555;
-            background-color: #444;
-            color: white;
-            resize: vertical;
-            box-sizing: border-box;
-            font-family: monospace;
-        }
-
-        input[type="checkbox"] {
-            margin-right: 0.5rem;
-        }
-    }
+    /* trimmed unused form-group styles to avoid warnings */
 </style>

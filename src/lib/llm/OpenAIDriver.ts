@@ -194,7 +194,8 @@ export class OpenAIDriver implements LLMDriver {
                     try {
                         const json = JSON.parse(payload)
                         const delta = json.choices?.[0]?.delta?.content || ""
-                        if (delta) chatAppendStreamingPending(chatId, delta, false)
+                        if (delta)
+                            chatAppendStreamingPending(chatId, delta, false)
                     } catch {}
                 }
             }

@@ -1,4 +1,5 @@
 import { get, writable } from "svelte/store"
+import { z } from "zod"
 import general_prompt from "../../preset-prompts/general.js"
 import { appState } from "../appState/appState"
 import { backpackProcess } from "../backpack/backpackActions"
@@ -10,6 +11,7 @@ import {
 import { MediaAttachment } from "./chatAttachments"
 import { mediaStorage } from "./mediaStorage"
 
+import { GenericMessage } from "../llm/LLMDriver"
 import { ttsMaybeAutoSpeak, ttsStop } from "../voice/tts"
 import {
     AppMode,
@@ -635,4 +637,92 @@ export const chatInProgress = writable(false)
 //--------------------------------------------------------------
 export function getActiveChatId(chatId: string = ""): string {
     return chatId || get(appState).activeChatId
+}
+
+//--------------------------------------------------------------
+const COMPACT_SYSTEM_PROMPT = `You will be provided the context of an LLM context. Your goal is to compact this context so we can continue the conversation. The best compaction will capture the key details, intent, code blocks, context, and important information from the context. ONLY return the content of the new, compacted context.`
+
+export async function chatGenerateSummary(
+    chatId: string = ""
+): Promise<string> {
+    chatId = getActiveChatId(chatId)
+    const chat_session: ChatSession | undefined = chatFind(chatId)
+    const _llm = get(llm)
+
+    if (!chat_session) {
+        throw new Error("chatGenerateSummary: chat session not found")
+    }
+
+    if (chat_session.messages.length === 0) {
+        throw new Error("chatGenerateSummary: no messages to summarize")
+    }
+
+    const llm_instance = get(_llm.driver)
+
+    if (!llm_instance) {
+        throw new Error("chatGenerateSummary: llm instance not found")
+    }
+
+    const conversation = chat_session.messages
+        .map((msg) => `${msg.role.toUpperCase()}: ${msg.content}`)
+        .join("\n\n")
+
+    const messages: GenericMessage[] = [
+        {
+            role: "system",
+            content: COMPACT_SYSTEM_PROMPT,
+        },
+        {
+            role: "user",
+            content: conversation,
+        },
+    ]
+
+    const cur_context = chat_session.settings?.num_ctx || DEFAULT_CONTEXT
+
+    const SummaryResponse = z.object({
+        compressed_context: z.string(),
+    })
+
+    const response = await llm_instance.chat(
+        null,
+        messages,
+        chat_session.model_name,
+        {
+            stream: false,
+            temp: 0.4,
+            ctx: cur_context,
+        }
+    )
+
+    return response || "[No summary generated]"
+}
+
+export async function chatCompactConversation(
+    chatId: string = "",
+    summaryText: string
+) {
+    chatId = getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                const compactMessage: Message = {
+                    role: "system",
+                    content: `[Previous conversation summary]\n\n${summaryText}`,
+                    timestamp: new Date(),
+                }
+
+                return {
+                    ...chat,
+                    messages: [compactMessage],
+                    response_buffer: "",
+                    thinking_buffer: "",
+                    hasThoughts: false,
+                    isThinking: false,
+                }
+            }
+            return chat
+        })
+    )
 }

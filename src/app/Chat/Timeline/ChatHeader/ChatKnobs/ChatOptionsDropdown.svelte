@@ -2,12 +2,14 @@
     import ContextMenu from "$app/UI/ContextMenu.svelte"
     import IconButton from "$app/UI/IconButton.svelte"
     import {
+        chatGenerateSummary,
         chatGetAllContents,
         chatInProgress,
         chatSetTitle,
     } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
     import { chatGenerateTitle } from "$lib/chatSession/chatTitler"
+    import { openCompactConversationDialog } from "$lib/chatSession/compactConversationDialog"
     import { Gears } from "carbon-icons-svelte"
 
     //TODO: convert this to a general component
@@ -65,12 +67,37 @@
         }
     }
 
+    async function compactConversation(chatId: string | undefined) {
+        if (!chatId) {
+            console.warn("No chat ID provided for compaction.")
+            return
+        }
+
+        isOpen = false
+
+        try {
+            $chatInProgress = true
+            const summary = await chatGenerateSummary(chatId)
+            openCompactConversationDialog(chatId, summary)
+        } catch (error) {
+            console.error("Error generating conversation summary:", error)
+        } finally {
+            $chatInProgress = false
+        }
+    }
+
     const menuItems = [
         { name: "Copy chat to clipboard", action: copyChatToClipboard },
         { name: "-" }, // Separator
         {
             name: "Regenerate title",
             action: regenerateTitle,
+        },
+        {
+            name: "Compact conversation",
+            action: () => {
+                compactConversation($currentChat?.id)
+            },
         },
         { name: "-" }, // Separator
         { name: "Save chat to file", action: saveChatToFile },
