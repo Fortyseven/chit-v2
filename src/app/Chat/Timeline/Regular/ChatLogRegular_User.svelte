@@ -30,7 +30,8 @@
         padding-block-start: 2em;
         color: var(--color-neutral);
         font-style: italic;
-        font-size: 1.15em;
+        font-size: 0.9em;
+        max-width: 80%;
         &::before {
             content: "> ";
             font-weight: bold;
