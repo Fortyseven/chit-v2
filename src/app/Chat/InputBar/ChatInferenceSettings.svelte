@@ -1,10 +1,10 @@
 <script lang="ts">
     import { chatUpdateSettings } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
-    import { Writable, writable } from "svelte/store"
+    import { writable } from "svelte/store"
 
-    let ctx : Writable<number|undefined> = writable($currentChat?.settings?.num_ctx || 8192)
-    let temp : Writable<number|undefined> = writable($currentChat?.settings?.temperature || 0.6)
+    let ctx   = writable($currentChat?.settings?.num_ctx || 8192)
+    let temp  = writable($currentChat?.settings?.temperature || 0.6)
 
     ctx.subscribe((value) => {
         chatUpdateSettings("", {

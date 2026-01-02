@@ -12,7 +12,7 @@
         voiceSettings,
     } from "$lib/voice/tts"
     import { Copy, Renew, Save } from "carbon-icons-svelte"
-    // @ts-ignore
+// @ts-ignore
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
     export let content = ""
