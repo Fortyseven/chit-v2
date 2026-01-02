@@ -13,6 +13,7 @@ import extract_and_infer from "./extract-and-infer.js"
 import general from "./general.js"
 import geolocation from "./geolocation.js"
 import idea_feedback from "./idea-feedback.js"
+import llm_prompt_enhance from "./llm-prompt-enhance.js"
 import llm_prompt from "./llm-prompt.js"
 import retort from "./retort.js"
 import summarize from "./summarize.js"
@@ -28,6 +29,7 @@ export const SYSTEM_PROMPTS = {
     geolocation,
     idea_feedback,
     llm_prompt,
+    llm_prompt_enhance,
     retort,
     summarize,
     summary_meeting,
