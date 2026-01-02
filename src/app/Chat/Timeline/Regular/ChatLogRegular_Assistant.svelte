@@ -15,7 +15,9 @@
 // @ts-ignore
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
-    export let content = ""
+    type MessageContent = string | { content: string }
+
+    export let content: MessageContent = ""
     export let inprogress = false
     export let isThoughts = false
     export let index: number
@@ -25,10 +27,16 @@
     // Context menu state
     let openEditor = false
     let renderHtml: boolean = false
+    let messageEl: HTMLElement | null = null
+
+    function getMessageText() {
+        return typeof content === "string" ? content : content.content
+    }
 
     function saveAsFile() {
         console.log("content", content)
-        const blob = new Blob([content], { type: `text/markdown` })
+        const text = getMessageText()
+        const blob = new Blob([text], { type: `text/markdown` })
         const url = URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
@@ -40,7 +48,7 @@
 
     function copyToClipboard() {
         //navigator.clipboard.writeText(line.content)
-        navigator.clipboard.writeText(content)
+        navigator.clipboard.writeText(getMessageText())
         toast("Copied response to clipboard")
     }
 
@@ -50,10 +58,24 @@
         await chatRunInference()
     }
 
+    function getSelectedTextWithin(el: HTMLElement | null) {
+        if (!el || typeof window === "undefined") return ""
+        const selection = window.getSelection()
+        if (!selection || selection.rangeCount === 0) return ""
+        const { anchorNode, focusNode } = selection
+        if (!anchorNode || !focusNode) return ""
+        const selected = selection.toString().trim()
+        if (!selected) return ""
+        const withinElement = el.contains(anchorNode) && el.contains(focusNode)
+        return withinElement ? selected : ""
+    }
+
     // TTS controls
     function speak() {
         // content can be string or object with content
-        const text = typeof content === "string" ? content : content.content
+        const fullText = getMessageText()
+        const selectedText = getSelectedTextWithin(messageEl)
+        const text = selectedText || fullText
         if (!text) return
         ttsSpeak(text)
     }
@@ -77,7 +99,7 @@
             <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
         </div> -->
         <MarkdownEditor
-            {content}
+            content={getMessageText()}
             {index}
             editorOpen={openEditor}
             {onUpdatedContent}
@@ -91,6 +113,7 @@
         tabindex="0"
         class:inprogress
         data-testid="ChatLogRegular_Assistant"
+        bind:this={messageEl}
     >
         <div class="message-controls">
             {#if isLatest && $voiceSettings.enabled}
@@ -108,7 +131,7 @@
             {/if}
         </div>
         <MarkdownEditor
-            {content}
+            content={getMessageText()}
             {index}
             editorOpen={openEditor}
             {onUpdatedContent}
