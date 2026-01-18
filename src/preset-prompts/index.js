@@ -30,7 +30,6 @@ const GENERAL_PROMPTS = {
     idea_feedback,
     llm_prompt,
     llm_prompt_enhance,
-    retort,
     summarize,
     summary_meeting,
     translate,
@@ -51,6 +50,7 @@ const FUN_PROMPTS = {
     facial_analysis,
     linux_prompt,
     gtei,
+    retort,
 }
 
 export default {
