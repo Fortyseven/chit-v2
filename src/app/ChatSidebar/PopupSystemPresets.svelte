@@ -7,18 +7,19 @@
     } from "$lib/chatSession/chatActions"
     import { loadPresetFromFile, savePresetToFile } from "$lib/presets/presets"
     import {
+        ChevronDown,
+        ChevronRight,
         CloudUpload,
         WatsonHealthSaveAnnotation,
     } from "carbon-icons-svelte"
     import { onDestroy, onMount } from "svelte"
-    import {
-        CODING_PROMPTS,
-        FUN_PROMPTS,
-        SYSTEM_PROMPTS,
-    } from "../../preset-prompts/index.js"
+    import PROMPTS from "../../preset-prompts/index.js"
 
     export let open = false
     let appendMode = false
+    let expandedSections = {
+        default: true,
+    }
 
     function selectPrompt(prompt_def) {
         if (prompt_def.temperature) {
@@ -59,27 +60,30 @@
 </script>
 
 <div class="system-presets-popup" class:open>
-    {#each Object.keys(SYSTEM_PROMPTS) as skey}
-        {@const p = SYSTEM_PROMPTS[skey]}
-        <button class="btn-preset" onclick={() => selectPrompt(p)}>
-            {p.name}{appendMode ? " +" : ""}
-        </button>
+    {#each Object.keys(PROMPTS) as section}
+        {#if section !== "default"}
+            <button class="btn-section-header" onclick={() => expandedSections[section] = !expandedSections[section]}>
+                <span class="chevron">
+                    {#if expandedSections[section]}
+                        <ChevronDown size={16} />
+                    {:else}
+                        <ChevronRight size={16} />
+                    {/if}
+                </span>
+                <span class="section-name">{section.charAt(0).toUpperCase() + section.slice(1)}</span>
+            </button>
+        {/if}
+
+        {#if section === "default" || expandedSections[section]}
+            {#each Object.keys(PROMPTS[section]) as prompt}
+            {@const p = PROMPTS[section][prompt]}
+                <button class="btn-preset" onclick={() => selectPrompt(p)}>
+                    {p.name}{appendMode ? " +" : ""}
+                </button>
+            {/each}
+        {/if}
     {/each}
-    <hr />
-    {#each Object.keys(CODING_PROMPTS) as skey}
-        {@const p = CODING_PROMPTS[skey]}
-        <button class="btn-preset" onclick={() => selectPrompt(p)}>
-            {p.name}{appendMode ? " +" : ""}
-        </button>
-    {/each}
-    <hr />
-    {#each Object.keys(FUN_PROMPTS) as skey}
-        {@const p = FUN_PROMPTS[skey]}
-        <button class="btn-preset" onclick={() => selectPrompt(p)}>
-            {p.name}{appendMode ? " +" : ""}
-        </button>
-    {/each}
-    <hr />
+
     <div class="btn-load-save">
         <button
             class="btn-save small"
@@ -126,11 +130,39 @@
             display: flex;
         }
 
+        button.btn-section-header {
+            background-color: transparent;
+            color: var(--color-accent-complement);
+            text-align: left;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5em;
+            font-weight: 600;
+            font-size: 0.95em;
+            padding: 0.25em 0 0.25em 0;
+            place-content: unset;
+
+            .chevron {
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+                width: 1em;
+                height: 1em;
+            }
+
+            &:hover {
+                background-color: var(--color-accent-lighter);
+                color: var(--color-accent-text);
+            }
+        }
+
         button.btn-preset {
             background-color: transparent;
             color: var(--color-accent);
             text-align: left;
             line-height: 0.5;
+            padding-left: 1.5em;
+            font-size: 0.9rem;
 
             &:hover {
                 background-color: var(--color-accent);
@@ -149,11 +181,12 @@
             grid-template-columns: 1fr 1fr;
             width: 100%;
             gap: 1px;
+            margin-top: 0.5rem;
 
             button {
                 line-height: 1em;
                 vertical-align: middle;
-                align-self: center;
+                align-self: flex-start;
 
                 :global(svg) {
                     vertical-align: middle;

@@ -1,6 +1,6 @@
 export default {
-    name: '🎨 Art Prompter',
-    temperature: 1,
+    name: '🎨 Image Gen Art Prompt',
+    temperature: 1.0,
     prompt: `You will be provided with a fragment of text or an image; either individual key words, or a brief description.
 You are to imagine a fuller, more visually descriptive T5 prompt suitable for SDXL or Flux, based on the user's provided input.
 

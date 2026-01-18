@@ -1,7 +1,7 @@
 /* NOTE: This is wildly toxic and is just for fun. It is not meant to be taken seriously. Robots have no sense of beauty as we understand it. Probably. */
 
 export default {
-    name: '💋 Fun: Appear. Ass.',
+    name: '💋 Appearance Assessment',
     temperature: 0.7,
     prompt: `Rate this individual's appearance on various metrics:
 
