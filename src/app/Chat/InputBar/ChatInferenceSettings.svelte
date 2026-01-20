@@ -1,6 +1,7 @@
 <script lang="ts">
     import { chatUpdateSettings } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
+    import { Receipt_long, Thermostat } from "svelte-google-materialdesign-icons"
     import { writable } from "svelte/store"
 
     let ctx   = writable($currentChat?.settings?.num_ctx || 8192)
@@ -32,7 +33,7 @@
 <div id="ChatInferenceSettings">
     <!-- {#key $currentChat} -->
     <div>
-        <label for="context">CNTX 📜</label>
+        <label for="context">CNTX&nbsp;<Receipt_long color="var(--color-accent-complement)" size="1.1em" /></label>
         <input
             name="context"
             type="number"
@@ -44,7 +45,7 @@
         />
     </div>
     <div>
-        <label for="temp">TEMP 🌡</label>
+        <label for="temp">TEMP&nbsp;<Thermostat color="var(--color-accent-complement)" size="1.1em" /></label>
         <input
             name="temp"
             type="number"
@@ -64,17 +65,20 @@
         gap: 0.25em;
         padding-inline: 1em;
         height: 100%;
+        place-content: top;
+
         div {
             flex: 0 0 auto;
             display: grid;
-            grid-template-columns: 4.5em 1fr;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            align-items: center;
         }
 
         label {
             color: var(--color-accent);
             display: flex;
             text-transform: uppercase;
-            line-height: 2;
             font-weight: bold;
         }
 

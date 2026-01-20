@@ -1,5 +1,4 @@
 <script>
-    import { CloseFilled, Replicate } from "carbon-icons-svelte"
 
     // @ts-nocheck
     import { appState } from "$lib/appState/appState"
@@ -11,6 +10,7 @@
         chatSwitchTo,
     } from "$lib/chatSession/chatActions"
     import { chats, currentChat } from "$lib/chatSession/chatSession"
+    import { Close, Content_copy } from "svelte-google-materialdesign-icons"
     import BtnNewSession from "./BtnNewSession.svelte"
     import ConfigPanel from "./Config/ConfigPanel.svelte"
 
@@ -64,7 +64,7 @@
                     title="Duplicate"
                     aria-label={`Duplicate: ${chat.title}`}
                 >
-                    <Replicate />
+                    <Content_copy size="16" color="var(--color-accent-complement)"/>
                 </button>
                 <button
                     class="delete"
@@ -73,7 +73,7 @@
                     title="Delete"
                     aria-label={`Delete: ${chat.title}`}
                 >
-                    <CloseFilled />
+                    <Close size="16" color="var(--color-error)"/>
                 </button>
             </div>
         {/each}
@@ -138,12 +138,13 @@
 
                 button.duplicate,
                 button.delete {
-                    color: var(--color-neutral-darkest);
-                    &:hover {
-                        color: var(--color-accent-complement-lightest);
-                        background-color: var(--color-accent-complement-darker);
-                    }
+                    opacity: 0.5;
                     background: transparent;
+                    transition: opacity 0.2s, background 0.2s;
+                    &:hover {
+                        opacity: 1;
+                        background: #222;
+                    }
                 }
                 button.duplicate {
                     color: var(--color-neutral-darker);
