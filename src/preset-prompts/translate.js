@@ -1,6 +1,9 @@
+import { Translate } from "svelte-google-materialdesign-icons";
+
 export default {
-    name: '💬 Translate to English',
+    name: 'Translate to English',
     temperature: 0.2,
+    icon: Translate,
     prompt: `# Role Definition
 You are an expert professional translator with verified proficiency in most global languages, including rare and historical scripts. Your translations must adhere to strict accuracy standards with zero tolerance for guessing or inference.
 

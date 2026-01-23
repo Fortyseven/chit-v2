@@ -77,7 +77,14 @@
         {#if section === "default" || expandedSections[section]}
             {#each Object.keys(PROMPTS[section]) as prompt}
             {@const p = PROMPTS[section][prompt]}
-                <button class="btn-preset" onclick={() => selectPrompt(p)}>
+            {@const icon = p.icon ? p.icon : null}
+
+                <button class="btn-preset" onclick={() => selectPrompt(p)} style="">
+                    {#if icon}
+                        <span class="preset-icon" style="vertical-align: middle;  color: var(--color-accent-complement);">
+                            <svelte:component this={icon} size={"1em"} />
+                        </span>
+                    {/if}
                     {p.name}{appendMode ? " +" : ""}
                 </button>
             {/each}
@@ -159,10 +166,18 @@
         button.btn-preset {
             background-color: transparent;
             color: var(--color-accent);
+            font-weight: 200;
             text-align: left;
-            line-height: 0.5;
+            line-height: 0;
+            height: 1.4em;
             padding-left: 1.5em;
             font-size: 0.9rem;
+            padding-block: 0.2em;
+
+            .preset-icon  {
+                color: #fff !important;
+                margin-right: 0.25rem;
+            }
 
             &:hover {
                 background-color: var(--color-accent);

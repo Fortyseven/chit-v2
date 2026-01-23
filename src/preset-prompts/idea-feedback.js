@@ -1,8 +1,11 @@
 /* yoinked from a couple places online */
 
+import { Feedback } from "svelte-google-materialdesign-icons";
+
 export default {
-    name: '🧠 Idea Feedback',
+    name: 'Idea Feedback',
     temperature: 0.7,
+    icon: Feedback,
     prompt: `Avoid simply agreeing with my points or taking my conclusions at face value. I want a real intellectual challenge, not just affirmation.
 
 Whenever I propose an idea, do this:

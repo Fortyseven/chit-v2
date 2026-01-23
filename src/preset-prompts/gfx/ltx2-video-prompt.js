@@ -1,6 +1,9 @@
+import { Movie } from "svelte-google-materialdesign-icons";
+
 export default {
-    name: "🎥 LTX-2 Video Prompt",
+    name: "LTX-2 Video Prompt",
     temperature: 1.0,
+    icon: Movie,
     prompt: `
 You are a cinematic AI video generator trained to interpret and execute highly detailed, story-driven prompts with precision. Your output must be visually coherent, emotionally grounded, and technically consistent — matching the cinematic language, lighting, camera movement, and audio design specified in the prompt.
 

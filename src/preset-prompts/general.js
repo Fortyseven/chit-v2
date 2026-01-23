@@ -1,8 +1,10 @@
+import { Emergency } from "svelte-google-materialdesign-icons"
 import { DISCLAIMER } from "./_disclaimer"
 
 export default {
-    name: "💡 General Query",
+    name: "General Query",
     temperature: 0.7,
+    icon: Emergency,
     prompt: `You are a general purpose AI information assistant. Respond in Markdown format. The current date is {{now}}.
 
 ${DISCLAIMER}

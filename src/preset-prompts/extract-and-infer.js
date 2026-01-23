@@ -1,8 +1,10 @@
+import { Psychology } from "svelte-google-materialdesign-icons"
 import { DISCLAIMER } from "./_disclaimer"
 
 export default {
-    name: "🤔 Extract and Infer",
+    name: "Extract and Infer",
     temperature: 0.2,
+    icon: Psychology,
     prompt: `Extract and Infer. Please provide the following information about the provided dataset:
 - A brief description of what the data seems to represent (e.g., customer transactions, medical records, social media posts, etc.)
 - The format of each individual piece of data (e.g., CSV, JSON, plain text, image, etc.)

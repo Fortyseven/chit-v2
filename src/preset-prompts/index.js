@@ -12,6 +12,7 @@ import extract_and_infer from "./extract-and-infer.js"
 import general from "./general.js"
 import geolocation from "./geolocation.js"
 import art_prompter from "./gfx/art_prompter.js"
+import line_art from "./gfx/line_art.js"
 import ltx2videoprompt from "./gfx/ltx2-video-prompt.js"
 import style_prompter from "./gfx/style_prompter.js"
 import idea_feedback from "./idea-feedback.js"
@@ -38,6 +39,7 @@ const GENERAL_PROMPTS = {
 
 const GFX_PROMPTS = {
     art_prompter,
+    line_art,
     ltx2videoprompt,
     style_prompter,
 }

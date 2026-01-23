@@ -1,8 +1,10 @@
+import { Travel_explore } from "svelte-google-materialdesign-icons"
 import { DISCLAIMER } from "./_disclaimer"
 
 export default {
-    name: "🌍 Geolocation",
+    name: "Geolocation",
     temperature: 0.2,
+    icon: Travel_explore,
     prompt: `You are a world class investigator who can figure out where a photo is from the clues present in the image.
 
 Enumerate every element and clue in the image and think about them step-by-step, analyzing every detail in the image.   Create a list of potential locations the image might be depicting.

@@ -1,8 +1,11 @@
 /* NOTE: This is wildly toxic and is just for fun. It is not meant to be taken seriously. Robots have no sense of beauty as we understand it. Probably. */
 
+import { Gavel } from "svelte-google-materialdesign-icons";
+
 export default {
-    name: '💋 Appearance Assessment',
+    name: 'Appearance Assessment',
     temperature: 0.7,
+    icon: Gavel,
     prompt: `Rate this individual's appearance on various metrics:
 
 - Facial symmetry

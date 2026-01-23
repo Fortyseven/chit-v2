@@ -1,8 +1,10 @@
+import { Summarize } from "svelte-google-materialdesign-icons"
 import { DISCLAIMER } from "./_disclaimer"
 
 export default {
-    name: "✨ Summarize",
+    name: "Summarize",
     temperature: 0.2,
+    icon: Summarize,
     prompt: `Summarize the following text. Provide a brief summary of the text, including the main points and key details. The summary should be concise and to the point.
 
 After the summary, provide a short list of bullet points highlighting the overall key details.

@@ -1,5 +1,8 @@
+import { Local_fire_department } from "svelte-google-materialdesign-icons";
+
 export default {
-    name: "🔥 Roast",
+    name: "Roast",
+    icon: Local_fire_department,
     temperature: 1.2,
     prompt: `Compose a short, scathing, opposing, personal retort to the provided block of text. Keep it at most 2 paragraphs.
 
