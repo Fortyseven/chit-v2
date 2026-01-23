@@ -6,13 +6,8 @@
         chatUpdateSettings,
     } from "$lib/chatSession/chatActions"
     import { loadPresetFromFile, savePresetToFile } from "$lib/presets/presets"
-    import {
-        ChevronDown,
-        ChevronRight,
-        CloudUpload,
-        WatsonHealthSaveAnnotation,
-    } from "carbon-icons-svelte"
     import { onDestroy, onMount } from "svelte"
+    import { Chevron_right, Expand_more, Open_in_browser, Save } from "svelte-google-materialdesign-icons"
     import PROMPTS from "../../preset-prompts/index.js"
 
     export let open = false
@@ -65,9 +60,9 @@
             <button class="btn-section-header" onclick={() => expandedSections[section] = !expandedSections[section]}>
                 <span class="chevron">
                     {#if expandedSections[section]}
-                        <ChevronDown size={16} />
+                        <Expand_more size={16} />
                     {:else}
-                        <ChevronRight size={16} />
+                        <Chevron_right size={16} />
                     {/if}
                 </span>
                 <span class="section-name">{section.charAt(0).toUpperCase() + section.slice(1)}</span>
@@ -102,7 +97,7 @@
                 // pushToRecents($appState.activeChatId.systemPrompt)
             }}
         >
-            <WatsonHealthSaveAnnotation /> Save
+            <Save /> Save
         </button>
         <button
             class="btn-load small"
@@ -118,7 +113,7 @@
                 }
             }}
         >
-            <CloudUpload /> Load
+            <Open_in_browser /> Load
         </button>
     </div>
     <hr />

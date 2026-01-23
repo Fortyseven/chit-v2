@@ -1,23 +1,15 @@
 <script>
-    import { Replicate } from "carbon-icons-svelte"
-    import { onMount } from "svelte"
     import {
         chatInProgress,
         chatNew,
         chatSetSystemPrompt,
     } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
+    import { onMount } from "svelte"
+    import { Content_copy } from "svelte-google-materialdesign-icons"
     import PopupSystemPresets from "./PopupSystemPresets.svelte"
 
-    // let mobileToggleOpen = false
-
     let popupOpen = false
-
-    const popupPreset = {
-        event: "click",
-        target: "popupPreset",
-        placement: "top",
-    }
 
     function newConversationClick() {
         chatNew()
@@ -67,7 +59,7 @@
             disabled={$chatInProgress}
             onclick={() => duplicateSession()}
         >
-            <Replicate />
+            <Content_copy />
         </button>
         <button
             class="btn-preset"
@@ -89,6 +81,8 @@
         grid-template-columns: 1fr auto auto;
 
         button {
+            vertical-align: middle;
+
             &.btn-new-session {
                 border-top-right-radius: 0;
                 border-bottom-right-radius: 0;

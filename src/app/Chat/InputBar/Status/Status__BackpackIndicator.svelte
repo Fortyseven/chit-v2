@@ -2,7 +2,8 @@
     import { appState } from "$lib/appState/appState"
     import { chatSetBackpackMode } from "$lib/chatSession/chatActions"
     import { BackpackMode, currentChat } from "$lib/chatSession/chatSession"
-    import { FlashFilled, FlashOffFilled } from "carbon-icons-svelte"
+    import { Flash_off, Flash_on } from "svelte-google-materialdesign-icons"
+
     import ContextMenu from "../../../UI/ContextMenu.svelte"
 
     const LIVE_INTERVAL = 1000 * 60 * 2
@@ -57,7 +58,7 @@
         >
             <div>{backpackModeId}</div>
             <div>
-                <FlashFilled
+                <Flash_on
                     color={backpackAlive
                         ? "var(--color-success)"
                         : "var(--color-warning)"}
@@ -85,7 +86,7 @@
             }}
         />
     {:else}
-        <FlashOffFilled color="#666" title="Backpack not available." />
+        <Flash_off color="#666" title="Backpack not available." />
     {/if}
 </div>
 

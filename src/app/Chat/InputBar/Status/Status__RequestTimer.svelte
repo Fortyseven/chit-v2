@@ -1,6 +1,7 @@
 <script lang="ts">
     import { currentChat } from "$lib/chatSession/chatSession"
-    import { Recycle as Wait } from "carbon-icons-svelte"
+    import { Refresh } from "svelte-google-materialdesign-icons"
+
 
     let time = NaN
     let cps = NaN
@@ -28,7 +29,7 @@
         {#if !isNaN(time) && time > 0}
             {time.toFixed(2)}s
         {:else}
-            <div class="rotate"><Wait /></div>
+            <div class="rotate"><Refresh /></div>
         {/if}
     </div>
     <div class="cps">

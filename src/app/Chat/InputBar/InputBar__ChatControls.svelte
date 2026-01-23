@@ -12,7 +12,7 @@
     } from "$lib/chatSession/chatActions"
     import { chatClearAllPastedMedia } from "$lib/chatSession/chatAttachments"
     import { chats, currentChat } from "$lib/chatSession/chatSession"
-    import { Renew, SendFilled, TrashCan, Undo } from "carbon-icons-svelte"
+    import { Delete, Replay, Send, Undo } from "svelte-google-materialdesign-icons"
     import { derived, writable } from "svelte/store"
 
     export let inputBoxEl: HTMLTextAreaElement | undefined = undefined
@@ -68,7 +68,7 @@
         class="btn-send"
     >
         <div>
-            Send&nbsp;<SendFilled />
+            Send&nbsp;<Send />
         </div>
     </button>
     {#key $hasMessages}
@@ -77,7 +77,7 @@
                 title="Reroll last response (Ctrl+E)"
                 onClick={onBtnReroll}
                 disabled={!$hasMessages || $chatInProgress}
-                iconComponent={Renew}
+                iconComponent={Replay}
                 roundCorner="nw"
             />
 
@@ -98,7 +98,7 @@
                 onClick={onBtnClear}
                 disabled={(!$hasMessages || $chatInProgress) &&
                     !$currentChat?.pastedMedia?.length}
-                iconComponent={TrashCan}
+                iconComponent={Delete}
                 roundCorner="se"
             />
         </div>

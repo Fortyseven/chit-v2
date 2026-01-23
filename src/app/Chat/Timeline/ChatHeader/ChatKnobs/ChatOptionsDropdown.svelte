@@ -10,7 +10,8 @@
     import { currentChat } from "$lib/chatSession/chatSession"
     import { chatGenerateTitle } from "$lib/chatSession/chatTitler"
     import { openCompactConversationDialog } from "$lib/chatSession/compactConversationDialog"
-    import { Gears } from "carbon-icons-svelte"
+    import { Settings } from "svelte-google-materialdesign-icons"
+
 
     //TODO: convert this to a general component
 
@@ -115,7 +116,7 @@
                 mEvent.preventDefault()
             }
         }}
-        iconComponent={Gears}
+        iconComponent={Settings}
         secondary
         disabled={$chatInProgress}
         className="btn-preset"

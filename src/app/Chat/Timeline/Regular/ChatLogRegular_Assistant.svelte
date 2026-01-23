@@ -11,8 +11,7 @@
         ttsStop,
         voiceSettings,
     } from "$lib/voice/tts"
-    import { Copy, Renew, Save } from "carbon-icons-svelte"
-// @ts-ignore
+    import { Code, Content_copy, Edit, Replay, Save_alt } from "svelte-google-materialdesign-icons"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
 
     type MessageContent = string | { content: string }
@@ -143,13 +142,14 @@
         <div class="right">
             <button
                 on:click={() => (renderHtml = !renderHtml)}
-                class:on={renderHtml}>HTML</button
+                class:on={renderHtml}
+                title="Toggle HTML view"><Code size=16 /></button
             >
-            <button on:click={() => (openEditor = true)}>Edit</button>
+            <button on:click={() => (openEditor = true)} title="Edit"><Edit size=16 /></button>
             <div class="divider" aria-hidden="true">|</div>
-            <button on:click={saveAsFile}><Save /></button>
-            <button on:click={regenerateResponse}><Renew /></button>
-            <button on:click={() => copyToClipboard()}><Copy /></button>
+            <button on:click={saveAsFile} title="Save as file"><Save_alt size=16/></button>
+            <button on:click={regenerateResponse} title="Regenerate response"><Replay size=16 /></button>
+            <button on:click={() => copyToClipboard()} title="Copy to clipboard"><Content_copy size=16 /></button>
         </div>
     </div>
 {/if}
