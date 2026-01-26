@@ -81,6 +81,17 @@
     function stopSpeak() {
         ttsStop()
     }
+
+    function handleKeydown(e: KeyboardEvent) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+            e.preventDefault()
+            if ($ttsSpeaking) {
+                stopSpeak()
+            } else {
+                speak()
+            }
+        }
+    }
 </script>
 
 {#if isThoughts}
@@ -113,6 +124,7 @@
         class:inprogress
         data-testid="ChatLogRegular_Assistant"
         bind:this={messageEl}
+        on:keydown={handleKeydown}
     >
         <div class="message-controls">
             {#if isLatest && $voiceSettings.enabled}
