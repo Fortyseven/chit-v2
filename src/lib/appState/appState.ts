@@ -19,6 +19,7 @@ export interface AppState {
     // NEW: OpenAI-compatible
     openaiApiBase: string
     openaiApiKey: string
+    selectedProvider: "ollama" | "openai"
 }
 
 export const appStateDefaults: AppState = {
@@ -35,6 +36,7 @@ export const appStateDefaults: AppState = {
     resizeImages: true,
     openaiApiBase: "",
     openaiApiKey: "",
+    selectedProvider: "ollama",
 }
 
 export const appState = writable<AppState>({

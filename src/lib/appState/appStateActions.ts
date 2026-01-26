@@ -37,3 +37,7 @@ export function appStateSetOpenAIBase(base: string) {
 export function appStateSetOpenAIKey(key: string) {
     appState.update((state) => ({ ...state, openaiApiKey: key }))
 }
+
+export function appStateSetSelectedProvider(provider: "ollama" | "openai") {
+    appState.update((state) => ({ ...state, selectedProvider: provider }))
+}

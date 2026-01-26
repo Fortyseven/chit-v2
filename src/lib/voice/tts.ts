@@ -1,5 +1,6 @@
 import { get, writable } from "svelte/store"
 import { appState } from "../appState/appState"
+import { createOpenAITTSEngine } from "./OpenAITTSEngine"
 import { SpeakOptions, TTSEngine } from "./TTSEngine"
 import { createWebSpeechEngine } from "./WebSpeechEngine"
 
@@ -12,6 +13,8 @@ export interface VoiceSettings {
     pitch: number
     volume: number
     enabled: boolean
+    openaiTtsEndpoint: string
+    openaiTtsApiKey: string
 }
 
 // Local storage persistence key
@@ -25,9 +28,20 @@ const defaults: VoiceSettings = {
     pitch: 1,
     volume: 1,
     enabled: true,
+    openaiTtsEndpoint: "",
+    openaiTtsApiKey: "",
 }
 
 export const voiceSettings = writable<VoiceSettings>({ ...defaults })
+
+function persistVoiceSettings(settings: VoiceSettings) {
+    if (typeof window === "undefined") return
+    try {
+        localStorage.setItem(VOICE_SETTINGS_KEY, JSON.stringify(settings))
+    } catch (e) {
+        console.warn("Failed to persist voice settings", e)
+    }
+}
 
 // Restore from localStorage
 if (typeof window !== "undefined") {
@@ -41,7 +55,7 @@ if (typeof window !== "undefined") {
         console.warn("Failed to load voice settings", e)
     }
     voiceSettings.subscribe((v) => {
-        localStorage.setItem(VOICE_SETTINGS_KEY, JSON.stringify(v))
+        persistVoiceSettings(v)
     })
 }
 
@@ -102,7 +116,67 @@ export function ttsMaybeAutoSpeak() {
     ttsSpeakLatestAssistant()
 }
 
-// Public API for future dynamic engine registration
+// Public API for dynamic engine registration and settings
 export function registerTTSEngine(id: string, engine: TTSEngine) {
     engines[id] = engine
+}
+
+export function setOpenAITtsConfig(endpoint: string, apiKey: string = "") {
+    if (endpoint) {
+        try {
+            const engine = createOpenAITTSEngine(endpoint, apiKey || null)
+            registerTTSEngine("openai", engine)
+            voiceSettings.update((v) => {
+                const next = {
+                    ...v,
+                    openaiTtsEndpoint: endpoint,
+                    openaiTtsApiKey: apiKey,
+                }
+                persistVoiceSettings(next)
+                return next
+            })
+        } catch (e) {
+            console.error("Failed to create OpenAI TTS engine", e)
+            throw e
+        }
+    } else {
+        // Clear OpenAI config
+        voiceSettings.update((v) => {
+            const next = {
+                ...v,
+                openaiTtsEndpoint: endpoint,
+                openaiTtsApiKey: apiKey,
+            }
+            persistVoiceSettings(next)
+            return next
+        })
+    }
+}
+
+export function getOpenAITtsConfig() {
+    const settings = get(voiceSettings)
+    return {
+        endpoint: settings.openaiTtsEndpoint,
+        apiKey: settings.openaiTtsApiKey,
+    }
+}
+
+// Initialize OpenAI engine if config exists on startup
+if (typeof window !== "undefined") {
+    const unsubscribe = voiceSettings.subscribe((settings) => {
+        if (settings.openaiTtsEndpoint) {
+            try {
+                const engine = createOpenAITTSEngine(
+                    settings.openaiTtsEndpoint,
+                    settings.openaiTtsApiKey || null
+                )
+                registerTTSEngine("openai", engine)
+            } catch (e) {
+                console.warn(
+                    "Failed to initialize OpenAI TTS engine on startup",
+                    e
+                )
+            }
+        }
+    })
 }
