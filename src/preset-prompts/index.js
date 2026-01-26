@@ -18,6 +18,7 @@ import style_prompter from "./gfx/style_prompter.js"
 import idea_feedback from "./idea-feedback.js"
 import llm_prompt_enhance from "./llm-prompt-enhance.js"
 import llm_prompt from "./llm-prompt.js"
+import qna from "./qna.js"
 import retort from "./retort.js"
 import summarize from "./summarize.js"
 import summary_meeting from "./summary-meeting.js"
@@ -32,6 +33,7 @@ const GENERAL_PROMPTS = {
     idea_feedback,
     llm_prompt,
     llm_prompt_enhance,
+    qna,
     summarize,
     summary_meeting,
     translate,
