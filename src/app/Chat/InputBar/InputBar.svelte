@@ -5,6 +5,7 @@
         chatAddRoleMessage,
         chatBack,
         chatChopLatest,
+        chatClearConversationKeepMedia,
         chatInProgress,
         chatLength,
         chatRunInference,
@@ -163,7 +164,7 @@
             // go back one response
             if (ev.key === "b" && ev.ctrlKey) {
                 ev.preventDefault()
-                onBtnBack()
+                onBtnBack() // Keyboard shortcut always does normal back
             }
 
             if (ev.key === "Enter" && ev.ctrlKey) {
@@ -186,7 +187,14 @@
     }
 
     /* ------------------------------------------------------ */
-    function onBtnBack() {
+    function onBtnBack(ev?: MouseEvent) {
+        // If CTRL/Cmd is held during mouse click, clear timeline but keep media
+        if (ev?.ctrlKey || ev?.metaKey) {
+            chatClearConversationKeepMedia()
+            return
+        }
+
+        // Normal back behavior
         if (chatLength() === 0) {
             chatClearAllPastedMedia()
         } else {

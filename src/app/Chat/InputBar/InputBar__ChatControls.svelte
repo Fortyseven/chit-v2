@@ -6,13 +6,19 @@
         chatBack,
         chatChopLatest,
         chatClearConversation,
+        chatClearConversationKeepMedia,
         // $chatInProgress,
         chatLength,
         chatRunInference,
     } from "$lib/chatSession/chatActions"
     import { chatClearAllPastedMedia } from "$lib/chatSession/chatAttachments"
     import { chats, currentChat } from "$lib/chatSession/chatSession"
-    import { Delete, Replay, Send, Undo } from "svelte-google-materialdesign-icons"
+    import {
+        Delete,
+        Replay,
+        Send,
+        Undo,
+    } from "svelte-google-materialdesign-icons"
     import { derived, writable } from "svelte/store"
 
     export let inputBoxEl: HTMLTextAreaElement | undefined = undefined
@@ -28,7 +34,14 @@
     }
 
     /* ------------------------------------------------------ */
-    function onBtnBack() {
+    function onBtnBack(btn: HTMLButtonElement, ev: MouseEvent) {
+        // If CTRL/Cmd is held during mouse click, clear timeline but keep media
+        if (ev.ctrlKey || ev.metaKey) {
+            chatClearConversationKeepMedia()
+            return
+        }
+
+        // Normal back behavior
         if (chatLength() === 0) {
             chatClearAllPastedMedia()
         } else {

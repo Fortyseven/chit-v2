@@ -538,6 +538,43 @@ export async function chatClearConversation(chatId: string = "") {
     )
 }
 
+//--------------------------------------------------------------
+export function chatClearConversationKeepMedia(chatId: string = "") {
+    chatId = getActiveChatId(chatId)
+
+    ttsStop()
+
+    // Clear messages but keep media attachments
+    // Collect all media from all messages and put them back into pastedMedia
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                // Collect all media from all messages
+                const allMedia: MediaAttachment[] = []
+
+                // Add any media currently in pastedMedia (not yet attached to messages)
+                if (chat.pastedMedia) {
+                    allMedia.push(...chat.pastedMedia)
+                }
+
+                // Extract media from all messages
+                chat.messages.forEach((message) => {
+                    if (message.media) {
+                        allMedia.push(...message.media)
+                    }
+                })
+
+                return {
+                    ...chat,
+                    messages: [],
+                    pastedMedia: allMedia,
+                }
+            }
+            return chat
+        })
+    )
+}
+
 // --------------------------------------------------------------
 export function chatStart(chatId: string = "") {
     chatId = getActiveChatId(chatId)
