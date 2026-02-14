@@ -1,6 +1,3 @@
-# run blah
-.PHONY: dev blah desktop
-
 dev:
 	npm run dev
 
