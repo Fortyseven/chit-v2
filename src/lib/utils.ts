@@ -62,3 +62,24 @@ export function loadFile(types: string[]): Promise<any> {
         input.click()
     })
 }
+/**
+ * Debounce a function to prevent excessive calls.
+ * @param fn Function to debounce
+ * @param delay Delay in milliseconds
+ * @returns Debounced function
+ */
+export function debounce<T extends (...args: any[]) => any>(
+    fn: T,
+    delay: number
+): (...args: Parameters<T>) => void {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    return function (...args: Parameters<T>) {
+        if (timeoutId !== null) {
+            clearTimeout(timeoutId)
+        }
+        timeoutId = setTimeout(() => {
+            fn(...args)
+            timeoutId = null
+        }, delay)
+    }
+}

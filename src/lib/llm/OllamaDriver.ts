@@ -136,7 +136,10 @@ export class OllamaDriver implements LLMDriver {
                         part.message?.thinking || part.message.content,
                         isThinking
                     )
-                    sndPlayTone(60 + Math.random() * 150, 250, 0.075)
+                    // Play audio feedback every 10 tokens instead of every token
+                    if (Math.random() < 0.1) {
+                        sndPlayTone(60 + Math.random() * 150, 250, 0.075)
+                    }
                 }
             } catch (e) {
                 if (e instanceof DOMException && e.name === "AbortError") {

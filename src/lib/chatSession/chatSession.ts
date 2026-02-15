@@ -8,6 +8,7 @@ export enum AppMode {
 }
 
 export interface Message {
+    id?: string // Unique identifier for stable Svelte keying
     content: string
     thoughts?: string
     role: "user" | "assistant" | "system"

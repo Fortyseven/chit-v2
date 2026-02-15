@@ -1,5 +1,4 @@
 <script>
-
     // @ts-nocheck
     import { appState } from "$lib/appState/appState"
     import {
@@ -40,7 +39,7 @@
 
 <div id="Sidebar">
     <div class="top">
-        {#each $chats as chat, i}
+        {#each $chats as chat (chat.id)}
             <div
                 class="chatRow"
                 class:active={chat.id === $appState.activeChatId}
@@ -64,7 +63,10 @@
                     title="Duplicate"
                     aria-label={`Duplicate: ${chat.title}`}
                 >
-                    <Content_copy size="16" color="var(--color-accent-complement)"/>
+                    <Content_copy
+                        size="16"
+                        color="var(--color-accent-complement)"
+                    />
                 </button>
                 <button
                     class="delete"
@@ -73,7 +75,7 @@
                     title="Delete"
                     aria-label={`Delete: ${chat.title}`}
                 >
-                    <Close size="16" color="var(--color-error)"/>
+                    <Close size="16" color="var(--color-error)" />
                 </button>
             </div>
         {/each}
@@ -140,7 +142,9 @@
                 button.delete {
                     opacity: 0.5;
                     background: transparent;
-                    transition: opacity 0.2s, background 0.2s;
+                    transition:
+                        opacity 0.2s,
+                        background 0.2s;
                     &:hover {
                         opacity: 1;
                         background: #222;

@@ -53,12 +53,23 @@
     let editableDiv: HTMLDivElement
     let markdownStr = ""
 
+    // Memoization for markdown rendering (prevent re-parsing unchanged content)
+    let lastContent = ""
+    let lastProcessed = ""
+    let lastMarkdownStr = ""
+
     // Compute processed content, only show blank content
     // message when content is truly empty
     // Process content to wrap quoted sections before markdown render
     $: {
         const processed = isRPMode() ? wrapQuotesStreaming(content) : content
-        markdownStr = md.render(processed).trim()
+        // Only re-render if content actually changed
+        if (content !== lastContent || processed !== lastProcessed) {
+            lastContent = content
+            lastProcessed = processed
+            lastMarkdownStr = md.render(processed).trim()
+        }
+        markdownStr = lastMarkdownStr
     }
 
     // Save the changes and update the rendered content

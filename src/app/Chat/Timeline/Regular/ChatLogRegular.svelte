@@ -57,78 +57,74 @@
 
 <div class="wrapper" data-testid="ChatLogRegular">
     {#if $appState.activeChatId && $currentChat?.messages}
-        {#each $currentChat.messages as message, index}
-            {#key message}
-                {#if message.role === "user"}
-                    {#if message.media && message.media.length > 0}
-                        <div class="media-container">
-                            {#each message.media as media}
-                                {#if media.type === ChatMediaType.IMAGE}
-                                    <div class="media-attachment">
-                                        <AsyncMediaImage
-                                            {media}
-                                            cssClass="media-attachment-image"
-                                            altText="Media Attachment"
-                                            maxWidth={256}
-                                            maxHeight={256}
+        {#each $currentChat.messages as message, index (message.id || `msg-${index}`)}
+            {#if message.role === "user"}
+                {#if message.media && message.media.length > 0}
+                    <div class="media-container">
+                        {#each message.media as media}
+                            {#if media.type === ChatMediaType.IMAGE}
+                                <div class="media-attachment">
+                                    <AsyncMediaImage
+                                        {media}
+                                        cssClass="media-attachment-image"
+                                        altText="Media Attachment"
+                                        maxWidth={256}
+                                        maxHeight={256}
+                                    />
+                                </div>
+                            {/if}
+                            {#if media.type === ChatMediaType.TEXT}
+                                <div class="media-attachment">
+                                    {#await getMediaBlob(media)}
+                                        <ChatLogRegular_User
+                                            line="Loading..."
+                                            isAttachment
                                         />
-                                    </div>
-                                {/if}
-                                {#if media.type === ChatMediaType.TEXT}
-                                    <div class="media-attachment">
-                                        {#await getMediaBlob(media)}
-                                            <ChatLogRegular_User
-                                                line="Loading..."
-                                                isAttachment
-                                            />
-                                        {:then textData}
-                                            <ChatLogRegular_User
-                                                line={typeof textData ===
-                                                "string"
-                                                    ? textData
-                                                    : "Invalid text data"}
-                                                isAttachment
-                                            />
-                                        {:catch error}
-                                            <ChatLogRegular_User
-                                                line="Failed to load text"
-                                                isAttachment
-                                            />
-                                        {/await}
-                                    </div>
-                                {/if}
-                            {/each}
-                        </div>
-                    {/if}
+                                    {:then textData}
+                                        <ChatLogRegular_User
+                                            line={typeof textData === "string"
+                                                ? textData
+                                                : "Invalid text data"}
+                                            isAttachment
+                                        />
+                                    {:catch error}
+                                        <ChatLogRegular_User
+                                            line="Failed to load text"
+                                            isAttachment
+                                        />
+                                    {/await}
+                                </div>
+                            {/if}
+                        {/each}
+                    </div>
+                {/if}
 
-                    {#if message.content}
-                        <ChatLogRegular_User line={message.content as string} />
-                    {/if}
+                {#if message.content}
+                    <ChatLogRegular_User line={message.content as string} />
+                {/if}
 
-                    {#if isMostRecentUserMessage(index)}
-                        <ChatLogRegular_ReferencesInUse />
-                    {/if}
-                {:else if message.role === "user" && !message.content}
-                    <!-- cont'd -->
-                {:else}
-                    {#if message.thoughts}
-                        <ChatLogRegular_Assistant
-                            content={message.thoughts}
-                            isThoughts
-                            {index}
-                            isLatest={index ===
-                                $currentChat.messages.length - 1}
-                            onUpdatedContent={updateChatMessage}
-                        />
-                    {/if}
+                {#if isMostRecentUserMessage(index)}
+                    <ChatLogRegular_ReferencesInUse />
+                {/if}
+            {:else if message.role === "user" && !message.content}
+                <!-- cont'd -->
+            {:else}
+                {#if message.thoughts}
                     <ChatLogRegular_Assistant
-                        content={message.content}
+                        content={message.thoughts}
+                        isThoughts
                         {index}
                         isLatest={index === $currentChat.messages.length - 1}
                         onUpdatedContent={updateChatMessage}
                     />
                 {/if}
-            {/key}
+                <ChatLogRegular_Assistant
+                    content={message.content}
+                    {index}
+                    isLatest={index === $currentChat.messages.length - 1}
+                    onUpdatedContent={updateChatMessage}
+                />
+            {/if}
         {/each}
 
         {#key $currentChat}

@@ -201,6 +201,7 @@ export async function chatAddRoleMessage(
     chatId = getActiveChatId(chatId)
 
     const message: Message = {
+        id: crypto.randomUUID(),
         role,
         content,
         timestamp: new Date(),
@@ -424,6 +425,7 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
                     messages: [
                         ...chat.messages,
                         {
+                            id: crypto.randomUUID(),
                             role: "assistant",
                             content: chat.response_buffer as string,
                             thoughts: chat.thinking_buffer as string,
@@ -745,6 +747,7 @@ export async function chatCompactConversation(
         $chats.map((chat) => {
             if (chat.id === chatId) {
                 const compactMessage: Message = {
+                    id: crypto.randomUUID(),
                     role: "system",
                     content: `[Previous conversation summary]\n\n${summaryText}`,
                     timestamp: new Date(),

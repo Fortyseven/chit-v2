@@ -1,3 +1,4 @@
+import { debounce } from "$lib/utils"
 import { get } from "svelte/store"
 import { chatNew } from "./chatActions"
 import { chats } from "./chatSession"
@@ -24,6 +25,17 @@ async function validateChatMedia() {
     }
 }
 
+// Ensure all messages have IDs (for backward compatibility with old saved chats)
+function ensureMessageIds(chatList: any[]) {
+    return chatList.map((chat) => ({
+        ...chat,
+        messages: chat.messages.map((msg: any) => ({
+            ...msg,
+            id: msg.id || crypto.randomUUID(),
+        })),
+    }))
+}
+
 // Restore from localStorage
 if (typeof window !== "undefined") {
     const saved = localStorage.getItem("chats")
@@ -31,7 +43,9 @@ if (typeof window !== "undefined") {
     // if we have existing chat content, try to restore it
     if (saved) {
         try {
-            chats.set(JSON.parse(saved))
+            const parsedChats = JSON.parse(saved)
+            const chatsWithIds = ensureMessageIds(parsedChats)
+            chats.set(chatsWithIds)
 
             const c = get(chats)
             if (c.length == 0) {
@@ -48,8 +62,11 @@ if (typeof window !== "undefined") {
         chatNew()
     }
 
-    // Setup auto-save to localStorage
-    chats.subscribe(($chats) => {
+    // Setup auto-save to localStorage with debounce (200ms)
+    // This prevents excessive serialization during streaming
+    const debouncedSave = debounce(($chats: any) => {
         localStorage.setItem("chats", JSON.stringify($chats))
-    })
+    }, 200)
+
+    chats.subscribe(debouncedSave)
 }

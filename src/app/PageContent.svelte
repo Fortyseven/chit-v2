@@ -12,6 +12,7 @@
     /* This allows the page to scroll when the chat is updated. */
 
     let scrollWindowEl = undefined
+    let isStreaming = false
 
     function scrollDown() {
         setTimeout(
@@ -20,9 +21,22 @@
         )
     }
 
-    currentChat.subscribe(scrollDown)
+    // Track streaming state to reduce scroll thrashing during token streaming
+    currentChat.subscribe(($chat) => {
+        isStreaming = ($chat?.response_buffer?.length ?? 0) > 0
+        // Only scroll if not streaming (avoid layout thrashing)
+        if (!isStreaming) {
+            scrollDown()
+        }
+    })
 
-    afterUpdate(scrollDown)
+    // Scroll after component updates, but only if streaming has completed
+    afterUpdate(() => {
+        if (isStreaming) {
+            return // Skip scroll updates during streaming
+        }
+        scrollDown()
+    })
 </script>
 
 <div class="page" bind:this={scrollWindowEl}>
