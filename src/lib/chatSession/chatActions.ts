@@ -27,6 +27,10 @@ export const DEFAULT_CONTEXT = 65536
 export const DEFAULT_TEMPERATURE = 0.7
 export const DEFAULT_MODEL = "gemma3:12b"
 
+// Scroll batching during streaming: track tokens to batch scroll updates
+let tokensSinceLastScroll = 0
+const SCROLL_BATCH_THRESHOLD = 10 // scroll every ~10 tokens to reduce layout thrashing
+
 //--------------------------------------------------------------
 // Insert a new chat at the end of the list
 export function chatNew(): string {
@@ -407,12 +411,34 @@ export function chatGetStreamingPending(chatId: string = "") {
 }
 
 //--------------------------------------------------------------
+/**
+ * Check if we should scroll during streaming based on token batching.
+ * Returns true when enough tokens have accumulated since last scroll.
+ */
+export function chatShouldScrollDuringStream(): boolean {
+    return tokensSinceLastScroll >= SCROLL_BATCH_THRESHOLD
+}
+
+/**
+ * Reset the token counter after scrolling has occurred.
+ * Called by PageContent when it performs a batched scroll.
+ */
+export function chatResetStreamScrollCounter(): void {
+    tokensSinceLastScroll = 0
+}
+
+//--------------------------------------------------------------
 export function chatAppendStreamingPending(
     chatId: string = "",
     fragment: string,
     isThinking: boolean
 ) {
     chatId = getActiveChatId(chatId)
+
+    // Track tokens for scroll batching (only count response text, not thinking)
+    if (!isThinking) {
+        tokensSinceLastScroll += fragment.length
+    }
 
     if (isThinking) {
         chats.update(($chats) =>
@@ -451,6 +477,9 @@ export function chatAppendStreamingPending(
 //--------------------------------------------------------------
 export async function chatPromoteStreamingPending(chatId: string = "") {
     chatId = getActiveChatId(chatId)
+
+    // Reset scroll counter when promoting streaming content (response complete)
+    tokensSinceLastScroll = 0
 
     chats.update(($chats) =>
         $chats.map((chat) => {

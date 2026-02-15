@@ -1,45 +1,84 @@
-<script>
+<script lang="ts">
     import { afterUpdate } from "svelte"
 
     import ChatLogRegular from "./Chat/Timeline/Regular/ChatLogRegular.svelte"
 
+    import {
+        chatResetStreamScrollCounter,
+        chatShouldScrollDuringStream,
+    } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
 
     import "$lib/appState/appStateStorage"
     import "$lib/audio"
     import "$lib/chatSession/chatStorage"
 
-    /* This allows the page to scroll when the chat is updated. */
+    /* This allows the page to scroll as chat content streams in. */
 
-    let scrollWindowEl = undefined
+    let scrollWindowEl: HTMLDivElement | undefined = undefined
     let isStreaming = false
+    let userScrolledUp = false
+    const SCROLL_THRESHOLD = 100 // pixels from bottom to consider "at bottom"
 
-    function scrollDown() {
+    function scrollDown(): void {
         setTimeout(
-            () => scrollWindowEl?.scrollTo(0, scrollWindowEl.scrollHeight),
+            () =>
+                scrollWindowEl?.scrollTo(0, scrollWindowEl?.scrollHeight ?? 0),
             50,
         )
     }
 
-    // Track streaming state to reduce scroll thrashing during token streaming
+    function isNearBottom(): boolean {
+        if (!scrollWindowEl) return true
+        const currentScroll = scrollWindowEl.scrollTop
+        const maxScroll =
+            scrollWindowEl.scrollHeight - scrollWindowEl.clientHeight
+        return maxScroll - currentScroll < SCROLL_THRESHOLD
+    }
+
+    function handleScroll(): void {
+        // Track if user has manually scrolled up
+        userScrolledUp = !isNearBottom()
+    }
+
+    function performBatchedScroll(): void {
+        // Only scroll if streaming is active, scroll threshold reached, and user hasn't scrolled up
+        if (isStreaming && chatShouldScrollDuringStream() && !userScrolledUp) {
+            scrollDown()
+            chatResetStreamScrollCounter()
+        }
+    }
+
+    // Track streaming state and perform batched scroll during streaming
     currentChat.subscribe(($chat) => {
         isStreaming = ($chat?.response_buffer?.length ?? 0) > 0
-        // Only scroll if not streaming (avoid layout thrashing)
+
+        // If streaming just ended, reset user scroll tracking
         if (!isStreaming) {
+            userScrolledUp = false
+        }
+
+        // Try to perform batched scroll if conditions are met
+        performBatchedScroll()
+
+        // Scroll to bottom when streaming completes, but only if user is near bottom
+        if (!isStreaming && isNearBottom()) {
             scrollDown()
         }
     })
 
-    // Scroll after component updates, but only if streaming has completed
+    // Scroll after component updates, but only if streaming has completed and user is near bottom
     afterUpdate(() => {
         if (isStreaming) {
             return // Skip scroll updates during streaming
         }
-        scrollDown()
+        if (isNearBottom()) {
+            scrollDown()
+        }
     })
 </script>
 
-<div class="page" bind:this={scrollWindowEl}>
+<div class="page" bind:this={scrollWindowEl} on:scroll={handleScroll}>
     <ChatLogRegular />
 </div>
 
