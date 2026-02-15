@@ -12,6 +12,10 @@
     } from "$lib/chatSession/chatActions"
     import { chatClearAllPastedMedia } from "$lib/chatSession/chatAttachments"
     import { currentChat } from "$lib/chatSession/chatSession"
+    import {
+        clearPendingInputText,
+        pendingInputText,
+    } from "$lib/chatSession/rewindInput"
     import type { CommandResult } from "$lib/inputCommands/inputCommands"
     import { handleCommand } from "$lib/inputCommands/inputCommands"
     import { toast } from "@zerodevx/svelte-toast"
@@ -37,6 +41,16 @@
             setTimeout(() => {
                 inputBoxEl?.focus()
             }, 100)
+        }
+    })
+
+    /* ------------------------------------------------------ */
+    pendingInputText.subscribe((text) => {
+        if (text && inputBoxEl) {
+            inputBoxValue = text
+            inputBoxEl.value = text
+            inputBoxEl.focus()
+            clearPendingInputText()
         }
     })
 

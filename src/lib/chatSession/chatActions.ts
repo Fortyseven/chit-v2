@@ -327,6 +327,41 @@ export function chatBack(chatId: string = ""): string | undefined {
     return undefined
 }
 
+//--------------------------------------------------------------
+/**
+ * Rewind the conversation to a specific message index.
+ * Removes the message at that index and all messages after it, returning the message content
+ * that should be restored to the input box for editing.
+ * @param chatId The chat ID (defaults to active chat)
+ * @param messageIndex The index of the message to rewind to
+ * @returns The message content that was rewound, or undefined if not found
+ */
+export function chatRewindToIndex(chatId: string = "", messageIndex: number): string | undefined {
+    chatId = getActiveChatId(chatId)
+
+    let rewoundContent: string | undefined = undefined
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                // Get the message at the specified index
+                if (messageIndex >= 0 && messageIndex < chat.messages.length) {
+                    rewoundContent = chat.messages[messageIndex].content
+                    // Remove the message at this index and all messages after it
+                    return {
+                        ...chat,
+                        messages: chat.messages.slice(0, messageIndex),
+                    }
+                }
+            }
+            return chat
+        })
+    )
+
+    return rewoundContent
+}
+
+//--------------------------------------------------------------
 /**
  * Run inference on the active (or indicated) chat, passing the current messages
  * state to the LLM driver.

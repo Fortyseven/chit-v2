@@ -4,12 +4,14 @@
         chatGetStreamingPending,
         chatGetStreamingPendingThoughts,
         chatInProgressWithId,
+        chatRewindToIndex,
     } from "$lib/chatSession/chatActions"
     import {
         ChatMediaType,
         getMediaBlob,
     } from "$lib/chatSession/chatAttachments"
     import { chats, currentChat } from "$lib/chatSession/chatSession"
+    import { setPendingInputText } from "$lib/chatSession/rewindInput"
     import AsyncMediaImage from "../../../components/AsyncMediaImage.svelte"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
@@ -41,6 +43,17 @@
             })
         }
     }
+
+    function handleRewindToIndex(messageIndex: number) {
+        const chatId = $appState.activeChatId
+        if (!chatId) return
+
+        const rewoundContent = chatRewindToIndex(chatId, messageIndex)
+        if (rewoundContent) {
+            setPendingInputText(rewoundContent)
+        }
+    }
+
     function isMostRecentUserMessage(index: number) {
         const messages = $currentChat?.messages || []
         if (messages.length === 0) return false
@@ -79,6 +92,8 @@
                                         <ChatLogRegular_User
                                             line="Loading..."
                                             isAttachment
+                                            {index}
+                                            onRewind={handleRewindToIndex}
                                         />
                                     {:then textData}
                                         <ChatLogRegular_User
@@ -86,11 +101,15 @@
                                                 ? textData
                                                 : "Invalid text data"}
                                             isAttachment
+                                            {index}
+                                            onRewind={handleRewindToIndex}
                                         />
                                     {:catch error}
                                         <ChatLogRegular_User
                                             line="Failed to load text"
                                             isAttachment
+                                            {index}
+                                            onRewind={handleRewindToIndex}
                                         />
                                     {/await}
                                 </div>
@@ -100,7 +119,11 @@
                 {/if}
 
                 {#if message.content}
-                    <ChatLogRegular_User line={message.content as string} />
+                    <ChatLogRegular_User
+                        line={message.content as string}
+                        {index}
+                        onRewind={handleRewindToIndex}
+                    />
                 {/if}
 
                 {#if isMostRecentUserMessage(index)}
