@@ -8,6 +8,7 @@ import {
     applySystemVariables,
     applyUserVariables,
 } from "../templating/templating"
+import { normalizeCharacters } from "../text/charNormalization"
 import { MediaAttachment } from "./chatAttachments"
 import { mediaStorage } from "./mediaStorage"
 
@@ -435,9 +436,12 @@ export function chatAppendStreamingPending(
 ) {
     chatId = getActiveChatId(chatId)
 
+    // Normalize special characters from LLM output
+    const normalizedFragment = normalizeCharacters(fragment)
+
     // Track tokens for scroll batching (only count response text, not thinking)
     if (!isThinking) {
-        tokensSinceLastScroll += fragment.length
+        tokensSinceLastScroll += normalizedFragment.length
     }
 
     if (isThinking) {
@@ -446,11 +450,11 @@ export function chatAppendStreamingPending(
                 if (chat.id === chatId) {
                     chat.isThinking = true
                     chat.hasThoughts = true
-                    chat.lastTokenCount += fragment.length
+                    chat.lastTokenCount += normalizedFragment.length
                     return {
                         ...chat,
                         thinking_buffer: ((chat.thinking_buffer as string) +
-                            fragment) as string,
+                            normalizedFragment) as string,
                     }
                 }
                 return chat
@@ -461,11 +465,11 @@ export function chatAppendStreamingPending(
             $chats.map((chat: ChatSession) => {
                 if (chat.id === chatId) {
                     chat.isThinking = false
-                    chat.lastTokenCount += fragment.length
+                    chat.lastTokenCount += normalizedFragment.length
                     return {
                         ...chat,
                         response_buffer: ((chat.response_buffer as string) +
-                            fragment) as string,
+                            normalizedFragment) as string,
                     }
                 }
                 return chat
