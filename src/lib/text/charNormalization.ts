@@ -26,6 +26,7 @@ const CHAR_REPLACEMENTS: Record<string, string> = {
     "（": "(",  // Fullwidth left parenthesis
     "）": ")",  // Fullwidth right parenthesis
     "‸": "^",  // Caret
+    "-": "-",  // Hyphen-minus (just in case)
 }
 
 /**
