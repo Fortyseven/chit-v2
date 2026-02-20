@@ -26,7 +26,7 @@
             <div class="media-thumbnails">
                 <div class="media-header">Media</div>
                 <div class="media-grid">
-                    {#each allImageMedia as media}
+                    {#each allImageMedia as media (media.id)}
                         <AsyncMediaImage
                             {media}
                             cssClass="media-thumb"
