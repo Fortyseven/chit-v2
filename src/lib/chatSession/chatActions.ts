@@ -802,6 +802,7 @@ export async function chatGenerateSummary(
             stream: false,
             temp: 0.4,
             ctx: cur_context,
+            enable_thinking: false,
         }
     )
 

@@ -75,8 +75,9 @@ export default async function (args: string[]): Promise<CommandResult> {
             zodToJsonSchema(ArtPrompt),
             {
                 stream: false,
-                temp: 0.9,
+                temp: 1.0,
                 ctx: cur_context,
+                enable_thinking: false
             }
         )
 

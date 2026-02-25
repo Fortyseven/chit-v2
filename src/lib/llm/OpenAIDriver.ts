@@ -36,7 +36,6 @@ export class OpenAIDriver implements LLMDriver {
         format: any,
         config: ChatConfig = {}
     ): Promise<string> {
-        console.log("FORMAT", format)
         // Use OpenAI JSON mode for structured output
         // If format is provided, append a system prompt to steer the model
         let oaiMessages = messages.map((m) => {
@@ -56,7 +55,9 @@ export class OpenAIDriver implements LLMDriver {
         })
         if (format && typeof format === "object" && format !== null) {
             const keys = Object.keys(format.properties || {})
-            const example = JSON.stringify(format, null, 2)
+            const exampleObj: Record<string, string> = {}
+            for (const key of keys) exampleObj[key] = `<${key}>`
+            const example = JSON.stringify(exampleObj, null, 2)
             const jsonInstruction = `Respond ONLY with a valid JSON object with these property names: ${keys.join(
                 ", "
             )}. Format your response exactly as: ${example}. Do not include any extra text or explanation.`
@@ -83,6 +84,8 @@ export class OpenAIDriver implements LLMDriver {
             // num_ctx: config.ctx ?? DEFAULT_CONTEXT,
             stream: config.stream ?? false,
             response_format: { type: "json_object" },
+            think: false,
+            chat_template_kwargs: { enable_thinking: false }
         }
 
         const res = await fetch(`${this.baseURL}/chat/completions`, {
@@ -97,6 +100,9 @@ export class OpenAIDriver implements LLMDriver {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
         const data = await res.json()
+        debugger
+
+        console.log("OpenAI chatFormatted response", data)
         // OpenAI returns choices[0].message.content as valid JSON
         return JSON.parse(data.choices?.[0]?.message?.content)
     }

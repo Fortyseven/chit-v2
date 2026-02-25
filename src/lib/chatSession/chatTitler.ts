@@ -78,6 +78,8 @@ export async function chatGenerateTitle(chatId: string = "") {
                 stream: false,
                 temp: 0.7,
                 ctx: cur_context,
+                // enable_thinking: chat_session.settings?.enable_thinking ?? true,
+                enable_thinking: false,
             }
         )
 
