@@ -19,6 +19,7 @@ export interface Message {
 export interface ChatSettings {
     temperature: number
     num_ctx: number
+    enable_thinking: boolean
 }
 
 export enum BackpackMode {

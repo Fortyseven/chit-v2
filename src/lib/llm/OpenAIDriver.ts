@@ -93,7 +93,9 @@ export class OpenAIDriver implements LLMDriver {
             },
             body: JSON.stringify(body),
         })
+
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
         const data = await res.json()
         // OpenAI returns choices[0].message.content as valid JSON
         return JSON.parse(data.choices?.[0]?.message?.content)
@@ -167,6 +169,7 @@ export class OpenAIDriver implements LLMDriver {
                     messages: oaiMessages,
                     temperature: config.temp ?? DEFAULT_TEMPERATURE,
                     stream: config.stream ?? true,
+                    chat_template_kwargs: { enable_thinking: config.enable_thinking }
                 }),
                 signal: controller.signal,
             })

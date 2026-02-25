@@ -183,11 +183,13 @@ export class LLMInterface {
 
         const temp = chat_session.settings?.temperature || DEFAULT_TEMPERATURE
         const ctx = chat_session.settings?.num_ctx || DEFAULT_CONTEXT
+        const enable_thinking = chat_session.settings?.enable_thinking ?? true
 
         await driver.chat(chatId, messages, chat_session.model_name as string, {
             stream: true,
             temp,
             ctx,
+            enable_thinking,
         })
     }
 }

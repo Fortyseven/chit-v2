@@ -80,7 +80,7 @@ export class OllamaDriver implements LLMDriver {
                     } as Message)
             ),
             stream: config.stream ?? true,
-            // think: false,
+            think: config.enable_thinking ?? true,
             options: {
                 temperature: config.temp || DEFAULT_TEMPERATURE,
                 num_ctx: config.ctx || DEFAULT_CONTEXT,

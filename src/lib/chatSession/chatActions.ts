@@ -64,6 +64,7 @@ export function chatNew(): string {
         settings: {
             temperature: defaultTemperature,
             num_ctx: defaultContext,
+            enable_thinking: true,
         },
         wasAborted: false,
         pastedMedia: [],
@@ -434,6 +435,8 @@ export function chatAppendStreamingPending(
     fragment: string,
     isThinking: boolean
 ) {
+    // console.log("chatAppendStreamingPending", { chatId, fragment, isThinking })
+
     chatId = getActiveChatId(chatId)
 
     // Normalize special characters from LLM output

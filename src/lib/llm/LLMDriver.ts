@@ -8,6 +8,7 @@ export interface ChatConfig {
     temp?: number
     ctx?: number
     stream?: boolean
+    enable_thinking?: boolean
 }
 
 export interface LLMDriver {
