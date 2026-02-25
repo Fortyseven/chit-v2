@@ -100,9 +100,7 @@ export class OpenAIDriver implements LLMDriver {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
         const data = await res.json()
-        debugger
 
-        console.log("OpenAI chatFormatted response", data)
         // OpenAI returns choices[0].message.content as valid JSON
         return JSON.parse(data.choices?.[0]?.message?.content)
     }
