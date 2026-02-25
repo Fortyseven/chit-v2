@@ -49,7 +49,6 @@
     })
 
     // Component state
-    let isEditing = false
     let editableDiv: HTMLDivElement
     let markdownStr = ""
 
@@ -76,11 +75,10 @@
     function saveChanges() {
         if (editableDiv) {
             const newContent: string = editableDiv.innerText
-            if (newContent !== content) {
-                onUpdatedContent(index, newContent)
-            }
+            onUpdatedContent(index, newContent)
+            content = newContent // update locally so markdownStr recomputes before editor closes
         }
-        isEditing = false
+        editorOpen = false
     }
 
     // Handle key events in the editor
@@ -88,13 +86,14 @@
         // Ctrl+Enter or Cmd+Enter to save
         if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
             event.preventDefault()
+            event.stopPropagation()
             saveChanges()
         }
 
-        // Escape to cancel editing
+        // Escape to save and close editor
         if (event.key === "Escape") {
             event.preventDefault()
-            isEditing = false
+            event.stopPropagation()
             saveChanges()
         }
     }

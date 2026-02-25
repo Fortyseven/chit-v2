@@ -111,7 +111,7 @@
         <MarkdownEditor
             content={getMessageText()}
             {index}
-            editorOpen={openEditor}
+            bind:editorOpen={openEditor}
             {onUpdatedContent}
         />
     </details>
@@ -144,7 +144,7 @@
         <MarkdownEditor
             content={getMessageText()}
             {index}
-            editorOpen={openEditor}
+            bind:editorOpen={openEditor}
             {onUpdatedContent}
             {renderHtml}
         />
