@@ -47,6 +47,7 @@ export function chatNew(): string {
         tempValue && !isNaN(Number(tempValue))
             ? Number(tempValue)
             : DEFAULT_TEMPERATURE
+    const defaultThinking = get(appState).defaultThinking
     const newChat = {
         id,
         title: "New Chat " + new Date().toLocaleString(),
@@ -64,7 +65,7 @@ export function chatNew(): string {
         settings: {
             temperature: defaultTemperature,
             num_ctx: defaultContext,
-            enable_thinking: true,
+            enable_thinking: defaultThinking,
         },
         wasAborted: false,
         pastedMedia: [],

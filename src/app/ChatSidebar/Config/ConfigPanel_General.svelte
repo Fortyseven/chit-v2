@@ -5,6 +5,7 @@
         appStateSetDefaultContext,
         appStateSetDefaultModel,
         appStateSetDefaultTemperature,
+        appStateSetDefaultThinking,
     } from "$lib/appState/appStateActions"
 
     let selectedProvider = "ollama"
@@ -104,6 +105,19 @@
                 placeholder="e.g. 0.7, 1.0, etc."
                 value={$appState.defaultTemperature}
                 on:input={(e) => appStateSetDefaultTemperature(e.target.value)}
+            />
+        </label>
+    </div>
+    <div class="field">
+        <label
+            for="default-thinking"
+            title="Enable thinking mode by default for new conversations."
+            >Default THNK
+            <input
+                id="default-thinking"
+                type="checkbox"
+                checked={$appState.defaultThinking}
+                on:change={(e) => appStateSetDefaultThinking(e.target.checked)}
             />
         </label>
     </div>

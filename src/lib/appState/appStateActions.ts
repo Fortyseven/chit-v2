@@ -31,6 +31,10 @@ export function appStateSetDefaultTemperature(temp: string) {
     appState.update((state) => ({ ...state, defaultTemperature: temp }))
 }
 
+export function appStateSetDefaultThinking(thinking: boolean) {
+    appState.update((state) => ({ ...state, defaultThinking: thinking }))
+}
+
 export function appStateSetOpenAIBase(base: string) {
     appState.update((state) => ({ ...state, openaiApiBase: base }))
 }
