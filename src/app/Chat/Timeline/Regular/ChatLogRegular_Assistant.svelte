@@ -11,8 +11,15 @@
         ttsStop,
         voiceSettings,
     } from "$lib/voice/tts"
-    import { Code, Content_copy, Edit, Replay, Save_alt } from "svelte-google-materialdesign-icons"
+    import {
+        Code,
+        Content_copy,
+        Edit,
+        Replay,
+        Save_alt,
+    } from "svelte-google-materialdesign-icons"
     import MarkdownEditor from "../../../components/MarkdownEditor.svelte"
+    import { createThinkingBlockStore } from "./thinkingBlockState"
 
     type MessageContent = string | { content: string }
 
@@ -27,6 +34,18 @@
     let openEditor = false
     let renderHtml: boolean = false
     let messageEl: HTMLElement | null = null
+
+    $: chatId = $currentChat?.id ?? "streaming"
+    $: stateKey = `${chatId}-${inprogress ? "streaming" : index}`
+
+    // Create a writable store for this specific thinking block
+    $: thinkingOpenStore = createThinkingBlockStore(stateKey)
+
+    function handleMouseDown(e: MouseEvent) {
+        e.preventDefault()
+        e.stopPropagation()
+        thinkingOpenStore.set(!$thinkingOpenStore)
+    }
 
     function getMessageText() {
         return typeof content === "string" ? content : content.content
@@ -83,7 +102,7 @@
     }
 
     function handleKeydown(e: KeyboardEvent) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        if ((e.ctrlKey || e.metaKey) && e.key === "p") {
             e.preventDefault()
             if ($ttsSpeaking) {
                 stopSpeak()
@@ -95,16 +114,22 @@
 </script>
 
 {#if isThoughts}
-    <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
     <details
-        open
+        open={$thinkingOpenStore}
         class="response markdown bot thoughts"
-        role="button"
-        tabindex="0"
         class:inprogress
         data-testid="ChatLogRegular_Assistant"
     >
-        <summary>&lt;THINK&gt;</summary>
+        <summary on:mousedown={handleMouseDown}>
+            &lt;THINK&gt;
+            {#if !$thinkingOpenStore && inprogress}
+                <span class="thinking-indicator">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </span>
+            {/if}
+        </summary>
         <!-- <div class="message-controls">
             <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
         </div> -->
@@ -155,13 +180,21 @@
             <button
                 on:click={() => (renderHtml = !renderHtml)}
                 class:on={renderHtml}
-                title="Toggle HTML view"><Code size=16 /></button
+                title="Toggle HTML view"><Code size="16" /></button
             >
-            <button on:click={() => (openEditor = true)} title="Edit"><Edit size=16 /></button>
+            <button on:click={() => (openEditor = true)} title="Edit"
+                ><Edit size="16" /></button
+            >
             <div class="divider" aria-hidden="true">|</div>
-            <button on:click={saveAsFile} title="Save as file"><Save_alt size=16/></button>
-            <button on:click={regenerateResponse} title="Regenerate response"><Replay size=16 /></button>
-            <button on:click={() => copyToClipboard()} title="Copy to clipboard"><Content_copy size=16 /></button>
+            <button on:click={saveAsFile} title="Save as file"
+                ><Save_alt size="16" /></button
+            >
+            <button on:click={regenerateResponse} title="Regenerate response"
+                ><Replay size="16" /></button
+            >
+            <button on:click={() => copyToClipboard()} title="Copy to clipboard"
+                ><Content_copy size="16" /></button
+            >
         </div>
     </div>
 {/if}
@@ -174,6 +207,47 @@
             cursor: pointer;
             opacity: 0.5;
             text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+    }
+
+    .thinking-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
+        margin-left: 0.5em;
+
+        .dot {
+            width: 0.4em;
+            height: 0.4em;
+            background-color: var(--color-accent-complement);
+            border-radius: 50%;
+            animation: thinking-pulse 1.4s ease-in-out infinite;
+
+            &:nth-child(1) {
+                animation-delay: 0s;
+            }
+            &:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+            &:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+        }
+    }
+
+    @keyframes thinking-pulse {
+        0%,
+        60%,
+        100% {
+            opacity: 0.3;
+            transform: scale(0.8);
+        }
+        30% {
+            opacity: 1;
+            transform: scale(1.2);
         }
     }
 
