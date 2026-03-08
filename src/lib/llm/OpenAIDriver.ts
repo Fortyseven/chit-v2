@@ -9,6 +9,7 @@ import {
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
+import { ThinkingDetector } from "./thinkingDetection"
 
 export class OpenAIDriver implements LLMDriver {
     baseURL: string
@@ -183,6 +184,7 @@ export class OpenAIDriver implements LLMDriver {
             const decoder = new TextDecoder()
             sndPlayTyping()
 
+            const thinkingDetector = new ThinkingDetector()
             let buffer = ""
             while (true) {
                 const { value, done } = await reader.read()
@@ -200,9 +202,19 @@ export class OpenAIDriver implements LLMDriver {
                     }
                     try {
                         const json = JSON.parse(payload)
-                        const delta = json.choices?.[0]?.delta?.content || ""
-                        if (delta)
-                            chatAppendStreamingPending(chatId, delta, false)
+                        const delta = json.choices?.[0]?.delta
+                        if (!delta) continue
+
+                        // Process chunk through thinking detector
+                        const result = thinkingDetector.processChunk(delta)
+
+                        // Skip marker tags
+                        if (result.shouldSkipChunk) continue
+
+                        // Append content to appropriate buffer
+                        if (result.contentToAppend) {
+                            chatAppendStreamingPending(chatId, result.contentToAppend, result.isThinking)
+                        }
                     } catch {}
                 }
             }

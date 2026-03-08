@@ -11,6 +11,7 @@ import {
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
+import { ThinkingDetector } from "./thinkingDetection"
 
 export class OllamaDriver implements LLMDriver {
     models: Writable<ModelResponse[]> = writable([])
@@ -110,32 +111,23 @@ export class OllamaDriver implements LLMDriver {
             try {
                 const stream = await inst.chat(payload)
                 this.currentStream = stream
-                let isThinking = false
+                const thinkingDetector = new ThinkingDetector()
                 for await (const part of stream) {
                     if (this.aborted) {
                         break
                     }
 
-                    if (
-                        part.message.content.toLowerCase() == "<think>" ||
-                        (part.message.hasOwnProperty("thinking") && !isThinking)
-                    ) {
-                        isThinking = true
-                        console.debug("Thinking started...")
-                        continue
-                    } else if (
-                        part.message.content.toLowerCase() == "</think>" ||
-                        (!part.message.hasOwnProperty("thinking") && isThinking)
-                    ) {
-                        isThinking = false
-                        console.debug("...thinking ended.")
-                        continue
+                    // Process chunk through thinking detector
+                    const result = thinkingDetector.processChunk(part.message)
+
+                    // Skip marker tags
+                    if (result.shouldSkipChunk) continue
+
+                    // Append content to appropriate buffer
+                    if (result.contentToAppend) {
+                        chatAppendStreamingPending(chatId, result.contentToAppend, result.isThinking)
                     }
-                    chatAppendStreamingPending(
-                        chatId,
-                        part.message?.thinking || part.message.content,
-                        isThinking
-                    )
+
                     // Play audio feedback every 10 tokens instead of every token
                     if (Math.random() < 0.1) {
                         sndPlayTone(60 + Math.random() * 150, 250, 0.075)
