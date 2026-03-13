@@ -6,12 +6,14 @@ import type { ToolDefinition } from './types';
 // Import individual tools here
 import { calculatorTool } from './calculator';
 import { echoTool } from './echo';
+import { sayTool } from './say';
 import { timeTool } from './time';
 
 export const tools: ToolDefinition[] = [
     echoTool,
     timeTool,
-    calculatorTool
+    calculatorTool,
+    sayTool
 ];
 
 export function getToolByName(name: string): ToolDefinition | undefined {
