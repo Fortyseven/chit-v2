@@ -33,7 +33,8 @@ export class WebSpeechEngine implements TTSEngine {
 
     async listVoices() {
         const voices = cachedVoices || (await getVoices())
-        return voices.map((v) => ({ id: v.name, name: v.name, lang: v.lang }))
+        const sorted = voices.slice().sort((a, b) => a.name.localeCompare(b.name))
+        return sorted.map((v) => ({ id: v.name, name: v.name, lang: v.lang }))
     }
 
     isSpeaking() {
