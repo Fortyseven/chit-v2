@@ -7,19 +7,12 @@
         appStateSetDefaultTemperature,
         appStateSetDefaultThinking,
     } from "$lib/appState/appStateActions"
+    import { chatSetToolCallMessagesVisible } from "$lib/chatSession/chatActions"
+    import { currentChat } from "$lib/chatSession/chatSession"
 
     let selectedProvider = "ollama"
 
-    // Load voices when TTS tab first activated
-    // $: if (
-    //     open &&
-    //     activeTab === "tts" &&
-    //     availableVoices.length === 0 &&
-    //     !loadingVoices
-    // ) {
-    //     // initializeOpenAIConfig()
-    //     // loadVoices()
-    // }
+    $: toolCallMessagesVisible = $currentChat?.toolCallMessagesVisible ?? true
 </script>
 
 <div class="form-group">
@@ -137,6 +130,23 @@
                 type="text"
                 value={$appState.backpackApiEndpoint}
                 on:input={(e) => appStateSetBackpackApiEndpoint(e.target.value)}
+            />
+        </label>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="field">
+        <label title="Show tool call messages in chat timeline.">
+            Tool Call Messages
+            <input
+                type="checkbox"
+                checked={toolCallMessagesVisible}
+                on:change={(e) =>
+                    chatSetToolCallMessagesVisible(
+                        $currentChat?.id ?? "",
+                        e.target.checked,
+                    )}
             />
         </label>
     </div>

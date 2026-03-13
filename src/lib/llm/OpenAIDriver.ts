@@ -2,9 +2,11 @@ import { get, Writable, writable } from "svelte/store"
 import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
 import {
     chatAppendStreamingPending,
+    chatFind,
     chatFinish,
     chatInProgress,
     chatPromoteStreamingPending,
+    chatSetToolCallInfo,
     chatSetWasAborted,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
@@ -146,6 +148,10 @@ export class OpenAIDriver implements LLMDriver {
         this.currentController = new AbortController()
         const controller = this.currentController
         try {
+            // Check if tools are enabled for this chat
+            const chat = chatFind(chatId)
+            const toolsEnabled = chat?.toolsEnabled ?? false
+
             const oaiMessages = messages.map((m) => {
                 if (m.images && m.images.length > 0) {
                     const imageBlocks = m.images.map((img64) => ({
@@ -163,19 +169,45 @@ export class OpenAIDriver implements LLMDriver {
                 return { role: m.role, content: m.content }
             })
 
+            // Prepare tool definitions if enabled
+            let toolDefinitions: any[] | undefined = undefined
+            if (toolsEnabled) {
+                const { tools } = await import('../tools/index')
+                toolDefinitions = tools.map(tool => ({
+                    type: "function",
+                    function: {
+                        name: tool.name,
+                        description: tool.description,
+                        parameters: {
+                            type: "object",
+                            properties: tool.parameters,
+                            required: Object.keys(tool.parameters)
+                        }
+                    }
+                }))
+                console.log('🔧 Tools enabled, sending definitions:', toolDefinitions)
+            }
+
+            const requestBody: any = {
+                model,
+                messages: oaiMessages,
+                temperature: config.temp ?? DEFAULT_TEMPERATURE,
+                stream: config.stream ?? true,
+                chat_template_kwargs: { enable_thinking: config.enable_thinking }
+            }
+
+            if (toolDefinitions && toolDefinitions.length > 0) {
+                requestBody.tools = toolDefinitions
+                requestBody.tool_choice = "auto"
+            }
+
             const res = await fetch(`${this.baseURL}/chat/completions`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${this.apiKey}`,
                 },
-                body: JSON.stringify({
-                    model,
-                    messages: oaiMessages,
-                    temperature: config.temp ?? DEFAULT_TEMPERATURE,
-                    stream: config.stream ?? true,
-                    chat_template_kwargs: { enable_thinking: config.enable_thinking }
-                }),
+                body: JSON.stringify(requestBody),
                 signal: controller.signal,
             })
             if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`)
@@ -186,6 +218,10 @@ export class OpenAIDriver implements LLMDriver {
 
             const thinkingDetector = new ThinkingDetector()
             let buffer = ""
+            let toolCallsBuffer: any[] = []
+            let hasToolCalls = false
+            let assistantMessage = ""
+
             while (true) {
                 const { value, done } = await reader.read()
                 if (done) break
@@ -205,19 +241,193 @@ export class OpenAIDriver implements LLMDriver {
                         const delta = json.choices?.[0]?.delta
                         if (!delta) continue
 
-                        // Process chunk through thinking detector
-                        const result = thinkingDetector.processChunk(delta)
+                        // Handle tool calls in streaming response
+                        if (delta.tool_calls) {
+                            hasToolCalls = true
+                            for (const toolCallDelta of delta.tool_calls) {
+                                const index = toolCallDelta.index ?? 0
 
-                        // Skip marker tags
-                        if (result.shouldSkipChunk) continue
+                                // Initialize tool call if needed
+                                if (!toolCallsBuffer[index]) {
+                                    toolCallsBuffer[index] = {
+                                        id: toolCallDelta.id || `tool_${index}`,
+                                        type: toolCallDelta.type || 'function',
+                                        function: {
+                                            name: '',
+                                            arguments: ''
+                                        }
+                                    }
+                                }
 
-                        // Append content to appropriate buffer
-                        if (result.contentToAppend) {
-                            chatAppendStreamingPending(chatId, result.contentToAppend, result.isThinking)
+                                // Accumulate function name
+                                if (toolCallDelta.function?.name) {
+                                    toolCallsBuffer[index].function.name += toolCallDelta.function.name
+                                }
+
+                                // Accumulate function arguments
+                                if (toolCallDelta.function?.arguments) {
+                                    toolCallsBuffer[index].function.arguments += toolCallDelta.function.arguments
+                                }
+                            }
+                            continue
+                        }
+
+                        // Collect assistant message content (if any)
+                        if (delta.content) {
+                            assistantMessage += delta.content
+                        }
+
+                        // Process chunk through thinking detector (only if no tool calls)
+                        if (!hasToolCalls) {
+                            const result = thinkingDetector.processChunk(delta)
+
+                            // Skip marker tags
+                            if (result.shouldSkipChunk) continue
+
+                            // Append content to appropriate buffer
+                            if (result.contentToAppend) {
+                                chatAppendStreamingPending(chatId, result.contentToAppend, result.isThinking)
+                            }
                         }
                     } catch {}
                 }
             }
+
+            // Execute tool calls and get model's response with results
+            if (toolsEnabled && toolCallsBuffer.length > 0) {
+                console.log('🔧 Tool calls received:', toolCallsBuffer)
+                const { getToolByName } = await import('../tools/index')
+
+                // Build tool response messages and collect display info
+                const toolMessages: any[] = []
+                const toolCallsDisplayInfo: any[] = []
+
+                for (const toolCall of toolCallsBuffer) {
+                    if (!toolCall.function?.name) continue
+
+                    const toolName = toolCall.function.name
+                    const tool = getToolByName(toolName)
+
+                    console.log(`🔧 Executing tool: ${toolName}`, toolCall.function.arguments)
+
+                    let toolResult: any
+                    let toolError: string | null = null
+                    let toolParams = toolCall.function.arguments || '{}'
+
+                    try {
+                        if (!tool) {
+                            toolResult = { error: `Tool ${toolName} not found` }
+                            toolError = `Tool ${toolName} not found`
+                        } else {
+                            // Parse arguments
+                            let args = {}
+                            try {
+                                args = JSON.parse(toolCall.function.arguments || '{}')
+                            } catch (err) {
+                                toolResult = { error: 'Invalid arguments' }
+                                toolError = 'Invalid arguments'
+                            }
+
+                            if (!toolResult) {
+                                // Execute tool
+                                toolResult = await tool.handler(args)
+                                console.log(`🔧 Tool result for ${toolName}:`, toolResult)
+                            }
+                        }
+                    } catch (err) {
+                        const errorMsg = err instanceof Error ? err.message : String(err)
+                        toolResult = { error: errorMsg }
+                        toolError = errorMsg
+                    }
+
+                    // Store structured tool call info for display
+                    toolCallsDisplayInfo.push({
+                        name: toolName,
+                        params: toolParams,
+                        result: JSON.stringify(toolResult),
+                        error: toolError
+                    })
+
+                    // Add tool result message for the model (not for display)
+                    toolMessages.push({
+                        role: "tool",
+                        tool_call_id: toolCall.id,
+                        content: JSON.stringify(toolResult)
+                    })
+                }
+
+                // Store tool call info in buffer for display (not sent to LLM)
+                chatSetToolCallInfo(chatId, JSON.stringify(toolCallsDisplayInfo))
+
+                // DON'T promote yet - we'll add tool info as metadata to the final response
+
+                // Now send tool results back to model for final response
+                console.log('🔧 Sending tool results back to model...')
+
+                const messagesWithToolResults = [
+                    ...oaiMessages,
+                    {
+                        role: "assistant",
+                        content: assistantMessage || null,
+                        tool_calls: toolCallsBuffer
+                    },
+                    ...toolMessages
+                ]
+
+                const followUpBody: any = {
+                    model,
+                    messages: messagesWithToolResults,
+                    temperature: config.temp ?? DEFAULT_TEMPERATURE,
+                    stream: true,
+                    chat_template_kwargs: { enable_thinking: config.enable_thinking }
+                }
+
+                // Make second API call with tool results
+                const followUpRes = await fetch(`${this.baseURL}/chat/completions`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${this.apiKey}`,
+                    },
+                    body: JSON.stringify(followUpBody),
+                    signal: controller.signal,
+                })
+
+                if (!followUpRes.ok || !followUpRes.body) {
+                    throw new Error(`HTTP ${followUpRes.status}`)
+                }
+
+                const followUpReader = followUpRes.body.getReader()
+                const followUpDecoder = new TextDecoder()
+                let followUpBuffer = ""
+
+                // Stream the model's response to tool results
+                while (true) {
+                    const { value, done } = await followUpReader.read()
+                    if (done) break
+                    followUpBuffer += followUpDecoder.decode(value, { stream: true })
+
+                    let idx
+                    while ((idx = followUpBuffer.indexOf("\n")) >= 0) {
+                        const line = followUpBuffer.slice(0, idx).trim()
+                        followUpBuffer = followUpBuffer.slice(idx + 1)
+                        if (!line.startsWith("data:")) continue
+                        const payload = line.slice(5).trim()
+                        if (payload === "[DONE]") break
+
+                        try {
+                            const json = JSON.parse(payload)
+                            const delta = json.choices?.[0]?.delta
+                            if (!delta?.content) continue
+
+                            chatAppendStreamingPending(chatId, delta.content, false)
+                        } catch {}
+                    }
+                }
+
+                console.log('🔧 Model responded with synthesized answer')
+            }
+
         } catch (e) {
             console.error("OpenAI chat error:", e)
         } finally {

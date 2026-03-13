@@ -132,6 +132,7 @@ export class LLMInterface {
         }
 
         for (const message of chat_session.messages) {
+            // Skip tool call info - it's for display only, not for LLM
             let msg = message.content.trim()
             const images: string[] = []
 

@@ -1,3 +1,36 @@
+//--------------------------------------------------------------
+// Set tool call message visibility toggle
+export function chatSetToolCallMessagesVisible(chatId: string = "", visible: boolean) {
+    chatId = getActiveChatId(chatId)
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    toolCallMessagesVisible: visible,
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
+// Set tools enabled toggle
+export function chatSetToolsEnabled(chatId: string = "", enabled: boolean) {
+    chatId = getActiveChatId(chatId)
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    toolsEnabled: enabled,
+                }
+            }
+            return chat
+        })
+    )
+}
 import { get, writable } from "svelte/store"
 import { z } from "zod"
 import general_prompt from "../../preset-prompts/general.js"
@@ -61,6 +94,7 @@ export function chatNew(): string {
         response_buffer: "",
         hasThoughts: false,
         thinking_buffer: "",
+        tool_call_info_buffer: "",
         isThinking: false,
         settings: {
             temperature: defaultTemperature,
@@ -76,6 +110,8 @@ export function chatNew(): string {
         backpackMode: BackpackMode.OFF,
         backpackReferences: undefined,
         currentMode: AppMode.DEFAULT,
+        toolCallMessagesVisible: true, // Default to visible
+        toolsEnabled: false, // Default to disabled (opt-in)
     }
 
     chats.update(($chats) => [...$chats, newChat])
@@ -483,6 +519,26 @@ export function chatAppendStreamingPending(
 }
 
 //--------------------------------------------------------------
+/**
+ * Set tool call info buffer for display in timeline (not sent to LLM)
+ */
+export function chatSetToolCallInfo(chatId: string = "", info: string) {
+    chatId = getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat: ChatSession) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    tool_call_info_buffer: info,
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
 export async function chatPromoteStreamingPending(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
@@ -492,20 +548,28 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
+                const message: Message = {
+                    id: crypto.randomUUID(),
+                    role: "assistant",
+                    content: chat.response_buffer as string,
+                    thoughts: chat.thinking_buffer as string,
+                    timestamp: new Date(),
+                }
+
+                // Add tool call info if present (for display only, not sent to LLM)
+                if (chat.tool_call_info_buffer && chat.tool_call_info_buffer.trim()) {
+                    message.tool_call_info = chat.tool_call_info_buffer
+                }
+
                 return {
                     ...chat,
                     messages: [
                         ...chat.messages,
-                        {
-                            id: crypto.randomUUID(),
-                            role: "assistant",
-                            content: chat.response_buffer as string,
-                            thoughts: chat.thinking_buffer as string,
-                            timestamp: new Date(),
-                        },
+                        message,
                     ],
                     response_buffer: "",
                     thinking_buffer: "",
+                    tool_call_info_buffer: "",
                     isThinking: false,
                 }
             }

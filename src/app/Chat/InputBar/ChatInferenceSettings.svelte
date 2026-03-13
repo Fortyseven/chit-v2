@@ -1,7 +1,11 @@
 <script lang="ts">
-    import { chatUpdateSettings } from "$lib/chatSession/chatActions"
+    import {
+        chatSetToolsEnabled,
+        chatUpdateSettings,
+    } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
     import {
+        Build,
         Psychology,
         Receipt_long,
         Thermostat,
@@ -11,6 +15,7 @@
     let ctx = writable($currentChat?.settings?.num_ctx || 8192)
     let temp = writable($currentChat?.settings?.temperature || 0.6)
     let thinking = writable($currentChat?.settings?.enable_thinking ?? true)
+    let toolsEnabled = writable($currentChat?.toolsEnabled ?? false)
 
     ctx.subscribe((value) => {
         chatUpdateSettings("", {
@@ -30,9 +35,14 @@
         })
     })
 
+    toolsEnabled.subscribe((value) => {
+        chatSetToolsEnabled("", value)
+    })
+
     $: $ctx = $currentChat?.settings?.num_ctx || 8192
-    $: $temp = $currentChat?.settings?.temperature
+    $: $temp = $currentChat?.settings?.temperature ?? 0.6
     $: $thinking = $currentChat?.settings?.enable_thinking ?? true
+    $: $toolsEnabled = $currentChat?.toolsEnabled ?? false
 
     function handleContextBlur(event: Event) {
         const value = parseInt((event.target as HTMLInputElement).value, 10)
@@ -84,6 +94,15 @@
                 size="1.1em"
             />
             <input name="thinking" type="checkbox" bind:checked={$thinking} />
+        </label>
+    </div>
+    <div>
+        <label for="tools"
+            >TOOL&nbsp;<Build
+                color="var(--color-accent-complement)"
+                size="1.1em"
+            />
+            <input name="tools" type="checkbox" bind:checked={$toolsEnabled} />
         </label>
     </div>
     <!-- {/key} -->

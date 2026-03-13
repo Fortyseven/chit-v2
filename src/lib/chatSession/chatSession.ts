@@ -14,6 +14,7 @@ export interface Message {
     role: "user" | "assistant" | "system"
     timestamp?: Date
     media?: MediaAttachment[]
+    tool_call_info?: string // Tool call/result info for display only, not sent to LLM
 }
 
 export interface ChatSettings {
@@ -47,6 +48,7 @@ export interface ChatSession {
     lastTokenCount: number
     response_buffer: string
     thinking_buffer: string
+    tool_call_info_buffer: string // Temporary buffer for tool call display info
     hasThoughts: boolean
     isThinking: boolean
     settings: ChatSettings
@@ -56,6 +58,8 @@ export interface ChatSession {
     backpackMode: BackpackMode
     backpackReferences: BackpackReference[] | undefined
     currentMode: AppMode
+    toolCallMessagesVisible?: boolean // Per-chat toggle for tool call message visibility
+    toolsEnabled?: boolean // Per-chat toggle to enable/disable tool calling
 }
 
 export const chats = writable<ChatSession[]>([])

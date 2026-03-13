@@ -16,6 +16,7 @@
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
+    import ToolCallMessage from "./ToolCallMessage.svelte"
 
     // Update chat message
     function updateChatMessage(index: number, message: any) {
@@ -65,6 +66,22 @@
             }
         }
         return false
+    }
+
+    // Tool call message handling
+    let toolCallExpanded: Record<string, boolean> = {}
+
+    function toggleToolCall(key: string) {
+        toolCallExpanded[key] = !toolCallExpanded[key]
+    }
+
+    function parseToolCallInfo(toolCallInfo: string): any[] {
+        try {
+            return JSON.parse(toolCallInfo)
+        } catch (err) {
+            console.error("Failed to parse tool_call_info:", err)
+            return []
+        }
     }
 </script>
 
@@ -141,6 +158,26 @@
                         onUpdatedContent={updateChatMessage}
                     />
                 {/if}
+
+                <!-- Display tool call info if present (for transparency, not sent to LLM) -->
+                {#if message.tool_call_info && $currentChat?.toolCallMessagesVisible !== false}
+                    {#each parseToolCallInfo(message.tool_call_info) as toolCall, toolIndex}
+                        <ToolCallMessage
+                            toolName={toolCall.name}
+                            params={toolCall.params}
+                            result={toolCall.result}
+                            error={toolCall.error}
+                            expanded={toolCallExpanded[
+                                `${index}-${toolIndex}`
+                            ] || false}
+                            onToggle={() => {
+                                toolCallExpanded[`${index}-${toolIndex}`] =
+                                    !toolCallExpanded[`${index}-${toolIndex}`]
+                            }}
+                        />
+                    {/each}
+                {/if}
+
                 <ChatLogRegular_Assistant
                     content={message.content}
                     {index}

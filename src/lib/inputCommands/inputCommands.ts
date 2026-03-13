@@ -1,4 +1,5 @@
 import cmdArtPrompt from "./cmdArtPrompt"
+import cmdTools from "./cmdTools"
 import cmdRPStats from "./rp/cmdRPStats"
 
 export interface CommandResult {
@@ -25,6 +26,10 @@ const COMMANDS: CommandList = {
         description:
             "Macro for prompting that generates stats for characters in an RP session.",
         action: cmdRPStats,
+    },
+    tools: {
+        description: "List all available tools for tool calling.",
+        action: cmdTools,
     },
     help: {
         description: "List all available commands.",
