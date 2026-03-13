@@ -279,6 +279,7 @@ export class OpenAIDriver implements LLMDriver {
                         // Process content through Qwen tool detector first (if we have content)
                         let processedContent = delta.content
                         if (delta.content && toolsEnabled) {
+                            console.log('🔍 Processing delta.content through Qwen detector:', JSON.stringify(delta.content.substring(0, 200)))
                             const qwenResult = qwenToolDetector.processChunk(delta.content)
 
                             // Merge detected Qwen tool calls into buffer
@@ -291,6 +292,9 @@ export class OpenAIDriver implements LLMDriver {
 
                             // Use stripped content for display and assistant message
                             processedContent = qwenResult.contentToAppend
+                            console.log('🔍 Qwen processed content:', JSON.stringify(processedContent.substring(0, 200)))
+                        } else if (delta.content) {
+                            console.log('⚠️ Delta has content but tools not enabled or no content - toolsEnabled:', toolsEnabled)
                         }
 
                         // Collect assistant message content (use processed content if Qwen stripping occurred)
@@ -314,6 +318,17 @@ export class OpenAIDriver implements LLMDriver {
                             chatAppendStreamingPending(chatId, processedContent, false)
                         }
                     } catch {}
+                }
+            }
+
+            // Flush any remaining buffered Qwen tool calls at end of stream
+            if (toolsEnabled) {
+                const flushedCalls = qwenToolDetector.flush()
+                if (flushedCalls.length > 0) {
+                    hasToolCalls = true
+                    isQwenFormat = true
+                    console.log('🔧 Flushed Qwen tool calls at end of stream:', flushedCalls.length)
+                    toolCallsBuffer.push(...flushedCalls)
                 }
             }
 
@@ -490,6 +505,16 @@ export class OpenAIDriver implements LLMDriver {
                                 chatAppendStreamingPending(chatId, followUpContent, false)
                             }
                         } catch {}
+                    }
+                }
+
+                // Flush any remaining buffered Qwen tool calls at end of follow-up stream
+                if (toolsEnabled && isQwenFormat) {
+                    const flushedCalls = qwenToolDetector.flush()
+                    if (flushedCalls.length > 0) {
+                        followUpHasTools = true
+                        followUpToolCalls.push(...flushedCalls)
+                        console.log('🔧 Flushed Qwen tool calls at end of follow-up stream:', flushedCalls.length)
                     }
                 }
 

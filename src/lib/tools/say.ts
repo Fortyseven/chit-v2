@@ -21,9 +21,10 @@ export const sayTool: ToolDefinition = {
             await ttsSpeak(text, false)
             return {
                 success: true,
-                message: 'Speaking text aloud',
+                message: 'Spoke text aloud: ' + text,
                 length: text.length,
-                text: text.substring(0, 100) + (text.length > 100 ? '...' : '')
+                // text: text.substring(0, 100) + (text.length > 100 ? '...' : '')
+                text
             }
         } catch (error) {
             throw new Error(`Failed to speak text: ${error instanceof Error ? error.message : String(error)}`)
