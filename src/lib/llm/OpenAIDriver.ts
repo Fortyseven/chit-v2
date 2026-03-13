@@ -11,6 +11,7 @@ import {
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
+import { QwenToolDetector } from "./qwenToolDetection"
 import { ThinkingDetector } from "./thinkingDetection"
 
 export class OpenAIDriver implements LLMDriver {
@@ -217,9 +218,11 @@ export class OpenAIDriver implements LLMDriver {
             sndPlayTyping()
 
             const thinkingDetector = new ThinkingDetector()
+            const qwenToolDetector = new QwenToolDetector()
             let buffer = ""
             let toolCallsBuffer: any[] = []
             let hasToolCalls = false
+            let isQwenFormat = false
             let assistantMessage = ""
 
             while (true) {
@@ -241,9 +244,10 @@ export class OpenAIDriver implements LLMDriver {
                         const delta = json.choices?.[0]?.delta
                         if (!delta) continue
 
-                        // Handle tool calls in streaming response
+                        // Handle OpenAI native tool calls in streaming response
                         if (delta.tool_calls) {
                             hasToolCalls = true
+                            console.log('🔧 OpenAI native tool calls detected')
                             for (const toolCallDelta of delta.tool_calls) {
                                 const index = toolCallDelta.index ?? 0
 
@@ -269,12 +273,29 @@ export class OpenAIDriver implements LLMDriver {
                                     toolCallsBuffer[index].function.arguments += toolCallDelta.function.arguments
                                 }
                             }
-                            continue
+                        continue
                         }
 
-                        // Collect assistant message content (if any)
-                        if (delta.content) {
-                            assistantMessage += delta.content
+                        // Process content through Qwen tool detector first (if we have content)
+                        let processedContent = delta.content
+                        if (delta.content && toolsEnabled) {
+                            const qwenResult = qwenToolDetector.processChunk(delta.content)
+
+                            // Merge detected Qwen tool calls into buffer
+                            if (qwenResult.detectedCalls.length > 0) {
+                                hasToolCalls = true
+                                isQwenFormat = true
+                                console.log('🔧 Qwen XML tool calls detected:', qwenResult.detectedCalls.length)
+                                toolCallsBuffer.push(...qwenResult.detectedCalls)
+                            }
+
+                            // Use stripped content for display and assistant message
+                            processedContent = qwenResult.contentToAppend
+                        }
+
+                        // Collect assistant message content (use processed content if Qwen stripping occurred)
+                        if (processedContent) {
+                            assistantMessage += processedContent
                         }
 
                         // Process chunk through thinking detector (only if no tool calls)
@@ -288,6 +309,9 @@ export class OpenAIDriver implements LLMDriver {
                             if (result.contentToAppend) {
                                 chatAppendStreamingPending(chatId, result.contentToAppend, result.isThinking)
                             }
+                        } else if (processedContent) {
+                            // If we have tool calls but still have content to display (e.g., text before/after tool calls)
+                            chatAppendStreamingPending(chatId, processedContent, false)
                         }
                     } catch {}
                 }
@@ -295,7 +319,8 @@ export class OpenAIDriver implements LLMDriver {
 
             // Execute tool calls and get model's response with results
             if (toolsEnabled && toolCallsBuffer.length > 0) {
-                console.log('🔧 Tool calls received:', toolCallsBuffer)
+                console.log('🔧 Tool calls received:', toolCallsBuffer.length, 'calls')
+                console.log('🔧 Tool calls buffer:', JSON.stringify(toolCallsBuffer, null, 2))
                 const { getToolByName } = await import('../tools/index')
 
                 // Build tool response messages and collect display info
@@ -357,22 +382,44 @@ export class OpenAIDriver implements LLMDriver {
                 }
 
                 // Store tool call info in buffer for display (not sent to LLM)
+                console.log('🔧 Tool calls display info:', JSON.stringify(toolCallsDisplayInfo, null, 2))
                 chatSetToolCallInfo(chatId, JSON.stringify(toolCallsDisplayInfo))
 
                 // DON'T promote yet - we'll add tool info as metadata to the final response
 
                 // Now send tool results back to model for final response
-                console.log('🔧 Sending tool results back to model...')
+                console.log(`🔧 Sending tool results back to model (format: ${isQwenFormat ? 'Qwen XML' : 'OpenAI native'})...`)
 
-                const messagesWithToolResults = [
-                    ...oaiMessages,
-                    {
-                        role: "assistant",
-                        content: assistantMessage || null,
-                        tool_calls: toolCallsBuffer
-                    },
-                    ...toolMessages
-                ]
+                let messagesWithToolResults: any[]
+                if (isQwenFormat) {
+                    // Qwen format: send tool results as user message with <tool_response> tags
+                    const toolResponseContent = toolCallsDisplayInfo.map(tc =>
+                        `<tool_response>\n${tc.result}\n</tool_response>`
+                    ).join('\n')
+
+                    messagesWithToolResults = [
+                        ...oaiMessages,
+                        {
+                            role: "assistant",
+                            content: assistantMessage || "<tool_call>"
+                        },
+                        {
+                            role: "user",
+                            content: toolResponseContent
+                        }
+                    ]
+                } else {
+                    // OpenAI format: use tool role messages
+                    messagesWithToolResults = [
+                        ...oaiMessages,
+                        {
+                            role: "assistant",
+                            content: assistantMessage || null,
+                            tool_calls: toolCallsBuffer
+                        },
+                        ...toolMessages
+                    ]
+                }
 
                 const followUpBody: any = {
                     model,
@@ -401,6 +448,11 @@ export class OpenAIDriver implements LLMDriver {
                 const followUpDecoder = new TextDecoder()
                 let followUpBuffer = ""
 
+                // Reset detector for follow-up response
+                qwenToolDetector.reset()
+                let followUpToolCalls: any[] = []
+                let followUpHasTools = false
+
                 // Stream the model's response to tool results
                 while (true) {
                     const { value, done } = await followUpReader.read()
@@ -418,11 +470,33 @@ export class OpenAIDriver implements LLMDriver {
                         try {
                             const json = JSON.parse(payload)
                             const delta = json.choices?.[0]?.delta
-                            if (!delta?.content) continue
+                            if (!delta) continue
 
-                            chatAppendStreamingPending(chatId, delta.content, false)
+                            // Handle potential Qwen tool calls in follow-up response
+                            let followUpContent = delta.content
+                            if (delta.content && toolsEnabled && isQwenFormat) {
+                                const qwenResult = qwenToolDetector.processChunk(delta.content)
+
+                                if (qwenResult.detectedCalls.length > 0) {
+                                    followUpHasTools = true
+                                    followUpToolCalls.push(...qwenResult.detectedCalls)
+                                    console.log('🔧 Qwen XML tool calls detected in follow-up:', qwenResult.detectedCalls.length)
+                                }
+
+                                followUpContent = qwenResult.contentToAppend
+                            }
+
+                            if (followUpContent) {
+                                chatAppendStreamingPending(chatId, followUpContent, false)
+                            }
                         } catch {}
                     }
+                }
+
+                // TODO: Handle recursive tool calls if followUpHasTools is true
+                if (followUpHasTools) {
+                    console.warn('🔧 Model requested additional tool calls in follow-up response - not yet supported')
+                    console.warn('Tool calls:', followUpToolCalls)
                 }
 
                 console.log('🔧 Model responded with synthesized answer')
