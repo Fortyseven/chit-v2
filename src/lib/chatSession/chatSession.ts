@@ -23,6 +23,12 @@ export interface ChatSettings {
     enable_thinking: boolean
 }
 
+export interface ChatTTSSettings {
+    voice?: string | null
+    rate?: number
+    pitch?: number
+}
+
 export enum BackpackMode {
     OFF = "",
     SEARCH = "search",
@@ -60,6 +66,7 @@ export interface ChatSession {
     currentMode: AppMode
     toolCallMessagesVisible?: boolean // Per-chat toggle for tool call message visibility
     toolsEnabled?: boolean // Per-chat toggle to enable/disable tool calling
+    ttsSettings?: ChatTTSSettings // Per-chat TTS overrides (voice, rate, pitch)
 }
 
 export const chats = writable<ChatSession[]>([])

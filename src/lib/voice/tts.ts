@@ -74,18 +74,33 @@ function getEngine(): TTSEngine {
     return engines[id] || engines["webspeech"]
 }
 
+/**
+ * Merge global voiceSettings with per-chat TTS overrides from the active chat.
+ */
+function getEffectiveSpeakSettings() {
+    const global = get(voiceSettings)
+    const chatOverrides = get(currentChat)?.ttsSettings
+    return {
+        ...global,
+        voice: chatOverrides?.voice !== undefined ? (chatOverrides.voice ?? undefined) : (global.preferredVoice ?? undefined),
+        rate: chatOverrides?.rate ?? global.rate,
+        pitch: chatOverrides?.pitch ?? global.pitch,
+    }
+}
+
 export async function ttsSpeak(text: string, partial: boolean = false) {
     if (!text) return
     const settings = get(voiceSettings)
     if (!settings.enabled) return
     const engine = getEngine()
+    const eff = getEffectiveSpeakSettings()
     ttsCurrentText.set(text)
     await engine.speak({
         text,
-        voice: settings.preferredVoice || undefined,
-        rate: settings.rate,
-        pitch: settings.pitch,
-        volume: settings.volume,
+        voice: eff.voice,
+        rate: eff.rate,
+        pitch: eff.pitch,
+        volume: eff.volume,
         onStart: () => ttsSpeaking.set(true),
         onEnd: () => ttsSpeaking.set(false),
         onError: () => ttsSpeaking.set(false),
@@ -104,13 +119,14 @@ export function ttsSpeakQueued(text: string): Promise<void> {
             return
         }
         const engine = getEngine()
+        const eff = getEffectiveSpeakSettings()
         ttsCurrentText.set(text)
         engine.speak({
             text,
-            voice: settings.preferredVoice || undefined,
-            rate: settings.rate,
-            pitch: settings.pitch,
-            volume: settings.volume,
+            voice: eff.voice,
+            rate: eff.rate,
+            pitch: eff.pitch,
+            volume: eff.volume,
             onStart: () => ttsSpeaking.set(true),
             onEnd: () => { ttsSpeaking.set(false); resolve() },
             onError: () => { ttsSpeaking.set(false); resolve() },

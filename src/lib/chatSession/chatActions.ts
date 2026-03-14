@@ -16,6 +16,23 @@ export function chatSetToolCallMessagesVisible(chatId: string = "", visible: boo
 }
 
 //--------------------------------------------------------------
+// Update per-chat TTS settings (voice, rate, pitch)
+export function chatSetTtsSettings(chatId: string = "", patch: Partial<ChatTTSSettings>) {
+    chatId = getActiveChatId(chatId)
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    ttsSettings: { ...chat.ttsSettings, ...patch },
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
 // Set tools enabled toggle
 export function chatSetToolsEnabled(chatId: string = "", enabled: boolean) {
     chatId = getActiveChatId(chatId)
@@ -46,12 +63,13 @@ import { MediaAttachment } from "./chatAttachments"
 import { mediaStorage } from "./mediaStorage"
 
 import { GenericMessage } from "../llm/LLMDriver"
-import { ttsMaybeAutoSpeak, ttsStop } from "../voice/tts"
+import { ttsMaybeAutoSpeak, ttsStop, voiceSettings } from "../voice/tts"
 import {
     AppMode,
     BackpackMode,
     chats,
     ChatSession,
+    ChatTTSSettings,
     currentChat,
     Message,
 } from "./chatSession"
@@ -112,6 +130,11 @@ export function chatNew(): string {
         currentMode: AppMode.DEFAULT,
         toolCallMessagesVisible: true, // Default to visible
         toolsEnabled: false, // Default to disabled (opt-in)
+        ttsSettings: {
+            voice: get(voiceSettings).preferredVoice,
+            rate: get(voiceSettings).rate,
+            pitch: get(voiceSettings).pitch,
+        },
     }
 
     chats.update(($chats) => [...$chats, newChat])
