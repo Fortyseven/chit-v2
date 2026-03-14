@@ -2,6 +2,12 @@
     // @ts-ignore
     import { isRPMode } from "$lib/modes/modeUtils"
     import { wrapQuotesStreaming } from "$lib/text/quoteWrap"
+    import {
+        ttsSpeak,
+        ttsSpeaking,
+        ttsStop,
+        voiceSettings,
+    } from "$lib/voice/tts"
     import MarkdownIt from "markdown-it"
     import { createEventDispatcher, onMount } from "svelte"
     // @ts-ignore
@@ -147,11 +153,36 @@
             })
         }
 
+        function setupQuoteClickHandlers() {
+            if (!isRPMode()) return
+            const quotes = document.querySelectorAll<HTMLElement>(
+                ".quote:not([data-tts-bound])",
+            )
+            quotes.forEach((span) => {
+                span.dataset.ttsBound = "1"
+                span.addEventListener("click", (e) => {
+                    if (!$voiceSettings.enabled) return
+                    e.stopPropagation()
+                    const text = span.textContent?.trim()
+                    if (!text) return
+                    if ($ttsSpeaking) {
+                        ttsStop()
+                    } else {
+                        ttsSpeak(text)
+                    }
+                })
+            })
+        }
+
         // Initial setup
         setupCopyButtons()
+        setupQuoteClickHandlers()
 
-        // Set up a mutation observer to detect when new code blocks are added
-        const observer = new MutationObserver(setupCopyButtons)
+        // Set up a mutation observer to detect when new code blocks or quotes are added
+        const observer = new MutationObserver(() => {
+            setupCopyButtons()
+            setupQuoteClickHandlers()
+        })
         observer.observe(document.body, { childList: true, subtree: true })
 
         return () => {
@@ -248,6 +279,20 @@
         :global(.quote) {
             color: white;
             font-family: serif;
+            cursor: pointer;
+            border-radius: 2px;
+            transition:
+                background-color 0.15s ease,
+                color 0.15s ease;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.12);
+                color: var(--color-accent, #fff);
+            }
+
+            &:active {
+                background-color: rgba(255, 255, 255, 0.22);
+            }
         }
     }
 </style>

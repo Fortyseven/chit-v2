@@ -10,7 +10,9 @@ import {
     chatSetWasAborted,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
+import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
+import { QuoteTTSDetector } from "./quoteTTSDetection"
 import { QwenToolDetector } from "./qwenToolDetection"
 import { ThinkingDetector } from "./thinkingDetection"
 
@@ -219,6 +221,7 @@ export class OpenAIDriver implements LLMDriver {
 
             const thinkingDetector = new ThinkingDetector()
             const qwenToolDetector = new QwenToolDetector()
+            const quoteTTSDetector = new QuoteTTSDetector()
             let buffer = ""
             let toolCallsBuffer: any[] = []
             let hasToolCalls = false
@@ -311,15 +314,24 @@ export class OpenAIDriver implements LLMDriver {
 
                             // Append content to appropriate buffer
                             if (result.contentToAppend) {
+                                if (!result.isThinking) {
+                                    const { completedQuotes } = quoteTTSDetector.processChunk(result.contentToAppend)
+                                    for (const quote of completedQuotes) queueQuote(quote)
+                                }
                                 chatAppendStreamingPending(chatId, result.contentToAppend, result.isThinking)
                             }
                         } else if (processedContent) {
                             // If we have tool calls but still have content to display (e.g., text before/after tool calls)
+                            const { completedQuotes } = quoteTTSDetector.processChunk(processedContent)
+                            for (const quote of completedQuotes) queueQuote(quote)
                             chatAppendStreamingPending(chatId, processedContent, false)
                         }
                     } catch {}
                 }
             }
+
+            // Flush any open quote at end of stream
+            for (const quote of quoteTTSDetector.flush()) queueQuote(quote)
 
             // Flush any remaining buffered Qwen tool calls at end of stream
             if (toolsEnabled) {
@@ -463,8 +475,9 @@ export class OpenAIDriver implements LLMDriver {
                 const followUpDecoder = new TextDecoder()
                 let followUpBuffer = ""
 
-                // Reset detector for follow-up response
+                // Reset detectors for follow-up response
                 qwenToolDetector.reset()
+                quoteTTSDetector.reset()
                 let followUpToolCalls: any[] = []
                 let followUpHasTools = false
 
@@ -502,11 +515,16 @@ export class OpenAIDriver implements LLMDriver {
                             }
 
                             if (followUpContent) {
+                                const { completedQuotes } = quoteTTSDetector.processChunk(followUpContent)
+                                for (const quote of completedQuotes) queueQuote(quote)
                                 chatAppendStreamingPending(chatId, followUpContent, false)
                             }
                         } catch {}
                     }
                 }
+
+                // Flush any open quote at end of follow-up stream
+                for (const quote of quoteTTSDetector.flush()) queueQuote(quote)
 
                 // Flush any remaining buffered Qwen tool calls at end of follow-up stream
                 if (toolsEnabled && isQwenFormat) {
@@ -528,6 +546,9 @@ export class OpenAIDriver implements LLMDriver {
             }
 
         } catch (e) {
+            if (e instanceof DOMException && e.name === "AbortError") {
+                clearQuoteQueue()
+            }
             console.error("OpenAI chat error:", e)
         } finally {
             this.currentController = null

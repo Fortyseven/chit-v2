@@ -8,6 +8,7 @@ import { createWebSpeechEngine } from "./WebSpeechEngine"
 export interface VoiceSettings {
     ttsEngineId: string
     autoSpeak: boolean
+    autoSpeakQuotes: boolean
     preferredVoice: string | null
     rate: number
     pitch: number
@@ -23,6 +24,7 @@ const VOICE_SETTINGS_KEY = "chitVoiceSettings"
 const defaults: VoiceSettings = {
     ttsEngineId: "webspeech",
     autoSpeak: false,
+    autoSpeakQuotes: false,
     preferredVoice: null,
     rate: 1,
     pitch: 1,
@@ -88,6 +90,32 @@ export async function ttsSpeak(text: string, partial: boolean = false) {
         onEnd: () => ttsSpeaking.set(false),
         onError: () => ttsSpeaking.set(false),
     } as SpeakOptions)
+}
+
+/**
+ * Speak text and return a Promise that resolves when playback ends.
+ * Used for sequential queue playback (e.g., auto-speak quoted dialogue).
+ */
+export function ttsSpeakQueued(text: string): Promise<void> {
+    return new Promise<void>((resolve) => {
+        const settings = get(voiceSettings)
+        if (!settings.enabled || !text || !text.trim()) {
+            resolve()
+            return
+        }
+        const engine = getEngine()
+        ttsCurrentText.set(text)
+        engine.speak({
+            text,
+            voice: settings.preferredVoice || undefined,
+            rate: settings.rate,
+            pitch: settings.pitch,
+            volume: settings.volume,
+            onStart: () => ttsSpeaking.set(true),
+            onEnd: () => { ttsSpeaking.set(false); resolve() },
+            onError: () => { ttsSpeaking.set(false); resolve() },
+        } as SpeakOptions)
+    })
 }
 
 export function ttsStop() {

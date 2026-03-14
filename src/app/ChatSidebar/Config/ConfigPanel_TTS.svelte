@@ -141,6 +141,23 @@
     </div>
     <div class="form-group">
         <div class="field">
+            <label
+                title="Automatically speak quoted dialogue as it streams in RP mode."
+            >
+                Auto-speak quoted dialogue (RP)
+                <input
+                    type="checkbox"
+                    checked={$voiceSettings.autoSpeakQuotes}
+                    on:change={(e) =>
+                        updateVoiceSettings({
+                            autoSpeakQuotes: e.target.checked,
+                        })}
+                />
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="field">
             <label title="Select which TTS engine to configure">
                 TTS Engine
                 <div class="engine-selector">

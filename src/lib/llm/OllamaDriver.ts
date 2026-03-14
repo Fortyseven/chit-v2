@@ -10,7 +10,9 @@ import {
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
+import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
+import { QuoteTTSDetector } from "./quoteTTSDetection"
 import { ThinkingDetector } from "./thinkingDetection"
 
 export class OllamaDriver implements LLMDriver {
@@ -112,6 +114,7 @@ export class OllamaDriver implements LLMDriver {
                 const stream = await inst.chat(payload)
                 this.currentStream = stream
                 const thinkingDetector = new ThinkingDetector()
+                const quoteTTSDetector = new QuoteTTSDetector()
                 for await (const part of stream) {
                     if (this.aborted) {
                         break
@@ -125,6 +128,10 @@ export class OllamaDriver implements LLMDriver {
 
                     // Append content to appropriate buffer
                     if (result.contentToAppend) {
+                        if (!result.isThinking) {
+                            const { completedQuotes } = quoteTTSDetector.processChunk(result.contentToAppend)
+                            for (const quote of completedQuotes) queueQuote(quote)
+                        }
                         chatAppendStreamingPending(chatId, result.contentToAppend, result.isThinking)
                     }
 
@@ -133,8 +140,11 @@ export class OllamaDriver implements LLMDriver {
                         sndPlayTone(60 + Math.random() * 150, 250, 0.075)
                     }
                 }
+                // Flush any open quote at end of stream
+                for (const quote of quoteTTSDetector.flush()) queueQuote(quote)
             } catch (e) {
                 if (e instanceof DOMException && e.name === "AbortError") {
+                    clearQuoteQueue()
                     return
                 }
                 console.error("Ollama chat error:", e)
