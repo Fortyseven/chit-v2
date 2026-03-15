@@ -44,10 +44,16 @@ export class OpenAITTSEngine implements TTSEngine {
             const data = await response.json()
             // OpenAI returns { voices: [...] }
             const voices = Array.isArray(data.voices) ? data.voices : []
-            return voices.map((v: any) => ({
-                id: v.id || v.name,
-                name: v.name || v.id,
-            }))
+            return voices
+                .map((v: any) => ({
+                    id: v.id || v.name,
+                    name: v.name || v.id,
+                }))
+                .sort((a, b) =>
+                    String(a.name).localeCompare(String(b.name), undefined, {
+                        sensitivity: "base",
+                    }),
+                )
         } catch (e) {
             console.error("OpenAITTSEngine.listVoices error", e)
             throw e
