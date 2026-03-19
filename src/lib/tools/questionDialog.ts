@@ -1,4 +1,6 @@
-import { writable } from 'svelte/store'
+import { get, writable } from 'svelte/store'
+import { sndIsTypingPlaying, sndPlayQuestion, sndPlayTyping, sndStopTyping } from '../audio'
+import { ttsSpeaking, ttsStop } from '../voice/tts'
 
 export interface QuestionOption {
     label: string
@@ -20,6 +22,8 @@ export const questionDialog = writable<QuestionDialogState>({
 })
 
 let pendingResolve: ((value: string) => void) | null = null
+let wasSpeaking = false
+let wasTypingPlaying = false
 
 export async function askQuestion(
     question: string,
@@ -27,6 +31,22 @@ export async function askQuestion(
 ): Promise<string> {
     return new Promise((resolve) => {
         pendingResolve = resolve
+
+        // Pause TTS if currently speaking
+        wasSpeaking = get(ttsSpeaking)
+        if (wasSpeaking) {
+            ttsStop()
+        }
+
+        // Pause typing audio if currently playing
+        wasTypingPlaying = sndIsTypingPlaying()
+        if (wasTypingPlaying) {
+            sndStopTyping()
+        }
+
+        // Play question sound
+        sndPlayQuestion()
+
         questionDialog.set({
             open: true,
             question,
@@ -47,6 +67,13 @@ export function submitAnswer(answer: string) {
         pendingResolve(answer)
         pendingResolve = null
     }
+    // Resume typing audio if it was playing before
+    if (wasTypingPlaying) {
+        sndPlayTyping()
+    }
+    // Note: We don't resume TTS here as user submitted an answer
+    wasSpeaking = false
+    wasTypingPlaying = false
 }
 
 export function closeQuestionDialog() {
@@ -60,4 +87,11 @@ export function closeQuestionDialog() {
         pendingResolve('')
         pendingResolve = null
     }
+    // Resume typing audio if it was playing before
+    if (wasTypingPlaying) {
+        sndPlayTyping()
+    }
+    // Note: We don't resume TTS here as dialog was cancelled
+    wasSpeaking = false
+    wasTypingPlaying = false
 }

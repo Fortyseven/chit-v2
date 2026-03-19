@@ -13,12 +13,21 @@ audioTyping.loop = true
 audioTyping.preload = "auto"
 audioTyping.volume = 0.5
 
+const audioQuestion = new Audio("assets/audio/question.wav")
+audioQuestion.preload = "auto"
+
 // const audioFail = new Audio("assets/audio/fail.wav")
 // audioResponse.preload = "auto"
 
 export function sndPlayResponse() {
     if (get(appState).soundEnabled) {
         audioResponse.play()
+    }
+}
+
+export function sndPlayQuestion() {
+    if (get(appState).soundEnabled) {
+        audioQuestion.play()
     }
 }
 
@@ -41,10 +50,12 @@ export function sndPlayTyping() {
 }
 
 export function sndStopTyping() {
-    if (get(appState).soundEnabled) {
-        audioTyping.pause()
-        audioTyping.currentTime = 0
-    }
+    audioTyping.pause()
+    audioTyping.currentTime = 0
+}
+
+export function sndIsTypingPlaying() {
+    return !audioTyping.paused
 }
 // New tone function
 let sharedAudioCtx: AudioContext | undefined

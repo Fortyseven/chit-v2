@@ -9,7 +9,7 @@ export interface AskQuestionsParams {
 }
 
 export const askQuestionsTool: ToolDefinition = {
-    name: 'ask_questions',
+    name: 'ask_question',
     description: 'Ask the user a question with optional multiple choice answers or freeform response',
     parameters: {
         question: {
