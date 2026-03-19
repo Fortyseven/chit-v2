@@ -7,12 +7,14 @@ import type { ToolDefinition } from './types';
 import { calculatorTool } from './calculator';
 // import { echoTool } from './__echo';
 // import { sayTool } from './say';
+import { askQuestionsTool } from './ask-questions';
 import { timeTool } from './time';
 
 export const tools: ToolDefinition[] = [
     // echoTool,
     timeTool,
     calculatorTool,
+    askQuestionsTool,
     // sayTool
 ];
 

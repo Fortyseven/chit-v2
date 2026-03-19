@@ -7,6 +7,7 @@
     import PageContent from "./app/PageContent.svelte"
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
     import ConfirmationDialog from "./app/UI/ConfirmationDialog.svelte"
+    import QuestionDialog from "./app/UI/QuestionDialog.svelte"
 
     import "./lib/appState/appStateStorage"
     import "./lib/audio"
@@ -66,6 +67,7 @@
     onConfirm={confirmCompactConversation}
     onCancel={closeCompactConversationDialog}
 />
+<QuestionDialog />
 <SvelteToast options={toastOptions} />
 
 <style lang="scss">
