@@ -1,22 +1,31 @@
 <script lang="ts">
     import { currentChat } from "$lib/chatSession/chatSession"
+    import { estimateTokens } from "$lib/text/tokenEstimate"
 
     export let inputLength = 0
     export let systemPromptLength = 0
 
     $: contextLimit = $currentChat?.settings?.num_ctx || 0
-    $: systemPromptLength = $currentChat?.systemPrompt?.length || 0
-    $: conversationLength =
+    $: systemPromptLength = estimateTokens(
+        $currentChat?.systemPrompt?.length || 0,
+    )
+    $: conversationLength = estimateTokens(
         $currentChat?.messages?.reduce((acc, message) => {
             return acc + (message?.content?.length || 0)
-        }, 0) || 0
+        }, 0) || 0,
+    )
 
-    $: fullChatLength = systemPromptLength + conversationLength + inputLength
+    $: inputTokens = estimateTokens(inputLength)
+    $: fullChatLength = systemPromptLength + conversationLength + inputTokens
     $: overflow = fullChatLength >= contextLimit
 
     $: title =
-        [inputLength, systemPromptLength, conversationLength].join(" + ") +
-        ` = ${fullChatLength} / ${contextLimit} tokens (input, system, conversation)`
+        [
+            Math.round(inputTokens),
+            Math.round(systemPromptLength),
+            Math.round(conversationLength),
+        ].join(" + ") +
+        ` = ${Math.round(fullChatLength)} / ${contextLimit} tokens (input, system, conversation)`
 </script>
 
 <div class="counter">

@@ -59,6 +59,7 @@ import {
     applyUserVariables,
 } from "../templating/templating"
 import { normalizeCharacters } from "../text/charNormalization"
+import { estimateTokens } from "../text/tokenEstimate"
 import { MediaAttachment } from "./chatAttachments"
 import { mediaStorage } from "./mediaStorage"
 
@@ -504,7 +505,7 @@ export function chatAppendStreamingPending(
 
     // Track tokens for scroll batching (only count response text, not thinking)
     if (!isThinking) {
-        tokensSinceLastScroll += normalizedFragment.length
+        tokensSinceLastScroll += estimateTokens(normalizedFragment.length)
     }
 
     if (isThinking) {
@@ -513,7 +514,7 @@ export function chatAppendStreamingPending(
                 if (chat.id === chatId) {
                     chat.isThinking = true
                     chat.hasThoughts = true
-                    chat.lastTokenCount += normalizedFragment.length
+                    chat.lastTokenCount += estimateTokens(normalizedFragment.length)
                     return {
                         ...chat,
                         thinking_buffer: ((chat.thinking_buffer as string) +
@@ -528,7 +529,7 @@ export function chatAppendStreamingPending(
             $chats.map((chat: ChatSession) => {
                 if (chat.id === chatId) {
                     chat.isThinking = false
-                    chat.lastTokenCount += normalizedFragment.length
+                    chat.lastTokenCount += estimateTokens(normalizedFragment.length)
                     return {
                         ...chat,
                         response_buffer: ((chat.response_buffer as string) +
