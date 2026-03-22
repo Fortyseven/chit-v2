@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { advancedInferenceDialogOpen } from "$lib/appState/advancedInferenceDialogState"
     import {
         chatSetToolsEnabled,
         chatUpdateSettings,
@@ -55,7 +56,13 @@
 <div id="ChatInferenceSettings">
     <!-- {#key $currentChat} -->
     <div>
-        <label for="context"
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <label
+            for="context"
+            class="clickable"
+            title="Click to open advanced inference settings"
+            on:click={() => ($advancedInferenceDialogOpen = true)}
             >CNTX&nbsp;<Receipt_long
                 color="var(--color-accent-complement)"
                 size="1.1em"
@@ -72,7 +79,13 @@
         />
     </div>
     <div>
-        <label for="temp"
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <label
+            for="temp"
+            class="clickable"
+            title="Click to open advanced inference settings"
+            on:click={() => ($advancedInferenceDialogOpen = true)}
             >TEMP&nbsp;<Thermostat
                 color="var(--color-accent-complement)"
                 size="1.1em"
@@ -130,6 +143,13 @@
             display: flex;
             text-transform: uppercase;
             font-weight: bold;
+
+            &.clickable {
+                cursor: pointer;
+                &:hover {
+                    color: var(--color-accent-complement);
+                }
+            }
         }
 
         input {

@@ -1,5 +1,6 @@
 <script>
     import { SvelteToast } from "@zerodevx/svelte-toast"
+    import AdvancedInferenceDialog from "./app/Chat/InputBar/AdvancedInferenceDialog.svelte"
     import InputBar from "./app/Chat/InputBar/InputBar.svelte"
     import ChatHeader from "./app/Chat/Timeline/ChatHeader/ChatHeader.svelte"
     import ConvoSidebar from "./app/ChatSidebar/Sidebar.svelte"
@@ -41,6 +42,8 @@
         }
     }
 </script>
+
+<AdvancedInferenceDialog />
 
 <AppFramework hasModeSidebar={isRPMode}>
     <div slot="sidebar" class="sidebar">

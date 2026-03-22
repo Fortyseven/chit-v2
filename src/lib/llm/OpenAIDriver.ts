@@ -196,7 +196,12 @@ export class OpenAIDriver implements LLMDriver {
                 messages: oaiMessages,
                 temperature: config.temp ?? DEFAULT_TEMPERATURE,
                 stream: config.stream ?? true,
-                chat_template_kwargs: { enable_thinking: config.enable_thinking }
+                chat_template_kwargs: { enable_thinking: config.enable_thinking },
+                ...(config.top_p !== undefined && { top_p: config.top_p }),
+                ...(config.presence_penalty !== undefined && { presence_penalty: config.presence_penalty }),
+                ...(config.repeat_penalty !== undefined && { frequency_penalty: config.repeat_penalty }),
+                ...(config.top_k !== undefined && { top_k: config.top_k }),
+                ...(config.seed !== undefined && { seed: config.seed }),
             }
 
             if (toolDefinitions && toolDefinitions.length > 0) {
@@ -453,7 +458,12 @@ export class OpenAIDriver implements LLMDriver {
                     messages: messagesWithToolResults,
                     temperature: config.temp ?? DEFAULT_TEMPERATURE,
                     stream: true,
-                    chat_template_kwargs: { enable_thinking: config.enable_thinking }
+                    chat_template_kwargs: { enable_thinking: config.enable_thinking },
+                    ...(config.top_p !== undefined && { top_p: config.top_p }),
+                    ...(config.presence_penalty !== undefined && { presence_penalty: config.presence_penalty }),
+                    ...(config.repeat_penalty !== undefined && { frequency_penalty: config.repeat_penalty }),
+                    ...(config.top_k !== undefined && { top_k: config.top_k }),
+                    ...(config.seed !== undefined && { seed: config.seed }),
                 }
 
                 // Make second API call with tool results

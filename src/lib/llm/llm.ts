@@ -186,11 +186,19 @@ export class LLMInterface {
         const ctx = chat_session.settings?.num_ctx || DEFAULT_CONTEXT
         const enable_thinking = chat_session.settings?.enable_thinking ?? true
 
+        const advancedConfig: Record<string, number> = {}
+        if (chat_session.settings?.top_p !== undefined) advancedConfig.top_p = chat_session.settings.top_p
+        if (chat_session.settings?.presence_penalty !== undefined) advancedConfig.presence_penalty = chat_session.settings.presence_penalty
+        if (chat_session.settings?.repeat_penalty !== undefined) advancedConfig.repeat_penalty = chat_session.settings.repeat_penalty
+        if (chat_session.settings?.top_k !== undefined) advancedConfig.top_k = chat_session.settings.top_k
+        if (chat_session.settings?.seed !== undefined) advancedConfig.seed = chat_session.settings.seed
+
         await driver.chat(chatId, messages, chat_session.model_name as string, {
             stream: true,
             temp,
             ctx,
             enable_thinking,
+            ...advancedConfig,
         })
     }
 }

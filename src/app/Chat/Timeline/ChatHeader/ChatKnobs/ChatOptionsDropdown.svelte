@@ -1,6 +1,7 @@
 <script lang="ts">
     import ContextMenu from "$app/UI/ContextMenu.svelte"
     import IconButton from "$app/UI/IconButton.svelte"
+    import { advancedInferenceDialogOpen } from "$lib/appState/advancedInferenceDialogState"
     import {
         chatGenerateSummary,
         chatGetAllContents,
@@ -11,7 +12,6 @@
     import { chatGenerateTitle } from "$lib/chatSession/chatTitler"
     import { openCompactConversationDialog } from "$lib/chatSession/compactConversationDialog"
     import { Settings } from "svelte-google-materialdesign-icons"
-
 
     //TODO: convert this to a general component
 
@@ -102,6 +102,14 @@
         },
         { name: "-" }, // Separator
         { name: "Save chat to file", action: saveChatToFile },
+        { name: "-" }, // Separator
+        {
+            name: "Advanced inference settings",
+            action: () => {
+                $advancedInferenceDialogOpen = true
+                isOpen = false
+            },
+        },
     ]
 </script>
 

@@ -87,6 +87,11 @@ export class OllamaDriver implements LLMDriver {
             options: {
                 temperature: config.temp || DEFAULT_TEMPERATURE,
                 num_ctx: config.ctx || DEFAULT_CONTEXT,
+                ...(config.top_p !== undefined && { top_p: config.top_p }),
+                ...(config.presence_penalty !== undefined && { presence_penalty: config.presence_penalty }),
+                ...(config.repeat_penalty !== undefined && { repeat_penalty: config.repeat_penalty }),
+                ...(config.top_k !== undefined && { top_k: config.top_k }),
+                ...(config.seed !== undefined && { seed: config.seed }),
             },
         }
 

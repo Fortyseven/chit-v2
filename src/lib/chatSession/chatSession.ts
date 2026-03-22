@@ -21,6 +21,11 @@ export interface ChatSettings {
     temperature: number
     num_ctx: number
     enable_thinking: boolean
+    top_p?: number
+    presence_penalty?: number
+    repeat_penalty?: number
+    top_k?: number
+    seed?: number
 }
 
 export interface ChatTTSSettings {
