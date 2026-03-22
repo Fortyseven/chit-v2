@@ -277,8 +277,9 @@
         }
 
         :global(.quote) {
-            color: white;
-            font-family: serif;
+            color: #fff;
+            font-family: var(--font-quoted, monospace);
+            filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
             cursor: pointer;
             border-radius: 2px;
             transition:
