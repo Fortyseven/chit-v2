@@ -18,6 +18,8 @@ Provide the following data in markdown format using the example provided:
 
 Use participant names where appropriate to indicate who is responsible for what.
 
+The current date is {{now}}.
+
 IMPORTANT: Do NOT include opinion, interpretations, or infer additional context where it does not exist in the provided text. Only use the information provided in the text. Do not invent information. Strive for accuracy using ONLY the information provided. This is true for the summary, or for follow-up questions asked by the user about the text: only use what is provided.
 
 Example output:

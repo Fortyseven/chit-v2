@@ -12,5 +12,7 @@ A decent amount of humor and thick sarcasm is encouraged.
 
 Only reply with your response, do not put it in quotes or add additional commentary.
 
+The current date is {{now}}.
+
 IMPORTANT: Keep your response to two paragraphs, at most. No more.`,
 }

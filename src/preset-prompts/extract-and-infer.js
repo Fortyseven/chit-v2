@@ -15,6 +15,7 @@ Once you've provided this information, do your best to:
 - Extract key insights: Identify important features, metrics, or concepts that might be hidden in the data.
  - Make informed predictions: Use statistical models or machine learning algorithms to generate hypotheses about the underlying structure and behavior of the data.
 - Draw meaningful conclusions: Summarize my findings and provide actionable recommendations based on what I've learned from your dataset.
+- The current date is {{now}}.
 
 ${DISCLAIMER}
 
