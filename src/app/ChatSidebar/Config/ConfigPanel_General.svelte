@@ -153,24 +153,6 @@
 </div>
 
 <style>
-    .tabs {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-        button {
-            background: #111;
-            color: var(--color-accent);
-            border: 1px solid #444;
-            padding: 0.5rem 0.75rem;
-            cursor: pointer;
-            border-radius: var(--border-radius-standard);
-            font-weight: 600;
-        }
-        button.active {
-            background: var(--color-background-lighter);
-            border-color: var(--color-accent);
-        }
-    }
     .form-group {
         * {
             box-sizing: border-box !important;
@@ -201,8 +183,7 @@
                     margin-top: 0.25rem;
                 }
 
-                input[type="text"],
-                input[type="password"] {
+                input[type="text"] {
                     width: 100%;
                     padding: 0.5rem;
                     border-radius: var(--border-radius-standard);
@@ -250,52 +231,6 @@
                     opacity: 0.7;
                 }
             }
-        }
-    }
-
-    .provider-selector {
-        display: flex;
-        gap: 1rem;
-        margin-top: 0.5rem;
-
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: var(--border-radius-standard);
-            background-color: #111;
-            border: 1px solid #555;
-            transition: all 0.2s;
-
-            input[type="radio"] {
-                margin: 0;
-                cursor: pointer;
-            }
-
-            &:has(input:checked) {
-                background-color: var(--color-background-lighter);
-                border-color: var(--color-accent);
-                color: var(--color-accent);
-            }
-        }
-    }
-
-    .input-with-button {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.25rem;
-
-        input {
-            flex: 1;
-        }
-
-        button {
-            width: auto !important;
-            padding: 0.5rem 1rem;
-            white-space: nowrap;
-            flex-shrink: 0;
         }
     }
 </style>
