@@ -26,7 +26,9 @@
         "@floating-ui/dom": "^1.6.12",
         "@mozilla/readability": "^0.6.0",
         "autoprefixer": "^10.4.20",
+        "katex": "^0.16.44",
         "markdown-it": "^14.1.0",
+        "markdown-it-texmath": "^1.0.0",
         "ollama": "^0.5.11",
         "svelte-google-materialdesign-icons": "^1.0.5",
         "zod-to-json-schema": "^3.23.5"

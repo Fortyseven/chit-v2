@@ -8,7 +8,10 @@
         ttsStop,
         voiceSettings,
     } from "$lib/voice/tts"
+    import katex from "katex"
+    import "katex/dist/katex.min.css"
     import MarkdownIt from "markdown-it"
+    import texmath from "markdown-it-texmath"
     import { createEventDispatcher, onMount } from "svelte"
     // @ts-ignore
     import { hljs } from "../../vendor/highlight.min.js"
@@ -53,6 +56,17 @@
             )
         },
     })
+
+    // Keep RP-mode quote behavior unchanged for now.
+    if (!isRPMode()) {
+        md.use(texmath, {
+            engine: katex,
+            delimiters: ["dollars", "beg_end"],
+            katexOptions: {
+                throwOnError: false,
+            },
+        })
+    }
 
     // Component state
     let editableDiv: HTMLDivElement
@@ -274,6 +288,20 @@
 
         :global(code) {
             font-family: monospace;
+        }
+
+        :global(.katex-display) {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.2em 0;
+        }
+
+        :global(.katex-display > .katex) {
+            max-width: 100%;
+        }
+
+        :global(.katex) {
+            font-size: 1.02em;
         }
 
         :global(.quote) {
