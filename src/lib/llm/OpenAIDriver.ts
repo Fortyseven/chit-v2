@@ -12,6 +12,7 @@ import {
 } from "../chatSession/chatActions"
 import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
+import { stripJsonFences } from "./LLMDriver"
 import { QuoteTTSDetector } from "./quoteTTSDetection"
 import { QwenToolDetector } from "./qwenToolDetection"
 import { ThinkingDetector } from "./thinkingDetection"
@@ -108,7 +109,7 @@ export class OpenAIDriver implements LLMDriver {
         const data = await res.json()
 
         // OpenAI returns choices[0].message.content as valid JSON
-        return JSON.parse(data.choices?.[0]?.message?.content)
+        return JSON.parse(stripJsonFences(data.choices?.[0]?.message?.content))
     }
 
     async refreshModels() {

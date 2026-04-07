@@ -83,7 +83,7 @@ export async function chatGenerateTitle(chatId: string = "") {
             }
         )
 
-        console.log("RESPONSE: ", response)
+        console.info(`New title: '${response}'`)
 
         try {
             chatSetTitle(chatId, Title.parse(response).short_summary_title)

@@ -16,6 +16,17 @@ export interface ChatConfig {
     seed?: number
 }
 
+/**
+ * Strip Markdown code fences that some models wrap JSON responses in.
+ * Handles ``` and ```json variants with optional surrounding whitespace.
+ */
+export function stripJsonFences(raw: string): string {
+    return raw
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/\s*```$/, "")
+        .trim()
+}
+
 export interface LLMDriver {
     abort(): void
     refreshModels(): Promise<void>

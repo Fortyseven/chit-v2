@@ -12,6 +12,7 @@ import {
 } from "../chatSession/chatActions"
 import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
+import { stripJsonFences } from "./LLMDriver"
 import { QuoteTTSDetector } from "./quoteTTSDetection"
 import { ThinkingDetector } from "./thinkingDetection"
 
@@ -196,6 +197,6 @@ export class OllamaDriver implements LLMDriver {
 
         console.log("chatFormatted result:", result)
 
-        return JSON.parse(result.message.content)
+        return JSON.parse(stripJsonFences(result.message.content))
     }
 }
