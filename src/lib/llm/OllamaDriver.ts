@@ -77,11 +77,11 @@ export class OllamaDriver implements LLMDriver {
             model,
             messages: messages.map(
                 (m) =>
-                    ({
-                        role: m.role,
-                        content: m.content,
-                        images: m.images,
-                    } as Message)
+                ({
+                    role: m.role,
+                    content: m.content,
+                    images: m.images,
+                } as Message)
             ),
             stream: config.stream ?? true,
             think: config.enable_thinking ?? true,
@@ -179,11 +179,11 @@ export class OllamaDriver implements LLMDriver {
             model,
             messages: messages.map(
                 (m) =>
-                    ({
-                        role: m.role,
-                        content: m.content,
-                        images: m.images,
-                    } as Message)
+                ({
+                    role: m.role,
+                    content: m.content,
+                    images: m.images,
+                } as Message)
             ),
             stream: false,
             format: format,

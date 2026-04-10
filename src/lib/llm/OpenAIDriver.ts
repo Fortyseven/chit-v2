@@ -282,7 +282,7 @@ export class OpenAIDriver implements LLMDriver {
                                     toolCallsBuffer[index].function.arguments += toolCallDelta.function.arguments
                                 }
                             }
-                        continue
+                            continue
                         }
 
                         // Process content through Qwen tool detector first (if we have content)
@@ -332,7 +332,7 @@ export class OpenAIDriver implements LLMDriver {
                             for (const quote of completedQuotes) queueQuote(quote)
                             chatAppendStreamingPending(chatId, processedContent, false)
                         }
-                    } catch {}
+                    } catch { }
                 }
             }
 
@@ -530,7 +530,7 @@ export class OpenAIDriver implements LLMDriver {
                                 for (const quote of completedQuotes) queueQuote(quote)
                                 chatAppendStreamingPending(chatId, followUpContent, false)
                             }
-                        } catch {}
+                        } catch { }
                     }
                 }
 
