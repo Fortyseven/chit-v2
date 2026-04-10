@@ -9,6 +9,7 @@ import exploitation from "./coding/exploitation.js"
 import analysis from "./analysis.js"
 import eli5 from "./eli5.js"
 import extract_and_infer from "./extract-and-infer.js"
+import ruthlessly_adversarial from "./fun/ruthlessly-adversarial.js"
 import general from "./general.js"
 import geolocation from "./geolocation.js"
 import art_prompter from "./gfx/art_prompter.js"
@@ -57,6 +58,7 @@ const FUN_PROMPTS = {
     linux_prompt,
     gtei,
     retort,
+    ruthlessly_adversarial,
 }
 
 export default {
