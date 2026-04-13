@@ -21,6 +21,7 @@ import llm_prompt_enhance from "./llm-prompt-enhance.js"
 import llm_prompt from "./llm-prompt.js"
 import qna from "./qna.js"
 import retort from "./retort.js"
+import study_mode from "./study-mode.js"
 import summarize from "./summarize.js"
 import summary_meeting from "./summary-meeting.js"
 import translate from "./translate.js"
@@ -35,6 +36,7 @@ const GENERAL_PROMPTS = {
     llm_prompt,
     llm_prompt_enhance,
     qna,
+    study_mode,
     summarize,
     summary_meeting,
     translate,
