@@ -8,6 +8,7 @@
         chatShouldScrollDuringStream,
     } from "$lib/chatSession/chatActions"
     import { streamingState } from "$lib/chatSession/streamingState"
+    import { chats, currentChat } from "$lib/chatSession/chatSession"
 
     import "$lib/appState/appStateStorage"
     import "$lib/audio"
@@ -19,6 +20,9 @@
     let isStreaming = false
     let userScrolledUp = false
     const SCROLL_THRESHOLD = 100 // pixels from bottom to consider "at bottom"
+    let previousChatId: string | null = null
+    let scrollSaveTimer: ReturnType<typeof setTimeout> | undefined
+    let skipNextAfterUpdate = false
 
     function scrollDown(): void {
         setTimeout(
@@ -36,10 +40,69 @@
         return maxScroll - currentScroll < SCROLL_THRESHOLD
     }
 
+    function saveScrollPosition(chatId: string | null): void {
+        if (!chatId || !scrollWindowEl) return
+        chats.update(($chats) =>
+            $chats.map((c) =>
+                c.id === chatId
+                    ? { ...c, scrollTop: scrollWindowEl!.scrollTop }
+                    : c
+            )
+        )
+    }
+
     function handleScroll(): void {
         // Track if user has manually scrolled up
         userScrolledUp = !isNearBottom()
+
+        // Debounced save of scroll position to current session
+        clearTimeout(scrollSaveTimer)
+        scrollSaveTimer = setTimeout(() => {
+            const chat = currentChatValue
+            if (chat) saveScrollPosition(chat.id)
+        }, 300)
     }
+
+    let currentChatValue: { id: string; scrollTop?: number } | null = null
+    let pendingScrollRestore: number | null = null
+
+    function restoreOrScrollDown(savedScroll: number | undefined): void {
+        if (savedScroll != null) {
+            if (scrollWindowEl) {
+                setTimeout(() => {
+                    scrollWindowEl?.scrollTo(0, savedScroll)
+                }, 50)
+            } else {
+                // DOM not mounted yet (e.g. page reload) — defer to afterUpdate
+                pendingScrollRestore = savedScroll
+            }
+        } else {
+            scrollDown()
+        }
+    }
+
+    // Track session changes to save/restore scroll position
+    const unsubChat = currentChat.subscribe(($chat) => {
+        const newId = $chat?.id ?? null
+
+        if (newId !== previousChatId) {
+            // Save scroll position for the outgoing session
+            if (previousChatId) {
+                clearTimeout(scrollSaveTimer)
+                saveScrollPosition(previousChatId)
+            }
+
+            previousChatId = newId
+            skipNextAfterUpdate = true
+
+            // Restore scroll position for the incoming session
+            if ($chat) {
+                restoreOrScrollDown($chat.scrollTop)
+            }
+        }
+
+        currentChatValue = $chat ? { id: $chat.id, scrollTop: $chat.scrollTop } : null
+    })
 
     function performBatchedScroll(): void {
         // Only scroll if streaming is active, scroll threshold reached, and user hasn't scrolled up
@@ -51,7 +114,7 @@
 
     // Track streaming state and perform batched scroll during streaming
     const unsubscribe = streamingState.subscribe(($ss) => {
-        isStreaming = ($ss.response_buffer.length) > 0
+        isStreaming = $ss.response_buffer.length > 0
 
         // If streaming just ended, reset user scroll tracking
         if (!isStreaming) {
@@ -67,10 +130,28 @@
         }
     })
 
-    onDestroy(unsubscribe)
+    onDestroy(() => {
+        unsubscribe()
+        unsubChat()
+        clearTimeout(scrollSaveTimer)
+    })
 
     // Scroll after component updates, but only if streaming has completed and user is near bottom
+    // Skip if we just switched sessions (scroll restoration is handled by the currentChat subscription)
     afterUpdate(() => {
+        // Handle deferred scroll restore (e.g. after page reload when DOM wasn't ready)
+        if (pendingScrollRestore != null && scrollWindowEl) {
+            const pos = pendingScrollRestore
+            pendingScrollRestore = null
+            setTimeout(() => {
+                scrollWindowEl?.scrollTo(0, pos)
+            }, 50)
+            return
+        }
+        if (skipNextAfterUpdate) {
+            skipNextAfterUpdate = false
+            return
+        }
         if (isStreaming) {
             return // Skip scroll updates during streaming
         }

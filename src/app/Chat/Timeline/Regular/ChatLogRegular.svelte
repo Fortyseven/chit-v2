@@ -1,8 +1,6 @@
 <script lang="ts">
     import { appState } from "$lib/appState/appState"
-    import {
-        chatRewindToIndex,
-    } from "$lib/chatSession/chatActions"
+    import { chatRewindToIndex } from "$lib/chatSession/chatActions"
     import {
         ChatMediaType,
         getMediaBlob,

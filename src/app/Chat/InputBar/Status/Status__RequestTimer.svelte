@@ -3,7 +3,6 @@
     import { streamingState } from "$lib/chatSession/streamingState"
     import { Refresh } from "svelte-google-materialdesign-icons"
 
-
     let time = NaN
     let cps = NaN
     let finished = false

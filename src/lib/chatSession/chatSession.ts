@@ -72,6 +72,7 @@ export interface ChatSession {
     toolCallMessagesVisible?: boolean // Per-chat toggle for tool call message visibility
     toolsEnabled?: boolean // Per-chat toggle to enable/disable tool calling
     ttsSettings?: ChatTTSSettings // Per-chat TTS overrides (voice, rate, pitch)
+    scrollTop?: number // Persisted scroll position for restoring on session switch
 }
 
 export const chats = writable<ChatSession[]>([])
