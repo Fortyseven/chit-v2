@@ -111,6 +111,8 @@
         color: var(--color-text);
 
         .top {
+            overflow-y: auto;
+            min-height: 0;
             margin-block: 1em;
             margin-inline: 1em;
 

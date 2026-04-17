@@ -7,8 +7,8 @@
         chatResetStreamScrollCounter,
         chatShouldScrollDuringStream,
     } from "$lib/chatSession/chatActions"
-    import { streamingState } from "$lib/chatSession/streamingState"
     import { chats, currentChat } from "$lib/chatSession/chatSession"
+    import { streamingState } from "$lib/chatSession/streamingState"
 
     import "$lib/appState/appStateStorage"
     import "$lib/audio"
@@ -46,8 +46,8 @@
             $chats.map((c) =>
                 c.id === chatId
                     ? { ...c, scrollTop: scrollWindowEl!.scrollTop }
-                    : c
-            )
+                    : c,
+            ),
         )
     }
 
@@ -101,7 +101,9 @@
             }
         }
 
-        currentChatValue = $chat ? { id: $chat.id, scrollTop: $chat.scrollTop } : null
+        currentChatValue = $chat
+            ? { id: $chat.id, scrollTop: $chat.scrollTop }
+            : null
     })
 
     function performBatchedScroll(): void {
