@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { afterUpdate } from "svelte"
+    import { afterUpdate, onDestroy } from "svelte"
 
     import ChatLogRegular from "./Chat/Timeline/Regular/ChatLogRegular.svelte"
 
@@ -50,7 +50,7 @@
     }
 
     // Track streaming state and perform batched scroll during streaming
-    currentChat.subscribe(($chat) => {
+    const unsubscribe = currentChat.subscribe(($chat) => {
         isStreaming = ($chat?.response_buffer?.length ?? 0) > 0
 
         // If streaming just ended, reset user scroll tracking
@@ -66,6 +66,8 @@
             scrollDown()
         }
     })
+
+    onDestroy(unsubscribe)
 
     // Scroll after component updates, but only if streaming has completed and user is near bottom
     afterUpdate(() => {

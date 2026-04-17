@@ -3,24 +3,27 @@
     import { chatSetModel } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
     import { llmModels } from "$lib/llm/llm"
-    import { writable } from "svelte/store"
 
-    let selected_model = writable($currentChat.model_name)
+    let selected_model = $currentChat.model_name
 
-    selected_model.subscribe((value) => {
-        chatSetModel($appState.activeChatId, value)
-    })
+    // Sync from chat to local selection
+    $: if ($currentChat) {
+        selected_model = $currentChat.model_name
+    }
 
-    currentChat.subscribe((value) => {
-        if ($currentChat) {
-            selected_model.set($currentChat.model_name)
-        }
-    })
+    function onModelChange() {
+        chatSetModel($appState.activeChatId, selected_model)
+    }
 </script>
 
 <div class="model-select">
     {#key selected_model}
-        <select bind:value={$selected_model} name="system" id="system">
+        <select
+            bind:value={selected_model}
+            on:change={onModelChange}
+            name="system"
+            id="system"
+        >
             {#each $llmModels as m}
                 {#if typeof m === "string"}
                     <option value={m}>{m}</option>

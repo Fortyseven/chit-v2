@@ -1,3 +1,4 @@
+import { debounce } from "$lib/utils"
 import { appState, appStateDefaults } from "./appState"
 
 const APP_LS_KEY = "chitAppState"
@@ -18,8 +19,10 @@ if (typeof window !== "undefined") {
         }
     }
 
-    // Setup auto-save to localStorage
-    appState.subscribe(($appState) => {
+    // Setup auto-save to localStorage with debounce
+    const debouncedSave = debounce(($appState: any) => {
         localStorage.setItem(APP_LS_KEY, JSON.stringify($appState))
-    })
+    }, 200)
+
+    appState.subscribe(debouncedSave)
 }

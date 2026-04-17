@@ -780,7 +780,7 @@ export function chatFinish(chatId: string = "") {
         // Only speak if not currently speaking.
         // Import done above; guard to avoid double start mid-stream.
         // We rely on promoteStreamingPending for main trigger.
-    } catch {}
+    } catch { }
 }
 
 // --------------------------------------------------------------

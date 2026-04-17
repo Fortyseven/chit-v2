@@ -70,6 +70,7 @@
 
     // Component state
     let editableDiv: HTMLDivElement
+    let containerEl: HTMLDivElement
     let markdownStr = ""
 
     // Memoization for markdown rendering (prevent re-parsing unchanged content)
@@ -141,8 +142,12 @@
     onMount(() => {
         // Add event listeners for copy buttons after the component is mounted
         function setupCopyButtons() {
-            const copyButtons = document.querySelectorAll(".copy-button")
+            if (!containerEl) return
+            const copyButtons = containerEl.querySelectorAll(
+                ".copy-button:not([data-copy-bound])",
+            )
             copyButtons.forEach((button) => {
+                button.setAttribute("data-copy-bound", "1")
                 button.addEventListener("click", () => {
                     const codeBlock = button.nextElementSibling
                     const code: string | undefined = codeBlock?.textContent
@@ -168,8 +173,8 @@
         }
 
         function setupQuoteClickHandlers() {
-            if (!isRPMode()) return
-            const quotes = document.querySelectorAll<HTMLElement>(
+            if (!isRPMode() || !containerEl) return
+            const quotes = containerEl.querySelectorAll<HTMLElement>(
                 ".quote:not([data-tts-bound])",
             )
             quotes.forEach((span) => {
@@ -192,12 +197,12 @@
         setupCopyButtons()
         setupQuoteClickHandlers()
 
-        // Set up a mutation observer to detect when new code blocks or quotes are added
+        // Set up a mutation observer scoped to this component's container
         const observer = new MutationObserver(() => {
             setupCopyButtons()
             setupQuoteClickHandlers()
         })
-        observer.observe(document.body, { childList: true, subtree: true })
+        observer.observe(containerEl, { childList: true, subtree: true })
 
         return () => {
             observer.disconnect()
@@ -205,7 +210,7 @@
     })
 </script>
 
-<div class="markdown-editor">
+<div class="markdown-editor" bind:this={containerEl}>
     {#if editorOpen}
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
