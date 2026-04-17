@@ -1,9 +1,9 @@
 # AGENTS.md
 
 ## Paths
-- `/desktop` is an Electron shell that uses the main Svelte project as the renderer
 - `/src` is a Svelte project
 - `/public` contains top level static content for the `/src` Svelte project
+- NO other directories are in-bounds.
 
 ## Build, Lint, and Test
 - Install deps: `npm install`
