@@ -7,7 +7,7 @@
         chatResetStreamScrollCounter,
         chatShouldScrollDuringStream,
     } from "$lib/chatSession/chatActions"
-    import { currentChat } from "$lib/chatSession/chatSession"
+    import { streamingState } from "$lib/chatSession/streamingState"
 
     import "$lib/appState/appStateStorage"
     import "$lib/audio"
@@ -50,8 +50,8 @@
     }
 
     // Track streaming state and perform batched scroll during streaming
-    const unsubscribe = currentChat.subscribe(($chat) => {
-        isStreaming = ($chat?.response_buffer?.length ?? 0) > 0
+    const unsubscribe = streamingState.subscribe(($ss) => {
+        isStreaming = ($ss.response_buffer.length) > 0
 
         // If streaming just ended, reset user scroll tracking
         if (!isStreaming) {

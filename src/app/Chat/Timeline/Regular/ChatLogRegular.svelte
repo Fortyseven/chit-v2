@@ -1,9 +1,6 @@
 <script lang="ts">
     import { appState } from "$lib/appState/appState"
     import {
-        chatGetStreamingPending,
-        chatGetStreamingPendingThoughts,
-        chatInProgressWithId,
         chatRewindToIndex,
     } from "$lib/chatSession/chatActions"
     import {
@@ -12,6 +9,7 @@
     } from "$lib/chatSession/chatAttachments"
     import { chats, currentChat } from "$lib/chatSession/chatSession"
     import { setPendingInputText } from "$lib/chatSession/rewindInput"
+    import { streamingState } from "$lib/chatSession/streamingState"
     import AsyncMediaImage from "../../../components/AsyncMediaImage.svelte"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
@@ -187,25 +185,23 @@
             {/if}
         {/each}
 
-        {#key $currentChat}
-            {#if chatInProgressWithId($appState.activeChatId)}
-                {#if $currentChat?.hasThoughts}
-                    <ChatLogRegular_Assistant
-                        content={chatGetStreamingPendingThoughts()}
-                        isThoughts
-                        inprogress
-                        isLatest={false}
-                        index={-1}
-                    />
-                {/if}
+        {#if $streamingState.response_buffer.length > 0 || $streamingState.thinking_buffer.length > 0}
+            {#if $streamingState.hasThoughts}
                 <ChatLogRegular_Assistant
-                    content={chatGetStreamingPending()}
+                    content={$streamingState.thinking_buffer}
+                    isThoughts
                     inprogress
                     isLatest={false}
                     index={-1}
                 />
             {/if}
-        {/key}
+            <ChatLogRegular_Assistant
+                content={$streamingState.response_buffer}
+                inprogress
+                isLatest={false}
+                index={-1}
+            />
+        {/if}
     {/if}
 </div>
 

@@ -41,6 +41,8 @@
     // Create a writable store for this specific thinking block
     $: thinkingOpenStore = createThinkingBlockStore(stateKey)
 
+    $: messageText = typeof content === "string" ? content : content.content
+
     function handleMouseDown(e: MouseEvent) {
         e.preventDefault()
         e.stopPropagation()
@@ -134,7 +136,7 @@
             <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
         </div> -->
         <MarkdownEditor
-            content={getMessageText()}
+            content={messageText}
             {index}
             bind:editorOpen={openEditor}
             {onUpdatedContent}
@@ -167,7 +169,7 @@
             {/if}
         </div>
         <MarkdownEditor
-            content={getMessageText()}
+            content={messageText}
             {index}
             bind:editorOpen={openEditor}
             {onUpdatedContent}

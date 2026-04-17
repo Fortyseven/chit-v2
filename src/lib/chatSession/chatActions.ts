@@ -75,6 +75,13 @@ import {
     Message,
 } from "./chatSession"
 import { chatGenerateTitle } from "./chatTitler"
+import {
+    appendStreamingResponse,
+    appendStreamingThoughts,
+    resetStreamingState,
+    setStreamingToolCallInfo,
+    streamingState,
+} from "./streamingState"
 
 export const DEFAULT_CONTEXT = 65536
 export const DEFAULT_TEMPERATURE = 0.7
@@ -460,17 +467,11 @@ export function chatLength(chatId: string = "") {
 
 //--------------------------------------------------------------
 export function chatGetStreamingPendingThoughts(chatId: string = "") {
-    chatId = getActiveChatId(chatId)
-
-    const chat = chatFind(chatId)
-    return chat ? chat.thinking_buffer : ""
+    return get(streamingState).thinking_buffer
 }
 //--------------------------------------------------------------
 export function chatGetStreamingPending(chatId: string = "") {
-    chatId = getActiveChatId(chatId)
-
-    const chat = chatFind(chatId)
-    return chat ? chat.response_buffer : ""
+    return get(streamingState).response_buffer
 }
 
 //--------------------------------------------------------------
@@ -508,37 +509,12 @@ export function chatAppendStreamingPending(
         tokensSinceLastScroll += estimateTokens(normalizedFragment.length)
     }
 
+    const tokenEstimate = estimateTokens(normalizedFragment.length)
+
     if (isThinking) {
-        chats.update(($chats) =>
-            $chats.map((chat: ChatSession) => {
-                if (chat.id === chatId) {
-                    chat.isThinking = true
-                    chat.hasThoughts = true
-                    chat.lastTokenCount += estimateTokens(normalizedFragment.length)
-                    return {
-                        ...chat,
-                        thinking_buffer: ((chat.thinking_buffer as string) +
-                            normalizedFragment) as string,
-                    }
-                }
-                return chat
-            })
-        )
+        appendStreamingThoughts(normalizedFragment, tokenEstimate)
     } else {
-        chats.update(($chats) =>
-            $chats.map((chat: ChatSession) => {
-                if (chat.id === chatId) {
-                    chat.isThinking = false
-                    chat.lastTokenCount += estimateTokens(normalizedFragment.length)
-                    return {
-                        ...chat,
-                        response_buffer: ((chat.response_buffer as string) +
-                            normalizedFragment) as string,
-                    }
-                }
-                return chat
-            })
-        )
+        appendStreamingResponse(normalizedFragment, tokenEstimate)
     }
 }
 
@@ -547,19 +523,7 @@ export function chatAppendStreamingPending(
  * Set tool call info buffer for display in timeline (not sent to LLM)
  */
 export function chatSetToolCallInfo(chatId: string = "", info: string) {
-    chatId = getActiveChatId(chatId)
-
-    chats.update(($chats) =>
-        $chats.map((chat: ChatSession) => {
-            if (chat.id === chatId) {
-                return {
-                    ...chat,
-                    tool_call_info_buffer: info,
-                }
-            }
-            return chat
-        })
-    )
+    setStreamingToolCallInfo(info)
 }
 
 //--------------------------------------------------------------
@@ -569,20 +533,22 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
     // Reset scroll counter when promoting streaming content (response complete)
     tokensSinceLastScroll = 0
 
+    const ss = get(streamingState)
+
     chats.update(($chats) =>
         $chats.map((chat) => {
             if (chat.id === chatId) {
                 const message: Message = {
                     id: crypto.randomUUID(),
                     role: "assistant",
-                    content: chat.response_buffer as string,
-                    thoughts: chat.thinking_buffer as string,
+                    content: ss.response_buffer,
+                    thoughts: ss.thinking_buffer,
                     timestamp: new Date(),
                 }
 
                 // Add tool call info if present (for display only, not sent to LLM)
-                if (chat.tool_call_info_buffer && chat.tool_call_info_buffer.trim()) {
-                    message.tool_call_info = chat.tool_call_info_buffer
+                if (ss.tool_call_info_buffer && ss.tool_call_info_buffer.trim()) {
+                    message.tool_call_info = ss.tool_call_info_buffer
                 }
 
                 return {
@@ -591,6 +557,8 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
                         ...chat.messages,
                         message,
                     ],
+                    hasThoughts: ss.hasThoughts,
+                    lastTokenCount: ss.lastTokenCount,
                     response_buffer: "",
                     thinking_buffer: "",
                     tool_call_info_buffer: "",
@@ -600,6 +568,8 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
             return chat
         })
     )
+
+    resetStreamingState()
 
     // Auto-speak if enabled
     try {
@@ -663,12 +633,8 @@ export function chatAbort() {
 
 //--------------------------------------------------------------
 export function chatInProgressWithId(chatId: string = ""): Boolean {
-    chatId = getActiveChatId(chatId)
-
-    const chat = chatFind(chatId)
-    return chat
-        ? chat.thinking_buffer?.length + chat.response_buffer?.length > 0
-        : false
+    const ss = get(streamingState)
+    return ss.thinking_buffer.length + ss.response_buffer.length > 0
 }
 
 //--------------------------------------------------------------
@@ -741,6 +707,7 @@ export function chatClearConversationKeepMedia(chatId: string = "") {
 export function chatStart(chatId: string = "") {
     chatId = getActiveChatId(chatId)
     ttsStop()
+    resetStreamingState()
 
     chats.update(($chats) =>
         $chats.map((chat) => {
@@ -750,7 +717,7 @@ export function chatStart(chatId: string = "") {
                 return {
                     ...chat,
                     lastRequestStart: Date.now(),
-                    lastTokenCount: 0, // reset per-stream to avoid cumulative CPS inflation
+                    lastTokenCount: 0,
                 }
             }
             return chat
@@ -926,4 +893,6 @@ export async function chatCompactConversation(
             return chat
         })
     )
+
+    resetStreamingState()
 }

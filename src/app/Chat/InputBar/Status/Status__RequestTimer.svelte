@@ -1,5 +1,6 @@
 <script lang="ts">
     import { currentChat } from "$lib/chatSession/chatSession"
+    import { streamingState } from "$lib/chatSession/streamingState"
     import { Refresh } from "svelte-google-materialdesign-icons"
 
 
@@ -19,7 +20,7 @@
         } else {
             // live update during streaming
             time = (Date.now() - $currentChat.lastRequestStart) / 1000
-            cps = $currentChat.lastTokenCount / (time > 0 ? time : 1)
+            cps = $streamingState.lastTokenCount / (time > 0 ? time : 1)
         }
     }
 </script>
