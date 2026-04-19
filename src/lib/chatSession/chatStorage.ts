@@ -94,7 +94,11 @@ async function loadFromIndexedDB(): Promise<boolean> {
         const storedChats = await chatSessionStorage.getAllChats()
         if (storedChats.length > 0) {
             const activeChatId = get(appState).activeChatId
-            const lazified = ensureMessageIds(storedChats).map((chat: any) =>
+            const sorted = ensureMessageIds(storedChats).sort(
+                (a: any, b: any) =>
+                    new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            )
+            const lazified = sorted.map((chat: any) =>
                 chat.id === activeChatId
                     ? chat
                     : { ...chat, messages: [] }
