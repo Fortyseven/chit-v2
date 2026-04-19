@@ -110,7 +110,8 @@
                                         />
                                     {:then textData}
                                         <ChatLogRegular_User
-                                            line={typeof textData === "string"
+                                            line={typeof textData ===
+                                            "string"
                                                 ? textData
                                                 : "Invalid text data"}
                                             isAttachment
@@ -150,7 +151,8 @@
                         content={message.thoughts}
                         isThoughts
                         {index}
-                        isLatest={index === $currentChat.messages.length - 1}
+                        isLatest={index ===
+                            $currentChat.messages.length - 1}
                         onUpdatedContent={updateChatMessage}
                     />
                 {/if}
@@ -168,7 +170,9 @@
                             ] || false}
                             onToggle={() => {
                                 toolCallExpanded[`${index}-${toolIndex}`] =
-                                    !toolCallExpanded[`${index}-${toolIndex}`]
+                                    !toolCallExpanded[
+                                        `${index}-${toolIndex}`
+                                    ]
                             }}
                         />
                     {/each}

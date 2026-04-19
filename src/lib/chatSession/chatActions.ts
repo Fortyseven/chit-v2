@@ -74,6 +74,7 @@ import {
     currentChat,
     Message,
 } from "./chatSession"
+import { chatSessionStorage, loadChatMessages, unloadChatMessages, unloadedChatIds } from "./chatSessionStorage"
 import { chatGenerateTitle } from "./chatTitler"
 import {
     appendStreamingResponse,
@@ -146,6 +147,13 @@ export function chatNew(): string {
     }
 
     chats.update(($chats) => [...$chats, newChat])
+
+    // Unload previous chat's messages to free memory
+    const previousChatId = get(appState).activeChatId
+    if (previousChatId) {
+        unloadChatMessages(previousChatId)
+    }
+
     appState.update((state) => ({ ...state, activeChatId: id }))
 
     return id
@@ -220,8 +228,20 @@ export function chatUpdateSettings(chatId: string = "", settings: any) {
 }
 
 //--------------------------------------------------------------
-// Change the active chat
-export function chatSwitchTo(chatId: string) {
+// Change the active chat (with lazy message loading)
+export async function chatSwitchTo(chatId: string) {
+    const currentId = get(appState).activeChatId
+    if (currentId === chatId) return
+
+    // Unload old chat's messages to free memory
+    if (currentId) {
+        unloadChatMessages(currentId)
+    }
+
+    // Load new chat's messages from IndexedDB
+    await loadChatMessages(chatId)
+
+    // Switch active chat
     appState.update((state) => ({ ...state, activeChatId: chatId }))
 }
 
@@ -242,6 +262,9 @@ export async function chatDelete(chatId: string) {
         // Continue with chat deletion even if media cleanup fails
     }
 
+    // Clean up lazy loading state
+    unloadedChatIds.delete(chatId)
+
     chats.update(($chats) => $chats.filter((chat) => chat.id !== chatId))
     console.log("chatDelete", chatId)
 
@@ -260,6 +283,9 @@ export function chatIsEmpty(chatId: string) {
         alert("BUG: chatIsEmpty: chatId was empty")
         throw new Error("chatIsEmpty: chatId is required")
     }
+
+    // If messages are unloaded (lazy loading), the chat is NOT empty
+    if (unloadedChatIds.has(chatId)) return false
 
     const chat = get(chats).find((chat) => chat.id === chatId)
     return chat ? chat.messages.length === 0 : false
@@ -322,7 +348,7 @@ export function _chatAddMessage(chatId: string = "", message: Message) {
 }
 
 //--------------------------------------------------------------
-export function chatDuplicate(chatId: string = "") {
+export async function chatDuplicate(chatId: string = "") {
     chatId = getActiveChatId(chatId)
 
     const chat = get(chats).find((chat) => chat.id === chatId)
@@ -334,6 +360,9 @@ export function chatDuplicate(chatId: string = "") {
         title: chat.title + " (copy)",
         createdAt: new Date(),
     }
+
+    // Save to IndexedDB first so chatSwitchTo can load messages
+    await chatSessionStorage.storeChat(newChat as ChatSession)
 
     chats.update(($chats) => [...$chats, newChat])
 
