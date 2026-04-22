@@ -2,6 +2,7 @@
     // @ts-ignore
     import { isRPMode } from "$lib/modes/modeUtils"
     import { wrapQuotesStreaming } from "$lib/text/quoteWrap"
+    import { extractSvgBlocks, injectSvgBlocks } from "$lib/text/svgRenderer"
     import {
         ttsSpeak,
         ttsSpeaking,
@@ -87,7 +88,11 @@
         if (content !== lastContent || processed !== lastProcessed) {
             lastContent = content
             lastProcessed = processed
-            lastMarkdownStr = md.render(processed).trim()
+            // Extract SVG blocks before markdown processing to prevent escaping
+            const { content: withoutSvg, svgBlocks } =
+                extractSvgBlocks(processed)
+            const rendered = md.render(withoutSvg).trim()
+            lastMarkdownStr = injectSvgBlocks(rendered, svgBlocks)
         }
         markdownStr = lastMarkdownStr
     }
@@ -193,14 +198,124 @@
             })
         }
 
+        function setupSvgCopyButtons() {
+            if (!containerEl) return
+            const svgCopyBtns = containerEl.querySelectorAll(
+                ".svg-copy-button:not([data-copy-bound])",
+            )
+            svgCopyBtns.forEach((button) => {
+                button.setAttribute("data-copy-bound", "1")
+                button.addEventListener("click", () => {
+                    const rawSvg = button.getAttribute("data-raw-svg")
+                    if (!rawSvg) return
+                    const decoded = rawSvg
+                        .replace(/&amp;/g, "&")
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&quot;/g, '"')
+
+                    navigator.clipboard
+                        .writeText(decoded)
+                        .then(() => {
+                            const originalText = button.textContent
+                            button.textContent = "✓ Copied"
+                            button.classList.add("copied")
+                            setTimeout(() => {
+                                button.textContent = originalText
+                                button.classList.remove("copied")
+                            }, 2000)
+                        })
+                        .catch((err) => {
+                            console.error("Failed to copy SVG: ", err)
+                        })
+                })
+            })
+        }
+
+        function setupSvgPngCopyButtons() {
+            if (!containerEl) return
+            const pngBtns = containerEl.querySelectorAll(
+                ".svg-copy-png-button:not([data-copy-bound])",
+            )
+            pngBtns.forEach((button) => {
+                button.setAttribute("data-copy-bound", "1")
+                button.addEventListener("click", () => {
+                    const rawSvg = button.getAttribute("data-raw-svg")
+                    if (!rawSvg) return
+                    const decoded = rawSvg
+                        .replace(/&amp;/g, "&")
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&quot;/g, '"')
+
+                    svgToPngClipboard(decoded, button)
+                })
+            })
+        }
+
+        /**
+         * Renders SVG to a canvas and copies as PNG to clipboard.
+         */
+        function svgToPngClipboard(svgSource: string, button: Element) {
+            const svgBlob = new Blob([svgSource], {
+                type: "image/svg+xml;charset=utf-8",
+            })
+            const url = URL.createObjectURL(svgBlob)
+            const img = new Image()
+
+            img.onload = () => {
+                const scale = 2
+                const canvas = document.createElement("canvas")
+                canvas.width = img.naturalWidth * scale
+                canvas.height = img.naturalHeight * scale
+                const ctx = canvas.getContext("2d")
+                if (!ctx) {
+                    URL.revokeObjectURL(url)
+                    return
+                }
+                ctx.scale(scale, scale)
+                ctx.drawImage(img, 0, 0)
+                URL.revokeObjectURL(url)
+
+                canvas.toBlob((blob) => {
+                    if (!blob) return
+                    navigator.clipboard
+                        .write([new ClipboardItem({ "image/png": blob })])
+                        .then(() => {
+                            const originalText = button.textContent
+                            button.textContent = "✓ Copied"
+                            button.classList.add("copied")
+                            setTimeout(() => {
+                                button.textContent = originalText
+                                button.classList.remove("copied")
+                            }, 2000)
+                        })
+                        .catch((err) => {
+                            console.error("Failed to copy PNG: ", err)
+                        })
+                }, "image/png")
+            }
+
+            img.onerror = () => {
+                URL.revokeObjectURL(url)
+                console.error("Failed to load SVG for PNG conversion")
+            }
+
+            img.src = url
+        }
+
         // Initial setup
         setupCopyButtons()
         setupQuoteClickHandlers()
+        setupSvgCopyButtons()
+        setupSvgPngCopyButtons()
 
         // Set up a mutation observer scoped to this component's container
         const observer = new MutationObserver(() => {
             setupCopyButtons()
             setupQuoteClickHandlers()
+            setupSvgCopyButtons()
+            setupSvgPngCopyButtons()
         })
         observer.observe(containerEl, { childList: true, subtree: true })
 
@@ -307,6 +422,56 @@
 
         :global(.katex) {
             font-size: 1.02em;
+        }
+
+        :global(.svg-block-wrapper) {
+            position: relative;
+            margin: 1em 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-standard);
+            overflow: hidden;
+            background-color: var(--color-background-darkest);
+        }
+
+        :global(.svg-block-toolbar) {
+            display: flex;
+            justify-content: flex-end;
+            padding: 4px 8px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        :global(.svg-copy-button),
+        :global(.svg-copy-png-button) {
+            font-size: 12px;
+            padding: 2px 8px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+            color: var(--color-text);
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.08);
+
+            &:hover {
+                opacity: 1;
+            }
+
+            &.copied {
+                background-color: rgba(50, 205, 50, 0.3);
+                opacity: 1;
+            }
+        }
+
+        :global(.svg-block-content) {
+            display: flex;
+            justify-content: center;
+            padding: 1em;
+            overflow-x: auto;
+
+            :global(svg) {
+                max-width: 100%;
+                height: auto;
+            }
         }
 
         :global(.quote) {
