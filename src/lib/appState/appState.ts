@@ -1,4 +1,5 @@
 import { derived, writable } from "svelte/store"
+import type { MCPServerConfig } from "../mcp/types"
 
 export const DEFAULT_OL_ENDPOINT = "http://localhost:11434"
 // export const DEFAULT_BP_ENDPOINT = "http://localhost:12434"
@@ -21,6 +22,7 @@ export interface AppState {
     openaiApiBase: string
     openaiApiKey: string
     selectedProvider: "ollama" | "openai"
+    mcpServers: MCPServerConfig[]
 }
 
 export const appStateDefaults: AppState = {
@@ -39,6 +41,7 @@ export const appStateDefaults: AppState = {
     openaiApiBase: "",
     openaiApiKey: "",
     selectedProvider: "ollama",
+    mcpServers: [],
 }
 
 export const appState = writable<AppState>({

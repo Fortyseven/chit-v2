@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "@floating-ui/dom": "^1.6.12",
+        "@modelcontextprotocol/sdk": "^1.29.0",
         "@mozilla/readability": "^0.6.0",
         "autoprefixer": "^10.4.20",
         "dompurify": "^3.4.1",

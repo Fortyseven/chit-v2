@@ -2,6 +2,7 @@
 // Each tool exports: name, description, parameters, handler
 
 import type { ToolDefinition } from './types';
+import { getMCPTools } from '../mcp/mcpManager';
 
 // Import individual tools here
 import { calculatorTool } from './calculator';
@@ -18,6 +19,10 @@ export const tools: ToolDefinition[] = [
     // sayTool
 ];
 
+export function getAllTools(): ToolDefinition[] {
+    return [...tools, ...getMCPTools()]
+}
+
 export function getToolByName(name: string): ToolDefinition | undefined {
-    return tools.find(tool => tool.name === name)
+    return getAllTools().find(tool => tool.name === name)
 }

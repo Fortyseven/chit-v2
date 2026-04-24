@@ -1,7 +1,7 @@
 <script>
     import ConfigPanel_General from "./ConfigPanel_General.svelte"
     import ConfigPanel_General__Provider from "./ConfigPanel_General__Provider.svelte"
-
+    import ConfigPanel_MCP from "./ConfigPanel_MCP.svelte"
     import ConfigPanel_TTS from "./ConfigPanel_TTS.svelte"
 
     import Modal from "../../UI/Modal.svelte"
@@ -37,6 +37,10 @@
                 class:active={activeTab === "tts"}
                 on:click={() => (activeTab = "tts")}>TTS</button
             >
+            <button
+                class:active={activeTab === "mcp"}
+                on:click={() => (activeTab = "mcp")}>MCP</button
+            >
         </div>
 
         {#if activeTab === "general"}
@@ -47,6 +51,9 @@
         {/if}
         {#if activeTab === "tts"}
             <ConfigPanel_TTS></ConfigPanel_TTS>
+        {/if}
+        {#if activeTab === "mcp"}
+            <ConfigPanel_MCP></ConfigPanel_MCP>
         {/if}
     </Modal>
 {/if}

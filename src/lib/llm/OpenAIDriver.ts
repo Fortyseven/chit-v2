@@ -176,8 +176,9 @@ export class OpenAIDriver implements LLMDriver {
             // Prepare tool definitions if enabled
             let toolDefinitions: any[] | undefined = undefined
             if (toolsEnabled) {
-                const { tools } = await import('../tools/index')
-                toolDefinitions = tools.map(tool => ({
+                const { getAllTools } = await import('../tools/index')
+                const allTools = getAllTools()
+                toolDefinitions = allTools.map(tool => ({
                     type: "function",
                     function: {
                         name: tool.name,
