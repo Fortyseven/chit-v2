@@ -30,7 +30,7 @@
         "autoprefixer": "^10.4.20",
         "dompurify": "^3.4.1",
         "katex": "^0.16.44",
-        "markdown-it": "^14.1.0",
+        "markdown-it": "^14.1.1",
         "markdown-it-texmath": "^1.0.0",
         "ollama": "^0.5.11",
         "svelte-google-materialdesign-icons": "^1.0.5",
