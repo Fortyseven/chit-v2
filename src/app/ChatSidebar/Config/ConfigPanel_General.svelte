@@ -38,16 +38,6 @@
         </label>
     </div>
 
-    <div class="field">
-        <label title="Show thinking blocks expanded by default instead of collapsed.">
-            THNK blocks open by default
-            <input
-                type="checkbox"
-                checked={$appState.thinkBlockOpenByDefault}
-                on:change={(e) => appStateSetThinkBlockOpenByDefault(e.target.checked)}
-            />
-        </label>
-    </div>
 </div>
 
 <!-- --------------------------------------------- -->
@@ -123,6 +113,16 @@
                 type="checkbox"
                 checked={$appState.defaultThinking}
                 on:change={(e) => appStateSetDefaultThinking(e.target.checked)}
+            />
+        </label>
+    </div>
+    <div class="field">
+        <label title="Show thinking blocks expanded by default instead of collapsed.">
+            THNK blocks open by default
+            <input
+                type="checkbox"
+                checked={$appState.thinkBlockOpenByDefault}
+                on:change={(e) => appStateSetThinkBlockOpenByDefault(e.target.checked)}
             />
         </label>
     </div>

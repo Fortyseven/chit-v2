@@ -44,8 +44,12 @@
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div class="modal" on:click|stopPropagation>
             <h2>{title}</h2>
-            <slot></slot>
-            <button on:click={closePanel} style="float: right;">Close</button>
+            <div class="modal-content">
+                <slot></slot>
+            </div>
+            <div class="modal-footer">
+                <button on:click={closePanel}>Close</button>
+            </div>
         </div>
     </div>
 {/if}
@@ -79,15 +83,16 @@
             color: white;
             width: 80%;
             max-height: 80%;
-            height: fit-content;
+            height: 80%;
             max-width: 800px;
             padding: 1em;
             border-radius: var(--border-radius-standard);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
             pointer-events: auto;
             box-sizing: border-box;
             outline: 2px solid #e74c3c; /* debug: make modal visually obvious */
+            display: flex;
+            flex-direction: column;
 
             h2 {
                 padding: 0;
@@ -95,6 +100,21 @@
                 margin-bottom: 1em;
                 padding-bottom: 0.5em;
                 border-bottom: 1px solid #555;
+                flex-shrink: 0;
+            }
+
+            .modal-content {
+                flex: 1;
+                overflow-y: auto;
+                overflow-x: hidden;
+                min-height: 0;
+            }
+
+            .modal-footer {
+                flex-shrink: 0;
+                display: flex;
+                justify-content: flex-end;
+                padding-top: 1em;
             }
 
             @media (max-width: 768px) {
