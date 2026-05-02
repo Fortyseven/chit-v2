@@ -43,9 +43,7 @@
 
     $: messageText = typeof content === "string" ? content : content.content
 
-    function handleMouseDown(e: MouseEvent) {
-        e.preventDefault()
-        e.stopPropagation()
+    function handleThinkToggle() {
         thinkingOpenStore.set(!$thinkingOpenStore)
     }
 
@@ -116,14 +114,22 @@
 </script>
 
 {#if isThoughts}
-    <details
-        open={$thinkingOpenStore}
+    <div
         class="response markdown bot thoughts"
         class:inprogress
         data-testid="ChatLogRegular_Assistant"
     >
-        <summary on:mousedown={handleMouseDown}>
-            &lt;THINK&gt;
+        <div
+            class="think-summary"
+            role="button"
+            tabindex="0"
+            on:click={handleThinkToggle}
+            on:keydown={(e) => {
+                if (e.key === "Enter" || e.key === " ") handleThinkToggle()
+            }}
+        >
+            <span class="think-arrow" class:open={$thinkingOpenStore}>▶</span>
+            Thinking...
             {#if !$thinkingOpenStore && inprogress}
                 <span class="thinking-indicator">
                     <span class="dot"></span>
@@ -131,17 +137,16 @@
                     <span class="dot"></span>
                 </span>
             {/if}
-        </summary>
-        <!-- <div class="message-controls">
-            <button class="dropdown" on:click={toggleContextMenu}>⋮</button>
-        </div> -->
-        <MarkdownEditor
-            content={messageText}
-            {index}
-            bind:editorOpen={openEditor}
-            {onUpdatedContent}
-        />
-    </details>
+        </div>
+        {#if $thinkingOpenStore}
+            <MarkdownEditor
+                content={messageText}
+                {index}
+                bind:editorOpen={openEditor}
+                {onUpdatedContent}
+            />
+        {/if}
+    </div>
 {:else}
     <div
         class="response markdown bot"
@@ -202,16 +207,28 @@
 {/if}
 
 <style lang="scss">
-    details.response {
+    .thoughts {
         border: 1px solid red;
         margin-bottom: 1em;
-        summary {
+
+        .think-summary {
             cursor: pointer;
             opacity: 0.5;
             text-transform: uppercase;
             display: flex;
             align-items: center;
             gap: 0.5em;
+            user-select: none;
+            margin-bottom: 1.5em;
+        }
+
+        .think-arrow {
+            display: inline-block;
+            font-size: 0.7em;
+            transition: transform 0.15s ease;
+            &.open {
+                transform: rotate(90deg);
+            }
         }
     }
 

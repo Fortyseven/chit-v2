@@ -6,6 +6,7 @@
         appStateSetDefaultModel,
         appStateSetDefaultTemperature,
         appStateSetDefaultThinking,
+        appStateSetThinkBlockOpenByDefault,
     } from "$lib/appState/appStateActions"
     import { chatSetToolCallMessagesVisible } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
@@ -34,6 +35,17 @@
         <label title="Resize images on paste">
             Resize images for inference
             <input type="checkbox" bind:checked={$appState.resizeImages} />
+        </label>
+    </div>
+
+    <div class="field">
+        <label title="Show thinking blocks expanded by default instead of collapsed.">
+            THNK blocks open by default
+            <input
+                type="checkbox"
+                checked={$appState.thinkBlockOpenByDefault}
+                on:change={(e) => appStateSetThinkBlockOpenByDefault(e.target.checked)}
+            />
         </label>
     </div>
 </div>

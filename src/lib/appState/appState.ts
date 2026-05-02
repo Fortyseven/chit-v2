@@ -15,6 +15,7 @@ export interface AppState {
     defaultContext: string // NEW: default context size (freeform)
     defaultTemperature: string // NEW: default temperature (freeform)
     defaultThinking: boolean // NEW: default thinking mode
+    thinkBlockOpenByDefault: boolean
     backpackHeartbeatTimer: any
     useTitler: boolean
     resizeImages: boolean
@@ -35,6 +36,7 @@ export const appStateDefaults: AppState = {
     defaultContext: "", // NEW: default context size
     defaultTemperature: "", // NEW: default temperature
     defaultThinking: true, // NEW: default thinking mode
+    thinkBlockOpenByDefault: false,
     backpackHeartbeatTimer: null,
     useTitler: true,
     resizeImages: true,

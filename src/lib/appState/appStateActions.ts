@@ -35,6 +35,10 @@ export function appStateSetDefaultThinking(thinking: boolean) {
     appState.update((state) => ({ ...state, defaultThinking: thinking }))
 }
 
+export function appStateSetThinkBlockOpenByDefault(open: boolean) {
+    appState.update((state) => ({ ...state, thinkBlockOpenByDefault: open }))
+}
+
 export function appStateSetOpenAIBase(base: string) {
     appState.update((state) => ({ ...state, openaiApiBase: base }))
 }
