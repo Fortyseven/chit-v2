@@ -13,7 +13,6 @@ import {
 } from "../templating/templating"
 import { convertBlobToBase64 as convertFileToBase64 } from "../utils"
 import type { GenericMessage, LLMDriver } from "./LLMDriver"
-import { OllamaDriver } from "./OllamaDriver"
 import { OpenAIDriver } from "./OpenAIDriver"
 
 // Shared models store (either ModelResponse[] or string[])
@@ -25,36 +24,18 @@ export class LLMInterface {
 
     async init() {
         const state = get(appState)
-        const selectedProvider = state.selectedProvider || "ollama"
-        const wantOpenAI = Boolean(state.openaiApiBase && state.openaiApiKey)
-        const wantOllama =
-            typeof state.chatApiEndpoint === "string" &&
-            state.chatApiEndpoint.trim() !== ""
 
-        if (selectedProvider === "openai") {
-            if (wantOpenAI) {
-                this.driver.set(
-                    new OpenAIDriver(state.openaiApiBase, state.openaiApiKey)
-                )
-            } else {
-                console.warn(
-                    "LLM: OpenAI selected but base/key not configured; driver disabled"
-                )
-                this.driver.set(undefined)
-                llmModels.set([])
-                return
-            }
+        if (state.openaiApiBase && state.openaiApiKey) {
+            this.driver.set(
+                new OpenAIDriver(state.openaiApiBase, state.openaiApiKey)
+            )
         } else {
-            if (wantOllama) {
-                this.driver.set(new OllamaDriver(state.chatApiEndpoint))
-            } else {
-                console.warn(
-                    "LLM: Ollama selected but endpoint not configured; driver disabled"
-                )
-                this.driver.set(undefined)
-                llmModels.set([])
-                return
-            }
+            console.warn(
+                "LLM: OpenAI base/key not configured; driver disabled"
+            )
+            this.driver.set(undefined)
+            llmModels.set([])
+            return
         }
 
         try {
@@ -209,8 +190,6 @@ await llm_instance.init()
 let lastKey = ""
 appState.subscribe(async (state) => {
     const key = [
-        state.selectedProvider || "",
-        state.chatApiEndpoint || "",
         state.openaiApiBase || "",
         state.openaiApiKey ? "set" : "",
     ].join("|")

@@ -28,7 +28,7 @@ export async function backpackProcess(chatId: string) {
         body: JSON.stringify({
             ...chat,
             llm: {
-                endpoint: get(appState).chatApiEndpoint,
+                endpoint: get(appState).openaiApiBase,
             },
         }),
     })

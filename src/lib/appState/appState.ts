@@ -1,13 +1,11 @@
 import { derived, writable } from "svelte/store"
 import type { MCPServerConfig } from "../mcp/types"
 
-export const DEFAULT_OL_ENDPOINT = "http://localhost:11434"
 // export const DEFAULT_BP_ENDPOINT = "http://localhost:12434"
 export const DEFAULT_BP_ENDPOINT = ""
 
 export interface AppState {
     activeChatId: string
-    chatApiEndpoint: string
     backpackApiEndpoint: string
     soundEnabled: boolean
     defaultPrompt: string
@@ -22,13 +20,11 @@ export interface AppState {
     // NEW: OpenAI-compatible
     openaiApiBase: string
     openaiApiKey: string
-    selectedProvider: "ollama" | "openai"
     mcpServers: MCPServerConfig[]
 }
 
 export const appStateDefaults: AppState = {
     activeChatId: "", // will be initialized later
-    chatApiEndpoint: DEFAULT_OL_ENDPOINT,
     backpackApiEndpoint: DEFAULT_BP_ENDPOINT,
     soundEnabled: true,
     defaultPrompt: "",
@@ -42,7 +38,6 @@ export const appStateDefaults: AppState = {
     resizeImages: true,
     openaiApiBase: "",
     openaiApiKey: "",
-    selectedProvider: "ollama",
     mcpServers: [],
 }
 

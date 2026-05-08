@@ -4,9 +4,6 @@ export function appStateSetActiveChatId(id: string | string) {
     appState.update((state) => ({ ...state, activeChatId: id }))
 }
 
-export function appStateSetChatApiEndpoint(endpoint: string) {
-    appState.update((state) => ({ ...state, chatApiEndpoint: endpoint }))
-}
 export function appStateSetBackpackApiEndpoint(endpoint: string) {
     appState.update((state) => ({ ...state, backpackApiEndpoint: endpoint }))
 }
@@ -46,6 +43,3 @@ export function appStateSetOpenAIKey(key: string) {
     appState.update((state) => ({ ...state, openaiApiKey: key }))
 }
 
-export function appStateSetSelectedProvider(provider: "ollama" | "openai") {
-    appState.update((state) => ({ ...state, selectedProvider: provider }))
-}

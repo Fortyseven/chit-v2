@@ -11,8 +11,6 @@
     import { chatSetToolCallMessagesVisible } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
 
-    let selectedProvider = "ollama"
-
     $: toolCallMessagesVisible = $currentChat?.toolCallMessagesVisible ?? true
 </script>
 
@@ -63,11 +61,11 @@
 <div class="form-group row">
     <div class="field">
         <label
-            for="default-ollama-model"
-            title="Default Ollama model to use for new conversations. Leave blank to use the built-in default."
-            >Default Ollama Model
+            for="default-model"
+            title="Default model to use for new conversations. Leave blank to use the built-in default."
+            >Default Model
             <input
-                id="default-ollama-model"
+                id="default-model"
                 type="text"
                 placeholder="e.g. gemma3:12b, llama3, etc."
                 value={$appState.defaultModel}

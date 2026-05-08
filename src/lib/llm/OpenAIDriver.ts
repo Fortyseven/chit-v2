@@ -137,7 +137,7 @@ export class OpenAIDriver implements LLMDriver {
         return get(this.models)
     }
 
-    kind(): "ollama" | "openai" {
+    kind(): "openai" {
         return "openai"
     }
 

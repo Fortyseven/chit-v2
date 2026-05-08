@@ -32,8 +32,7 @@
         "katex": "^0.16.44",
         "markdown-it": "^14.1.1",
         "markdown-it-texmath": "^1.0.0",
-        "ollama": "^0.5.11",
-        "svelte-google-materialdesign-icons": "^1.0.5",
+"svelte-google-materialdesign-icons": "^1.0.5",
         "zod-to-json-schema": "^3.23.5"
     }
 }

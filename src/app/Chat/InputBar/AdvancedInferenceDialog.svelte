@@ -83,8 +83,7 @@
                 <label>
                     <span>Top K</span>
                     <span class="desc"
-                        >Limit sampling to top K candidates (llama.cpp, vllm,
-                        Ollama)</span
+                        >Limit sampling to top K candidates (llama.cpp, vllm)</span
                     >
                     <input
                         type="number"
@@ -128,8 +127,7 @@
                 <label>
                     <span>Repeat Penalty</span>
                     <span class="desc"
-                        >Penalise repeated tokens (Ollama) / frequency_penalty
-                        (OpenAI)</span
+                        >Penalise repeated tokens / frequency_penalty</span
                     >
                     <input
                         type="number"

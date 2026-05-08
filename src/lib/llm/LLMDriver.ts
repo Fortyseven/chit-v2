@@ -46,5 +46,5 @@ export interface LLMDriver {
         config: ChatConfig
     ): Promise<string>
 
-    kind(): "ollama" | "openai"
+    kind(): "openai"
 }
