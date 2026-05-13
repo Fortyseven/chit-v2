@@ -277,6 +277,8 @@
             width: 100%;
             max-width: var(--timeline-max-width);
             margin-inline: auto;
+            padding-inline: 1em;
+            box-sizing: border-box;
 
             .user-prompt {
                 &:disabled {
