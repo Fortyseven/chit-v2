@@ -50,7 +50,7 @@ export function extractBboxBlocks(content: string): {
     // First, extract from fenced code blocks (```json or ```)
     const fencedJsonRegex = /```(?:json)?\s*\n([\s\S]*?)\n```/gi
     let modified = content.replace(fencedJsonRegex, (_match, jsonContent) => {
-        const parsed = tryParseBboxArray(jsonContent.trim())
+        const parsed = tryParseBbox(jsonContent.trim())
         if (parsed) {
             const index = bboxBlocks.length
             bboxBlocks.push(parsed)
@@ -63,7 +63,19 @@ export function extractBboxBlocks(content: string): {
     // Match arrays that contain bbox_2d objects
     const bareJsonRegex = /\[\s*\{[^}]*(?:bbox_2d)[^}]*\}(?:\s*,?\s*\{[^}]*(?:bbox_2d)[^}]*\})*\s*\]/gi
     modified = modified.replace(bareJsonRegex, (match) => {
-        const parsed = tryParseBboxArray(match.trim())
+        const parsed = tryParseBbox(match.trim())
+        if (parsed) {
+            const index = bboxBlocks.length
+            bboxBlocks.push(parsed)
+            return `${BBOX_PLACEHOLDER_PREFIX}${index}${BBOX_PLACEHOLDER_SUFFIX}`
+        }
+        return match // Not valid bbox JSON, leave as-is
+    })
+
+    // Finally, extract bare single objects with bbox_2d
+    const bareJsonObjectRegex = /\{[^}]*(?:bbox_2d)[^}]*\}/gi
+    modified = modified.replace(bareJsonObjectRegex, (match) => {
+        const parsed = tryParseBbox(match.trim())
         if (parsed) {
             const index = bboxBlocks.length
             bboxBlocks.push(parsed)
@@ -76,16 +88,24 @@ export function extractBboxBlocks(content: string): {
 }
 
 /**
- * Attempts to parse a string as a bounding box JSON array.
+ * Attempts to parse a string as a bounding box JSON array or single object.
  * Returns null if parsing fails or validation fails.
+ * Single objects are wrapped in an array.
  */
-function tryParseBboxArray(jsonStr: string): BoundingBoxEntry[] | null {
+function tryParseBbox(jsonStr: string): BoundingBoxEntry[] | null {
     try {
         const parsed = JSON.parse(jsonStr)
-        if (!Array.isArray(parsed)) return null
-        if (parsed.length === 0) return null // Empty array, not useful
-        if (!parsed.every((item) => isValidBboxEntry(item))) return null
-        return parsed as BoundingBoxEntry[]
+        // Handle array of entries
+        if (Array.isArray(parsed)) {
+            if (parsed.length === 0) return null // Empty array, not useful
+            if (!parsed.every((item) => isValidBboxEntry(item))) return null
+            return parsed as BoundingBoxEntry[]
+        }
+        // Handle single object
+        if (isValidBboxEntry(parsed)) {
+            return [parsed]
+        }
+        return null
     } catch {
         return null
     }
@@ -112,8 +132,8 @@ function detectCoordinateScale(
     if (maxCoord <= 1.0) {
         // Normalized 0-1 coordinates
         return { scaleX: imgWidth, scaleY: imgHeight }
-    } else if (maxCoord <= 1000 && (imgWidth > 1000 || imgHeight > 1000)) {
-        // Normalized to 1000 - scale proportionally
+    } else if (maxCoord <= 1000) {
+        // Normalized to 1000 (common in object detection models)
         return { scaleX: imgWidth / 1000, scaleY: imgHeight / 1000 }
     } else {
         // Pixel coordinates - use as-is
@@ -256,7 +276,7 @@ function drawLabelBadge(
     ctx.fill()
 
     // Draw label text
-    ctx.fillStyle = "#FFFFFF"
+    ctx.fillStyle = "#000000"
     ctx.textBaseline = "top"
     labels.forEach((label, i) => {
         ctx.fillText(label, badgeX + padding, badgeY + padding + i * (fontSize + 2))
@@ -278,49 +298,49 @@ export function injectBboxBlocks(
     const placeholderRegex = new RegExp(`(?:<p>)?${BBOX_PLACEHOLDER_PREFIX}(\\d+)${BBOX_PLACEHOLDER_SUFFIX}(?:</p>)?`, "g")
 
     return html.replace(placeholderRegex, (_match, indexStr) => {
-            const index = parseInt(indexStr, 10)
-            const boxes = bboxBlocks[index]
-            if (!boxes) return ""
+        const index = parseInt(indexStr, 10)
+        const boxes = bboxBlocks[index]
+        if (!boxes) return ""
 
-            // Escape the raw JSON for data attributes
-            const rawJson = JSON.stringify(boxes, null, 2)
-            const escapedJson = rawJson
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
+        // Escape the raw JSON for data attributes
+        const rawJson = JSON.stringify(boxes, null, 2)
+        const escapedJson = rawJson
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
 
-            // If no source image, show placeholder
-            if (!sourceImageUrl) {
-                return (
-                    `<div class="bbox-block-wrapper">` +
-                    `<div class="bbox-block-toolbar">` +
-                    `<div class="bbox-toggle-button" data-toggle="bbox-${index}" data-raw-json="${escapedJson}">📋 Show JSON</div>` +
-                    `</div>` +
-                    `<div class="bbox-block-content">` +
-                    `<div class="bbox-no-image">No source image available for bounding box overlay</div>` +
-                    `</div>` +
-                    `<div class="bbox-raw-json" data-json="${escapedJson}" style="display:none"></div>` +
-                    `</div>`
-                )
-            }
-
-            // Return wrapper with loading state; actual rendering happens asynchronously
-            // The data-bbox-index attribute lets the component identify which block to render
+        // If no source image, show placeholder
+        if (!sourceImageUrl) {
             return (
-                `<div class="bbox-block-wrapper" data-bbox-index="${index}">` +
+                `<div class="bbox-block-wrapper">` +
                 `<div class="bbox-block-toolbar">` +
-                `<div class="bbox-copy-button" title="Copy annotated image to clipboard" data-bbox-index="${index}">📋 Copy Image</div>` +
-                `<div class="bbox-download-button" title="Download annotated image" data-bbox-index="${index}">💾 Download</div>` +
-                `<div class="bbox-toggle-button" title="Toggle between image and raw JSON" data-toggle="bbox-${index}" data-raw-json="${escapedJson}">📄 Show JSON</div>` +
+                `<div class="bbox-toggle-button" data-toggle="bbox-${index}" data-raw-json="${escapedJson}">📋 Show JSON</div>` +
                 `</div>` +
-                `<div class="bbox-block-content" data-bbox-index="${index}">` +
-                `<div class="bbox-loading">Rendering annotated image...</div>` +
+                `<div class="bbox-block-content">` +
+                `<div class="bbox-no-image">No source image available for bounding box overlay</div>` +
                 `</div>` +
-                `<div class="bbox-raw-json" data-json="${escapedJson}" style="display:none"><pre>${escapedJson}</pre></div>` +
+                `<div class="bbox-raw-json" data-json="${escapedJson}" style="display:none"></div>` +
                 `</div>`
             )
-        },
+        }
+
+        // Return wrapper with loading state; actual rendering happens asynchronously
+        // The data-bbox-index attribute lets the component identify which block to render
+        return (
+            `<div class="bbox-block-wrapper" data-bbox-index="${index}">` +
+            `<div class="bbox-block-toolbar">` +
+            `<div class="bbox-copy-button" title="Copy annotated image to clipboard" data-bbox-index="${index}">📋 Copy Image</div>` +
+            `<div class="bbox-download-button" title="Download annotated image" data-bbox-index="${index}">💾 Download</div>` +
+            `<div class="bbox-toggle-button" title="Toggle between image and raw JSON" data-toggle="bbox-${index}" data-raw-json="${escapedJson}">📄 Show JSON</div>` +
+            `</div>` +
+            `<div class="bbox-block-content" data-bbox-index="${index}">` +
+            `<div class="bbox-loading">Rendering annotated image...</div>` +
+            `</div>` +
+            `<div class="bbox-raw-json" data-json="${escapedJson}" style="display:none"><pre>${escapedJson}</pre></div>` +
+            `</div>`
+        )
+    },
     )
 }
 
