@@ -175,7 +175,7 @@ export function renderBoundingBoxes(
                 if (box.sub_label) labels.push(box.sub_label)
 
                 if (labels.length > 0) {
-                    drawLabelBadge(ctx, x, y, labels, color)
+                    drawLabelBadge(ctx, x, y, w, labels, color, img.naturalWidth, img.naturalHeight)
                 }
             })
 
@@ -197,16 +197,20 @@ export function renderBoundingBoxes(
 }
 
 /**
- * Draws a label badge in the top-left corner of a bounding box.
+ * Draws a label badge above a bounding box.
+ * Positions the badge just above the box, clamped to canvas bounds.
  */
 function drawLabelBadge(
     ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
+    boxX: number,
+    boxY: number,
+    boxWidth: number,
     labels: string[],
     color: string,
+    canvasWidth: number,
+    canvasHeight: number,
 ): void {
-    const fontSize = Math.max(12, Math.min(16, x * 0.05, y * 0.05))
+    const fontSize = Math.max(12, Math.min(16, boxWidth * 0.08))
     ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`
 
     // Measure text to determine badge size
@@ -219,25 +223,35 @@ function drawLabelBadge(
 
     const badgeWidth = maxWidth + padding * 2
     const badgeHeight = labels.length * (fontSize + 2) + padding * 2
+    const gap = 2 // gap between badge and box
+
+    // Position badge above the box, clamped to canvas bounds
+    let badgeX = boxX
+    let badgeY = boxY - badgeHeight - gap
+
+    // Clamp to canvas bounds
+    if (badgeX < 0) badgeX = 0
+    if (badgeX + badgeWidth > canvasWidth) badgeX = canvasWidth - badgeWidth
+    if (badgeY < 0) badgeY = boxY + 2 // fallback: place inside box if no room above
 
     // Draw badge background with rounded corners
     ctx.fillStyle = color
     const cornerRadius = 4
     ctx.beginPath()
-    ctx.moveTo(x + cornerRadius, y)
-    ctx.lineTo(x + badgeWidth - cornerRadius, y)
-    ctx.quadraticCurveTo(x + badgeWidth, y, x + badgeWidth, y + cornerRadius)
-    ctx.lineTo(x + badgeWidth, y + badgeHeight - cornerRadius)
+    ctx.moveTo(badgeX + cornerRadius, badgeY)
+    ctx.lineTo(badgeX + badgeWidth - cornerRadius, badgeY)
+    ctx.quadraticCurveTo(badgeX + badgeWidth, badgeY, badgeX + badgeWidth, badgeY + cornerRadius)
+    ctx.lineTo(badgeX + badgeWidth, badgeY + badgeHeight - cornerRadius)
     ctx.quadraticCurveTo(
-        x + badgeWidth,
-        y + badgeHeight,
-        x + badgeWidth - cornerRadius,
-        y + badgeHeight,
+        badgeX + badgeWidth,
+        badgeY + badgeHeight,
+        badgeX + badgeWidth - cornerRadius,
+        badgeY + badgeHeight,
     )
-    ctx.lineTo(x + cornerRadius, y + badgeHeight)
-    ctx.quadraticCurveTo(x, y + badgeHeight, x, y + badgeHeight - cornerRadius)
-    ctx.lineTo(x, y + cornerRadius)
-    ctx.quadraticCurveTo(x, y, x + cornerRadius, y)
+    ctx.lineTo(badgeX + cornerRadius, badgeY + badgeHeight)
+    ctx.quadraticCurveTo(badgeX, badgeY + badgeHeight, badgeX, badgeY + badgeHeight - cornerRadius)
+    ctx.lineTo(badgeX, badgeY + cornerRadius)
+    ctx.quadraticCurveTo(badgeX, badgeY, badgeX + cornerRadius, badgeY)
     ctx.closePath()
     ctx.fill()
 
@@ -245,7 +259,7 @@ function drawLabelBadge(
     ctx.fillStyle = "#FFFFFF"
     ctx.textBaseline = "top"
     labels.forEach((label, i) => {
-        ctx.fillText(label, x + padding, y + padding + i * (fontSize + 2))
+        ctx.fillText(label, badgeX + padding, badgeY + padding + i * (fontSize + 2))
     })
 }
 
