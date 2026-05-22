@@ -75,15 +75,21 @@ npm run preview
 
 Chit is built with:
 
-- [Svelte 5](https://svelte.dev/)
-- [Vite](https://vitejs.dev/)
+- [Svelte 5](https://svelte.dev/) — runtime and compiler
+- [Vite](https://vitejs.dev/) — build tool and dev server
+- [SCSS](https://sass-lang.com/) — styling with nested syntax and variables
+- [Markdown It](https://github.com/markdown-it/markdown-it) — markdown rendering
+- [KaTeX](https://katex.org/) — math formula rendering
+- [MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk) — Model Context Protocol integration
+- [Zod](https://zod.dev/) — runtime type validation and schema definition
 
 The project structure follows Svelte conventions:
 
 - `/src` — Source code
-  - `/app` — Main application components
-  - `/lib` — Utility functions, stores, core logic
+  - `/app` — Main application components (UI, chat, sidebar)
+  - `/lib` — Utility functions, stores, LLM drivers, tools, and voice
   - `/preset-prompts` — Predefined system prompts
+  - `/vendor` — Vendored third-party scripts (EXIF.js, FileSaver)
 
 ----
 2025, Network47.org
