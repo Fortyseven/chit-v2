@@ -17,6 +17,16 @@ import { QuoteTTSDetector } from "./quoteTTSDetection"
 import { QwenToolDetector } from "./qwenToolDetection"
 import { ThinkingDetector } from "./thinkingDetection"
 
+/**
+ * Normalize an audio format string to one the OpenAI API accepts.
+ * The API only accepts 'wav' or 'mp3'.
+ */
+function normalizeAudioFormat(format: string): string {
+    const normalized = format.toLowerCase().replace(/\s/g, "")
+    if (normalized === "mp3" || normalized === "mpeg") return "mp3"
+    return "wav"
+}
+
 export class OpenAIDriver implements LLMDriver {
     baseURL: string
     apiKey: string
@@ -46,17 +56,35 @@ export class OpenAIDriver implements LLMDriver {
         // Use OpenAI JSON mode for structured output
         // If format is provided, append a system prompt to steer the model
         let oaiMessages = messages.map((m) => {
+            const parts: any[] = [{ type: "text", text: m.content }]
             if (m.images && m.images.length > 0) {
-                return {
-                    role: m.role,
-                    content: [
-                        { type: "text", text: m.content },
-                        ...m.images.map((img64) => ({
-                            type: "image_url",
-                            image_url: `data:image/png;base64,${img64}`,
-                        })),
-                    ],
-                }
+                parts.push(
+                    ...m.images.map((img64) => ({
+                        type: "image_url",
+                        image_url: `data:image/png;base64,${img64}`,
+                    }))
+                )
+            }
+            if (m.audio && m.audio.length > 0) {
+                parts.push(
+                    ...m.audio.map((audioEntry) => {
+                        const colonIdx = audioEntry.indexOf(":")
+                        const format = normalizeAudioFormat(
+                            colonIdx > -1 ? audioEntry.slice(0, colonIdx) : "wav"
+                        )
+                        const data = colonIdx > -1 ? audioEntry.slice(colonIdx + 1) : audioEntry
+                        return {
+                            type: "input_audio",
+                            input_audio: {
+                                data: data,
+                                format: format,
+                            },
+                        }
+                    })
+                )
+            }
+            if (parts.length > 1) {
+                return { role: m.role, content: parts }
             }
             return { role: m.role, content: m.content }
         })
@@ -104,7 +132,10 @@ export class OpenAIDriver implements LLMDriver {
             body: JSON.stringify(body),
         })
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        if (!res.ok) {
+            const errBody = await res.text()
+            throw new Error(`HTTP ${res.status}: ${errBody}`)
+        }
 
         const data = await res.json()
 
@@ -157,18 +188,33 @@ export class OpenAIDriver implements LLMDriver {
             const toolsEnabled = chat?.toolsEnabled ?? false
 
             const oaiMessages = messages.map((m) => {
+                const parts: any[] = [{ type: "text", text: m.content }]
                 if (m.images && m.images.length > 0) {
                     const imageBlocks = m.images.map((img64) => ({
                         type: "image_url",
                         image_url: { url: `data:image/png;base64,${img64}` },
                     }))
-                    return {
-                        role: m.role,
-                        content: [
-                            { type: "text", text: m.content },
-                            ...imageBlocks,
-                        ],
-                    }
+                    parts.push(...imageBlocks)
+                }
+                if (m.audio && m.audio.length > 0) {
+                    const audioBlocks = m.audio.map((audioEntry) => {
+                        const colonIdx = audioEntry.indexOf(":")
+                        const format = normalizeAudioFormat(
+                            colonIdx > -1 ? audioEntry.slice(0, colonIdx) : "wav"
+                        )
+                        const data = colonIdx > -1 ? audioEntry.slice(colonIdx + 1) : audioEntry
+                        return {
+                            type: "input_audio",
+                            input_audio: {
+                                data: data,
+                                format: format,
+                            },
+                        }
+                    })
+                    parts.push(...audioBlocks)
+                }
+                if (parts.length > 1) {
+                    return { role: m.role, content: parts }
                 }
                 return { role: m.role, content: m.content }
             })
@@ -220,7 +266,11 @@ export class OpenAIDriver implements LLMDriver {
                 body: JSON.stringify(requestBody),
                 signal: controller.signal,
             })
-            if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`)
+            if (!res.ok) {
+                const errBody = await res.text()
+                throw new Error(`HTTP ${res.status}: ${errBody}`)
+            }
+            if (!res.body) throw new Error(`HTTP ${res.status}: no response body`)
 
             const reader = res.body.getReader()
             const decoder = new TextDecoder()
@@ -479,9 +529,11 @@ export class OpenAIDriver implements LLMDriver {
                     signal: controller.signal,
                 })
 
-                if (!followUpRes.ok || !followUpRes.body) {
-                    throw new Error(`HTTP ${followUpRes.status}`)
+                if (!followUpRes.ok) {
+                    const errBody = await followUpRes.text()
+                    throw new Error(`HTTP ${followUpRes.status}: ${errBody}`)
                 }
+                if (!followUpRes.body) throw new Error(`HTTP ${followUpRes.status}: no response body`)
 
                 const followUpReader = followUpRes.body.getReader()
                 const followUpDecoder = new TextDecoder()

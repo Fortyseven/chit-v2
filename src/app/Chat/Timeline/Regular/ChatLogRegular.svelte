@@ -9,6 +9,7 @@
     import { setPendingInputText } from "$lib/chatSession/rewindInput"
     import { streamingState } from "$lib/chatSession/streamingState"
     import AsyncMediaImage from "../../../components/AsyncMediaImage.svelte"
+    import ChatAudioAttachment from "../../../components/ChatAudioAttachment.svelte"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
     import ChatLogRegular_ReferencesInUse from "./ChatLogRegular_ReferencesInUse.svelte"
     import ChatLogRegular_User from "./ChatLogRegular_User.svelte"
@@ -97,6 +98,11 @@
                                         maxWidth={256}
                                         maxHeight={256}
                                     />
+                                </div>
+                            {/if}
+                            {#if media.type === ChatMediaType.AUDIO}
+                                <div class="media-attachment">
+                                    <ChatAudioAttachment {media} />
                                 </div>
                             {/if}
                             {#if media.type === ChatMediaType.TEXT}

@@ -41,6 +41,15 @@
                             ChatMediaType.IMAGE,
                         )
                     }
+                } else if (clipboardItem.type.startsWith("audio/")) {
+                    ev.preventDefault()
+                    await chatAddPastedMedia(
+                        $currentChat?.id,
+                        new Blob([clipboardItem], {
+                            type: clipboardItem.type,
+                        }),
+                        ChatMediaType.AUDIO,
+                    )
                 }
             }
         }

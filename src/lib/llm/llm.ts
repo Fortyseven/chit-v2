@@ -116,6 +116,7 @@ export class LLMInterface {
             // Skip tool call info - it's for display only, not for LLM
             let msg = message.content.trim()
             const images: string[] = []
+            const audio: string[] = []
 
             if (message.media && message.media.length > 0) {
                 for (const media of message.media) {
@@ -140,6 +141,39 @@ export class LLMInterface {
                                 error
                             )
                         }
+                    } else if (media.type == ChatMediaType.AUDIO) {
+                        try {
+                            const blobData = await getMediaBlob(media)
+                            if (blobData instanceof Blob) {
+                                const audio64 = await convertFileToBase64(
+                                    blobData
+                                )
+                                // Normalize MIME type to format the API accepts
+                                const mime = blobData.type
+                                let format: string
+                                if (mime === "audio/mpeg" || mime === "audio/mp3") {
+                                    format = "mp3"
+                                } else if (
+                                    mime === "audio/wav" ||
+                                    mime === "audio/x-wav"
+                                ) {
+                                    format = "wav"
+                                } else {
+                                    format = "wav"
+                                }
+                                audio.push(`${format}:${audio64}`)
+                            } else {
+                                console.warn(
+                                    "Media data is not a blob, skipping audio:",
+                                    media.id
+                                )
+                            }
+                        } catch (error) {
+                            console.error(
+                                "Failed to load audio blob for LLM:",
+                                error
+                            )
+                        }
                     } else if (media.type == ChatMediaType.TEXT && media.data) {
                         const textData =
                             typeof media.data === "string" ? media.data : ""
@@ -154,6 +188,7 @@ export class LLMInterface {
                 role: message.role,
                 content: msg,
                 images,
+                audio,
             })
         }
 

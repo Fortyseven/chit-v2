@@ -120,6 +120,8 @@
             ".png",
             ".webp",
             ".gif",
+            ".wav",
+            ".mp3",
             ".txt",
             ".pdf",
             ".md",
@@ -159,6 +161,15 @@
                         $currentChat?.id,
                         blob,
                         ChatMediaType.IMAGE,
+                        file.name,
+                    )
+                } else if (type.startsWith("audio/")) {
+                    const blob = new Blob([result], { type })
+
+                    chatAddPastedMedia(
+                        $currentChat?.id,
+                        blob,
+                        ChatMediaType.AUDIO,
                         file.name,
                     )
                 } else {
@@ -235,6 +246,19 @@
                     >
                         <div class="btn-text-attach">{media.data}</div>
                     </Pill>
+                {:else if media.type === ChatMediaType.AUDIO}
+                    <Pill
+                        text={media.filename || "Audio"}
+                        dismissible
+                        color="var(--color-accent-complement-darker)"
+                        textColor="white"
+                        on:dismiss={async () => {
+                            await chatClearPastedMedia(
+                                $currentChat?.id,
+                                media.id,
+                            )
+                        }}
+                    />
                 {:else}
                     <Pill
                         text={media.filename ||

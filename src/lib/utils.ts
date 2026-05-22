@@ -53,7 +53,7 @@ export function loadFile(types: string[]): Promise<any> {
                 }
             }
             reader.onerror = () => reject(new Error("Error reading file"))
-            if (file.type.startsWith("image/")) {
+            if (file.type.startsWith("image/") || file.type.startsWith("audio/")) {
                 reader.readAsArrayBuffer(file)
             } else {
                 reader.readAsText(file)

@@ -2,6 +2,7 @@ export type GenericMessage = {
     role: "system" | "user" | "assistant"
     content: string
     images?: string[]
+    audio?: string[]
 }
 
 export interface ChatConfig {
