@@ -11,12 +11,22 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
-        "paths":{
-            "@/*": ["./src/*"],
-            "$src/*": ["./src/*"],
-            "$lib/*": ["./src/lib/*"],
-            "$stores/*": ["./src/stores/*"],
-            "$app/*": ["./src/app/*"],
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "$src/*": [
+                "./src/*"
+            ],
+            "$lib/*": [
+                "./src/lib/*"
+            ],
+            "$stores/*": [
+                "./src/stores/*"
+            ],
+            "$app/*": [
+                "./src/app/*"
+            ],
         }
     },
     "include": [

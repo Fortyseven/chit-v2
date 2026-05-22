@@ -68,7 +68,7 @@ interface BoundingBoxEntry {
 - Draws image, then overlays rectangles with labels
 - **Coordinate auto-scaling**: Detects coordinate system:
   - If max coord ≤ 1: treat as normalized (0-1), multiply by image dimensions
-  - If max coord ≤ 1000 and image is larger: treat as normalized to 1000, scale proportionally  
+  - If max coord ≤ 1000 and image is larger: treat as normalized to 1000, scale proportionally
   - Otherwise: treat as pixel coordinates
 - Each box gets a distinct "primary" color from a rotating palette
 - Labels rendered as a badge in the top-left corner of each rectangle

@@ -113,4 +113,4 @@ The project structure follows Svelte conventions:
 - `/public` — Static assets (favicon, manifest, syntax highlighting CSS)
 
 ----
-2025, Network47.org
+2026, Network47.org
