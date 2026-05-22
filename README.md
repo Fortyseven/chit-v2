@@ -86,10 +86,25 @@ Chit is built with:
 The project structure follows Svelte conventions:
 
 - `/src` — Source code
-  - `/app` — Main application components (UI, chat, sidebar)
-  - `/lib` — Utility functions, stores, LLM drivers, tools, and voice
-  - `/preset-prompts` — Predefined system prompts
-  - `/vendor` — Vendored third-party scripts (EXIF.js, FileSaver)
+  - `/app` — Main application components
+    - `/Chat` — Chat timeline, input bar, and message rendering
+    - `/ChatSidebar` — Sidebar with session list, config panels, and mode controls
+    - `/UI` — Shared UI primitives (modals, dialogs, buttons, pills, context menus)
+    - `/components` — Reusable standalone components (async media, markdown editor)
+  - `/lib` — Core logic and utilities
+    - `/chatSession` — Chat state management, storage, attachments, and streaming
+    - `/llm` — LLM driver interface, OpenAI-compatible driver, and response detectors
+    - `/tools` — Built-in tool definitions and index
+    - `/mcp` — MCP (Model Context Protocol) manager and server connections
+    - `/voice` — TTS engine interface, OpenAI and Web Speech implementations
+    - `/backpack` — External context reference management
+    - `/inputCommands` — Slash command parser and handlers
+    - `/modes` — App mode logic (chat, roleplay)
+    - `/text` — Text normalization and token estimation
+    - `/templating` — System and user variable templating
+  - `/preset-prompts` — Predefined system prompt presets
+  - `/vendor` — Vendored third-party scripts (EXIF.js, FileSaver, highlight.js)
+- `/public` — Static assets (favicon, manifest, syntax highlighting CSS)
 
 ----
 2025, Network47.org
