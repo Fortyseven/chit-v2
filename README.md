@@ -1,36 +1,46 @@
-# Chit - Web-based Chat Interface for Ollama
+# Chit - Browser-Based Chat Interface
 
 ![Chit Application Screenshot](./docs/screenshot.png)
 
 ## Overview
 
-Chit is yet another chat interface for interacting with local large language models through Ollama.
-
-It's primary focus is providing a useful browser-only interface that does not rely on a third-party server, besides Ollama itself. It only saves data to the browser via the browser's'regular applicaton storage.
-
-Later I may add an optional thin server component for performing tasks the browser can't.
+Chit is a browser-only chat interface for interacting with large language models through any OpenAI-compatible API. It requires no server — all data is stored in the browser via IndexedDB and regular application storage.
 
 This personal project is a constant WIP, and I'm not (yet) accepting PRs for new features or fixes.
 
 ## Features
 
-- 🤖 Connect to local Ollama instance for AI chat functionality
-- 💬 Multiple chat sessions with persistent storage
-- 🔧 Customizable system prompts and model parameters
-- 🔊 Audio feedback for typing and responses
-- 📚 Preset system prompts for various use cases (analysis, code review, ELI5, etc.)
+- 🤖 **OpenAI-Compatible API** — Connect to any OpenAI-compatible backend (Ollama, LM Studio, vLLM, etc.) with configurable base URL and API key
+- 💬 **Multiple Chat Sessions** — Create, switch between, and manage multiple persistent chat conversations
+- 💾 **Persistent Storage** — Chat history, settings, and media are saved to IndexedDB and survive browser reloads
+- 🎨 **Customizable System Prompts** — Set per-chat system prompts with user and system variable templating
+- 📚 **Preset System Prompts** — Built-in prompt templates for common use cases (analysis, code review, ELI5, etc.)
+- 🎛️ **Advanced Model Parameters** — Fine-tune temperature, top_p, presence penalty, repeat penalty, top_k, and seed per chat
+- 💭 **Thinking Mode** — Models that support reasoning output display collapsible thinking blocks separate from the final response
+- 🖼️ **Image Upload and Paste** — Attach images via file picker or clipboard paste; images are resized and stored in IndexedDB
+- 🎵 **Audio Upload** — Attach .wav and .mp3 audio files for multimodal inference, displayed as playable cards in the timeline
+- 📄 **Text File Attachments** — Attach code and text files (.py, .js, .json, .txt, .md, .csv, .xml, .yaml, etc.) that are inline with messages
+- 🔧 **Tool System** — Built-in tools (calculator, time, ask-questions, echo, say) with support for MCP (Model Context Protocol) server integration
+- 🔊 **Text-to-Speech** — Read responses aloud with configurable TTS engines, auto-speak options, and quote detection for selective reading
+- 🎧 **Audio Feedback** — Distinct sound cues for typing, response completion, and questions
+- 📦 **Backpack References** — Attach external context references (URLs, tool outputs) to enrich the conversation context window
+- ⏪ **Chat Rewind** — Rewind to any previous message to branch the conversation from that point
+- 📋 **Chat Duplicate and Chop** — Duplicate messages to create branches, or chop the latest message to re-roll responses
+- 📐 **KaTeX Math Rendering** — Inline and block math formulas rendered with KaTeX
+- ✏️ **Markdown Editor** — Rich markdown preview with SVG copy, bbox annotation, and code block copy buttons
+- 🎭 **App Modes** — Switch between standard chat mode and roleplay mode for different interaction styles
 
 ## Prerequisites
 
-- [Ollama](https://ollama.ai/) running locally or on an accessible server
-- A compatible AI model loaded in Ollama (e.g., Llama 3.1, etc.)
+- Any OpenAI-compatible API server (Ollama, LM Studio, vLLM, etc.)
+- A compatible AI model loaded in your backend
 
 ## Building and Developing
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/chit-svelte5.git
-   cd chit-svelte5
+   git clone https://github.com/network47/chit.git
+   cd chit
    ```
 
 2. Install dependencies:
@@ -43,8 +53,7 @@ This personal project is a constant WIP, and I'm not (yet) accepting PRs for new
    npm run dev
    ```
 
-4. Open your browser and navigate to http://localhost:4000
-
+4. Open your browser and navigate to `http://localhost:5173`
 
 ### Building for Production
 
@@ -54,7 +63,7 @@ To build the application for production:
 npm run build
 ```
 
-This will create a production build in the `docs` folder.
+This creates a production build in the `docs` folder.
 
 To preview the production build locally:
 
@@ -68,15 +77,13 @@ Chit is built with:
 
 - [Svelte 5](https://svelte.dev/)
 - [Vite](https://vitejs.dev/)
-- [Ollama JS SDK](https://github.com/ollama/ollama-js)
 
 The project structure follows Svelte conventions:
 
-- `/src` - Source code
-  - `/app` - Main application components
-  - `/lib` - Utility functions, stores, core logic
-  - `/preset-prompts` - Predefined system prompts
-
+- `/src` — Source code
+  - `/app` — Main application components
+  - `/lib` — Utility functions, stores, core logic
+  - `/preset-prompts` — Predefined system prompts
 
 ----
 2025, Network47.org
