@@ -21,6 +21,15 @@
 - **Components:** Svelte in `/src/app`, utilities in `/src/lib`
 - **Comments:** Use JSDoc for functions; keep comments concise and relevant
 
+## Media Attachment System
+- Media types are defined in `ChatMediaType` enum (`src/lib/chatSession/chatAttachments.ts`): `IMAGE`, `AUDIO`, `VIDEO`, `TEXT`
+- Attachments flow: user picks/pastes file → `chatAddPastedMedia()` stores in IndexedDB → rendered as pills in `InputBar__Attachments.svelte` → sent to LLM via `chatUpdateSession()` in `llm.ts`
+- `GenericMessage` type (`src/lib/llm/LLMDriver.ts`) carries `images?: string[]` and `audio?: string[]` (base64 with format prefix like `"wav:data"`)
+- `OpenAIDriver.ts` maps images to `image_url` and audio to `input_audio` content parts for the OpenAI API
+- Timeline rendering: `ChatLogRegular.svelte` dispatches to `AsyncMediaImage`, `ChatAudioAttachment`, or `ChatLogRegular_User` (text) based on media type
+- File picker filter and paste handler live in `InputBar__Attachments.svelte` and `InputBar__PasteHandler.svelte` respectively
+- `loadFile()` in `src/lib/utils.ts` reads images and audio as `ArrayBuffer`, text files as text
+
 ## Task Focus Guidelines
 - **Stay on Task:** Only implement the specific features or changes that were explicitly requested
 - **No Unsolicited Features:** Do not add additional features, optimizations, or improvements unless they were specifically asked for
