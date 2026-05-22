@@ -1,6 +1,6 @@
 # Chit - Browser-Based Chat Interface
 
-![Chit Application Screenshot](./docs/screenshot.png)
+![Chit Application Screenshot](./screenshot.png)
 
 ## Overview
 
