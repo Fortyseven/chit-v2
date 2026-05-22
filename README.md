@@ -71,6 +71,12 @@ To preview the production build locally:
 npm run preview
 ```
 
+### Deployment
+
+The project is configured to deploy to GitHub Pages. On every push to `master`, a GitHub Actions workflow builds the project and deploys the `docs` folder to GitHub Pages.
+
+You can also trigger a manual deployment from the Actions tab.
+
 ## Development
 
 Chit is built with:
