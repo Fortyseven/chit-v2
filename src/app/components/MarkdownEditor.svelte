@@ -416,6 +416,58 @@
 
         function setupMermaidButtons() {
             if (!containerEl) return
+
+            // Source toggle button — swap between rendered diagram and raw source
+            const sourceBtns = containerEl.querySelectorAll(
+                ".mermaid-source-button:not([data-mermaid-bound])",
+            )
+            sourceBtns.forEach((button) => {
+                button.setAttribute("data-mermaid-bound", "1")
+                button.addEventListener("click", () => {
+                    const wrapper = button.closest(".mermaid-block-wrapper")
+                    if (!wrapper) return
+                    const contentEl = wrapper.querySelector(
+                        ".mermaid-block-content",
+                    )
+                    if (!contentEl) return
+
+                    const showingSource =
+                        wrapper.getAttribute("data-showing-source") === "1"
+                    if (showingSource) {
+                        // Switch back to rendered diagram
+                        const svg = wrapper.getAttribute("data-mermaid-svg")
+                        if (svg) {
+                            const decoded = svg
+                                .replace(/&amp;/g, "&")
+                                .replace(/&lt;/g, "<")
+                                .replace(/&gt;/g, ">")
+                                .replace(/&quot;/g, '"')
+                            contentEl.innerHTML = decoded
+                        }
+                        wrapper.setAttribute("data-showing-source", "0")
+                        button.textContent = "📄 Source"
+                        button.classList.remove("active")
+                    } else {
+                        // Show raw mermaid source (disables the rendered view)
+                        const diagram =
+                            wrapper.getAttribute("data-mermaid-diagram")
+                        const decoded = (diagram || "")
+                            .replace(/&amp;/g, "&")
+                            .replace(/&lt;/g, "<")
+                            .replace(/&gt;/g, ">")
+                            .replace(/&quot;/g, '"')
+                        const pre = document.createElement("pre")
+                        pre.className = "mermaid-source"
+                        pre.textContent = decoded
+                        contentEl.innerHTML = ""
+                        contentEl.appendChild(pre)
+                        wrapper.setAttribute("data-showing-source", "1")
+                        button.textContent = "🖼️ Diagram"
+                        button.classList.add("active")
+                    }
+                })
+            })
+
             // Expand button — open mermaid viewer modal
             const expandBtns = containerEl.querySelectorAll(
                 ".mermaid-expand-button:not([data-mermaid-bound])",
@@ -573,6 +625,9 @@
                 el.addEventListener("click", () => {
                     const wrapper = el.closest(".mermaid-block-wrapper")
                     if (!wrapper) return
+                    // Don't open the viewer while the raw source is showing
+                    if (wrapper.getAttribute("data-showing-source") === "1")
+                        return
                     const svg = wrapper.getAttribute("data-mermaid-svg")
                     if (!svg) return
                     const decoded = svg
@@ -955,6 +1010,7 @@
             flex-wrap: wrap;
         }
 
+        :global(.mermaid-source-button),
         :global(.mermaid-expand-button),
         :global(.mermaid-copy-svg-button),
         :global(.mermaid-copy-png-button),
@@ -977,6 +1033,23 @@
                 background-color: rgba(50, 205, 50, 0.3);
                 opacity: 1;
             }
+
+            &.active {
+                background-color: rgba(255, 255, 255, 0.2);
+                opacity: 1;
+            }
+        }
+
+        :global(.mermaid-source) {
+            width: 100%;
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: var(--font-family-mono, monospace);
+            font-size: 13px;
+            color: var(--color-text);
+            text-align: left;
+            cursor: text;
         }
 
         :global(.mermaid-block-content) {

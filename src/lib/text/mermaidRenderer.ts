@@ -117,6 +117,7 @@ export function injectMermaidBlocks(
             return (
                 `<div class="mermaid-block-wrapper" data-mermaid-diagram="${escapedDiagram}">` +
                 `<div class="mermaid-block-toolbar">` +
+                `<div class="mermaid-source-button" title="Toggle diagram source">📄 Source</div>` +
                 `<div class="mermaid-expand-button" title="Open in full viewer">🔍 Expand</div>` +
                 `<div class="mermaid-copy-svg-button" title="Copy as SVG">📋 SVG</div>` +
                 `<div class="mermaid-copy-png-button" title="Copy as PNG">🖼️ PNG</div>` +
