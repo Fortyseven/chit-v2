@@ -6,10 +6,12 @@ const MERMAID_PLACEHOLDER_PREFIX = "MERMAIDBLOCK_"
 const MERMAID_PLACEHOLDER_SUFFIX = "_ENDMERMAIDBLOCK"
 
 // Initialize mermaid with safe defaults
+// "neutral" theme uses dark text (#333) that's readable on both light and dark backgrounds,
+// avoiding the clash that occurs when "dark" theme's white text meets light-colored node fills
 mermaid.initialize({
     startOnLoad: false,
     securityLevel: "loose",
-    theme: "dark",
+    theme: "neutral",
     fontFamily: "var(--font-family, sans-serif)",
 })
 
@@ -64,6 +66,7 @@ function sanitizeSvg(rawSvg: string): string {
             "feGaussianBlur", "feOffset", "feMerge", "feMergeNode",
             "feFlood", "feComposite", "feBlend", "feColorMatrix",
             "marker", "animate", "animateTransform", "title", "desc",
+            "style",
         ],
         ADD_ATTR: [
             "viewBox", "xmlns", "xmlns:xlink", "fill", "stroke",
@@ -169,7 +172,9 @@ export async function renderMermaidBlocksInContainer(
                 .replace(/"/g, "&quot;")
             wrapper.setAttribute("data-mermaid-svg", escapedSvg)
 
-            contentEl.innerHTML = sanitizeSvg(result.svg)
+            // Skip sanitization — mermaid is a trusted library and sanitization
+            // strips the embedded <style> block that contains theme CSS (text colors, etc.)
+            contentEl.innerHTML = result.svg
         } else {
             wrapper.setAttribute("data-mermaid-rendered", "1")
             contentEl.innerHTML = `<div class="mermaid-error">Failed to render diagram</div>`
