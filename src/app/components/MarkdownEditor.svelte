@@ -1,13 +1,18 @@
 <script lang="ts">
     // @ts-ignore
     import { isRPMode } from "$lib/modes/modeUtils"
-    import { wrapQuotesStreaming } from "$lib/text/quoteWrap"
     import {
         extractBboxBlocks,
         injectBboxBlocks,
         renderBboxBlocksInContainer,
         type BoundingBoxEntry,
     } from "$lib/text/bboxRenderer"
+    import {
+        extractMermaidBlocks,
+        injectMermaidBlocks,
+        renderMermaidBlocksInContainer,
+    } from "$lib/text/mermaidRenderer"
+    import { wrapQuotesStreaming } from "$lib/text/quoteWrap"
     import { extractSvgBlocks, injectSvgBlocks } from "$lib/text/svgRenderer"
     import {
         ttsSpeak,
@@ -22,6 +27,7 @@
     import { createEventDispatcher, onMount, tick } from "svelte"
     // @ts-ignore
     import { hljs } from "../../vendor/highlight.min.js"
+    import MermaidViewer from "./MermaidViewer.svelte"
 
     // Props
     export let content = ""
@@ -89,11 +95,28 @@
     let lastSourceImage: string | null = null
     let mounted = false
 
+    // Mermaid viewer state
+    let mermaidViewerOpen = false
+    let mermaidViewerSvg = ""
+
+    // Async render mermaid diagrams after DOM update
+    async function renderMermaidDiagrams(_diagrams: string[]) {
+        tick().then(() => {
+            if (containerEl) {
+                renderMermaidBlocksInContainer(containerEl)
+            }
+        })
+    }
+
     // Re-render bbox blocks when source image becomes available after mount
     // Use tick() to wait for Svelte to update the DOM before querying elements
     $: if (mounted && containerEl && sourceImage && lastBboxBlocks.length > 0) {
         tick().then(() => {
-            renderBboxBlocksInContainer(containerEl, sourceImage, lastBboxBlocks)
+            renderBboxBlocksInContainer(
+                containerEl,
+                sourceImage,
+                lastBboxBlocks,
+            )
         })
     }
 
@@ -103,22 +126,34 @@
     $: {
         const processed = isRPMode() ? wrapQuotesStreaming(content) : content
         // Re-render if content changed OR if sourceImage changed (for bbox overlay)
-        const contentChanged = content !== lastContent || processed !== lastProcessed
+        const contentChanged =
+            content !== lastContent || processed !== lastProcessed
         const sourceImageChanged = sourceImage !== lastSourceImage
-        const shouldRerender = contentChanged || (sourceImageChanged && lastBboxBlocks.length > 0)
+        const shouldRerender =
+            contentChanged || (sourceImageChanged && lastBboxBlocks.length > 0)
         if (shouldRerender) {
             lastContent = content
             lastProcessed = processed
             lastSourceImage = sourceImage
             // Always re-process full pipeline (needed when sourceImage changes
             // since we can't re-inject into already-rendered HTML)
-            const { content: withoutSvg, svgBlocks } = extractSvgBlocks(processed)
-            const { content: withoutBbox, bboxBlocks } = extractBboxBlocks(withoutSvg)
+            const { content: withoutSvg, svgBlocks } =
+                extractSvgBlocks(processed)
+            const { content: withoutMermaid, mermaidBlocks } =
+                extractMermaidBlocks(withoutSvg)
+            const { content: withoutBbox, bboxBlocks } =
+                extractBboxBlocks(withoutMermaid)
             lastBboxBlocks = bboxBlocks
             const rendered = md.render(withoutBbox).trim()
             let result = injectSvgBlocks(rendered, svgBlocks)
+            // Mermaid blocks are injected with loading placeholders, then rendered async
+            result = injectMermaidBlocks(result, mermaidBlocks)
             result = injectBboxBlocks(result, bboxBlocks, sourceImage)
             lastMarkdownStr = result
+            // Async render mermaid diagrams
+            if (mermaidBlocks.length > 0) {
+                renderMermaidDiagrams(mermaidBlocks)
+            }
         }
         markdownStr = lastMarkdownStr
     }
@@ -297,7 +332,9 @@
                         .then((res) => res.blob())
                         .then((blob) => {
                             navigator.clipboard
-                                .write([new ClipboardItem({ "image/png": blob })])
+                                .write([
+                                    new ClipboardItem({ "image/png": blob }),
+                                ])
                                 .then(() => {
                                     const originalText = button.textContent
                                     button.textContent = "✓ Copied"
@@ -308,7 +345,10 @@
                                     }, 2000)
                                 })
                                 .catch((err) => {
-                                    console.error("Failed to copy bbox image:", err)
+                                    console.error(
+                                        "Failed to copy bbox image:",
+                                        err,
+                                    )
                                 })
                         })
                         .catch((err) => {
@@ -348,7 +388,9 @@
                 button.addEventListener("click", () => {
                     const wrapper = button.closest(".bbox-block-wrapper")
                     if (!wrapper) return
-                    const contentEl = wrapper.querySelector(".bbox-block-content")
+                    const contentEl = wrapper.querySelector(
+                        ".bbox-block-content",
+                    )
                     const rawJsonEl = wrapper.querySelector(".bbox-raw-json")
                     if (!contentEl || !rawJsonEl) return
 
@@ -368,6 +410,178 @@
                         rawJsonEl.style.display = ""
                         button.textContent = "🖼️ Show Image"
                     }
+                })
+            })
+        }
+
+        function setupMermaidButtons() {
+            if (!containerEl) return
+            // Expand button — open mermaid viewer modal
+            const expandBtns = containerEl.querySelectorAll(
+                ".mermaid-expand-button:not([data-mermaid-bound])",
+            )
+            expandBtns.forEach((button) => {
+                button.setAttribute("data-mermaid-bound", "1")
+                button.addEventListener("click", () => {
+                    const wrapper = button.closest(".mermaid-block-wrapper")
+                    if (!wrapper) return
+                    const svg = wrapper.getAttribute("data-mermaid-svg")
+                    if (!svg) return
+                    const decoded = svg
+                        .replace(/&amp;/g, "&")
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&quot;/g, '"')
+                    mermaidViewerSvg = decoded
+                    mermaidViewerOpen = true
+                })
+            })
+
+            // Copy SVG button
+            const copySvgBtns = containerEl.querySelectorAll(
+                ".mermaid-copy-svg-button:not([data-mermaid-bound])",
+            )
+            copySvgBtns.forEach((button) => {
+                button.setAttribute("data-mermaid-bound", "1")
+                button.addEventListener("click", () => {
+                    const wrapper = button.closest(".mermaid-block-wrapper")
+                    if (!wrapper) return
+                    const svg = wrapper.getAttribute("data-mermaid-svg")
+                    if (!svg) return
+                    const decoded = svg
+                        .replace(/&amp;/g, "&")
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&quot;/g, '"')
+                    navigator.clipboard
+                        .writeText(decoded)
+                        .then(() => {
+                            const originalText = button.textContent
+                            button.textContent = "✓ Copied"
+                            button.classList.add("copied")
+                            setTimeout(() => {
+                                button.textContent = originalText
+                                button.classList.remove("copied")
+                            }, 2000)
+                        })
+                        .catch((err) => {
+                            console.error("Failed to copy SVG:", err)
+                        })
+                })
+            })
+
+            // Copy PNG button
+            const copyPngBtns = containerEl.querySelectorAll(
+                ".mermaid-copy-png-button:not([data-mermaid-bound])",
+            )
+            copyPngBtns.forEach((button) => {
+                button.setAttribute("data-mermaid-bound", "1")
+                button.addEventListener("click", () => {
+                    const wrapper = button.closest(".mermaid-block-wrapper")
+                    if (!wrapper) return
+                    const svg = wrapper.getAttribute("data-mermaid-svg")
+                    if (!svg) return
+                    const decoded = svg
+                        .replace(/&amp;/g, "&")
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&quot;/g, '"')
+                    svgToPngClipboard(decoded, button)
+                })
+            })
+
+            // Download SVG button
+            const downloadSvgBtns = containerEl.querySelectorAll(
+                ".mermaid-download-svg-button:not([data-mermaid-bound])",
+            )
+            downloadSvgBtns.forEach((button) => {
+                button.setAttribute("data-mermaid-bound", "1")
+                button.addEventListener("click", () => {
+                    const wrapper = button.closest(".mermaid-block-wrapper")
+                    if (!wrapper) return
+                    const svg = wrapper.getAttribute("data-mermaid-svg")
+                    if (!svg) return
+                    const decoded = svg
+                        .replace(/&amp;/g, "&")
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&quot;/g, '"')
+                    const blob = new Blob([decoded], { type: "image/svg+xml" })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement("a")
+                    a.href = url
+                    a.download = `mermaid-diagram-${Date.now()}.svg`
+                    a.click()
+                    URL.revokeObjectURL(url)
+                })
+            })
+
+            // Download PNG button
+            const downloadPngBtns = containerEl.querySelectorAll(
+                ".mermaid-download-png-button:not([data-mermaid-bound])",
+            )
+            downloadPngBtns.forEach((button) => {
+                button.setAttribute("data-mermaid-bound", "1")
+                button.addEventListener("click", () => {
+                    const wrapper = button.closest(".mermaid-block-wrapper")
+                    if (!wrapper) return
+                    const svg = wrapper.getAttribute("data-mermaid-svg")
+                    if (!svg) return
+                    const decoded = svg
+                        .replace(/&amp;/g, "&")
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&quot;/g, '"')
+
+                    const svgBlob = new Blob([decoded], {
+                        type: "image/svg+xml",
+                    })
+                    const url = URL.createObjectURL(svgBlob)
+                    const img = new Image()
+                    img.onload = () => {
+                        const canvas = document.createElement("canvas")
+                        canvas.width = img.naturalWidth * 2
+                        canvas.height = img.naturalHeight * 2
+                        const ctx = canvas.getContext("2d")
+                        if (!ctx) {
+                            URL.revokeObjectURL(url)
+                            return
+                        }
+                        ctx.scale(2, 2)
+                        ctx.drawImage(img, 0, 0)
+                        URL.revokeObjectURL(url)
+                        canvas.toBlob((blob) => {
+                            if (!blob) return
+                            const pngUrl = URL.createObjectURL(blob)
+                            const a = document.createElement("a")
+                            a.href = pngUrl
+                            a.download = `mermaid-diagram-${Date.now()}.png`
+                            a.click()
+                            URL.revokeObjectURL(pngUrl)
+                        }, "image/png")
+                    }
+                    img.src = url
+                })
+            })
+
+            // Click on diagram content to expand
+            const contentEls = containerEl.querySelectorAll(
+                ".mermaid-block-content:not([data-mermaid-bound])",
+            )
+            contentEls.forEach((el) => {
+                el.setAttribute("data-mermaid-bound", "1")
+                el.addEventListener("click", () => {
+                    const wrapper = el.closest(".mermaid-block-wrapper")
+                    if (!wrapper) return
+                    const svg = wrapper.getAttribute("data-mermaid-svg")
+                    if (!svg) return
+                    const decoded = svg
+                        .replace(/&amp;/g, "&")
+                        .replace(/&lt;/g, "<")
+                        .replace(/&gt;/g, ">")
+                        .replace(/&quot;/g, '"')
+                    mermaidViewerSvg = decoded
+                    mermaidViewerOpen = true
                 })
             })
         }
@@ -431,10 +645,15 @@
         setupBboxCopyButtons()
         setupBboxDownloadButtons()
         setupBboxToggleButtons()
+        setupMermaidButtons()
 
         // Render bbox blocks asynchronously after initial setup
         if (sourceImage && lastBboxBlocks.length > 0 && containerEl) {
-            renderBboxBlocksInContainer(containerEl, sourceImage, lastBboxBlocks)
+            renderBboxBlocksInContainer(
+                containerEl,
+                sourceImage,
+                lastBboxBlocks,
+            )
         }
 
         // Set up a mutation observer scoped to this component's container
@@ -446,6 +665,7 @@
             setupBboxCopyButtons()
             setupBboxDownloadButtons()
             setupBboxToggleButtons()
+            setupMermaidButtons()
         })
         observer.observe(containerEl, { childList: true, subtree: true })
 
@@ -480,6 +700,8 @@
         </div>
     {/if}
 </div>
+
+<MermaidViewer bind:open={mermaidViewerOpen} svgContent={mermaidViewerSvg} />
 
 <style lang="scss">
     .markdown-editor {
@@ -712,6 +934,75 @@
                 word-break: break-all;
                 color: var(--color-text);
             }
+        }
+
+        :global(.mermaid-block-wrapper) {
+            position: relative;
+            margin: 1em 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-standard);
+            overflow: hidden;
+            background-color: var(--color-background-darkest);
+        }
+
+        :global(.mermaid-block-toolbar) {
+            display: flex;
+            justify-content: flex-end;
+            gap: 4px;
+            padding: 4px 8px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+        }
+
+        :global(.mermaid-expand-button),
+        :global(.mermaid-copy-svg-button),
+        :global(.mermaid-copy-png-button),
+        :global(.mermaid-download-svg-button),
+        :global(.mermaid-download-png-button) {
+            font-size: 12px;
+            padding: 2px 8px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+            color: var(--color-text);
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.08);
+
+            &:hover {
+                opacity: 1;
+            }
+
+            &.copied {
+                background-color: rgba(50, 205, 50, 0.3);
+                opacity: 1;
+            }
+        }
+
+        :global(.mermaid-block-content) {
+            display: flex;
+            justify-content: center;
+            padding: 1em;
+            overflow-x: auto;
+            cursor: pointer;
+
+            :global(svg) {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        :global(.mermaid-loading) {
+            color: var(--color-text);
+            opacity: 0.5;
+            padding: 2em;
+            text-align: center;
+        }
+
+        :global(.mermaid-error) {
+            color: #ff6b6b;
+            padding: 2em;
+            text-align: center;
         }
     }
 </style>
