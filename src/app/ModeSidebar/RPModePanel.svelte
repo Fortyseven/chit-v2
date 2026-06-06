@@ -77,34 +77,29 @@
         artImageBlob = null
         artPrompt = ""
         try {
-            const prompt = await generateArtPrompt()
-            artLoadingStage = "image"
-
             // Check for attached image media (pasted/attached first, then message images)
             const allImages = [...attachedImageMedia, ...allImageMedia]
-            const hasInputImage = allImages.length > 0
+
+            // Resolve input image data URL upfront — used for both prompt gen and image editing
+            let inputImageDataUrl: string | null = null
+            if (allImages.length > 0) {
+                const blob = await getMediaBlob(allImages[0])
+                if (blob instanceof Blob) {
+                    inputImageDataUrl = await blobToDataUrl(blob)
+                }
+            }
+
+            const prompt = await generateArtPrompt("", inputImageDataUrl)
+            artLoadingStage = "image"
 
             let response
-            if (hasInputImage) {
-                // Use /images/edits with the first image
-                const firstImage = allImages[0]
-                const blob = await getMediaBlob(firstImage)
-                if (blob instanceof Blob) {
-                    const dataUrl = await blobToDataUrl(blob)
-                    response = await editImage(
-                        prompt,
-                        dataUrl,
-                        {},
-                        getMediaServerUrl(),
-                    )
-                } else {
-                    // Fallback to text-to-image if we can't get the blob
-                    response = await generateImage(
-                        prompt,
-                        {},
-                        getMediaServerUrl(),
-                    )
-                }
+            if (inputImageDataUrl) {
+                response = await editImage(
+                    prompt,
+                    inputImageDataUrl,
+                    {},
+                    getMediaServerUrl(),
+                )
             } else {
                 response = await generateImage(
                     prompt,

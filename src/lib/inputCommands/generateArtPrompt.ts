@@ -14,17 +14,19 @@ const ArtPrompt = z.object({
 })
 
 const SYSTEM_PROMPT =
-    "Write a single detailed paragraph visually describing the current moment in a way that can be processed by an AI art generator. Describe the composition and details using vivid language. Only respond with the prompt paragraph."
+    "Generate a detailed visual description of the current moment in this story in a way that can be processed by an AI art generator. Describe the composition and details using vivid language. Focus on the visual elements and atmosphere, and avoid mentioning text or dialogue. Be concise but descriptive, capturing the essence of the scene in a way that inspires creativity in an art generation model. If an image is provided, incorporate its details into the description and preserve the artistic style of the image in the description."
 
 /**
  * Generate an art prompt from the current chat session's conversation context.
  *
  * @param additionalInstructions - Optional extra instructions appended to the system prompt
+ * @param inputImage - Optional base64 data URL of an input image to include with the inference
  * @returns Promise resolving to the generated art prompt string
  * @throws Error if the LLM driver or chat session is not available
  */
 export async function generateArtPrompt(
-    additionalInstructions: string = ""
+    additionalInstructions: string = "",
+    inputImage: string | null = null,
 ): Promise<string> {
     const _llm: LLMInterface = get(llm)
     const driver = await get(_llm.driver)
@@ -62,6 +64,7 @@ export async function generateArtPrompt(
         {
             role: "user",
             content: contextText,
+            images: inputImage ? [inputImage] : undefined,
         },
     ]
 
