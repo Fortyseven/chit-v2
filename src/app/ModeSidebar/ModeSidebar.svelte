@@ -1,6 +1,6 @@
 <script lang="ts">
     import { modeSidebarWidth } from "$lib/appState/modeSidebarState"
-    import RPModePanel from "../ChatSidebar/ModePanels/RPModePanel.svelte"
+    import RPModePanel from "./RPModePanel.svelte"
 
     const MIN_WIDTH = 200
     const MAX_WIDTH = 800
@@ -40,7 +40,12 @@
     }
 </script>
 
-<div id="ModeSidebar" style="width: {$modeSidebarWidth}px;" style:min-width="{MIN_WIDTH}px" style:max-width="{MAX_WIDTH}px">
+<div
+    id="ModeSidebar"
+    style="width: {$modeSidebarWidth}px;"
+    style:min-width="{MIN_WIDTH}px"
+    style:max-width="{MAX_WIDTH}px"
+>
     <div class="panel-content">
         <RPModePanel />
     </div>

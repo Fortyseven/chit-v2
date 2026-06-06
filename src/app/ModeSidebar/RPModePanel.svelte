@@ -20,7 +20,7 @@
         voiceSettings,
     } from "$lib/voice/tts"
     import { onMount } from "svelte"
-    import AsyncMediaImage from "../../components/AsyncMediaImage.svelte"
+    import AsyncMediaImage from "../components/AsyncMediaImage.svelte"
 
     $: currentMode = $currentChatMode
     $: hasMediaServer = getMediaServerUrl().length > 0
@@ -62,7 +62,11 @@
         try {
             const prompt = await generateArtPrompt()
             artLoadingStage = "image"
-            const response = await generateImage(prompt, {}, getMediaServerUrl())
+            const response = await generateImage(
+                prompt,
+                {},
+                getMediaServerUrl(),
+            )
             if (response.data.length > 0) {
                 artImageBlob = b64ToBlob(response.data[0].b64_json)
                 artPrompt = response.data[0].revised_prompt || prompt
@@ -150,7 +154,9 @@
 
     function closeArtModal() {
         if (artModalEl) {
-            const handler = (artModalEl as any).__keydownHandler as ((e: KeyboardEvent) => void) | undefined
+            const handler = (artModalEl as any).__keydownHandler as
+                | ((e: KeyboardEvent) => void)
+                | undefined
             if (handler) document.removeEventListener("keydown", handler)
             document.body.removeChild(artModalEl)
             artModalEl = null
@@ -267,41 +273,47 @@
             </div>
         {/if}
         {#if hasMediaServer}
-        <div class="art-accordion">
-            <button
-                class="accordion-header"
-                class:open={artOpen}
-                on:click={() => (artOpen = !artOpen)}
-            >
-                <span>🎨 Art</span>
-                <span class="chevron">{artOpen ? "▲" : "▼"}</span>
-            </button>
-            {#if artOpen}
-                <div class="accordion-body">
-                    {#if artLoading}
-                        <div class="art-loading">
-                            {artLoadingStage === "prompt" ? "Generating prompt..." : "Generating image..."}
-                        </div>
-                    {:else if artError}
-                        <div class="art-error">{artError}</div>
-                    {:else if artImageBlob}
-                        <!-- svelte-ignore a11y_click_events_have_key_events -->
-                        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-                        <img
-                            src={URL.createObjectURL(artImageBlob)}
-                            class="art-image"
-                            alt="Generated Art"
-                            on:click={openArtModal}
-                        />
-                    {:else}
-                        <div class="art-empty">No art generated yet</div>
-                    {/if}
-                    <button class="art-btn" on:click={generateArt} disabled={artLoading}>
-                        {artLoading ? "⏳" : "+"} Generate
-                    </button>
-                </div>
-            {/if}
-        </div>
+            <div class="art-accordion">
+                <button
+                    class="accordion-header"
+                    class:open={artOpen}
+                    on:click={() => (artOpen = !artOpen)}
+                >
+                    <span>🎨 Art</span>
+                    <span class="chevron">{artOpen ? "▲" : "▼"}</span>
+                </button>
+                {#if artOpen}
+                    <div class="accordion-body">
+                        {#if artLoading}
+                            <div class="art-loading">
+                                {artLoadingStage === "prompt"
+                                    ? "Generating prompt..."
+                                    : "Generating image..."}
+                            </div>
+                        {:else if artError}
+                            <div class="art-error">{artError}</div>
+                        {:else if artImageBlob}
+                            <!-- svelte-ignore a11y_click_events_have_key_events -->
+                            <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+                            <img
+                                src={URL.createObjectURL(artImageBlob)}
+                                class="art-image"
+                                alt="Generated Art"
+                                on:click={openArtModal}
+                            />
+                        {:else}
+                            <div class="art-empty">No art generated yet</div>
+                        {/if}
+                        <button
+                            class="art-btn"
+                            on:click={generateArt}
+                            disabled={artLoading}
+                        >
+                            {artLoading ? "⏳" : "+"} Generate
+                        </button>
+                    </div>
+                {/if}
+            </div>
         {/if}
         {#if allImageMedia.length > 0}
             <div class="media-thumbnails">
