@@ -63,6 +63,55 @@ export async function generateImage(
     return (await resp.json()) as GenerateImageResponse
 }
 
+export interface EditImageOptions extends GenerateImageOptions {
+    input_fidelity?: "high" | "low"
+}
+
+export interface ImageRef {
+    image_url: string
+}
+
+/**
+ * Edit an existing image via the OpenAI-compatible /images/edits API.
+ *
+ * @param prompt - Text prompt describing the edit
+ * @param inputImage - Base64 data URL of the input image
+ * @param options - Optional edit parameters
+ * @param baseUrl - Override the default media server URL
+ * @returns Promise resolving to the API response
+ */
+export async function editImage(
+    prompt: string,
+    inputImage: string,
+    options: EditImageOptions = {},
+    baseUrl: string = DEFAULT_MEDIA_SERVER_URL
+): Promise<GenerateImageResponse> {
+    const { model, n = 1, size, quality, input_fidelity } = options
+
+    const body: Record<string, unknown> = { prompt, n, images: [{ image_url: inputImage }] }
+    if (model) body.model = model
+    if (size) body.size = size
+    if (quality) body.quality = quality
+    if (input_fidelity) body.input_fidelity = input_fidelity
+
+    const resp = await fetch(`${baseUrl}/images/edits`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    })
+
+    if (!resp.ok) {
+        const errText = await resp.text().catch(() => "")
+        throw new Error(
+            `mediaServer: HTTP ${resp.status} ${resp.statusText}${
+                errText ? ` — ${errText}` : ""
+            }`
+        )
+    }
+
+    return (await resp.json()) as GenerateImageResponse
+}
+
 /**
  * Decode a base64 image string to a Blob.
  *

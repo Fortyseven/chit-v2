@@ -1,6 +1,9 @@
 <script lang="ts">
     import { chatSetTtsSettings } from "$lib/chatSession/chatActions"
-    import { ChatMediaType } from "$lib/chatSession/chatAttachments"
+    import {
+        ChatMediaType,
+        getMediaBlob,
+    } from "$lib/chatSession/chatAttachments"
     import {
         AppMode,
         currentChat,
@@ -9,6 +12,7 @@
     import { generateArtPrompt } from "$lib/inputCommands/generateArtPrompt"
     import {
         b64ToBlob,
+        editImage,
         generateImage,
         getMediaServerUrl,
     } from "$lib/mediaServer/mediaServer"
@@ -25,10 +29,14 @@
     $: currentMode = $currentChatMode
     $: hasMediaServer = getMediaServerUrl().length > 0
 
-    // Get all image attachments from the current chat session
+    // Get all image attachments from the current chat session (from messages)
     $: allImageMedia =
         $currentChat?.messages
             ?.flatMap((message) => message.media || [])
+            ?.filter((media) => media.type === ChatMediaType.IMAGE) || []
+    // Get image attachments from the current chat session (pasted/attached input)
+    $: attachedImageMedia =
+        $currentChat?.pastedMedia
             ?.filter((media) => media.type === ChatMediaType.IMAGE) || []
 
     // Effective per-chat TTS settings, falling back to global defaults
@@ -53,6 +61,15 @@
     let artModalOpen = false
     let artModalEl: HTMLElement | null = null
 
+    async function blobToDataUrl(blob: Blob): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = () => resolve(reader.result as string)
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+        })
+    }
+
     async function generateArt() {
         artLoading = true
         artLoadingStage = "prompt"
@@ -62,11 +79,40 @@
         try {
             const prompt = await generateArtPrompt()
             artLoadingStage = "image"
-            const response = await generateImage(
-                prompt,
-                {},
-                getMediaServerUrl(),
-            )
+
+            // Check for attached image media (pasted/attached first, then message images)
+            const allImages = [...attachedImageMedia, ...allImageMedia]
+            const hasInputImage = allImages.length > 0
+
+            let response
+            if (hasInputImage) {
+                // Use /images/edits with the first image
+                const firstImage = allImages[0]
+                const blob = await getMediaBlob(firstImage)
+                if (blob instanceof Blob) {
+                    const dataUrl = await blobToDataUrl(blob)
+                    response = await editImage(
+                        prompt,
+                        dataUrl,
+                        {},
+                        getMediaServerUrl(),
+                    )
+                } else {
+                    // Fallback to text-to-image if we can't get the blob
+                    response = await generateImage(
+                        prompt,
+                        {},
+                        getMediaServerUrl(),
+                    )
+                }
+            } else {
+                response = await generateImage(
+                    prompt,
+                    {},
+                    getMediaServerUrl(),
+                )
+            }
+
             if (response.data.length > 0) {
                 artImageBlob = b64ToBlob(response.data[0].b64_json)
                 artPrompt = response.data[0].revised_prompt || prompt
