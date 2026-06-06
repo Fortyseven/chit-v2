@@ -42,4 +42,7 @@ export function appStateSetOpenAIBase(base: string) {
 export function appStateSetOpenAIKey(key: string) {
     appState.update((state) => ({ ...state, openaiApiKey: key }))
 }
+export function appStateSetMediaServerUrl(url: string) {
+    appState.update((state) => ({ ...state, mediaServerUrl: url }))
+}
 

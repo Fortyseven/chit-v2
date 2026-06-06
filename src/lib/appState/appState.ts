@@ -20,6 +20,7 @@ export interface AppState {
     // NEW: OpenAI-compatible
     openaiApiBase: string
     openaiApiKey: string
+    mediaServerUrl: string
     mcpServers: MCPServerConfig[]
 }
 
@@ -38,6 +39,7 @@ export const appStateDefaults: AppState = {
     resizeImages: true,
     openaiApiBase: "",
     openaiApiKey: "",
+    mediaServerUrl: "",
     mcpServers: [],
 }
 

@@ -1,6 +1,7 @@
 <script>
     import ConfigPanel_General from "./ConfigPanel_General.svelte"
     import ConfigPanel_General__Provider from "./ConfigPanel_General__Provider.svelte"
+    import ConfigPanel_MediaServer from "./ConfigPanel_MediaServer.svelte"
     import ConfigPanel_MCP from "./ConfigPanel_MCP.svelte"
     import ConfigPanel_TTS from "./ConfigPanel_TTS.svelte"
 
@@ -34,6 +35,10 @@
                 on:click={() => (activeTab = "provider")}>Provider</button
             >
             <button
+                class:active={activeTab === "mediaserver"}
+                on:click={() => (activeTab = "mediaserver")}>Media Server</button
+            >
+            <button
                 class:active={activeTab === "tts"}
                 on:click={() => (activeTab = "tts")}>TTS</button
             >
@@ -48,6 +53,9 @@
         {/if}
         {#if activeTab === "provider"}
             <ConfigPanel_General__Provider></ConfigPanel_General__Provider>
+        {/if}
+        {#if activeTab === "mediaserver"}
+            <ConfigPanel_MediaServer></ConfigPanel_MediaServer>
         {/if}
         {#if activeTab === "tts"}
             <ConfigPanel_TTS></ConfigPanel_TTS>

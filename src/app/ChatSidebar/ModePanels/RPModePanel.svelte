@@ -10,6 +10,7 @@
     import {
         b64ToBlob,
         generateImage,
+        getMediaServerUrl,
     } from "$lib/mediaServer/mediaServer"
     import {
         ttsListVoices,
@@ -22,6 +23,7 @@
     import AsyncMediaImage from "../../components/AsyncMediaImage.svelte"
 
     $: currentMode = $currentChatMode
+    $: hasMediaServer = getMediaServerUrl().length > 0
 
     // Get all image attachments from the current chat session
     $: allImageMedia =
@@ -60,7 +62,7 @@
         try {
             const prompt = await generateArtPrompt()
             artLoadingStage = "image"
-            const response = await generateImage(prompt)
+            const response = await generateImage(prompt, {}, getMediaServerUrl())
             if (response.data.length > 0) {
                 artImageBlob = b64ToBlob(response.data[0].b64_json)
                 artPrompt = response.data[0].revised_prompt || prompt
@@ -264,6 +266,7 @@
                 {/if}
             </div>
         {/if}
+        {#if hasMediaServer}
         <div class="art-accordion">
             <button
                 class="accordion-header"
@@ -299,6 +302,7 @@
                 </div>
             {/if}
         </div>
+        {/if}
         {#if allImageMedia.length > 0}
             <div class="media-thumbnails">
                 <div class="media-header">Media</div>

@@ -1,5 +1,12 @@
-// Default media server endpoint — override via MEDIA_SERVER_URL env or config
-const DEFAULT_MEDIA_SERVER_URL = "http://wheeljack:8100"
+import { get } from "svelte/store"
+import { appState } from "../appState/appState"
+
+/**
+ * Get the configured media server URL from appState.
+ */
+export function getMediaServerUrl(): string {
+    return get(appState).mediaServerUrl || ""
+}
 
 export interface GenerateImageOptions {
     model?: string
