@@ -36,7 +36,7 @@ export interface GenerateImageResponse {
 export async function generateImage(
     prompt: string,
     options: GenerateImageOptions = {},
-    baseUrl: string = DEFAULT_MEDIA_SERVER_URL
+    baseUrl: string = getMediaServerUrl()
 ): Promise<GenerateImageResponse> {
     const { model, n = 1, size, quality } = options
 
@@ -84,7 +84,7 @@ export async function editImage(
     prompt: string,
     inputImage: string,
     options: EditImageOptions = {},
-    baseUrl: string = DEFAULT_MEDIA_SERVER_URL
+    baseUrl: string = getMediaServerUrl()
 ): Promise<GenerateImageResponse> {
     const { model, n = 1, size, quality, input_fidelity } = options
 
