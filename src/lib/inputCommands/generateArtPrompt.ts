@@ -18,7 +18,7 @@ const SYSTEM_PROMPT =
 
 const SYSTEM_PROMPT_WITH_IMAGE =
     SYSTEM_PROMPT +
-    "Incorporate details from the provided image and use it's details as part the visual description, preserving the artistic style of the image in the description. "
+    " Incorporate details from the provided image and use it's details as part the visual description, preserving the artistic style of the image in the description. "
 
 /**
  * Generate an art prompt from the current chat session's conversation context.
@@ -43,6 +43,13 @@ export async function generateArtPrompt(
         throw Error("generateArtPrompt: chat session not found")
     }
 
+    // Strip data URL prefix for the LLM driver (it prepends its own)
+    const rawImageB64 = inputImage
+        ? inputImage.startsWith("data:")
+            ? inputImage.split(",")[1] || inputImage
+            : inputImage
+        : null
+
     // Build conversation context from user + assistant messages
     const conversation = chat_session.messages
         .filter((msg) => msg.role === "user" || msg.role === "assistant")
@@ -62,13 +69,13 @@ export async function generateArtPrompt(
         {
             role: "system",
             content:
-                (inputImage ? SYSTEM_PROMPT_WITH_IMAGE : SYSTEM_PROMPT) +
+                (rawImageB64 ? SYSTEM_PROMPT_WITH_IMAGE : SYSTEM_PROMPT) +
                 (additionalInstructions ? "\n " + additionalInstructions : ""),
         },
         {
             role: "user",
             content: contextText,
-            images: inputImage ? [inputImage] : undefined,
+            images: rawImageB64 ? [rawImageB64] : undefined,
         },
     ]
 
