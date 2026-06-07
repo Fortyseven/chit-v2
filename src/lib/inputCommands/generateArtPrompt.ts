@@ -14,7 +14,7 @@ const ArtPrompt = z.object({
 })
 
 const SYSTEM_PROMPT =
-    "Generate a detailed visual description of the current moment in this story. Describe the composition, positions, and details using vivid language. Focus on the visual elements and atmosphere, and avoid mentioning text or dialogue. Be concise but descriptive, capturing the essence of the scene in a way that inspires creativity in an art generation model. Use the conversation context to inform the description, but do not include any narrative or character details that are not visually relevant. The goal is to create a prompt that an AI art generator can use to create an image that represents the current moment in the story."
+    "Generate a detailed visual description of the current moment in this role playing story. Describe the composition, positions, and details of the current moment, using vivid visual language. Focus on the visual elements and atmosphere. Be verbose and descriptive, capturing the essence of the scene in a way that inspires creativity in an art generation model. Use the conversation context to inform this new description. The goal is to create a complex prompt that an AI art generator can use to create an image that represents the current moment in the story."
 
 const SYSTEM_PROMPT_WITH_IMAGE =
     SYSTEM_PROMPT +
