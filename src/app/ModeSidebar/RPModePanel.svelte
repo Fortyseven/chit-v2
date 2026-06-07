@@ -36,8 +36,9 @@
             ?.filter((media) => media.type === ChatMediaType.IMAGE) || []
     // Get image attachments from the current chat session (pasted/attached input)
     $: attachedImageMedia =
-        $currentChat?.pastedMedia
-            ?.filter((media) => media.type === ChatMediaType.IMAGE) || []
+        $currentChat?.pastedMedia?.filter(
+            (media) => media.type === ChatMediaType.IMAGE,
+        ) || []
 
     // Effective per-chat TTS settings, falling back to global defaults
     $: chatTTS = $currentChat?.ttsSettings
@@ -90,22 +91,20 @@
             }
 
             const prompt = await generateArtPrompt("", inputImageDataUrl)
+
             artLoadingStage = "image"
 
             let response
             if (inputImageDataUrl) {
                 response = await editImage(
-                    prompt,
+                    prompt +
+                        "\n\nMake sure to preserve the artistic style of the input image in the generated art, but feel free to change the composition and details to better fit the scene. Use the input image as inspiration for the visual style, but focus on creating a new image that represents the current moment in the story based on the generated prompt.",
                     inputImageDataUrl,
                     {},
                     getMediaServerUrl(),
                 )
             } else {
-                response = await generateImage(
-                    prompt,
-                    {},
-                    getMediaServerUrl(),
-                )
+                response = await generateImage(prompt, {}, getMediaServerUrl())
             }
 
             if (response.data.length > 0) {

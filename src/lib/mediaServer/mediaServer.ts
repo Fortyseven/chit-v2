@@ -54,8 +54,7 @@ export async function generateImage(
     if (!resp.ok) {
         const errText = await resp.text().catch(() => "")
         throw new Error(
-            `mediaServer: HTTP ${resp.status} ${resp.statusText}${
-                errText ? ` — ${errText}` : ""
+            `mediaServer: HTTP ${resp.status} ${resp.statusText}${errText ? ` — ${errText}` : ""
             }`
         )
     }
@@ -103,8 +102,7 @@ export async function editImage(
     if (!resp.ok) {
         const errText = await resp.text().catch(() => "")
         throw new Error(
-            `mediaServer: HTTP ${resp.status} ${resp.statusText}${
-                errText ? ` — ${errText}` : ""
+            `mediaServer: HTTP ${resp.status} ${resp.statusText}${errText ? ` — ${errText}` : ""
             }`
         )
     }
