@@ -61,7 +61,7 @@ export class OpenAIDriver implements LLMDriver {
                 parts.push(
                     ...m.images.map((img64) => ({
                         type: "image_url",
-                        image_url: `data:image/png;base64,${img64}`,
+                        image_url: { url: `data:image/png;base64,${img64}` },
                     }))
                 )
             }
