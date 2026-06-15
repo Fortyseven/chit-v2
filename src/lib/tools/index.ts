@@ -10,12 +10,14 @@ import { calculatorTool } from './calculator';
 // import { sayTool } from './say';
 import { askQuestionsTool } from './ask-questions';
 import { timeTool } from './time';
+import { generateImageTool } from './generate-image';
 
 export const tools: ToolDefinition[] = [
     // echoTool,
     timeTool,
     calculatorTool,
     askQuestionsTool,
+    generateImageTool,
     // sayTool
 ];
 
