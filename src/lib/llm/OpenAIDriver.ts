@@ -439,7 +439,7 @@ export class OpenAIDriver implements LLMDriver {
 
                             if (!toolResult) {
                                 // Execute tool
-                                toolResult = await tool.handler(args)
+                                toolResult = await tool.handler(args, { chatId })
                                 console.log(`🔧 Tool result for ${toolName}:`, toolResult)
                             }
                         }

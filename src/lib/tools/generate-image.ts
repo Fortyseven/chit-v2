@@ -1,5 +1,6 @@
 // Image generation tool - uses the configured Media Server
-import { generateImage, getMediaServerUrl } from '../mediaServer/mediaServer'
+import { chatAddPastedMedia, ChatMediaType } from '../chatSession/chatAttachments'
+import { b64ToBlob, generateImage, getMediaServerUrl } from '../mediaServer/mediaServer'
 import type { ToolDefinition } from './types'
 
 export const generateImageTool: ToolDefinition = {
@@ -14,22 +15,25 @@ export const generateImageTool: ToolDefinition = {
             type: 'string',
             description: 'Image dimensions, e.g. "1024x1024", "1024x1792", "1792x1024"'
         },
-        n: {
-            type: 'number',
-            description: 'Number of images to generate (1-4)'
-        },
     },
-    async handler(params) {
+    async handler(params, context) {
         const prompt = params.prompt as string
         if (!prompt || prompt.trim().length === 0) {
             throw new Error('Prompt is required')
         }
 
         const options: Record<string, any> = {}
-        if (params.n) options.n = Math.min(Math.max(Number(params.n), 1), 4)
         if (params.size) options.size = params.size as string
 
         const response = await generateImage(prompt.trim(), options, getMediaServerUrl())
+
+        // Add generated images to the chat session media
+        if (context?.chatId && response.data.length > 0) {
+            for (const img of response.data) {
+                const blob = b64ToBlob(img.b64_json)
+                await chatAddPastedMedia(context.chatId, blob, ChatMediaType.IMAGE, 'generated_image.png')
+            }
+        }
 
         return {
             created: response.created,
