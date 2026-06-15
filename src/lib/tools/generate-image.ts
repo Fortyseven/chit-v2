@@ -1,6 +1,6 @@
 // Image generation tool - uses the configured Media Server
-import type { ToolDefinition } from './types'
 import { generateImage, getMediaServerUrl } from '../mediaServer/mediaServer'
+import type { ToolDefinition } from './types'
 
 export const generateImageTool: ToolDefinition = {
     name: 'generate_image',
@@ -18,14 +18,6 @@ export const generateImageTool: ToolDefinition = {
             type: 'number',
             description: 'Number of images to generate (1-4)'
         },
-        quality: {
-            type: 'string',
-            description: 'Image quality: "standard" or "hd"'
-        },
-        model: {
-            type: 'string',
-            description: 'Image generation model to use (e.g., "dall-e-3", "flux")'
-        }
     },
     async handler(params) {
         const prompt = params.prompt as string
@@ -36,8 +28,6 @@ export const generateImageTool: ToolDefinition = {
         const options: Record<string, any> = {}
         if (params.n) options.n = Math.min(Math.max(Number(params.n), 1), 4)
         if (params.size) options.size = params.size as string
-        if (params.quality) options.quality = params.quality as string
-        if (params.model) options.model = params.model as string
 
         const response = await generateImage(prompt.trim(), options, getMediaServerUrl())
 
