@@ -13,6 +13,7 @@ import ruthlessly_adversarial from "./fun/ruthlessly-adversarial.js"
 import general from "./general.js"
 import geolocation from "./geolocation.js"
 import art_prompter from "./gfx/art_prompter.js"
+import bbox2d from "./gfx/bbox2d.js"
 import line_art from "./gfx/line_art.js"
 import ltx2videoprompt from "./gfx/ltx2-video-prompt.js"
 import style_prompter from "./gfx/style_prompter.js"
@@ -44,6 +45,7 @@ const GENERAL_PROMPTS = {
 
 const GFX_PROMPTS = {
     art_prompter,
+    bbox2d,
     line_art,
     ltx2videoprompt,
     style_prompter,
