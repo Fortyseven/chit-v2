@@ -112,67 +112,89 @@ export class LLMInterface {
             })
         }
 
-        for (const message of chat_session.messages) {
+        // Only send images/audio from the latest user message to avoid
+        // blowing the context window with re-encoded historical media.
+        // The LLM already saw those in prior turns.
+        let lastUserIndex = -1
+        for (let i = chat_session.messages.length - 1; i >= 0; i--) {
+            if (chat_session.messages[i].role === "user") {
+                lastUserIndex = i
+                break
+            }
+        }
+
+        for (let i = 0; i < chat_session.messages.length; i++) {
+            const message = chat_session.messages[i]
             // Skip tool call info - it's for display only, not for LLM
             let msg = message.content.trim()
             const images: string[] = []
             const audio: string[] = []
+            const isLatestUserMessage = i === lastUserIndex
 
             if (message.media && message.media.length > 0) {
                 for (const media of message.media) {
                     if (media.type == ChatMediaType.IMAGE) {
-                        try {
-                            // Get the actual blob data (from IndexedDB or in-memory)
-                            const blobData = await getMediaBlob(media)
-                            if (blobData instanceof Blob) {
-                                const img64 = await convertFileToBase64(
-                                    blobData
-                                )
-                                images.push(img64 as string)
-                            } else {
-                                console.warn(
-                                    "Media data is not a blob, skipping image:",
-                                    media.id
+                        if (isLatestUserMessage) {
+                            try {
+                                // Get the actual blob data (from IndexedDB or in-memory)
+                                const blobData = await getMediaBlob(media)
+                                if (blobData instanceof Blob) {
+                                    const img64 = await convertFileToBase64(
+                                        blobData
+                                    )
+                                    images.push(img64 as string)
+                                } else {
+                                    console.warn(
+                                        "Media data is not a blob, skipping image:",
+                                        media.id
+                                    )
+                                }
+                            } catch (error) {
+                                console.error(
+                                    "Failed to load media blob for LLM:",
+                                    error
                                 )
                             }
-                        } catch (error) {
-                            console.error(
-                                "Failed to load media blob for LLM:",
-                                error
-                            )
+                        } else {
+                            // Historical image — just note it was there
+                            msg += "\n[image attached]"
                         }
                     } else if (media.type == ChatMediaType.AUDIO) {
-                        try {
-                            const blobData = await getMediaBlob(media)
-                            if (blobData instanceof Blob) {
-                                const audio64 = await convertFileToBase64(
-                                    blobData
-                                )
-                                // Normalize MIME type to format the API accepts
-                                const mime = blobData.type
-                                let format: string
-                                if (mime === "audio/mpeg" || mime === "audio/mp3") {
-                                    format = "mp3"
-                                } else if (
-                                    mime === "audio/wav" ||
-                                    mime === "audio/x-wav"
-                                ) {
-                                    format = "wav"
+                        if (isLatestUserMessage) {
+                            try {
+                                const blobData = await getMediaBlob(media)
+                                if (blobData instanceof Blob) {
+                                    const audio64 = await convertFileToBase64(
+                                        blobData
+                                    )
+                                    // Normalize MIME type to format the API accepts
+                                    const mime = blobData.type
+                                    let format: string
+                                    if (mime === "audio/mpeg" || mime === "audio/mp3") {
+                                        format = "mp3"
+                                    } else if (
+                                        mime === "audio/wav" || mime === "audio/x-wav"
+                                    ) {
+                                        format = "wav"
+                                    } else {
+                                        format = "wav"
+                                    }
+                                    audio.push(`${format}:${audio64}`)
                                 } else {
-                                    format = "wav"
+                                    console.warn(
+                                        "Media data is not a blob, skipping audio:",
+                                        media.id
+                                    )
                                 }
-                                audio.push(`${format}:${audio64}`)
-                            } else {
-                                console.warn(
-                                    "Media data is not a blob, skipping audio:",
-                                    media.id
+                            } catch (error) {
+                                console.error(
+                                    "Failed to load audio blob for LLM:",
+                                    error
                                 )
                             }
-                        } catch (error) {
-                            console.error(
-                                "Failed to load audio blob for LLM:",
-                                error
-                            )
+                        } else {
+                            // Historical audio — just note it was there
+                            msg += "\n[audio attached]"
                         }
                     } else if (media.type == ChatMediaType.TEXT && media.data) {
                         const textData =

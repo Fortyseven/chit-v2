@@ -75,7 +75,7 @@ export function resizeImage(
     })
 }
 
-function createMediaAttachment(
+export function createMediaAttachment(
     data: Blob | string,
     type: ChatMediaType,
     filename: string = "",

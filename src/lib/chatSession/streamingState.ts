@@ -1,9 +1,11 @@
 import { writable } from "svelte/store"
+import type { MediaAttachment } from "./chatAttachments"
 
 export interface StreamingState {
     response_buffer: string
     thinking_buffer: string
     tool_call_info_buffer: string
+    media_buffer: MediaAttachment[]
     isThinking: boolean
     hasThoughts: boolean
     lastTokenCount: number
@@ -13,6 +15,7 @@ const defaultState: StreamingState = {
     response_buffer: "",
     thinking_buffer: "",
     tool_call_info_buffer: "",
+    media_buffer: [],
     isThinking: false,
     hasThoughts: false,
     lastTokenCount: 0,
@@ -47,5 +50,12 @@ export function setStreamingToolCallInfo(info: string) {
     streamingState.update((s) => ({
         ...s,
         tool_call_info_buffer: info,
+    }))
+}
+
+export function addStreamingMedia(attachment: MediaAttachment) {
+    streamingState.update((s) => ({
+        ...s,
+        media_buffer: [...s.media_buffer, attachment],
     }))
 }

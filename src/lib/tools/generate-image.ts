@@ -1,6 +1,7 @@
 // Image generation tool - uses the configured Media Server
-import { chatAddPastedMedia, ChatMediaType } from '../chatSession/chatAttachments'
+import { ChatMediaType, createMediaAttachment } from '../chatSession/chatAttachments'
 import { b64ToBlob, generateImage, getMediaServerUrl } from '../mediaServer/mediaServer'
+import { addStreamingMedia } from '../chatSession/streamingState'
 import type { ToolDefinition } from './types'
 
 export const generateImageTool: ToolDefinition = {
@@ -27,21 +28,28 @@ export const generateImageTool: ToolDefinition = {
 
         const response = await generateImage(prompt.trim(), options, getMediaServerUrl())
 
-        // Add generated images to the chat session media
-        if (context?.chatId && response.data.length > 0) {
+        // Add generated images to the streaming media buffer so they
+        // get attached to the assistant's message in the conversation.
+        // Do NOT use chatAddPastedMedia — that puts them in the input box.
+        if (response.data.length > 0) {
             for (const img of response.data) {
                 const blob = b64ToBlob(img.b64_json)
-                await chatAddPastedMedia(context.chatId, blob, ChatMediaType.IMAGE, 'generated_image.png')
+                const attachment = createMediaAttachment(
+                    blob,
+                    ChatMediaType.IMAGE,
+                    'generated_image.png'
+                )
+                addStreamingMedia(attachment)
             }
         }
 
+        // Return metadata only — do NOT include b64_json in the result.
+        // The full base64 would be stringified into the tool response text,
+        // blowing the context window.
         return {
             created: response.created,
             revised_prompt: response.data[0]?.revised_prompt,
-            images: response.data.map((img, i) => ({
-                index: i,
-                b64_json: img.b64_json
-            }))
+            count: response.data.length,
         }
     }
 }

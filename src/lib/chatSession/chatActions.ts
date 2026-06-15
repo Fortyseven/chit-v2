@@ -580,6 +580,11 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
                     message.tool_call_info = ss.tool_call_info_buffer
                 }
 
+                // Add tool-generated media (e.g. generated images)
+                if (ss.media_buffer && ss.media_buffer.length > 0) {
+                    message.media = ss.media_buffer
+                }
+
                 return {
                     ...chat,
                     messages: [
