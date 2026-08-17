@@ -8,6 +8,7 @@ import {
 } from "../chatSession/chatActions"
 import { ChatMediaType, getMediaBlob } from "../chatSession/chatAttachments"
 import {
+    applySecondaryPrompt,
     applySystemVariables,
     applyUserVariables,
 } from "../templating/templating"
@@ -82,6 +83,13 @@ export class LLMInterface {
         } else {
             system_prompt = get(appState).defaultPrompt.trim()
         }
+
+        // Inject the optional secondary prompt (before the templating passes,
+        // so {{name}} variables inside it are also resolved)
+        system_prompt = applySecondaryPrompt(
+            system_prompt,
+            chat_session.secondarySystemPrompt
+        )
 
         if (system_prompt) {
             processed_final_sprompt =

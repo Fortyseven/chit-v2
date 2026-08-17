@@ -50,6 +50,7 @@ export interface ChatSession {
     id: string
     title: string
     systemPrompt?: string
+    secondarySystemPrompt?: string // Optional add-on injected into systemPrompt ({{}} slot or append)
     model_name: string
     messages: Message[]
     createdAt: Date

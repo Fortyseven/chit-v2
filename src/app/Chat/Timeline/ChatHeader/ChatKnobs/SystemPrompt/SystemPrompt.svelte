@@ -1,6 +1,9 @@
 <script>
     import { appState } from "$lib/appState/appState"
-    import { chatSetSystemPrompt } from "$lib/chatSession/chatActions"
+    import {
+        chatSetSecondarySystemPrompt,
+        chatSetSystemPrompt,
+    } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
     import { recalculateUserVariables } from "$lib/templating/templating"
     import { onMount } from "svelte"
@@ -8,14 +11,20 @@
     import Variables from "./Variables.svelte"
 
     let sys_prompt_state = writable($currentChat.systemPrompt)
+    let sec_prompt_state = writable($currentChat.secondarySystemPrompt)
 
     sys_prompt_state.subscribe((value) => {
         chatSetSystemPrompt($appState.activeChatId, value)
     })
 
+    sec_prompt_state.subscribe((value) => {
+        chatSetSecondarySystemPrompt($appState.activeChatId, value)
+    })
+
     currentChat.subscribe((value) => {
         if ($currentChat) {
             sys_prompt_state.set($currentChat.systemPrompt)
+            sec_prompt_state.set($currentChat.secondarySystemPrompt)
         }
     })
 
@@ -111,6 +120,21 @@
         {#if hasVariables}
             <Variables />
         {/if}
+        <div class="sec-box">
+            <h3>Secondary Prompt</h3>
+            <p class="hint">
+                Optional. Appended to the system prompt, or placed at the
+                first &lcub;&lcub;&rcub;&rcub; if present. Leave empty to ignore.
+            </p>
+            <textarea
+                id="sec-prompt"
+                name="sec-prompt"
+                placeholder="Optional secondary prompt..."
+                rows="4"
+                class="sec-textarea"
+                bind:value={$sec_prompt_state}
+            ></textarea>
+        </div>
         <button class="btnClose" onclick={() => (isOpen = false)}>
             Close
         </button>
@@ -159,6 +183,29 @@
             font-family: --font-ui;
             padding: 1rem;
             font-size: 1.25em;
+        }
+
+        .sec-box {
+            h3 {
+                font-weight: bold;
+                font-size: 1.25rem;
+                margin: 0;
+                margin-top: 0.5rem;
+                padding: 0 1rem;
+                color: var(--color-accent-complement);
+            }
+
+            .hint {
+                margin: 0.25rem 1rem;
+                font-size: 0.9em;
+                color: var(--color-text-dim);
+            }
+
+            .sec-textarea {
+                min-height: 80px;
+                max-height: 200px;
+                font-size: 1em;
+            }
         }
 
         .btnClose {

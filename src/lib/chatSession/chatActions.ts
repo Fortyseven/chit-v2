@@ -55,6 +55,7 @@ import { appState } from "../appState/appState"
 import { backpackProcess } from "../backpack/backpackActions"
 import { llm } from "../llm/llm.js"
 import {
+    applySecondaryPrompt,
     applySystemVariables,
     applyUserVariables,
 } from "../templating/templating"
@@ -169,6 +170,27 @@ export function chatSetModel(chatId: string = "", modelName: string) {
                 return {
                     ...chat,
                     model_name: modelName,
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
+// Set the optional secondary system prompt (independent of the main prompt)
+export function chatSetSecondarySystemPrompt(
+    chatId: string,
+    secondarySystemPrompt: string
+) {
+    chatId = getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    secondarySystemPrompt: secondarySystemPrompt,
                 }
             }
             return chat
@@ -788,7 +810,12 @@ export function chatFinish(chatId: string = "") {
 export function chatGetAllContents(): string | undefined {
     const curChat = get(currentChat)
     const sysPrompt = applySystemVariables(
-        applyUserVariables(curChat?.systemPrompt)
+        applyUserVariables(
+            applySecondaryPrompt(
+                curChat?.systemPrompt || "",
+                curChat?.secondarySystemPrompt
+            )
+        )
     )
     return (
         (sysPrompt ? sysPrompt + "\n\n----\n\n" : "") +

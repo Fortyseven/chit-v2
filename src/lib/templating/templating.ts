@@ -47,6 +47,30 @@ export function applySystemVariables(prompt: string): string {
     return newPrompt
 }
 
+/**
+ * Inject the optional secondary system prompt into the main prompt.
+ * - If the secondary prompt is empty/whitespace, the main prompt is returned unchanged.
+ * - If the main prompt contains a literal `{{}}` placeholder, the first occurrence
+ *   is replaced with the secondary prompt.
+ * - Otherwise the secondary prompt is appended after a blank line.
+ * Call this BEFORE the templating passes so `{{name}}` variables inside the
+ * secondary prompt are also resolved.
+ */
+export function applySecondaryPrompt(
+    mainPrompt: string,
+    secondary?: string
+): string {
+    const sec = secondary?.trim()
+    if (!sec || !mainPrompt) return mainPrompt || ""
+
+    if (mainPrompt.includes("{{}}")) {
+        // String.replace with a string pattern replaces the first occurrence only
+        return mainPrompt.replace("{{}}", sec)
+    }
+
+    return mainPrompt + "\n\n" + sec
+}
+
 export function applyUserVariables(prompt: string): string {
     if (!prompt) {
         return prompt
@@ -93,6 +117,10 @@ export function recalculateUserVariables(chatId: string) {
         // create them, using their existing values if present
 
         for (const variable_name of variables) {
+            // `{{}}` (empty name) is the secondary-prompt injection slot,
+            // not a user variable — skip it so it doesn't show up in the UI
+            if (!variable_name) continue
+
             chatUpdateTemplateVariableValue(
                 chatId,
                 variable_name,
