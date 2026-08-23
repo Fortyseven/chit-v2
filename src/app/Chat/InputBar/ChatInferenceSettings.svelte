@@ -65,68 +65,108 @@
 
 <div id="ChatInferenceSettings">
     <!-- {#key $currentChat} -->
-    <div>
-        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <label
-            for="context"
-            class="clickable"
-            title="Click to open advanced inference settings"
-            on:click={() => ($advancedInferenceDialogOpen = true)}
-            >CNTX&nbsp;<Receipt_long
-                color="var(--color-accent-complement)"
-                size="1.1em"
-            /></label
-        >
-        <input
-            name="context"
-            type="number"
-            min="1024"
-            max="1048576"
-            step="1024"
-            bind:value={$ctx}
-            on:blur={handleContextBlur}
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <label
+        for="context"
+        class="label clickable"
+        title="Click to open advanced inference settings"
+        on:click={() => ($advancedInferenceDialogOpen = true)}
+        >CNTX</label
+    >
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <label
+        for="context"
+        class="label icon clickable"
+        title="Click to open advanced inference settings"
+        on:click={() => ($advancedInferenceDialogOpen = true)}
+    >
+        <Receipt_long
+            color="var(--color-accent-complement)"
+            size="1.1em"
         />
-    </div>
-    <div>
-        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <label
-            for="temp"
-            class="clickable"
-            title="Click to open advanced inference settings"
-            on:click={() => ($advancedInferenceDialogOpen = true)}
-            >TEMP&nbsp;<Thermostat
-                color="var(--color-accent-complement)"
-                size="1.1em"
-            /></label
-        >
-        <input
-            name="temp"
-            type="number"
-            min="0"
-            max="2"
-            step="0.1"
-            bind:value={$temp}
+    </label>
+    <input
+        id="context"
+        name="context"
+        type="number"
+        min="1024"
+        max="1048576"
+        step="1024"
+        bind:value={$ctx}
+        on:blur={handleContextBlur}
+    />
+
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <label
+        for="temp"
+        class="label clickable"
+        title="Click to open advanced inference settings"
+        on:click={() => ($advancedInferenceDialogOpen = true)}
+        >TEMP</label
+    >
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <label
+        for="temp"
+        class="label icon clickable"
+        title="Click to open advanced inference settings"
+        on:click={() => ($advancedInferenceDialogOpen = true)}
+    >
+        <Thermostat
+            color="var(--color-accent-complement)"
+            size="1.1em"
         />
-    </div>
-    <div>
-        <label for="thinking"
-            ><span
-                class="clickable"
-                title="Click to open advanced inference settings"
-                on:click={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    $advancedInferenceDialogOpen = true
-                }}
-                >THNK&nbsp;<Psychology
-                    color="var(--color-accent-complement)"
-                    size="1.1em"
-                /></span
-            >
-            <input name="thinking" type="checkbox" bind:checked={$thinking} />
-        </label>
+    </label>
+    <input
+        id="temp"
+        name="temp"
+        type="number"
+        min="0"
+        max="2"
+        step="0.1"
+        bind:value={$temp}
+    />
+
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <label
+        for="thinking"
+        class="label clickable"
+        title="Click to open advanced inference settings"
+        on:click={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            $advancedInferenceDialogOpen = true
+        }}
+        >THNK</label
+    >
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <label
+        for="thinking"
+        class="label icon clickable"
+        title="Click to open advanced inference settings"
+        on:click={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            $advancedInferenceDialogOpen = true
+        }}
+    >
+        <Psychology
+            color="var(--color-accent-complement)"
+            size="1.1em"
+        />
+    </label>
+    <div class="controls">
+        <input
+            id="thinking"
+            name="thinking"
+            type="checkbox"
+            bind:checked={$thinking}
+        />
         <select
             name="reasoning-effort"
             bind:value={$reasoningEffort}
@@ -140,40 +180,45 @@
             <option value="xhigh">xhigh</option>
         </select>
     </div>
-    <div>
-        <label for="tools"
-            >TOOL&nbsp;<Build
-                color="var(--color-accent-complement)"
-                size="1.1em"
-            />
-            <input name="tools" type="checkbox" bind:checked={$toolsEnabled} />
-        </label>
+
+    <label for="tools" class="label">TOOL</label>
+    <label for="tools" class="label icon">
+        <Build
+            color="var(--color-accent-complement)"
+            size="1.1em"
+        />
+    </label>
+    <div class="controls">
+        <input
+            id="tools"
+            name="tools"
+            type="checkbox"
+            bind:checked={$toolsEnabled}
+        />
     </div>
     <!-- {/key} -->
 </div>
 
 <style lang="scss">
     #ChatInferenceSettings {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25em;
+        display: grid;
+        grid-template-columns: max-content max-content 1fr;
+        gap: 0.25em 0.5rem;
+        align-items: center;
+        align-content: start;
         padding-inline: 1em;
         height: 100%;
-        place-content: top;
-
-        div {
-            flex: 0 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            align-items: center;
-        }
 
         label {
             color: var(--color-accent);
             display: flex;
+            align-items: center;
             text-transform: uppercase;
             font-weight: bold;
+        }
+
+        .icon {
+            justify-content: center;
         }
 
         .clickable {
@@ -183,14 +228,21 @@
             }
         }
 
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            min-width: 0;
+        }
+
         input {
             font-family: monospace;
             background: var(--color-background-darkest);
             border: 0;
             padding: 0.25em;
             color: var(--color-accent-tertiary-lightest);
-            display: inline;
-            width: 6.4em;
+            width: 100%;
+            box-sizing: border-box;
 
             &:focus {
                 color: var(--color-accent);
@@ -211,7 +263,7 @@
             padding: 0.25em;
             color: var(--color-accent-tertiary-lightest);
             width: auto;
-            max-width: 6.4em;
+            max-width: 100%;
             cursor: pointer;
 
             &:focus {
