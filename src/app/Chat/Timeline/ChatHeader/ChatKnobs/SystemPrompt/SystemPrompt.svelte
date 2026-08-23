@@ -126,6 +126,7 @@
                 in order.
             </p>
             {#if $currentChat && $currentChat.subPrompts.length}
+                <div class="subprompt-grid">
                 {#each $currentChat.subPrompts as sp, i (sp.id)}
                     <div class="subprompt-card">
                         <div class="subprompt-header">
@@ -166,19 +167,22 @@
                         ></textarea>
                     </div>
                 {/each}
+                </div>
             {:else}
                 <p class="empty">No sub-prompts.</p>
             {/if}
+        </div>
+        <div class="modal-footer">
             <button
                 class="btnAdd"
                 onclick={() => chatAddSubPrompt($currentChat?.id)}
             >
                 <svelte:component this={Add} size="20" /> Add Sub-Prompt
             </button>
+            <button class="btnClose" onclick={() => (isOpen = false)}>
+                Close
+            </button>
         </div>
-        <button class="btnClose" onclick={() => (isOpen = false)}>
-            Close
-        </button>
     </div>
 {/if}
 
@@ -242,8 +246,15 @@
                 color: var(--color-text-dim);
             }
 
+            .subprompt-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+                padding: 0 1rem;
+            }
+
             .subprompt-card {
-                margin: 0.5rem 1rem;
+                margin: 0;
                 padding: 0.5rem;
                 background-color: var(--color-background-darker);
                 border-radius: var(--border-radius-standard);
@@ -285,6 +296,7 @@
                 }
 
                 .subprompt-textarea {
+                    height: auto;
                     min-height: 80px;
                     max-height: 200px;
                     font-size: 1em;
@@ -297,17 +309,19 @@
                 font-size: 0.9em;
                 color: var(--color-text-dim);
             }
+        }
+
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 1rem 1rem;
 
             .btnAdd {
                 display: inline-flex;
                 align-items: center;
                 gap: 0.25rem;
-                margin: 0.5rem 1rem;
             }
-        }
-
-        .btnClose {
-            margin-bottom: 1rem;
         }
     }
 </style>
