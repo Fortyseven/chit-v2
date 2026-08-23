@@ -1,5 +1,5 @@
 <script>
-    import toast from "$lib/toast"
+    import toast, { toastError } from "$lib/toast"
     import {
         setOpenAITtsConfig,
         ttsListVoices,
@@ -34,7 +34,7 @@
             console.error("Failed to list voices", e)
             const errorMsg = e?.message || String(e)
             loadError = `Failed to load voices: ${errorMsg}`
-            toast(loadError, "error")
+            toastError(loadError)
         } finally {
             loadingVoices = false
         }
@@ -50,7 +50,7 @@
         const apiKey = openaiApiKey.trim()
 
         if (!endpoint) {
-            toast("OpenAI endpoint is required", "error")
+            toastError("OpenAI endpoint is required")
             return
         }
 
@@ -61,7 +61,7 @@
         } catch (e) {
             const errorMsg = e?.message || String(e)
             loadError = `Configuration failed: ${errorMsg}`
-            toast(loadError, "error")
+            toastError(loadError)
         }
     }
 

@@ -11,6 +11,7 @@ import {
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
 import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
+import { toastError } from "../toast"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
 import { stripJsonFences } from "./LLMDriver"
 import { QuoteTTSDetector } from "./quoteTTSDetection"
@@ -25,6 +26,23 @@ function normalizeAudioFormat(format: string): string {
     const normalized = format.toLowerCase().replace(/\s/g, "")
     if (normalized === "mp3" || normalized === "mpeg") return "mp3"
     return "wav"
+}
+
+/**
+ * Build a human-readable message from an HTTP error response body.
+ * Extracts `error.message` from OpenAI-style JSON error payloads when possible.
+ */
+function describeHttpError(status: number, body: string): string {
+    try {
+        const parsed = JSON.parse(body)
+        const message = parsed?.error?.message ?? parsed?.message
+        if (typeof message === "string" && message) {
+            return `Server error (${status}): ${message}`
+        }
+    } catch {
+        // Not JSON — fall through to generic message
+    }
+    return `Server error (${status})`
 }
 
 export class OpenAIDriver implements LLMDriver {
@@ -134,7 +152,7 @@ export class OpenAIDriver implements LLMDriver {
 
         if (!res.ok) {
             const errBody = await res.text()
-            throw new Error(`HTTP ${res.status}: ${errBody}`)
+            throw new Error(describeHttpError(res.status, errBody))
         }
 
         const data = await res.json()
@@ -268,7 +286,7 @@ export class OpenAIDriver implements LLMDriver {
             })
             if (!res.ok) {
                 const errBody = await res.text()
-                throw new Error(`HTTP ${res.status}: ${errBody}`)
+                throw new Error(describeHttpError(res.status, errBody))
             }
             if (!res.body) throw new Error(`HTTP ${res.status}: no response body`)
 
@@ -531,7 +549,7 @@ export class OpenAIDriver implements LLMDriver {
 
                 if (!followUpRes.ok) {
                     const errBody = await followUpRes.text()
-                    throw new Error(`HTTP ${followUpRes.status}: ${errBody}`)
+                    throw new Error(describeHttpError(followUpRes.status, errBody))
                 }
                 if (!followUpRes.body) throw new Error(`HTTP ${followUpRes.status}: no response body`)
 
@@ -612,6 +630,8 @@ export class OpenAIDriver implements LLMDriver {
         } catch (e) {
             if (e instanceof DOMException && e.name === "AbortError") {
                 clearQuoteQueue()
+            } else {
+                toastError(e instanceof Error ? e.message : String(e))
             }
             console.error("OpenAI chat error:", e)
         } finally {

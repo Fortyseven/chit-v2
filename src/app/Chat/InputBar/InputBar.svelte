@@ -18,7 +18,7 @@
     } from "$lib/chatSession/rewindInput"
     import type { CommandResult } from "$lib/inputCommands/inputCommands"
     import { handleCommand } from "$lib/inputCommands/inputCommands"
-    import { toast } from "@zerodevx/svelte-toast"
+    import { toastError } from "$lib/toast"
     import ChatInferenceSettings from "./ChatInferenceSettings.svelte"
     import InputBar__Attachments from "./InputBar__Attachments.svelte"
     import InputBar__ChatControls from "./InputBar__ChatControls.svelte"
@@ -73,13 +73,7 @@
                 inputBoxEl.focus()
             }
         } catch (error) {
-            toast.push(`ERR: ${error}`, {
-                theme: {
-                    "--toastBackground": "var(--toastErrorBackground)",
-                    "--toastBarBackground": "var(--toastErrorBarBackground)",
-                    "--toastColor": "var(--toastErrorColor)",
-                },
-            })
+            toastError(`ERR: ${error}`)
             inputBoxValue = ""
             inputBoxEl.value = ""
             console.error("Error launching command", error)
