@@ -112,10 +112,19 @@
     </div>
     <div>
         <label for="thinking"
-            >THNK&nbsp;<Psychology
-                color="var(--color-accent-complement)"
-                size="1.1em"
-            />
+            ><span
+                class="clickable"
+                title="Click to open advanced inference settings"
+                on:click={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    $advancedInferenceDialogOpen = true
+                }}
+                >THNK&nbsp;<Psychology
+                    color="var(--color-accent-complement)"
+                    size="1.1em"
+                /></span
+            >
             <input name="thinking" type="checkbox" bind:checked={$thinking} />
         </label>
         <select
@@ -164,12 +173,12 @@
             display: flex;
             text-transform: uppercase;
             font-weight: bold;
+        }
 
-            &.clickable {
-                cursor: pointer;
-                &:hover {
-                    color: var(--color-accent-complement);
-                }
+        .clickable {
+            cursor: pointer;
+            &:hover {
+                color: var(--color-accent-complement);
             }
         }
 
