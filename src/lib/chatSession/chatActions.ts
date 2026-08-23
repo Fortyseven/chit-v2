@@ -109,6 +109,7 @@ export function chatNew(): string {
             ? Number(tempValue)
             : DEFAULT_TEMPERATURE
     const defaultThinking = get(appState).defaultThinking
+    const defaultReasoningEffort = get(appState).defaultReasoningEffort
     const newChat = {
         id,
         title: "New Chat " + new Date().toLocaleString(),
@@ -128,6 +129,7 @@ export function chatNew(): string {
             temperature: defaultTemperature,
             num_ctx: defaultContext,
             enable_thinking: defaultThinking,
+            reasoning_effort: defaultReasoningEffort,
         },
         wasAborted: false,
         pastedMedia: [],

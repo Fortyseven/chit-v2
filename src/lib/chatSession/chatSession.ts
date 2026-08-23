@@ -17,10 +17,13 @@ export interface Message {
     tool_call_info?: string // Tool call/result info for display only, not sent to LLM
 }
 
+export type ReasoningEffort = "low" | "medium" | "high" | "xhigh"
+
 export interface ChatSettings {
     temperature: number
     num_ctx: number
     enable_thinking: boolean
+    reasoning_effort?: ReasoningEffort
     top_p?: number
     presence_penalty?: number
     repeat_penalty?: number

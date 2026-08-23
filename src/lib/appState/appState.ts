@@ -1,5 +1,6 @@
 import { derived, writable } from "svelte/store"
 import type { MCPServerConfig } from "../mcp/types"
+import type { ReasoningEffort } from "../chatSession/chatSession"
 
 // export const DEFAULT_BP_ENDPOINT = "http://localhost:12434"
 export const DEFAULT_BP_ENDPOINT = ""
@@ -13,6 +14,7 @@ export interface AppState {
     defaultContext: string // NEW: default context size (freeform)
     defaultTemperature: string // NEW: default temperature (freeform)
     defaultThinking: boolean // NEW: default thinking mode
+    defaultReasoningEffort: ReasoningEffort // NEW: default reasoning effort
     thinkBlockOpenByDefault: boolean
     backpackHeartbeatTimer: any
     useTitler: boolean
@@ -33,6 +35,7 @@ export const appStateDefaults: AppState = {
     defaultContext: "", // NEW: default context size
     defaultTemperature: "", // NEW: default temperature
     defaultThinking: true, // NEW: default thinking mode
+    defaultReasoningEffort: "medium", // NEW: default reasoning effort
     thinkBlockOpenByDefault: false,
     backpackHeartbeatTimer: null,
     useTitler: true,

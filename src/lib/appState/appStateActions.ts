@@ -1,4 +1,5 @@
 import { appState } from "./appState"
+import type { ReasoningEffort } from "../chatSession/chatSession"
 
 export function appStateSetActiveChatId(id: string | string) {
     appState.update((state) => ({ ...state, activeChatId: id }))
@@ -30,6 +31,10 @@ export function appStateSetDefaultTemperature(temp: string) {
 
 export function appStateSetDefaultThinking(thinking: boolean) {
     appState.update((state) => ({ ...state, defaultThinking: thinking }))
+}
+
+export function appStateSetDefaultReasoningEffort(effort: ReasoningEffort) {
+    appState.update((state) => ({ ...state, defaultReasoningEffort: effort }))
 }
 
 export function appStateSetThinkBlockOpenByDefault(open: boolean) {

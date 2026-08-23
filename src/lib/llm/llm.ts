@@ -231,6 +231,7 @@ export class LLMInterface {
         const temp = chat_session.settings?.temperature || DEFAULT_TEMPERATURE
         const ctx = chat_session.settings?.num_ctx || DEFAULT_CONTEXT
         const enable_thinking = chat_session.settings?.enable_thinking ?? true
+        const reasoning_effort = chat_session.settings?.reasoning_effort
 
         const advancedConfig: Record<string, number> = {}
         if (chat_session.settings?.top_p !== undefined) advancedConfig.top_p = chat_session.settings.top_p
@@ -244,6 +245,7 @@ export class LLMInterface {
             temp,
             ctx,
             enable_thinking,
+            reasoning_effort,
             ...advancedConfig,
         })
     }

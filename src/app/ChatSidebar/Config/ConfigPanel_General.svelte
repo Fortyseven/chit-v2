@@ -4,6 +4,7 @@
         appStateSetBackpackApiEndpoint,
         appStateSetDefaultContext,
         appStateSetDefaultModel,
+        appStateSetDefaultReasoningEffort,
         appStateSetDefaultTemperature,
         appStateSetDefaultThinking,
         appStateSetThinkBlockOpenByDefault,
@@ -112,6 +113,24 @@
                 checked={$appState.defaultThinking}
                 on:change={(e) => appStateSetDefaultThinking(e.target.checked)}
             />
+        </label>
+    </div>
+    <div class="field">
+        <label
+            for="default-reasoning-effort"
+            title="Default reasoning effort for new conversations."
+            >Default Reasoning Effort
+            <select
+                id="default-reasoning-effort"
+                value={$appState.defaultReasoningEffort}
+                on:change={(e) =>
+                    appStateSetDefaultReasoningEffort(e.target.value)}
+            >
+                <option value="low">low</option>
+                <option value="medium">medium</option>
+                <option value="high">high</option>
+                <option value="xhigh">xhigh</option>
+            </select>
         </label>
     </div>
     <div class="field">

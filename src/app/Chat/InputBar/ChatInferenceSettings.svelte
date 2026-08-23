@@ -4,7 +4,7 @@
         chatSetToolsEnabled,
         chatUpdateSettings,
     } from "$lib/chatSession/chatActions"
-    import { currentChat } from "$lib/chatSession/chatSession"
+    import { currentChat, type ReasoningEffort } from "$lib/chatSession/chatSession"
     import {
         Build,
         Psychology,
@@ -16,6 +16,9 @@
     let ctx = writable($currentChat?.settings?.num_ctx || 8192)
     let temp = writable($currentChat?.settings?.temperature || 0.6)
     let thinking = writable($currentChat?.settings?.enable_thinking ?? true)
+    let reasoningEffort = writable<ReasoningEffort>(
+        $currentChat?.settings?.reasoning_effort ?? "medium",
+    )
     let toolsEnabled = writable($currentChat?.toolsEnabled ?? false)
 
     ctx.subscribe((value) => {
@@ -36,6 +39,12 @@
         })
     })
 
+    reasoningEffort.subscribe((value) => {
+        chatUpdateSettings("", {
+            reasoning_effort: value,
+        })
+    })
+
     toolsEnabled.subscribe((value) => {
         chatSetToolsEnabled("", value)
     })
@@ -43,6 +52,7 @@
     $: $ctx = $currentChat?.settings?.num_ctx || 8192
     $: $temp = $currentChat?.settings?.temperature ?? 0.6
     $: $thinking = $currentChat?.settings?.enable_thinking ?? true
+    $: $reasoningEffort = $currentChat?.settings?.reasoning_effort ?? "medium"
     $: $toolsEnabled = $currentChat?.toolsEnabled ?? false
 
     function handleContextBlur(event: Event) {
@@ -108,6 +118,17 @@
             />
             <input name="thinking" type="checkbox" bind:checked={$thinking} />
         </label>
+        <select
+            name="reasoning-effort"
+            bind:value={$reasoningEffort}
+            disabled={!$thinking}
+            title="Reasoning effort (requires THNK)"
+        >
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+            <option value="xhigh">xhigh</option>
+        </select>
     </div>
     <div>
         <label for="tools"
@@ -171,6 +192,27 @@
             width: auto;
             accent-color: var(--color-accent);
             cursor: pointer;
+        }
+
+        select {
+            font-family: monospace;
+            background: var(--color-background-darkest);
+            border: 0;
+            padding: 0.25em;
+            color: var(--color-accent-tertiary-lightest);
+            width: auto;
+            max-width: 6.4em;
+            cursor: pointer;
+
+            &:focus {
+                color: var(--color-accent);
+                outline: none;
+            }
+
+            &:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
         }
     }
 </style>

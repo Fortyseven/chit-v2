@@ -1,3 +1,5 @@
+import type { ReasoningEffort } from "$lib/chatSession/chatSession"
+
 export type GenericMessage = {
     role: "system" | "user" | "assistant"
     content: string
@@ -10,6 +12,7 @@ export interface ChatConfig {
     ctx?: number
     stream?: boolean
     enable_thinking?: boolean
+    reasoning_effort?: ReasoningEffort
     top_p?: number
     presence_penalty?: number
     repeat_penalty?: number
