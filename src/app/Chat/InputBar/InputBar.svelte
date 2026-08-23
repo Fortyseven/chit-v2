@@ -266,7 +266,7 @@
 
         .inner {
             display: grid;
-            grid-template-columns: 11.5em minmax(0, 1fr) auto auto;
+            grid-template-columns: 13em minmax(0, 1fr) auto auto;
             gap: 0.5em;
             width: 100%;
             max-width: var(--timeline-max-width);
