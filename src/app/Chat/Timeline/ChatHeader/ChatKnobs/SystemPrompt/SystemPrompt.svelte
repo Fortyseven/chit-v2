@@ -1,30 +1,28 @@
 <script>
     import { appState } from "$lib/appState/appState"
     import {
-        chatSetSecondarySystemPrompt,
+        chatAddSubPrompt,
+        chatRemoveSubPrompt,
         chatSetSystemPrompt,
+        chatToggleSubPrompt,
+        chatUpdateSubPromptText,
     } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
     import { recalculateUserVariables } from "$lib/templating/templating"
     import { onMount } from "svelte"
+    import { Add, Delete } from "svelte-google-materialdesign-icons"
     import { derived, writable } from "svelte/store"
     import Variables from "./Variables.svelte"
 
     let sys_prompt_state = writable($currentChat.systemPrompt)
-    let sec_prompt_state = writable($currentChat.secondarySystemPrompt)
 
     sys_prompt_state.subscribe((value) => {
         chatSetSystemPrompt($appState.activeChatId, value)
     })
 
-    sec_prompt_state.subscribe((value) => {
-        chatSetSecondarySystemPrompt($appState.activeChatId, value)
-    })
-
     currentChat.subscribe((value) => {
         if ($currentChat) {
             sys_prompt_state.set($currentChat.systemPrompt)
-            sec_prompt_state.set($currentChat.secondarySystemPrompt)
         }
     })
 
@@ -120,20 +118,63 @@
         {#if hasVariables}
             <Variables />
         {/if}
-        <div class="sec-box">
-            <h3>Secondary Prompt</h3>
+        <div class="subprompts-box">
+            <h3>Sub-Prompts</h3>
             <p class="hint">
-                Optional. Appended to the system prompt, or placed at the
-                first &lcub;&lcub;&rcub;&rcub; if present. Leave empty to ignore.
+                Optional. Enabled sub-prompts fill &lcub;&lcub;N&rcub;&rcub;
+                slots in the system prompt; any without a slot are appended
+                in order.
             </p>
-            <textarea
-                id="sec-prompt"
-                name="sec-prompt"
-                placeholder="Optional secondary prompt..."
-                rows="4"
-                class="sec-textarea"
-                bind:value={$sec_prompt_state}
-            ></textarea>
+            {#if $currentChat && $currentChat.subPrompts.length}
+                {#each $currentChat.subPrompts as sp, i (sp.id)}
+                    <div class="subprompt-card">
+                        <div class="subprompt-header">
+                            <span class="subprompt-label">Sub-Prompt {i + 1}</span>
+                            <label class="subprompt-toggle">
+                                <input
+                                    type="checkbox"
+                                    checked={sp.enabled}
+                                    onchange={(ev) =>
+                                        chatToggleSubPrompt(
+                                            $currentChat.id,
+                                            sp.id,
+                                            ev.target.checked
+                                        )}
+                                />
+                                enabled
+                            </label>
+                            <button
+                                class="subprompt-delete"
+                                title="Delete sub-prompt"
+                                onclick={() =>
+                                    chatRemoveSubPrompt($currentChat.id, sp.id)}
+                            >
+                                <svelte:component this={Delete} size="20" />
+                            </button>
+                        </div>
+                        <textarea
+                            placeholder="Sub-prompt text..."
+                            rows="4"
+                            class="subprompt-textarea"
+                            value={sp.text}
+                            oninput={(ev) =>
+                                chatUpdateSubPromptText(
+                                    $currentChat.id,
+                                    sp.id,
+                                    ev.target.value
+                                )}
+                        ></textarea>
+                    </div>
+                {/each}
+            {:else}
+                <p class="empty">No sub-prompts.</p>
+            {/if}
+            <button
+                class="btnAdd"
+                onclick={() => chatAddSubPrompt($currentChat?.id)}
+            >
+                <svelte:component this={Add} size="20" /> Add Sub-Prompt
+            </button>
         </div>
         <button class="btnClose" onclick={() => (isOpen = false)}>
             Close
@@ -185,7 +226,7 @@
             font-size: 1.25em;
         }
 
-        .sec-box {
+        .subprompts-box {
             h3 {
                 font-weight: bold;
                 font-size: 1.25rem;
@@ -201,10 +242,67 @@
                 color: var(--color-text-dim);
             }
 
-            .sec-textarea {
-                min-height: 80px;
-                max-height: 200px;
-                font-size: 1em;
+            .subprompt-card {
+                margin: 0.5rem 1rem;
+                padding: 0.5rem;
+                background-color: var(--color-background-darker);
+                border-radius: var(--border-radius-standard);
+
+                .subprompt-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+
+                    .subprompt-label {
+                        font-weight: bold;
+                        flex: 1;
+                    }
+
+                    .subprompt-toggle {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.25rem;
+                        font-size: 0.9em;
+                        color: var(--color-text-dim);
+                    }
+
+                    .subprompt-delete {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 0.25rem;
+                        background: none;
+                        border: none;
+                        border-radius: var(--border-radius-standard);
+                        color: var(--color-text-dim);
+                        cursor: pointer;
+
+                        &:hover {
+                            color: var(--color-accent);
+                        }
+                    }
+                }
+
+                .subprompt-textarea {
+                    min-height: 80px;
+                    max-height: 200px;
+                    font-size: 1em;
+                    margin: 0;
+                }
+            }
+
+            .empty {
+                margin: 0.5rem 1rem;
+                font-size: 0.9em;
+                color: var(--color-text-dim);
+            }
+
+            .btnAdd {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                margin: 0.5rem 1rem;
             }
         }
 

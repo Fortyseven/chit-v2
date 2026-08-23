@@ -8,7 +8,7 @@ import {
 } from "../chatSession/chatActions"
 import { ChatMediaType, getMediaBlob } from "../chatSession/chatAttachments"
 import {
-    applySecondaryPrompt,
+    applySubPrompts,
     applySystemVariables,
     applyUserVariables,
 } from "../templating/templating"
@@ -84,11 +84,11 @@ export class LLMInterface {
             system_prompt = get(appState).defaultPrompt.trim()
         }
 
-        // Inject the optional secondary prompt (before the templating passes,
-        // so {{name}} variables inside it are also resolved)
-        system_prompt = applySecondaryPrompt(
+        // Inject enabled sub-prompts (before the templating passes,
+        // so {{name}} variables inside them are also resolved)
+        system_prompt = applySubPrompts(
             system_prompt,
-            chat_session.secondarySystemPrompt
+            chat_session.subPrompts
         )
 
         if (system_prompt) {
@@ -239,6 +239,7 @@ export class LLMInterface {
         if (chat_session.settings?.repeat_penalty !== undefined) advancedConfig.repeat_penalty = chat_session.settings.repeat_penalty
         if (chat_session.settings?.top_k !== undefined) advancedConfig.top_k = chat_session.settings.top_k
         if (chat_session.settings?.seed !== undefined) advancedConfig.seed = chat_session.settings.seed
+        if (chat_session.settings?.thinking_budget_tokens !== undefined) advancedConfig.thinking_budget_tokens = chat_session.settings.thinking_budget_tokens
 
         await driver.chat(chatId, messages, chat_session.model_name as string, {
             stream: true,

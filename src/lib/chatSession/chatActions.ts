@@ -55,7 +55,7 @@ import { appState } from "../appState/appState"
 import { backpackProcess } from "../backpack/backpackActions"
 import { llm } from "../llm/llm.js"
 import {
-    applySecondaryPrompt,
+    applySubPrompts,
     applySystemVariables,
     applyUserVariables,
 } from "../templating/templating"
@@ -120,6 +120,7 @@ export function chatNew(): string {
         lastTokenCount: 0,
         model_name: defaultModel,
         systemPrompt: get(appState).defaultPrompt || general_prompt.prompt,
+        subPrompts: [],
         response_buffer: "",
         hasThoughts: false,
         thinking_buffer: "",
@@ -180,10 +181,34 @@ export function chatSetModel(chatId: string = "", modelName: string) {
 }
 
 //--------------------------------------------------------------
-// Set the optional secondary system prompt (independent of the main prompt)
-export function chatSetSecondarySystemPrompt(
-    chatId: string,
-    secondarySystemPrompt: string
+// Add a new sub-prompt to the chat (enabled by default)
+export function chatAddSubPrompt(chatId: string = ""): string {
+    chatId = getActiveChatId(chatId)
+    const id = crypto.randomUUID()
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    subPrompts: [
+                        ...(chat.subPrompts || []),
+                        { id, text: "", enabled: true },
+                    ],
+                }
+            }
+            return chat
+        })
+    )
+
+    return id
+}
+
+//--------------------------------------------------------------
+// Remove a sub-prompt from the chat
+export function chatRemoveSubPrompt(
+    chatId: string = "",
+    subPromptId: string
 ) {
     chatId = getActiveChatId(chatId)
 
@@ -192,7 +217,57 @@ export function chatSetSecondarySystemPrompt(
             if (chat.id === chatId) {
                 return {
                     ...chat,
-                    secondarySystemPrompt: secondarySystemPrompt,
+                    subPrompts: (chat.subPrompts || []).filter(
+                        (sp) => sp.id !== subPromptId
+                    ),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
+// Update the text of a sub-prompt
+export function chatUpdateSubPromptText(
+    chatId: string = "",
+    subPromptId: string,
+    text: string
+) {
+    chatId = getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    subPrompts: (chat.subPrompts || []).map((sp) =>
+                        sp.id === subPromptId ? { ...sp, text } : sp
+                    ),
+                }
+            }
+            return chat
+        })
+    )
+}
+
+//--------------------------------------------------------------
+// Toggle a sub-prompt on/off
+export function chatToggleSubPrompt(
+    chatId: string = "",
+    subPromptId: string,
+    enabled: boolean
+) {
+    chatId = getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    subPrompts: (chat.subPrompts || []).map((sp) =>
+                        sp.id === subPromptId ? { ...sp, enabled } : sp
+                    ),
                 }
             }
             return chat
@@ -813,9 +888,9 @@ export function chatGetAllContents(): string | undefined {
     const curChat = get(currentChat)
     const sysPrompt = applySystemVariables(
         applyUserVariables(
-            applySecondaryPrompt(
+            applySubPrompts(
                 curChat?.systemPrompt || "",
-                curChat?.secondarySystemPrompt
+                curChat?.subPrompts
             )
         )
     )

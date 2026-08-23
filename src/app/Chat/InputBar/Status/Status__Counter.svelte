@@ -8,7 +8,10 @@
     $: contextLimit = $currentChat?.settings?.num_ctx || 0
     $: systemPromptLength = estimateTokens(
         ($currentChat?.systemPrompt?.length || 0) +
-            ($currentChat?.secondarySystemPrompt?.length || 0)
+            ($currentChat?.subPrompts?.reduce(
+                (acc, sp) => acc + (sp.enabled ? sp.text.length : 0),
+                0
+            ) || 0)
     )
     $: conversationLength = estimateTokens(
         $currentChat?.messages?.reduce((acc, message) => {

@@ -24,15 +24,29 @@ async function validateChatMedia() {
     }
 }
 
-// Ensure all messages have IDs (for backward compatibility with old saved chats)
+// Ensure all messages have IDs and migrate legacy fields
+// (for backward compatibility with old saved chats)
 function ensureMessageIds(chatList: any[]) {
-    return chatList.map((chat) => ({
-        ...chat,
-        messages: (chat.messages || []).map((msg: any) => ({
-            ...msg,
-            id: msg.id || crypto.randomUUID(),
-        })),
-    }))
+    return chatList.map((chat: any) => {
+        const migrated = { ...chat }
+
+        // Migrate the legacy secondarySystemPrompt into one enabled sub-prompt
+        if (migrated.subPrompts === undefined) {
+            const legacy = (migrated.secondarySystemPrompt || "").trim()
+            migrated.subPrompts = legacy
+                ? [{ id: crypto.randomUUID(), text: legacy, enabled: true }]
+                : []
+        }
+        delete migrated.secondarySystemPrompt
+
+        return {
+            ...migrated,
+            messages: (migrated.messages || []).map((msg: any) => ({
+                ...msg,
+                id: msg.id || crypto.randomUUID(),
+            })),
+        }
+    })
 }
 
 /**

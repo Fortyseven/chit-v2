@@ -1,6 +1,10 @@
 import { get } from "svelte/store"
 import { chatFind } from "../chatSession/chatActions"
-import { chats, currentChat } from "../chatSession/chatSession"
+import {
+    chats,
+    currentChat,
+    type SubPrompt,
+} from "../chatSession/chatSession"
 
 interface Template {
     name: string
@@ -48,27 +52,68 @@ export function applySystemVariables(prompt: string): string {
 }
 
 /**
- * Inject the optional secondary system prompt into the main prompt.
- * - If the secondary prompt is empty/whitespace, the main prompt is returned unchanged.
- * - If the main prompt contains a literal `{{}}` placeholder, the first occurrence
- *   is replaced with the secondary prompt.
- * - Otherwise the secondary prompt is appended after a blank line.
- * Call this BEFORE the templating passes so `{{name}}` variables inside the
- * secondary prompt are also resolved.
+ * Inject enabled sub-prompts into the main prompt.
+ * - {{N}} (N >= 0) is a slot for sub-prompt N (zero-indexed);
+ *   {{}} is an alias for {{0}}.
+ * - An enabled sub-prompt whose slot appears in the main prompt replaces
+ *   the first occurrence of each present slot with its text; otherwise it
+ *   is appended after the main prompt (in order, blank-line separated).
+ * - Disabled/empty sub-prompts: their slots (if present) are removed.
+ * - Slots referencing non-existent sub-prompts (N >= count) are removed.
+ * - Single pass over the main prompt only; {{var}} inside sub-prompt text
+ *   is still resolved by the later templating passes.
+ * Call this BEFORE the templating passes.
  */
-export function applySecondaryPrompt(
+export function applySubPrompts(
     mainPrompt: string,
-    secondary?: string
+    subPrompts?: SubPrompt[]
 ): string {
-    const sec = secondary?.trim()
-    if (!sec || !mainPrompt) return mainPrompt || ""
+    const subs = subPrompts || []
+    let result = mainPrompt || ""
 
-    if (mainPrompt.includes("{{}}")) {
-        // String.replace with a string pattern replaces the first occurrence only
-        return mainPrompt.replace("{{}}", sec)
+    // Strip out-of-range slots up front so text inserted later is untouched
+    result = result.replace(/\{\{(\d+)\}\}/g, (match, num) =>
+        parseInt(num, 10) >= subs.length ? "" : match
+    )
+
+    if (subs.length === 0) {
+        // {{}} is an alias for the (non-existent) sub-prompt 0
+        return result.replace(/\{\{\}\}/g, "")
     }
 
-    return mainPrompt + "\n\n" + sec
+    const appended: string[] = []
+
+    subs.forEach((sp, index) => {
+        const text = sp.text.trim()
+        const slots = index === 0 ? ["{{0}}", "{{}}"] : [`{{${index}}}`]
+
+        if (sp.enabled && text) {
+            let placed = false
+            for (const slot of slots) {
+                if (result.includes(slot)) {
+                    // String.replace with a string pattern replaces the first occurrence only
+                    result = result.replace(slot, text)
+                    placed = true
+                }
+            }
+            if (!placed) {
+                appended.push(text)
+            }
+        } else {
+            // Disabled or empty: strip its slots
+            for (const slot of slots) {
+                result = result.split(slot).join("")
+            }
+        }
+    })
+
+    if (appended.length) {
+        result = result
+            ? result + "\n\n" + appended.join("\n\n")
+            : appended.join("\n\n")
+    }
+
+    return result
 }
 
 export function applyUserVariables(prompt: string): string {
@@ -117,9 +162,10 @@ export function recalculateUserVariables(chatId: string) {
         // create them, using their existing values if present
 
         for (const variable_name of variables) {
-            // `{{}}` (empty name) is the secondary-prompt injection slot,
-            // not a user variable — skip it so it doesn't show up in the UI
-            if (!variable_name) continue
+            // Numeric names ({{0}}, {{1}}...) and {{}} (empty name) are
+            // sub-prompt slots, not user variables — skip them so they
+            // don't show up in the UI
+            if (!variable_name || /^\d+$/.test(variable_name)) continue
 
             chatUpdateTemplateVariableValue(
                 chatId,

@@ -17,13 +17,14 @@ export interface Message {
     tool_call_info?: string // Tool call/result info for display only, not sent to LLM
 }
 
-export type ReasoningEffort = "low" | "medium" | "high" | "xhigh"
+export type ReasoningEffort = "none" | "low" | "medium" | "high" | "xhigh"
 
 export interface ChatSettings {
     temperature: number
     num_ctx: number
     enable_thinking: boolean
     reasoning_effort?: ReasoningEffort
+    thinking_budget_tokens?: number
     top_p?: number
     presence_penalty?: number
     repeat_penalty?: number
@@ -49,11 +50,17 @@ export interface BackpackReference {
     referenceContent: string // actual reference text
 }
 
+export interface SubPrompt {
+    id: string
+    text: string
+    enabled: boolean
+}
+
 export interface ChatSession {
     id: string
     title: string
     systemPrompt?: string
-    secondarySystemPrompt?: string // Optional add-on injected into systemPrompt ({{}} slot or append)
+    subPrompts: SubPrompt[] // toggleable add-ons; {{N}} slots in systemPrompt or appended in order
     model_name: string
     messages: Message[]
     createdAt: Date
