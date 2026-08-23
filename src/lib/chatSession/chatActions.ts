@@ -364,12 +364,21 @@ export async function chatDelete(chatId: string) {
     // Clean up lazy loading state
     unloadedChatIds.delete(chatId)
 
+    const wasActive = get(appState).activeChatId === chatId
+    const deletedIndex = get(chats).findIndex((chat) => chat.id === chatId)
+
     chats.update(($chats) => $chats.filter((chat) => chat.id !== chatId))
     console.log("chatDelete", chatId)
 
     // there must always be one
     if (!get(chats).length) {
         chatNew()
+    } else if (wasActive) {
+        // Deleted chat was active — switch to the chat that takes its place
+        const remaining = get(chats)
+        await chatSwitchTo(remaining[Math.min(deletedIndex, remaining.length - 1)].id)
+        // chatSwitchTo re-added the deleted id to unloadedChatIds — clean it up
+        unloadedChatIds.delete(chatId)
     }
 }
 
