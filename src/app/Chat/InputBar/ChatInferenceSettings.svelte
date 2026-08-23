@@ -133,6 +133,7 @@
             disabled={!$thinking}
             title="Reasoning effort (requires THNK)"
         >
+            <option value="none">none</option>
             <option value="low">low</option>
             <option value="medium">medium</option>
             <option value="high">high</option>

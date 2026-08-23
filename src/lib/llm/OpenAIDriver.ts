@@ -263,7 +263,11 @@ export class OpenAIDriver implements LLMDriver {
                 temperature: config.temp ?? DEFAULT_TEMPERATURE,
                 stream: config.stream ?? true,
                 chat_template_kwargs: { enable_thinking: config.enable_thinking },
-                ...(config.enable_thinking && config.reasoning_effort && { reasoning_effort: config.reasoning_effort }),
+                // "none" means: don't send reasoning_effort, use the model default
+                ...(config.enable_thinking && config.reasoning_effort && config.reasoning_effort !== "none" && { reasoning_effort: config.reasoning_effort }),
+                // Wire key is thinking_token_budget (vLLM parameter name)
+                // TODO: untested — verify thinking_token_budget actually works against vLLM (and whether other backends accept or reject it); remove the "untested" dialog note once confirmed
+                ...(config.enable_thinking && config.thinking_budget_tokens !== undefined && { thinking_token_budget: config.thinking_budget_tokens }),
                 ...(config.top_p !== undefined && { top_p: config.top_p }),
                 ...(config.presence_penalty !== undefined && { presence_penalty: config.presence_penalty }),
                 ...(config.repeat_penalty !== undefined && { frequency_penalty: config.repeat_penalty }),
@@ -530,7 +534,10 @@ export class OpenAIDriver implements LLMDriver {
                     temperature: config.temp ?? DEFAULT_TEMPERATURE,
                     stream: true,
                     chat_template_kwargs: { enable_thinking: config.enable_thinking },
-                    ...(config.enable_thinking && config.reasoning_effort && { reasoning_effort: config.reasoning_effort }),
+                    // "none" means: don't send reasoning_effort, use the model default
+                    ...(config.enable_thinking && config.reasoning_effort && config.reasoning_effort !== "none" && { reasoning_effort: config.reasoning_effort }),
+                    // Wire key is thinking_token_budget (vLLM parameter name)
+                    ...(config.enable_thinking && config.thinking_budget_tokens !== undefined && { thinking_token_budget: config.thinking_budget_tokens }),
                     ...(config.top_p !== undefined && { top_p: config.top_p }),
                     ...(config.presence_penalty !== undefined && { presence_penalty: config.presence_penalty }),
                     ...(config.repeat_penalty !== undefined && { frequency_penalty: config.repeat_penalty }),

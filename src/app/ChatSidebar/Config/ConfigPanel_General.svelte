@@ -126,6 +126,7 @@
                 on:change={(e) =>
                     appStateSetDefaultReasoningEffort(e.target.value)}
             >
+                <option value="none">none</option>
                 <option value="low">low</option>
                 <option value="medium">medium</option>
                 <option value="high">high</option>

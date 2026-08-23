@@ -64,6 +64,11 @@
         const val = parseOptionalInt((e.target as HTMLInputElement).value)
         chatUpdateSettings("", { seed: val })
     }
+
+    function onThinkingBudgetTokens(e: Event) {
+        const val = parseOptionalInt((e.target as HTMLInputElement).value)
+        chatUpdateSettings("", { thinking_budget_tokens: val })
+    }
 </script>
 
 {#if $advancedInferenceDialogOpen}
@@ -136,6 +141,21 @@
                         placeholder="default"
                         value={settings?.repeat_penalty ?? ""}
                         on:change={onRepeatPenalty}
+                    />
+                </label>
+
+                <label>
+                    <span>Thinking Token Budget</span>
+                    <span class="desc"
+                        >Max tokens the model may spend reasoning (vllm, thinking models only). Untested — may not work</span
+                    >
+                    <input
+                        type="number"
+                        min="1"
+                        step="1"
+                        placeholder="default"
+                        value={settings?.thinking_budget_tokens ?? ""}
+                        on:change={onThinkingBudgetTokens}
                     />
                 </label>
 
