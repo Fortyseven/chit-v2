@@ -6,12 +6,13 @@
     export let className: string = ""
     export let secondary: boolean = false
     export let warning: boolean = false
+    export let danger: boolean = false
     export let roundCorner = "" // can be 'ne', 'nw', 'se', 'sw' or empty
 
     let buttonEl: HTMLButtonElement
 
     $: buttonClass =
-        `${className} ${secondary ? "secondary" : ""} ${warning ? "warning" : ""} ${roundCorner}`.trim()
+        `${className} ${secondary ? "secondary" : ""} ${warning ? "warning" : ""} ${danger ? "danger" : ""} ${roundCorner}`.trim()
 </script>
 
 <!-- svelte-ignore a11y_consider_explicit_label -->
@@ -40,6 +41,10 @@
 
         &.warning {
             background-color: orange;
+        }
+
+        &.danger {
+            background-color: var(--color-error);
         }
 
         &.ne {

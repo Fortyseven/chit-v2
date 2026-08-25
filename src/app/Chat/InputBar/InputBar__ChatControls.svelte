@@ -54,7 +54,53 @@
     }
 
     /* ------------------------------------------------------ */
+    // Clearing requires two clicks: the first click "arms" the button
+    // (its color changes), the second click actually clears. Any other
+    // action (clicking elsewhere, pressing a key, scrolling) resets it.
+    let clearArmed = false
+    let clearBtnWrap: HTMLDivElement | undefined = undefined
+
+    $: isClearDisabled =
+        (!$hasMessages || $chatInProgress) && !$currentChat?.pastedMedia?.length
+
+    // The armed state can never survive on a disabled button
+    $: if (isClearDisabled) {
+        clearArmed = false
+    }
+
+    function clearBtnContains(target: EventTarget | null): boolean {
+        return (
+            clearBtnWrap != null &&
+            target instanceof Node &&
+            clearBtnWrap.contains(target)
+        )
+    }
+
+    // Listened in the capture phase so stopPropagation() elsewhere
+    // (e.g. the chat options dropdown) can't hide events from us
+    function onAnyAction(ev: Event) {
+        if (clearArmed && !clearBtnContains(ev.target)) {
+            clearArmed = false
+        }
+    }
+
+    function onGlobalKeypress(ev: KeyboardEvent) {
+        // Enter/Space on the armed button itself confirms the clear
+        const isConfirm =
+            (ev.key === "Enter" || ev.key === " ") && clearBtnContains(ev.target)
+        if (clearArmed && !isConfirm) {
+            clearArmed = false
+        }
+    }
+
+    /* ------------------------------------------------------ */
     async function onBtnClear() {
+        if (!clearArmed) {
+            clearArmed = true
+            return
+        }
+        clearArmed = false
+
         if (inputBoxEl) {
             inputBoxEl.value = ""
         }
@@ -74,6 +120,11 @@
     )
 </script>
 
+<svelte:window
+    on:click|capture={onAnyAction}
+    on:wheel|capture={onAnyAction}
+    on:keydown|capture={onGlobalKeypress}
+/>
 <div class="chat-controls">
     <button
         onclick={async () => await doInputBarSubmit()}
@@ -105,15 +156,17 @@
                 roundCorner="sw"
             />
 
-            <IconButton
-                title="Clear"
-                warning
-                onClick={onBtnClear}
-                disabled={(!$hasMessages || $chatInProgress) &&
-                    !$currentChat?.pastedMedia?.length}
-                iconComponent={Delete}
-                roundCorner="se"
-            />
+            <div class="clear-wrap" bind:this={clearBtnWrap}>
+                <IconButton
+                    title={clearArmed ? "Click again to clear" : "Clear"}
+                    warning
+                    danger={clearArmed}
+                    onClick={onBtnClear}
+                    disabled={isClearDisabled}
+                    iconComponent={Delete}
+                    roundCorner="se"
+                />
+            </div>
         </div>
     {/key}
 </div>
@@ -150,6 +203,12 @@
             gap: 2px;
             place-content: center;
             position: relative;
+        }
+
+        .clear-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     }
 </style>
