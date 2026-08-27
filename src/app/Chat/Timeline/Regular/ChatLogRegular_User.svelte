@@ -46,9 +46,8 @@
 <style lang="scss">
     .response {
         width: auto;
-        padding-block: 1em;
+        padding-block: 0.5em;
         padding-inline: 0.6em;
-        padding-block-start: 2em;
         color: var(--color-neutral);
         font-style: italic;
         font-size: 0.9em;
