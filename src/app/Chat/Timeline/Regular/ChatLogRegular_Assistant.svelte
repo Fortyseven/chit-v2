@@ -415,14 +415,15 @@
 
         &.thoughts {
             background-color: #2222228a;
-            font-size: 0.75em;
+            font-size: 0.8em;
             opacity: 0.75;
-            color: var(--color-accent-complement-lightest);
+            color: var(--color-accent-complement-lighter);
             background: unset;
             border: unset;
             box-shadow: unset;
             line-height: 0.95;
             font-family: monospace;
+            letter-spacing: -0.05ch !important;
         }
     }
     .mini-toolbar {
