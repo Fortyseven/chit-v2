@@ -45,7 +45,7 @@
 
 <style lang="scss">
     .response {
-        width: auto;
+        width: 100%;
         padding-block: 0.5em;
         padding-inline: 0.6em;
         color: var(--color-neutral);
@@ -53,22 +53,31 @@
         font-size: 0.9em;
         max-width: 100%;
         position: relative;
-        &::before {
-            content: "> ";
-            font-weight: bold;
+
+        .message-content {
+            display: block;
+            &::before {
+                content: "> ";
+                font-weight: bold;
+            }
         }
 
         &.user {
             display: flex;
             align-items: flex-start;
             gap: 0.5em;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 50% auto;
 
             .message-content {
                 flex: 1;
             }
 
             .rewind-btn {
-                flex-shrink: 0;
+                align-self: start;
+                justify-self: flex-end;
+                display: block;
                 opacity: 0.5;
                 transition: opacity 0.2s;
                 background: none;
@@ -77,7 +86,6 @@
                 font-size: 0.8em;
                 padding: 0.25em;
                 color: var(--color-accent);
-                display: flex;
                 align-items: center;
                 justify-content: center;
                 min-width: 1.5em;
