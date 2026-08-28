@@ -35,6 +35,12 @@ export default defineConfig({
     },
     build: {
         target: "ES2022",
+        // The main bundle is ~1.5 MB because the markdown rendering stack
+        // (KaTeX, markdown-it, highlight.js) must load upfront to render
+        // assistant messages. Mermaid and the MCP SDK are code-split and
+        // load lazily. Raise the limit to acknowledge this deliberate size
+        // instead of warning on every build.
+        chunkSizeWarningLimit: 1600,
     },
     base: "https://fortyseven.github.io/chit-v2/",
 })

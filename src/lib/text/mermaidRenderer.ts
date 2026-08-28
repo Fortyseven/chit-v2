@@ -1,19 +1,32 @@
 import DOMPurify from "dompurify"
-import mermaid from "mermaid"
 
 // Use a plain-text placeholder that markdown-it won't escape or transform
 const MERMAID_PLACEHOLDER_PREFIX = "MERMAIDBLOCK_"
 const MERMAID_PLACEHOLDER_SUFFIX = "_ENDMERMAIDBLOCK"
 
-// Initialize mermaid with safe defaults
-// "neutral" theme uses dark text (#333) that's readable on both light and dark backgrounds,
-// avoiding the clash that occurs when "dark" theme's white text meets light-colored node fills
-mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: "loose",
-    theme: "neutral",
-    fontFamily: "var(--font-family, sans-serif)",
-})
+// Mermaid is loaded lazily so its ~2.5 MB bundle is only fetched when a
+// diagram actually renders, keeping it out of the critical initial load.
+let mermaidPromise: Promise<typeof import("mermaid").default> | null = null
+
+/**
+ * Loads and initializes the mermaid module on first use.
+ * "neutral" theme uses dark text (#333) that's readable on both light and dark backgrounds,
+ * avoiding the clash that occurs when "dark" theme's white text meets light-colored node fills
+ */
+function loadMermaid(): Promise<typeof import("mermaid").default> {
+    if (!mermaidPromise) {
+        mermaidPromise = import("mermaid").then((mod) => {
+            mod.default.initialize({
+                startOnLoad: false,
+                securityLevel: "loose",
+                theme: "neutral",
+                fontFamily: "var(--font-family, sans-serif)",
+            })
+            return mod.default
+        })
+    }
+    return mermaidPromise
+}
 
 /**
  * Extracts Mermaid diagram blocks from content, replacing them with placeholders.
@@ -45,6 +58,7 @@ export async function renderMermaidToSvg(
     diagram: string,
 ): Promise<{ svg: string; diagram: string } | null> {
     try {
+        const mermaid = await loadMermaid()
         const { svg } = await mermaid.render(`mermaid-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`, diagram)
         return { svg, diagram }
     } catch (err) {

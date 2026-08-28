@@ -1,9 +1,28 @@
 import { get, writable } from 'svelte/store'
-import { Client } from '@modelcontextprotocol/sdk/client'
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp'
-import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse'
+import type { Client } from '@modelcontextprotocol/sdk/client'
 import type { ToolDefinition } from '../tools/types'
 import type { MCPServerConfig } from './types'
+
+// The MCP SDK is loaded lazily so its ~370 kB only downloads when a server
+// actually connects, keeping it out of the critical initial bundle.
+let mcpSdkPromise: Promise<typeof import('@modelcontextprotocol/sdk/client') &
+    typeof import('@modelcontextprotocol/sdk/client/streamableHttp') &
+    typeof import('@modelcontextprotocol/sdk/client/sse')> | null = null
+
+function loadMcpSdk() {
+    if (!mcpSdkPromise) {
+        mcpSdkPromise = Promise.all([
+            import('@modelcontextprotocol/sdk/client'),
+            import('@modelcontextprotocol/sdk/client/streamableHttp'),
+            import('@modelcontextprotocol/sdk/client/sse'),
+        ]).then(([client, streamableHttp, sse]) => ({
+            Client: client.Client,
+            StreamableHTTPClientTransport: streamableHttp.StreamableHTTPClientTransport,
+            SSEClientTransport: sse.SSEClientTransport,
+        }))
+    }
+    return mcpSdkPromise
+}
 
 export type MCPConnectionStatus = 'idle' | 'connecting' | 'connected' | 'error'
 
@@ -42,6 +61,7 @@ export async function connectServer(config: MCPServerConfig): Promise<void> {
         return [...servers]
     })
 
+    const { Client, StreamableHTTPClientTransport, SSEClientTransport } = await loadMcpSdk()
     const client = new Client({ name: 'chit', version: '1.0.0' })
     let connected = false
 
