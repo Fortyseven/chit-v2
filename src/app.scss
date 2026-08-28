@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap');
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
@@ -433,26 +435,26 @@ $color-spread: 15;
     --timeline-max-width: 1280px;
     --border-radius-standard: 6px;
 
-    --color-accent-lightest: #{lighten($color-accent-base, $color-spread * 2)};
-    --color-accent-lighter: #{lighten($color-accent-base, $color-spread)};
+    --color-accent-lightest: #{color.adjust($color-accent-base, $lightness: $color-spread * 2 * 1%)};
+    --color-accent-lighter: #{color.adjust($color-accent-base, $lightness: $color-spread * 1%)};
     --color-accent: #{$color-accent-base};
-    --color-accent-darker: #{darken($color-accent-base, $color-spread)};
-    --color-accent-darkest: #{darken($color-accent-base, $color-spread * 1.5)};
+    --color-accent-darker: #{color.adjust($color-accent-base, $lightness: -$color-spread * 1%)};
+    --color-accent-darkest: #{color.adjust($color-accent-base, $lightness: -$color-spread * 1.5 * 1%)};
     --color-accent-text: #000;
 
 
-    --color-accent-complement-lightest: #{lighten($color-accent-complement-base, $color-spread * 2)};
-    --color-accent-complement-lighter: #{lighten($color-accent-complement-base, $color-spread)};
+    --color-accent-complement-lightest: #{color.adjust($color-accent-complement-base, $lightness: $color-spread * 2 * 1%)};
+    --color-accent-complement-lighter: #{color.adjust($color-accent-complement-base, $lightness: $color-spread * 1%)};
     --color-accent-complement: #{$color-accent-complement-base};
-    --color-accent-complement-darker: #{darken($color-accent-complement-base, $color-spread)};
-    --color-accent-complement-darkest: #{darken($color-accent-complement-base, $color-spread * 1.5)};
+    --color-accent-complement-darker: #{color.adjust($color-accent-complement-base, $lightness: -$color-spread * 1%)};
+    --color-accent-complement-darkest: #{color.adjust($color-accent-complement-base, $lightness: -$color-spread * 1.5 * 1%)};
     --color-accent-complement-text: #000;
 
-    --color-accent-tertiary-lightest: #{lighten($color-accent-tertiary-base, $color-spread * 2)};
-    --color-accent-tertiary-lighter: #{lighten($color-accent-tertiary-base, $color-spread)};
+    --color-accent-tertiary-lightest: #{color.adjust($color-accent-tertiary-base, $lightness: $color-spread * 2 * 1%)};
+    --color-accent-tertiary-lighter: #{color.adjust($color-accent-tertiary-base, $lightness: $color-spread * 1%)};
     --color-accent-tertiary: #{$color-accent-tertiary-base};
-    --color-accent-tertiary-darker: #{darken($color-accent-tertiary-base, $color-spread)};
-    --color-accent-tertiary-darkest: #{darken($color-accent-tertiary-base, $color-spread * 1.5)};
+    --color-accent-tertiary-darker: #{color.adjust($color-accent-tertiary-base, $lightness: -$color-spread * 1%)};
+    --color-accent-tertiary-darkest: #{color.adjust($color-accent-tertiary-base, $lightness: -$color-spread * 1.5 * 1%)};
     --color-accent-tertiary-text: #000;
 
     --color-neutral-darkest: #333;
