@@ -47,7 +47,6 @@
     .response {
         width: 100%;
         padding-block: 0.5em;
-        padding-inline: 0.6em;
         color: var(--color-neutral);
         font-style: italic;
         font-size: 0.9em;
