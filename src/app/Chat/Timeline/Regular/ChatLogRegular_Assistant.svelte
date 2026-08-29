@@ -1,6 +1,7 @@
 <script lang="ts">
     import {
         chatChopLatest,
+        chatForkAtMessage,
         chatRunInference,
     } from "$lib/chatSession/chatActions"
     import {
@@ -20,6 +21,7 @@
         Code,
         Content_copy,
         Edit,
+        Fork_right,
         Replay,
         Save_alt,
     } from "svelte-google-materialdesign-icons"
@@ -52,19 +54,29 @@
     let sourceImageUrl: string | null = null
 
     // Resolve source image URL from the most recent user message with an image
-    async function resolveSourceImage(msgIndex: number): Promise<string | null> {
+    async function resolveSourceImage(
+        msgIndex: number,
+    ): Promise<string | null> {
         if (inprogress) return null // No source image during streaming
         const messages = $currentChat?.messages || []
         // Search backwards from current message for the most recent user message with an image
         for (let i = msgIndex - 1; i >= 0; i--) {
             const msg = messages[i]
-            if (msg.role === "user" && msg.media?.some((m) => m.type === ChatMediaType.IMAGE)) {
+            if (
+                msg.role === "user" &&
+                msg.media?.some((m) => m.type === ChatMediaType.IMAGE)
+            ) {
                 // Find the first image media item
-                const imageMedia = msg.media.find((m) => m.type === ChatMediaType.IMAGE)
+                const imageMedia = msg.media.find(
+                    (m) => m.type === ChatMediaType.IMAGE,
+                )
                 if (imageMedia) {
                     try {
                         // Handle string data directly
-                        if (typeof imageMedia.data === "string" && imageMedia.data) {
+                        if (
+                            typeof imageMedia.data === "string" &&
+                            imageMedia.data
+                        ) {
                             return imageMedia.data
                         }
                         // Handle Blob data
@@ -125,6 +137,12 @@
         // Remove the last assistant response and generate a new one
         chatChopLatest()
         await chatRunInference()
+    }
+
+    async function forkConversation() {
+        // Duplicate the conversation, truncated at this message (inclusive)
+        await chatForkAtMessage(chatId, index)
+        toast("Forked conversation")
     }
 
     function getSelectedTextWithin(el: HTMLElement | null) {
@@ -249,6 +267,13 @@
             <button on:click={saveAsFile} title="Save as file"
                 ><Save_alt size="16" /></button
             >
+            {#if !inprogress}
+                <button
+                    on:click={forkConversation}
+                    title="Fork conversation from this message"
+                    ><Fork_right size="16" /></button
+                >
+            {/if}
             <button on:click={regenerateResponse} title="Regenerate response"
                 ><Replay size="16" /></button
             >

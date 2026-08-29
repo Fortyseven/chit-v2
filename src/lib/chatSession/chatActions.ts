@@ -478,6 +478,86 @@ export async function chatDuplicate(chatId: string = "") {
 }
 
 //--------------------------------------------------------------
+/**
+ * Fork the conversation at a specific message index.
+ * Creates a new chat that is a copy of the current chat — including all
+ * media blobs — but with the message list truncated to end at (and include)
+ * the message at `messageIndex`. The new chat is saved to IndexedDB, added
+ * to the chat list, and set as the active chat.
+ *
+ * Media blobs are re-keyed under the new chat id so the fork is fully
+ * independent of the original: deleting the original chat will not destroy
+ * the fork's media, and startup orphan-cleanup will not remove it.
+ * @param chatId The chat ID to fork (defaults to active chat)
+ * @param messageIndex The index of the message to fork at (inclusive)
+ */
+export async function chatForkAtMessage(chatId: string = "", messageIndex: number) {
+    chatId = getActiveChatId(chatId)
+
+    const chat = get(chats).find((chat) => chat.id === chatId)
+    if (!chat) return
+
+    // Guard against invalid indices (e.g. the streaming message renders with index -1)
+    if (messageIndex < 0 || messageIndex >= chat.messages.length) return
+
+    const newId = crypto.randomUUID()
+
+    // Deep-copy the truncated message list so edits to the fork never alias
+    // the original chat's message/media objects.
+    const forkedMessages: Message[] = chat.messages
+        .slice(0, messageIndex + 1)
+        .map((msg) => ({
+            ...msg,
+            media: msg.media?.map((m) => ({ ...m })),
+        }))
+
+    const newChat = {
+        ...chat,
+        id: newId,
+        title: chat.title + " (fork)",
+        createdAt: new Date(),
+        messages: forkedMessages,
+        pastedMedia: [],
+        // Reset transient/streaming state
+        response_buffer: "",
+        thinking_buffer: "",
+        tool_call_info_buffer: "",
+        hasThoughts: false,
+        isThinking: false,
+        wasAborted: false,
+        scrollTop: undefined,
+    }
+
+    // Re-key media blobs under the new chat id. storeMedia is a put keyed by
+    // blob id, so we must mint a new id per blob — reusing the original id
+    // would overwrite the original chat's media record.
+    try {
+        const seen = new Set<string>()
+        for (const msg of forkedMessages) {
+            for (const m of msg.media || []) {
+                if (!m.isStored || !m.blobId || seen.has(m.blobId)) continue
+                seen.add(m.blobId)
+                const blob = await mediaStorage.getMedia(m.blobId)
+                if (!blob) continue
+                const newBlobId = crypto.randomUUID()
+                await mediaStorage.storeMedia(newBlobId, newId, blob, m.filename)
+                m.blobId = newBlobId
+            }
+        }
+    } catch (error) {
+        console.error(`Failed to re-key media for fork ${newId}:`, error)
+        // Continue — the fork still works; worst case a media item fails to load.
+    }
+
+    // Save to IndexedDB first so chatSwitchTo can load messages
+    await chatSessionStorage.storeChat(newChat as ChatSession)
+
+    chats.update(($chats) => [...$chats, newChat])
+
+    await chatSwitchTo(newId)
+}
+
+//--------------------------------------------------------------
 export function chatFind(chatId: string = ""): ChatSession | undefined {
     chatId = getActiveChatId(chatId)
     return get(chats).find((chat) => chat.id === chatId)
