@@ -2,14 +2,15 @@ import { svelte } from "@sveltejs/vite-plugin-svelte"
 import path from "path"
 import { defineConfig } from "vite"
 
+// Svelte warning codes use underscores (not hyphens) — see svelte.dev/e
 const IGNORED_WARNINGS = [
-    "a11y-autofocus",
-    "a11y-click-events-have-key-events",
-    "a11y-label-has-associated-control",
-    "a11y-missing-attribute",
-    "a11y-no-noninteractive-element-interactions",
-    "a11y-no-static-element-interactions",
-    "css-unused-selector",
+    "a11y_autofocus",
+    "a11y_click_events_have_key_events",
+    "a11y_label_has_associated_control",
+    "a11y_missing_attribute",
+    "a11y_no_noninteractive_element_interactions",
+    "a11y_no_static_element_interactions",
+    "css_unused_selector",
 ]
 
 // https://vite.dev/config/
