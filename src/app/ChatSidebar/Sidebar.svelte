@@ -125,6 +125,7 @@
                     padding: 0;
                     margin-bottom: 0.5em;
                     line-height: 1;
+                    font-weight: normal;
                 }
 
                 button.chat-title {
@@ -158,6 +159,7 @@
 
                 &.active {
                     button:first-of-type {
+                        font-weight: bold !important;
                         color: yellow;
                         border-radius: var(--border-radius-standard);
                         &:hover {
