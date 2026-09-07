@@ -120,6 +120,9 @@ export class LLMInterface {
             })
         }
 
+        const includeAssistantThoughts =
+            chat_session.settings?.include_assistant_thoughts ?? false
+
         // Only send images/audio from the latest user message to avoid
         // blowing the context window with re-encoded historical media.
         // The LLM already saw those in prior turns.
@@ -135,6 +138,14 @@ export class LLMInterface {
             const message = chat_session.messages[i]
             // Skip tool call info - it's for display only, not for LLM
             let msg = message.content.trim()
+            const thoughts = message.thoughts?.trim()
+            if (
+                includeAssistantThoughts &&
+                message.role === "assistant" &&
+                thoughts
+            ) {
+                msg = `<think>\n${thoughts}\n</think>\n${msg}`
+            }
             const images: string[] = []
             const audio: string[] = []
             const isLatestUserMessage = i === lastUserIndex

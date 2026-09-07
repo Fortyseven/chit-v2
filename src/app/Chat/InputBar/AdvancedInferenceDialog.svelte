@@ -69,6 +69,11 @@
         const val = parseOptionalInt((e.target as HTMLInputElement).value)
         chatUpdateSettings("", { thinking_budget_tokens: val })
     }
+
+    function onIncludeAssistantThoughts(e: Event) {
+        const checked = (e.target as HTMLInputElement).checked
+        chatUpdateSettings("", { include_assistant_thoughts: checked })
+    }
 </script>
 
 {#if $advancedInferenceDialogOpen}
@@ -156,6 +161,18 @@
                         placeholder="default"
                         value={settings?.thinking_budget_tokens ?? ""}
                         on:change={onThinkingBudgetTokens}
+                    />
+                </label>
+
+                <label>
+                    <span>Replay Assistant Thinking</span>
+                    <span class="desc"
+                        >Include completed assistant thinking in later requests</span
+                    >
+                    <input
+                        type="checkbox"
+                        checked={settings?.include_assistant_thoughts ?? false}
+                        on:change={onIncludeAssistantThoughts}
                     />
                 </label>
 

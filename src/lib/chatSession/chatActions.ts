@@ -130,6 +130,7 @@ export function chatNew(): string {
             temperature: defaultTemperature,
             num_ctx: defaultContext,
             enable_thinking: defaultThinking,
+            include_assistant_thoughts: false,
             reasoning_effort: defaultReasoningEffort,
         },
         wasAborted: false,

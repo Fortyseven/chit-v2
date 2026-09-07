@@ -23,6 +23,7 @@ export interface ChatSettings {
     temperature: number
     num_ctx: number
     enable_thinking: boolean
+    include_assistant_thoughts?: boolean
     reasoning_effort?: ReasoningEffort
     thinking_budget_tokens?: number
     top_p?: number
