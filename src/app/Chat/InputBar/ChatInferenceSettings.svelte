@@ -4,7 +4,10 @@
         chatSetToolsEnabled,
         chatUpdateSettings,
     } from "$lib/chatSession/chatActions"
-    import { currentChat, type ReasoningEffort } from "$lib/chatSession/chatSession"
+    import {
+        currentChat,
+        type ReasoningEffort,
+    } from "$lib/chatSession/chatSession"
     import {
         Build,
         Psychology,
@@ -71,8 +74,7 @@
         for="context"
         class="label clickable"
         title="Click to open advanced inference settings"
-        on:click={() => ($advancedInferenceDialogOpen = true)}
-        >CNTX</label
+        on:click={() => ($advancedInferenceDialogOpen = true)}>CNTX</label
     >
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -82,10 +84,7 @@
         title="Click to open advanced inference settings"
         on:click={() => ($advancedInferenceDialogOpen = true)}
     >
-        <Receipt_long
-            color="var(--color-accent-complement)"
-            size="1.1em"
-        />
+        <Receipt_long color="var(--color-accent-complement)" size="1.1em" />
     </label>
     <input
         id="context"
@@ -104,8 +103,7 @@
         for="temp"
         class="label clickable"
         title="Click to open advanced inference settings"
-        on:click={() => ($advancedInferenceDialogOpen = true)}
-        >TEMP</label
+        on:click={() => ($advancedInferenceDialogOpen = true)}>TEMP</label
     >
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -115,10 +113,7 @@
         title="Click to open advanced inference settings"
         on:click={() => ($advancedInferenceDialogOpen = true)}
     >
-        <Thermostat
-            color="var(--color-accent-complement)"
-            size="1.1em"
-        />
+        <Thermostat color="var(--color-accent-complement)" size="1.1em" />
     </label>
     <input
         id="temp"
@@ -140,8 +135,7 @@
             e.preventDefault()
             e.stopPropagation()
             $advancedInferenceDialogOpen = true
-        }}
-        >THNK</label
+        }}>THNK</label
     >
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -155,10 +149,7 @@
             $advancedInferenceDialogOpen = true
         }}
     >
-        <Psychology
-            color="var(--color-accent-complement)"
-            size="1.1em"
-        />
+        <Psychology color="var(--color-accent-complement)" size="1.1em" />
     </label>
     <div class="controls">
         <input
@@ -183,10 +174,7 @@
 
     <label for="tools" class="label">TOOL</label>
     <label for="tools" class="label icon">
-        <Build
-            color="var(--color-accent-complement)"
-            size="1.1em"
-        />
+        <Build color="var(--color-accent-complement)" size="1.1em" />
     </label>
     <div class="controls">
         <input
