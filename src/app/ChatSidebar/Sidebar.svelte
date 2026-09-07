@@ -130,7 +130,7 @@
                 button.chat-title {
                     color: var(--color-accent-darkest);
                     background: transparent;
-                    padding: 0.5em 1em;
+                    padding: 0.1em 1em;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -158,11 +158,10 @@
 
                 &.active {
                     button:first-of-type {
-                        background-color: var(--color-accent);
-                        color: black;
+                        color: yellow;
                         border-radius: var(--border-radius-standard);
                         &:hover {
-                            background-color: var(--color-accent-lighter);
+                            color: white;
                         }
                     }
                 }
