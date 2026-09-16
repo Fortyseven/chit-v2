@@ -448,6 +448,7 @@ $color-spread: 15;
     --color-accent-complement: #{$color-accent-complement-base};
     --color-accent-complement-darker: #{color.adjust($color-accent-complement-base, $lightness: -$color-spread * 1%)};
     --color-accent-complement-darkest: #{color.adjust($color-accent-complement-base, $lightness: -$color-spread * 1.5 * 1%)};
+    --color-accent-complement-darkest-extreme: #{color.adjust($color-accent-complement-base, $lightness: -$color-spread * 2 * 1%)};
     --color-accent-complement-text: #000;
 
     --color-accent-tertiary-lightest: #{color.adjust($color-accent-tertiary-base, $lightness: $color-spread * 2 * 1%)};
