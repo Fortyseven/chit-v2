@@ -52,4 +52,7 @@ export interface LLMDriver {
     ): Promise<string>
 
     kind(): "openai"
+
+    /** Unload all currently loaded models (router-mode servers only). */
+    unloadAllModels?(): Promise<void>
 }

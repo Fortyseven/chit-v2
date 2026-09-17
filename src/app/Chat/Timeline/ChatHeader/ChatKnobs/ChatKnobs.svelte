@@ -3,12 +3,14 @@
     import ModelSelect from "./ModelSelect.svelte"
     import ModeSelector from "./ModeSelector.svelte"
     import SystemPrompt from "./SystemPrompt/SystemPrompt.svelte"
+    import UnloadModels from "./UnloadModels.svelte"
 </script>
 
 <div id="ChatKnobs">
     <div class="knob-container">
         {#key $appState}
             <ModelSelect></ModelSelect>
+            <UnloadModels></UnloadModels>
             <SystemPrompt></SystemPrompt>
             <ModeSelector />
         {/key}

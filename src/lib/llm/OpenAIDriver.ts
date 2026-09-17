@@ -10,8 +10,8 @@ import {
     chatSetWasAborted,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
-import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import { toastError } from "../toast"
+import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
 import { stripJsonFences } from "./LLMDriver"
 import { QuoteTTSDetector } from "./quoteTTSDetection"
@@ -188,6 +188,60 @@ export class OpenAIDriver implements LLMDriver {
 
     kind(): "openai" {
         return "openai"
+    }
+
+    /**
+     * Unload every loaded model from a llama.cpp router-mode server.
+     * Uses the router's /models management endpoints (distinct from /v1/models).
+     */
+    async unloadAllModels(): Promise<void> {
+        const routerBase = this.baseURL.replace(/\/v1$/, "")
+        console.log("🔌 OpenAIDriver.unloadAllModels: routerBase =", routerBase)
+
+        const res = await fetch(`${routerBase}/models`, {
+            headers: {
+                Authorization: `Bearer ${this.apiKey}`,
+            },
+        })
+        console.log("🔌 OpenAIDriver.unloadAllModels: GET /models status =", res.status)
+        if (!res.ok) {
+            const errBody = await res.text()
+            throw new Error(describeHttpError(res.status, errBody))
+        }
+        const data = await res.json()
+        console.log("🔌 OpenAIDriver.unloadAllModels: /models response =", data)
+        if (Array.isArray(data?.data) && data.data.length > 0) {
+            console.log(
+                "🔌 OpenAIDriver.unloadAllModels: first model entry (full) =",
+                JSON.stringify(data.data[0], null, 2)
+            )
+        }
+        const loaded = (data?.data || []).filter(
+            (m: any) => m?.status?.value === "loaded"
+        )
+        console.log("🔌 OpenAIDriver.unloadAllModels: loaded models =", loaded)
+
+        for (const m of loaded) {
+            console.log("🔌 OpenAIDriver.unloadAllModels: unloading", m.id)
+            const unloadRes = await fetch(`${routerBase}/models/unload`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.apiKey}`,
+                },
+                body: JSON.stringify({ model: m.id }),
+            })
+            console.log(
+                "🔌 OpenAIDriver.unloadAllModels: unload",
+                m.id,
+                "status =",
+                unloadRes.status
+            )
+            if (!unloadRes.ok) {
+                const errBody = await unloadRes.text()
+                throw new Error(describeHttpError(unloadRes.status, errBody))
+            }
+        }
     }
 
     async chat(

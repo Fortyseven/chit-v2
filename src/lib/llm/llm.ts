@@ -65,6 +65,15 @@ export class LLMInterface {
         return get(this.driver)?.listModels()
     }
 
+    async unloadAllModels() {
+        const d = get(this.driver)
+        console.log("🔌 LLMInterface.unloadAllModels: driver =", d)
+        if (!d?.unloadAllModels) {
+            throw new Error("Current LLM driver does not support unloading models")
+        }
+        await d.unloadAllModels()
+    }
+
     async chatUpdateSession(chatId: string) {
         const backpackApi = get(appState).backpackApiEndpoint
         const chat_session = chatFind(chatId)
@@ -100,9 +109,8 @@ export class LLMInterface {
         if (backpackApi) {
             backpack_context = chat_session.backpackReferences
                 ?.map((ref) => {
-                    return `TOOL: ${ref.toolId}\nURL: ${
-                        ref.referenceUrl
-                    }\nCONTEXT:\n${ref.referenceContent.trim()}`
+                    return `TOOL: ${ref.toolId}\nURL: ${ref.referenceUrl
+                        }\nCONTEXT:\n${ref.referenceContent.trim()}`
                 })
                 .join("\n#####\n")
 
