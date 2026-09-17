@@ -8,6 +8,7 @@
     export let warning: boolean = false
     export let danger: boolean = false
     export let roundCorner = "" // can be 'ne', 'nw', 'se', 'sw' or empty
+    export let size: number = 50 // button (and icon) size in px
 
     let buttonEl: HTMLButtonElement
 
@@ -21,17 +22,20 @@
     onclick={(ev) => onClick(buttonEl, ev)}
     {disabled}
     class={buttonClass}
+    style="width: {size}px; height: {size}px;"
 >
-    <svelte:component this={iconComponent} {title}></svelte:component>
+    <svelte:component
+        this={iconComponent}
+        {title}
+        size={Math.round(size * 0.48)}
+    ></svelte:component>
 </button>
 
 <style lang="scss">
     button {
         padding: 0;
         display: inline-flex;
-        border-radius: 0px;
-        width: 50px;
-        height: 50px;
+        border-radius: 4px;
         place-content: center;
         align-items: center;
 
