@@ -14,6 +14,7 @@ import { toastError } from "../toast"
 import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
 import { stripJsonFences } from "./LLMDriver"
+import type { RouterModelInfo, RouterSlotInfo } from "./routerModels"
 import { QuoteTTSDetector } from "./quoteTTSDetection"
 import { QwenToolDetector } from "./qwenToolDetection"
 import { ThinkingDetector } from "./thinkingDetection"
@@ -190,57 +191,95 @@ export class OpenAIDriver implements LLMDriver {
         return "openai"
     }
 
+    /** Base URL without the /v1 suffix (where router-native endpoints live). */
+    get routerBase(): string {
+        return this.baseURL.replace(/\/v1$/, "")
+    }
+
+    /**
+     * Full model entries from the router's native GET /models endpoint
+     * (status, meta, architecture). Returns null when the backend is not
+     * a llama.cpp router (plain OpenAI /models is a bare array).
+     */
+    async getRouterModels(): Promise<RouterModelInfo[] | null> {
+        const res = await fetch(`${this.routerBase}/models`, {
+            headers: {
+                Authorization: `Bearer ${this.apiKey}`,
+            },
+        })
+        if (!res.ok) return null
+        const data = await res.json()
+        if (!Array.isArray(data?.data)) return null
+        return data.data as RouterModelInfo[]
+    }
+
+    /** Load a model via the router (POST /models/load). */
+    async routerLoadModel(model: string): Promise<void> {
+        await this.routerPost("load", { model })
+    }
+
+    /** Unload one model via the router (POST /models/unload). */
+    async routerUnloadModel(model: string): Promise<void> {
+        await this.routerPost("unload", { model })
+    }
+
+    private async routerPost(
+        action: "load" | "unload",
+        body: { model: string }
+    ): Promise<void> {
+        const res = await fetch(`${this.routerBase}/models/${action}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.apiKey}`,
+            },
+            body: JSON.stringify(body),
+        })
+        if (!res.ok) {
+            const errBody = await res.text()
+            throw new Error(describeHttpError(res.status, errBody))
+        }
+    }
+
+    /**
+     * Slot stats for one model via the router proxy (GET /slots?model=X).
+     * Returns null when unavailable (non-router, model not running).
+     */
+    async getRouterSlots(model: string): Promise<RouterSlotInfo[] | null> {
+        try {
+            const res = await fetch(
+                `${this.routerBase}/slots?model=${encodeURIComponent(model)}`,
+                { headers: { Authorization: `Bearer ${this.apiKey}` } }
+            )
+            if (!res.ok) return null
+            const data = await res.json()
+            return Array.isArray(data) ? (data as RouterSlotInfo[]) : null
+        } catch {
+            return null
+        }
+    }
+
     /**
      * Unload every loaded model from a llama.cpp router-mode server.
      * Uses the router's /models management endpoints (distinct from /v1/models).
      */
     async unloadAllModels(): Promise<void> {
-        const routerBase = this.baseURL.replace(/\/v1$/, "")
-        console.log("🔌 OpenAIDriver.unloadAllModels: routerBase =", routerBase)
+        console.log("🔌 OpenAIDriver.unloadAllModels: routerBase =", this.routerBase)
+        const infos = await this.getRouterModels()
+        if (!infos) {
+            throw new Error("Server is not a llama.cpp router (no /models data)")
+        }
+        console.log("🔌 OpenAIDriver.unloadAllModels: /models response =", infos)
 
-        const res = await fetch(`${routerBase}/models`, {
-            headers: {
-                Authorization: `Bearer ${this.apiKey}`,
-            },
-        })
-        console.log("🔌 OpenAIDriver.unloadAllModels: GET /models status =", res.status)
-        if (!res.ok) {
-            const errBody = await res.text()
-            throw new Error(describeHttpError(res.status, errBody))
-        }
-        const data = await res.json()
-        console.log("🔌 OpenAIDriver.unloadAllModels: /models response =", data)
-        if (Array.isArray(data?.data) && data.data.length > 0) {
-            console.log(
-                "🔌 OpenAIDriver.unloadAllModels: first model entry (full) =",
-                JSON.stringify(data.data[0], null, 2)
-            )
-        }
-        const loaded = (data?.data || []).filter(
-            (m: any) => m?.status?.value === "loaded"
+        const loaded = infos.filter((m) => m.status?.value === "loaded")
+        console.log(
+            "🔌 OpenAIDriver.unloadAllModels: loaded models =",
+            loaded.map((m) => m.id)
         )
-        console.log("🔌 OpenAIDriver.unloadAllModels: loaded models =", loaded)
 
         for (const m of loaded) {
             console.log("🔌 OpenAIDriver.unloadAllModels: unloading", m.id)
-            const unloadRes = await fetch(`${routerBase}/models/unload`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${this.apiKey}`,
-                },
-                body: JSON.stringify({ model: m.id }),
-            })
-            console.log(
-                "🔌 OpenAIDriver.unloadAllModels: unload",
-                m.id,
-                "status =",
-                unloadRes.status
-            )
-            if (!unloadRes.ok) {
-                const errBody = await unloadRes.text()
-                throw new Error(describeHttpError(unloadRes.status, errBody))
-            }
+            await this.routerUnloadModel(m.id)
         }
     }
 
@@ -249,18 +288,10 @@ export class OpenAIDriver implements LLMDriver {
      * or undefined if it isn't loaded or the endpoint can't report it.
      */
     async getModelContext(model: string): Promise<number | undefined> {
-        const routerBase = this.baseURL.replace(/\/v1$/, "")
-        const res = await fetch(`${routerBase}/models`, {
-            headers: {
-                Authorization: `Bearer ${this.apiKey}`,
-            },
-        })
-        if (!res.ok) return undefined
-        const data = await res.json()
-        const entry = (data?.data || []).find(
-            (m: any) =>
-                m?.id === model ||
-                (Array.isArray(m?.aliases) && m.aliases.includes(model))
+        const infos = await this.getRouterModels()
+        if (!infos) return undefined
+        const entry = infos.find(
+            (m) => m.id === model || (m.aliases?.includes(model) ?? false)
         )
         const nCtx = entry?.meta?.n_ctx
         return typeof nCtx === "number" && nCtx > 0 ? nCtx : undefined

@@ -1,4 +1,5 @@
 import type { ReasoningEffort } from "$lib/chatSession/chatSession"
+import type { RouterModelInfo, RouterSlotInfo } from "./routerModels"
 
 export type GenericMessage = {
     role: "system" | "user" | "assistant"
@@ -62,4 +63,19 @@ export interface LLMDriver {
      * Router-mode servers only.
      */
     getModelContext?(model: string): Promise<number | undefined>
+
+    /** Base URL without the /v1 suffix (router-native endpoint root). */
+    readonly routerBase?: string
+
+    /** Full router model entries (status/meta/architecture); null if not a router. */
+    getRouterModels?(): Promise<RouterModelInfo[] | null>
+
+    /** Load a model via the router (POST /models/load). */
+    routerLoadModel?(model: string): Promise<void>
+
+    /** Unload one model via the router (POST /models/unload). */
+    routerUnloadModel?(model: string): Promise<void>
+
+    /** Slot stats via the router proxy; null when unavailable. */
+    getRouterSlots?(model: string): Promise<RouterSlotInfo[] | null>
 }

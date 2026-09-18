@@ -17,6 +17,10 @@ import {
 import { convertBlobToBase64 as convertFileToBase64 } from "../utils"
 import type { GenericMessage, LLMDriver } from "./LLMDriver"
 import { OpenAIDriver } from "./OpenAIDriver"
+import {
+    startRouterMonitor,
+    stopRouterMonitor,
+} from "./routerModels"
 
 // Shared models store (either ModelResponse[] or string[])
 export const llmModels: Writable<Array<any>> = writable([])
@@ -29,15 +33,17 @@ export class LLMInterface {
         const state = get(appState)
 
         if (state.openaiApiBase && state.openaiApiKey) {
-            this.driver.set(
-                new OpenAIDriver(state.openaiApiBase, state.openaiApiKey)
-            )
+            const driver = new OpenAIDriver(state.openaiApiBase, state.openaiApiKey)
+            this.driver.set(driver)
+            // Track live router model statuses (no-ops on non-router backends)
+            startRouterMonitor(driver, () => this.refreshModelList())
         } else {
             console.warn(
                 "LLM: OpenAI base/key not configured; driver disabled"
             )
             this.driver.set(undefined)
             llmModels.set([])
+            stopRouterMonitor()
             return
         }
 
@@ -307,6 +313,10 @@ export class LLMInterface {
 
 const llm_instance = new LLMInterface()
 await llm_instance.init()
+
+/** The active driver (undefined until base+key are configured). */
+export const llmDriver: Writable<LLMDriver | undefined> =
+    llm_instance.driver
 
 let lastKey = ""
 appState.subscribe(async (state) => {
