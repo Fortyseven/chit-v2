@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ChatModelInfo from "../ChatModelInfo.svelte"
     import BackpackIndicator from "./Status__BackpackIndicator.svelte"
     import Status__Counter from "./Status__Counter.svelte"
     import RequestTimer from "./Status__RequestTimer.svelte"
@@ -8,7 +9,9 @@
 
 <div class="status-bar">
     <div class="wrapper">
-        <div class="left"></div>
+        <div class="left">
+            <ChatModelInfo />
+        </div>
         <div class="center">
             <Status__Counter {inputLength} />
         </div>

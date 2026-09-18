@@ -1,11 +1,48 @@
 <script lang="ts">
+    import { chatInProgress } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
+    import { llmDriver } from "$lib/llm/llm"
+    import type { RouterDriver } from "$lib/llm/routerModels"
+    import {
+        routerSlotStatus,
+        slotPolledModel,
+        startSlotPolling,
+        stopSlotPolling,
+    } from "$lib/llm/routerModels"
     import { estimateTokens } from "$lib/text/tokenEstimate"
 
     export let inputLength = 0
     export let systemPromptLength = 0
 
-    $: contextLimit = $currentChat?.settings?.num_ctx || 0
+    // Live server-side context fill for the current model (null when the
+    // router can't report it, or the polled model is a different one).
+    $: serverFill =
+        slotPolledModel() === $currentChat?.model_name
+            ? $routerSlotStatus
+            : null
+
+    // Poll the current model's slots at 1Hz while a response is generating
+    let pollingChatId: string | undefined = undefined
+    $: {
+        const chatId = $currentChat?.id
+        const model = $currentChat?.model_name
+        if (
+            $chatInProgress &&
+            chatId &&
+            model &&
+            $llmDriver?.getRouterSlots
+        ) {
+            if (pollingChatId !== chatId) {
+                pollingChatId = chatId
+                void startSlotPolling($llmDriver as RouterDriver, model)
+            }
+        } else if (pollingChatId !== undefined) {
+            pollingChatId = undefined
+            stopSlotPolling()
+        }
+    }
+
+    $: contextLimit = serverFill?.ctxTokens || $currentChat?.settings?.num_ctx || 0
     $: systemPromptLength = estimateTokens(
         ($currentChat?.systemPrompt?.length || 0) +
             ($currentChat?.subPrompts?.reduce(
@@ -20,16 +57,20 @@
     )
 
     $: inputTokens = estimateTokens(inputLength)
-    $: fullChatLength = systemPromptLength + conversationLength + inputTokens
+    // Prefer the server's real context occupancy over the client estimate
+    $: fullChatLength =
+        serverFill !== null ? serverFill.usedTokens : systemPromptLength + conversationLength + inputTokens
     $: overflow = fullChatLength >= contextLimit
 
     $: title =
-        [
-            Math.round(inputTokens),
-            Math.round(systemPromptLength),
-            Math.round(conversationLength),
-        ].join(" + ") +
-        ` = ${Math.round(fullChatLength)} / ${contextLimit} tokens (input, system, conversation)`
+        serverFill !== null
+            ? `${serverFill.usedTokens} / ${serverFill.ctxTokens} tokens on server (prompt ${serverFill.promptTokens}, generated ${serverFill.usedTokens - serverFill.promptTokens})${serverFill.tokensPerSec ? ` · ${serverFill.tokensPerSec} tok/s` : ""}`
+            : [
+                  Math.round(inputTokens),
+                  Math.round(systemPromptLength),
+                  Math.round(conversationLength),
+              ].join(" + ") +
+              ` = ${Math.round(fullChatLength)} / ${contextLimit} tokens (input, system, conversation)`
 </script>
 
 <div class="counter">

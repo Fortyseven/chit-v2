@@ -3,7 +3,20 @@
     import { chatSetModel } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
     import { llm, llmModels } from "$lib/llm/llm"
+    import { findRouterModel, routerModelInfos } from "$lib/llm/routerModels"
     import { get } from "svelte/store"
+
+    /** Router info for the currently selected model (null on non-router). */
+    $: selectedInfo = $currentChat
+        ? findRouterModel($routerModelInfos, $currentChat.model_name)
+        : undefined
+    $: selectedStatus = selectedInfo?.status?.value ?? ""
+
+    // Once the router reports the model loaded (e.g. after a background
+    // load), snap CNTX right away - detection is idempotent per model.
+    $: if ($currentChat && selectedStatus === "loaded") {
+        get(llm).applyModelContext($currentChat.id, $currentChat.model_name)
+    }
 
     let selected_model: string = $currentChat?.model_name ?? ""
 
