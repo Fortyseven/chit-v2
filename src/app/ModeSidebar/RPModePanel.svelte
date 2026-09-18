@@ -1,5 +1,8 @@
 <script lang="ts">
-    import { chatSetTtsSettings } from "$lib/chatSession/chatActions"
+    import {
+        chatSetArtUseImage,
+        chatSetTtsSettings,
+    } from "$lib/chatSession/chatActions"
     import {
         ChatMediaType,
         getMediaBlob,
@@ -39,6 +42,10 @@
         $currentChat?.pastedMedia?.filter(
             (media) => media.type === ChatMediaType.IMAGE,
         ) || []
+    // Per-chat toggle: include the media image in the art generation call (default on)
+    $: artUseImage = $currentChat?.artUseImage ?? true
+    $: hasAnyImageMedia =
+        attachedImageMedia.length > 0 || allImageMedia.length > 0
 
     // Effective per-chat TTS settings, falling back to global defaults
     $: chatTTS = $currentChat?.ttsSettings
@@ -77,6 +84,7 @@
         artError = null
         artImageBlob = null
         artPrompt = ""
+        const useImage = $currentChat?.artUseImage ?? true
         try {
             // Check for attached image media (pasted/attached first, then message images)
             const allImages = [...attachedImageMedia, ...allImageMedia]
@@ -90,12 +98,15 @@
                 }
             }
 
+            // NOTE: the media image is also fed into prompt generation above as a
+            // style reference. To exclude it when the toggle is off, pass
+            // `useImage ? inputImageDataUrl : null` instead of `inputImageDataUrl`.
             const prompt = await generateArtPrompt("", inputImageDataUrl)
 
             artLoadingStage = "image"
 
             let response
-            if (inputImageDataUrl) {
+            if (inputImageDataUrl && useImage) {
                 response = await editImage(
                     prompt +
                         "\n\nMake sure to preserve the artistic style of the input image in the generated art, but feel free to change the composition and details to better fit the scene. Use the input image as inspiration for the visual style, but focus on creating a new image that represents the current moment in the story based on the generated prompt.",
@@ -344,6 +355,22 @@
                         {:else}
                             <div class="art-empty">No art generated yet</div>
                         {/if}
+                        <label
+                            class="art-toggle"
+                            title="Include the chat's media image in the image generation call"
+                        >
+                            <input
+                                type="checkbox"
+                                checked={artUseImage}
+                                disabled={!hasAnyImageMedia}
+                                on:change={(e) =>
+                                    chatSetArtUseImage(
+                                        "",
+                                        (e.target as HTMLInputElement).checked,
+                                    )}
+                            />
+                            <span>Use media image</span>
+                        </label>
                         <button
                             class="art-btn"
                             on:click={generateArt}
@@ -554,6 +581,35 @@
         .art-error {
             color: var(--color-error-text, #ff6b6b);
             opacity: 1;
+        }
+
+        .art-toggle {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 0.4em;
+            font-size: 0.8em;
+            color: var(--color-accent-complement-lighter);
+            cursor: pointer;
+            user-select: none;
+
+            span {
+                text-transform: uppercase;
+                font-weight: 600;
+                letter-spacing: 0.04em;
+                opacity: 0.9;
+            }
+
+            input[type="checkbox"] {
+                accent-color: var(--color-accent);
+                margin: 0;
+                cursor: inherit;
+            }
+
+            &:has(input:disabled) {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
         }
 
         .art-btn {

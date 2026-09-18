@@ -48,6 +48,23 @@ export function chatSetToolsEnabled(chatId: string = "", enabled: boolean) {
         })
     )
 }
+
+//--------------------------------------------------------------
+// Set art-use-image toggle (include media image in the art generation call)
+export function chatSetArtUseImage(chatId: string = "", enabled: boolean) {
+    chatId = getActiveChatId(chatId)
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    artUseImage: enabled,
+                }
+            }
+            return chat
+        })
+    )
+}
 import { get, writable } from "svelte/store"
 import { z } from "zod"
 import general_prompt from "../../preset-prompts/general.js"
