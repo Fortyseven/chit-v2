@@ -40,6 +40,13 @@
         return isNaN(n) ? undefined : n
     }
 
+    function onContext(e: Event) {
+        const value = parseInt((e.target as HTMLInputElement).value, 10)
+        if (isNaN(value)) return
+        // Values under 1024 are read as thousands (e.g. 8 → 8192)
+        chatUpdateSettings("", { num_ctx: value < 1024 ? value * 1024 : value })
+    }
+
     function onTopP(e: Event) {
         const val = parseOptionalFloat((e.target as HTMLInputElement).value)
         chatUpdateSettings("", { top_p: val })
@@ -90,6 +97,22 @@
                 the current conversation only.
             </p>
             <div class="fields">
+                <label>
+                    <span>Context</span>
+                    <span class="desc"
+                        >Context window in tokens. Values under 1024 are read
+                        as thousands (e.g. 8 → 8192). Auto-set from the loaded
+                        model on first use
+                    </span>
+                    <input
+                        type="number"
+                        min="1024"
+                        max="1048576"
+                        step="1024"
+                        value={settings?.num_ctx ?? ""}
+                        on:change={onContext}
+                    />
+                </label>
                 <label>
                     <span>Top K</span>
                     <span class="desc"

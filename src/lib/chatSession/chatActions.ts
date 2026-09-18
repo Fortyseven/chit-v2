@@ -198,6 +198,26 @@ export function chatSetModel(chatId: string = "", modelName: string) {
     )
 }
 
+/**
+ * Record which model's loaded context window was last auto-applied to this
+ * chat, so first-access detection only runs once per model.
+ */
+export function chatSetContextDetectedFor(chatId: string = "", model: string) {
+    chatId = getActiveChatId(chatId)
+
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    contextDetectedFor: model,
+                }
+            }
+            return chat
+        })
+    )
+}
+
 //--------------------------------------------------------------
 // Add a new sub-prompt to the chat (enabled by default)
 export function chatAddSubPrompt(chatId: string = ""): string {

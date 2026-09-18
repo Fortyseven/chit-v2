@@ -244,6 +244,28 @@ export class OpenAIDriver implements LLMDriver {
         }
     }
 
+    /**
+     * Context window (meta.n_ctx) a given model is currently loaded with,
+     * or undefined if it isn't loaded or the endpoint can't report it.
+     */
+    async getModelContext(model: string): Promise<number | undefined> {
+        const routerBase = this.baseURL.replace(/\/v1$/, "")
+        const res = await fetch(`${routerBase}/models`, {
+            headers: {
+                Authorization: `Bearer ${this.apiKey}`,
+            },
+        })
+        if (!res.ok) return undefined
+        const data = await res.json()
+        const entry = (data?.data || []).find(
+            (m: any) =>
+                m?.id === model ||
+                (Array.isArray(m?.aliases) && m.aliases.includes(model))
+        )
+        const nCtx = entry?.meta?.n_ctx
+        return typeof nCtx === "number" && nCtx > 0 ? nCtx : undefined
+    }
+
     async chat(
         chatId: string,
         messages: GenericMessage[],

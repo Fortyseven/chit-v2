@@ -2,7 +2,9 @@ import { get, Writable, writable } from "svelte/store"
 import { appState } from "../appState/appState"
 import {
     chatFind,
+    chatSetContextDetectedFor,
     chatStart,
+    chatUpdateSettings,
     DEFAULT_CONTEXT,
     DEFAULT_TEMPERATURE,
 } from "../chatSession/chatActions"
@@ -74,15 +76,44 @@ export class LLMInterface {
         await d.unloadAllModels()
     }
 
+    /**
+     * First-access context sync: when this chat accesses a given model for
+     * the first time, snap settings.num_ctx to the context window the model
+     * is loaded with. Skips if detection already ran for this model, the
+     * driver doesn't report context, or the model isn't loaded yet (the next
+     * access retries).
+     */
+    async applyModelContext(chatId: string, model: string): Promise<void> {
+        if (!model) return
+        const chat = chatFind(chatId)
+        if (!chat || chat.contextDetectedFor === model) return
+        const d = get(this.driver)
+        if (!d?.getModelContext) return
+        let nCtx: number | undefined
+        try {
+            nCtx = await d.getModelContext(model)
+        } catch (e) {
+            console.debug("LLM applyModelContext error:", e)
+            return
+        }
+        if (nCtx === undefined) return
+        chatUpdateSettings(chatId, { num_ctx: nCtx })
+        chatSetContextDetectedFor(chatId, model)
+    }
+
     async chatUpdateSession(chatId: string) {
         const backpackApi = get(appState).backpackApiEndpoint
-        const chat_session = chatFind(chatId)
+        let chat_session = chatFind(chatId)
         if (!chat_session) {
             console.error("Chat session not found: " + chatId)
             return
         }
 
         chatStart(chatId)
+
+        // First access to this model: sync the context window from the server
+        await this.applyModelContext(chatId, chat_session.model_name as string)
+        chat_session = chatFind(chatId) ?? chat_session
 
         let system_prompt = ""
         let processed_final_sprompt = ""
@@ -268,6 +299,9 @@ export class LLMInterface {
             reasoning_effort,
             ...advancedConfig,
         })
+
+        // The model may have been loaded during this turn; retry detection
+        await this.applyModelContext(chatId, chatFind(chatId)?.model_name ?? "")
     }
 }
 

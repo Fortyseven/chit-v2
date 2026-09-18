@@ -11,24 +11,16 @@
     import {
         Build,
         Psychology,
-        Receipt_long,
         Thermostat,
     } from "svelte-google-materialdesign-icons"
     import { writable } from "svelte/store"
 
-    let ctx = writable($currentChat?.settings?.num_ctx || 8192)
     let temp = writable($currentChat?.settings?.temperature || 0.6)
     let thinking = writable($currentChat?.settings?.enable_thinking ?? true)
     let reasoningEffort = writable<ReasoningEffort>(
         $currentChat?.settings?.reasoning_effort ?? "medium",
     )
     let toolsEnabled = writable($currentChat?.toolsEnabled ?? false)
-
-    ctx.subscribe((value) => {
-        chatUpdateSettings("", {
-            num_ctx: value,
-        })
-    })
 
     temp.subscribe((value) => {
         chatUpdateSettings("", {
@@ -52,51 +44,15 @@
         chatSetToolsEnabled("", value)
     })
 
-    $: $ctx = $currentChat?.settings?.num_ctx || 8192
     $: $temp = $currentChat?.settings?.temperature ?? 0.6
     $: $thinking = $currentChat?.settings?.enable_thinking ?? true
     $: $reasoningEffort = $currentChat?.settings?.reasoning_effort ?? "medium"
     $: $toolsEnabled = $currentChat?.toolsEnabled ?? false
 
-    function handleContextBlur(event: Event) {
-        const value = parseInt((event.target as HTMLInputElement).value, 10)
-        if (value < 1024) {
-            $ctx = value * 1024
-        }
-    }
 </script>
 
 <div id="ChatInferenceSettings">
     <!-- {#key $currentChat} -->
-    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <label
-        for="context"
-        class="label clickable"
-        title="Click to open advanced inference settings"
-        on:click={() => ($advancedInferenceDialogOpen = true)}>CNTX</label
-    >
-    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <label
-        for="context"
-        class="label icon clickable"
-        title="Click to open advanced inference settings"
-        on:click={() => ($advancedInferenceDialogOpen = true)}
-    >
-        <Receipt_long color="var(--color-accent-complement)" size="1.1em" />
-    </label>
-    <input
-        id="context"
-        name="context"
-        type="number"
-        min="1024"
-        max="1048576"
-        step="1024"
-        bind:value={$ctx}
-        on:blur={handleContextBlur}
-    />
-
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <label

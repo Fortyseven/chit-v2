@@ -63,6 +63,8 @@ export interface ChatSession {
     systemPrompt?: string
     subPrompts: SubPrompt[] // toggleable add-ons; {{N}} slots in systemPrompt or appended in order
     model_name: string
+    /** Model whose loaded context window was last auto-applied to num_ctx. */
+    contextDetectedFor?: string
     messages: Message[]
     createdAt: Date
     lastRequestStart: number

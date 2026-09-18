@@ -55,4 +55,11 @@ export interface LLMDriver {
 
     /** Unload all currently loaded models (router-mode servers only). */
     unloadAllModels?(): Promise<void>
+
+    /**
+     * Context window (meta.n_ctx) the given model is currently loaded with,
+     * or undefined if the model isn't loaded or the server can't report it.
+     * Router-mode servers only.
+     */
+    getModelContext?(model: string): Promise<number | undefined>
 }

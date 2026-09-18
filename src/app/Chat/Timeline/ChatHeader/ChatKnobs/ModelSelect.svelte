@@ -2,7 +2,8 @@
     import { appState } from "$lib/appState/appState"
     import { chatSetModel } from "$lib/chatSession/chatActions"
     import { currentChat } from "$lib/chatSession/chatSession"
-    import { llmModels } from "$lib/llm/llm"
+    import { llm, llmModels } from "$lib/llm/llm"
+    import { get } from "svelte/store"
 
     let selected_model: string = $currentChat?.model_name ?? ""
 
@@ -48,6 +49,8 @@
 
     function onModelChange() {
         chatSetModel($appState.activeChatId, selected_model)
+        // First access to this model: sync the context window, if reported
+        get(llm).applyModelContext($appState.activeChatId, selected_model)
     }
 </script>
 
