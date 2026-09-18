@@ -7,14 +7,11 @@
     let unloading = false
 
     async function onUnload() {
-        console.log("🔌 UnloadModels: button clicked")
         unloading = true
         try {
             await $llm.unloadAllModels()
-            console.log("🔌 UnloadModels: unloadAllModels() resolved")
             toast("Unloaded all models")
         } catch (e) {
-            console.error("🔌 UnloadModels: unloadAllModels() failed", e)
             toastError(e instanceof Error ? e.message : "Failed to unload models")
         } finally {
             unloading = false
