@@ -5,9 +5,23 @@
         ChatMediaType,
     } from "$lib/chatSession/chatAttachments"
     import { currentChat } from "$lib/chatSession/chatSession"
+    import {
+        findRouterModel,
+        modelSupportsModality,
+        routerModelInfos,
+    } from "$lib/llm/routerModels"
+    import { toastError } from "$lib/toast"
     import { memoizeBlobUrl } from "$lib/memoizeBlob"
     import { loadFile } from "$lib/utils"
     import AsyncMediaImage from "../../components/AsyncMediaImage.svelte"
+
+    // Multimodal gating: hide image/audio attachment when the selected
+    // model can't consume it (fails open when the router can't report).
+    $: selectedInfo = $currentChat
+        ? findRouterModel($routerModelInfos, $currentChat.model_name)
+        : undefined
+    $: canAttachImage = modelSupportsModality(selectedInfo, "image")
+    $: canAttachAudio = modelSupportsModality(selectedInfo, "audio")
 
     import { EXIF } from "../../../vendor/exif"
     import Pill from "../../UI/Pill/Pill.svelte"
@@ -115,13 +129,7 @@
 
     /* ------------------------------------------------------ */
     async function onClickAddContext() {
-        let loadedFile = await loadFile([
-            ".jpg",
-            ".png",
-            ".webp",
-            ".gif",
-            ".wav",
-            ".mp3",
+        const extensions = [
             ".txt",
             ".pdf",
             ".md",
@@ -136,7 +144,11 @@
             ".yml",
             ".yaml",
             ".toml",
-        ])
+        ]
+        if (canAttachImage) extensions.push(".jpg", ".png", ".webp", ".gif")
+        if (canAttachAudio) extensions.push(".wav", ".mp3")
+
+        let loadedFile = await loadFile(extensions)
 
         if (loadedFile) {
             const type = loadedFile.file.type
@@ -145,6 +157,14 @@
 
             if (file && type) {
                 console.debug("File type: ", type)
+                if (type.startsWith("image/") && !canAttachImage) {
+                    toastError("The selected model can't read images")
+                    return
+                }
+                if (type.startsWith("audio/") && !canAttachAudio) {
+                    toastError("The selected model can't read audio")
+                    return
+                }
                 if (type.startsWith("text/") && inputBoxEl) {
                     chatAddPastedMedia(
                         $currentChat?.id,
