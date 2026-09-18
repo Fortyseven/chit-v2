@@ -4,7 +4,7 @@ This guide provides essential knowledge for AI agents working in the Chit codeba
 
 ## Architecture Overview
 
--   **Main App:** Svelte 5 project in `/src` (browser-based chat UI for Ollama)
+-   **Main App:** Svelte 5 project in `/src` (browser-based chat UI for OpenAI-compatible APIs)
 -   **Electron Shell:** `/desktop` wraps the Svelte app for desktop use
 -   **Server (Optional):** `/server` is an experimental Python backend, not required for most workflows
 -   **Static Assets:** `/public` and `/docs` hold static files and production builds
@@ -44,7 +44,7 @@ This guide provides essential knowledge for AI agents working in the Chit codeba
 
 -   **Preset Prompts:** `/src/preset-prompts` contains reusable system prompts for chat sessions
 -   **Audio Feedback:** `/src/lib/audio.ts` manages sound effects for UI
--   **Ollama Integration:** Uses [Ollama JS SDK](https://github.com/ollama/ollama-js) for LLM communication
+-   **LLM Integration:** Uses the OpenAI-compatible chat completions API (plain fetch in `src/lib/llm/OpenAIDriver.ts`) for LLM communication
 -   **Persistent Storage:** Chat sessions and settings are saved in browser storage
 -   **No third-party backend:** All core features run client-side except optional `/server`
 
