@@ -1,12 +1,13 @@
-// Draw-overlay tool: draws labeled bounding boxes (bbox2d format) over the
-// first image of the latest user message, then attaches the annotated image
-// back to the chat's media as if the user had pasted it themselves — so it is
-// visible in the input bar and seen by the model on the next user message.
+// Draw-overlay tool: draws labeled bounding boxes (bbox2d format) and lines
+// over the first image of the latest user message, then attaches the
+// annotated image to the assistant's message — so it is visible inline in
+// the reply and in the chat's media list.
 import {
     ChatMediaType,
-    chatAddPastedMedia,
+    createMediaAttachment,
     getMediaBlob,
 } from "../chatSession/chatAttachments"
+import { addStreamingMedia } from "../chatSession/streamingState"
 import { chatFind } from "../chatSession/chatActions"
 import type { ToolDefinition } from "./types"
 
@@ -27,6 +28,12 @@ interface BBoxEntry {
     label?: string
 }
 
+interface LineEntry {
+    from: number[]
+    to: number[]
+    label?: string
+}
+
 // Load a Blob into an HTMLImageElement (rejects on decode failure)
 function loadImage(blob: Blob): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
@@ -44,6 +51,18 @@ function loadImage(blob: Blob): Promise<HTMLImageElement> {
     })
 }
 
+// Scale a single [x, y] point from 0-1000 normalized space to pixel space,
+// clamping to range (non-finite values become 0)
+function scalePoint(
+    point: number[],
+    width: number,
+    height: number,
+): [number, number] {
+    const norm = (v: number, max: number) =>
+        (Number.isFinite(v) ? Math.max(0, Math.min(1000, v)) / 1000 : 0) * max
+    return [norm(point[0], width), norm(point[1], height)]
+}
+
 // Convert [x1, y1, x2, y2] from 0-1000 normalized space to pixel space,
 // clamping to range and normalizing so x2 > x1 and y2 > y1
 function toPixels(
@@ -51,13 +70,8 @@ function toPixels(
     width: number,
     height: number,
 ): [number, number, number, number] {
-    const norm = (v: number, max: number) =>
-        (Number.isFinite(v) ? Math.max(0, Math.min(1000, v)) / 1000 : 0) * max
-
-    let a = norm(box[0], width)
-    let b = norm(box[1], height)
-    let c = norm(box[2], width)
-    let d = norm(box[3], height)
+    let [a, b] = scalePoint([box[0], box[1]], width, height)
+    let [c, d] = scalePoint([box[2], box[3]], width, height)
     if (c < a) [a, c] = [c, a]
     if (d < b) [b, d] = [d, b]
     return [a, b, c, d]
@@ -95,15 +109,55 @@ function drawBox(
     ctx.fillText(label, labelX + pad, labelY + pad / 2)
 }
 
+// Draw one line: solid stroke plus optional label pill centered at the
+// midpoint, above the line (below if no room), clamped inside the canvas
+function drawLine(
+    ctx: CanvasRenderingContext2D,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    color: string,
+    label: string,
+    lineWidth: number,
+    fontSize: number,
+    canvasW: number,
+    canvasH: number,
+) {
+    ctx.lineWidth = lineWidth
+    ctx.strokeStyle = color
+    ctx.beginPath()
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(x2, y2)
+    ctx.stroke()
+
+    if (!label) return
+
+    ctx.font = `bold ${fontSize}px sans-serif`
+    const pad = Math.round(fontSize / 3)
+    const pillW = ctx.measureText(label).width + pad * 2
+    const pillH = fontSize + pad
+    const mx = (x1 + x2) / 2
+    const my = (y1 + y2) / 2
+    const labelX = Math.max(0, Math.min(canvasW - pillW, mx - pillW / 2))
+    const labelY = my - pillH >= 0 ? my - pillH : my
+
+    ctx.fillStyle = color
+    ctx.fillRect(labelX, labelY, pillW, pillH)
+    ctx.fillStyle = "#ffffff"
+    ctx.textBaseline = "top"
+    ctx.fillText(label, labelX + pad, labelY + pad / 2)
+}
+
 export const drawOverlayTool: ToolDefinition = {
     name: "draw_overlay",
     description:
-        "Draw labeled bounding-box annotations over the first image in the latest user message and attach the annotated image back to the chat media. Box coordinates are [x1, y1, x2, y2] in a 0-1000 normalized grid (Qwen-VL bbox2d convention).",
+        "Draw labeled bounding boxes and/or lines over the first image in the latest user message and attach the annotated image back to the chat media. All coordinates are in a 0-1000 normalized grid (Qwen-VL bbox2d convention).",
     parameters: {
         boxes: {
             type: "array",
             description:
-                'Bounding boxes to draw, bbox2d format: {"bbox_2d": [x1, y1, x2, y2], "label": "..."} with coordinates in a 0-1000 normalized space',
+                'Bounding boxes to draw, bbox2d format: {"bbox_2d": [x1, y1, x2, y2], "label": "..."} with coordinates in a 0-1000 normalized space (pass [] if drawing only lines)',
             items: {
                 type: "object",
                 properties: {
@@ -121,12 +175,44 @@ export const drawOverlayTool: ToolDefinition = {
                 required: ["bbox_2d"],
             },
         },
+        lines: {
+            type: "array",
+            description:
+                'Lines to draw, each {"from": [x, y], "to": [x, y], "label": "..."} with coordinates in a 0-1000 normalized space (pass [] if drawing only boxes)',
+            items: {
+                type: "object",
+                properties: {
+                    from: {
+                        type: "array",
+                        items: { type: "number" },
+                        description:
+                            "Start point [x, y] in 0-1000 normalized coordinates",
+                    },
+                    to: {
+                        type: "array",
+                        items: { type: "number" },
+                        description:
+                            "End point [x, y] in 0-1000 normalized coordinates",
+                    },
+                    label: {
+                        type: "string",
+                        description: "Short label drawn near the line midpoint",
+                    },
+                },
+                required: ["from", "to"],
+            },
+        },
     },
     async handler(params, context) {
-        const boxes = (params.boxes ?? []) as BBoxEntry[]
-        if (!Array.isArray(boxes) || boxes.length === 0) {
+        const boxes: BBoxEntry[] = Array.isArray(params.boxes)
+            ? params.boxes
+            : []
+        const lines: LineEntry[] = Array.isArray(params.lines)
+            ? params.lines
+            : []
+        if (boxes.length === 0 && lines.length === 0) {
             throw new Error(
-                'boxes is required: a non-empty array of {"bbox_2d": [x1, y1, x2, y2], "label": "..."}',
+                'boxes and/or lines is required: at least one non-empty array of {"bbox_2d": [x1, y1, x2, y2], "label": "..."} or {"from": [x, y], "to": [x, y], "label": "..."}',
             )
         }
 
@@ -169,7 +255,12 @@ export const drawOverlayTool: ToolDefinition = {
         const lineWidth = Math.max(2, Math.round(canvas.width / 300))
         const fontSize = Math.max(14, Math.round(canvas.height / 32))
 
-        let drawn = 0
+        // Shared palette counter so boxes and lines never reuse the same
+        // color next to each other
+        let paletteIdx = 0
+        let drawnBoxes = 0
+        let drawnLines = 0
+
         boxes.forEach((entry, i) => {
             if (
                 !entry ||
@@ -192,12 +283,45 @@ export const drawOverlayTool: ToolDefinition = {
                 y1,
                 x2,
                 y2,
-                PALETTE[i % PALETTE.length],
+                PALETTE[paletteIdx % PALETTE.length],
                 entry.label ?? "",
                 lineWidth,
                 fontSize,
             )
-            drawn++
+            paletteIdx++
+            drawnBoxes++
+        })
+
+        lines.forEach((entry, i) => {
+            if (
+                !entry ||
+                !Array.isArray(entry.from) ||
+                entry.from.length < 2 ||
+                !Array.isArray(entry.to) ||
+                entry.to.length < 2
+            ) {
+                console.warn(
+                    `draw_overlay: skipping line ${i}: malformed from/to`,
+                )
+                return
+            }
+            const [x1, y1] = scalePoint(entry.from, canvas.width, canvas.height)
+            const [x2, y2] = scalePoint(entry.to, canvas.width, canvas.height)
+            drawLine(
+                ctx,
+                x1,
+                y1,
+                x2,
+                y2,
+                PALETTE[paletteIdx % PALETTE.length],
+                entry.label ?? "",
+                lineWidth,
+                fontSize,
+                canvas.width,
+                canvas.height,
+            )
+            paletteIdx++
+            drawnLines++
         })
 
         const outBlob = await new Promise<Blob>((resolve, reject) => {
@@ -210,19 +334,22 @@ export const drawOverlayTool: ToolDefinition = {
             )
         })
 
-        // Attach as if the user pasted it: stored in IndexedDB, shown in the
-        // input bar, and included with the next user message to the model.
-        // Do NOT use addStreamingMedia — that attaches to the assistant reply.
-        await chatAddPastedMedia(
-            context?.chatId ?? "",
-            outBlob,
-            ChatMediaType.IMAGE,
-            "annotated.png",
+        // Attach to the assistant's message: rendered inline in the reply and
+        // listed in the chat media list (same flow as generate_image).
+        // Note: the model does not re-see assistant-message images on the
+        // next turn — only the latest user message's images are sent to it.
+        addStreamingMedia(
+            createMediaAttachment(
+                outBlob,
+                ChatMediaType.IMAGE,
+                "annotated.png",
+            ),
         )
 
         // Return metadata only — never the image data (would blow the context)
         return {
-            annotated: drawn,
+            boxes: drawnBoxes,
+            lines: drawnLines,
             image_size: [canvas.width, canvas.height],
         }
     },
