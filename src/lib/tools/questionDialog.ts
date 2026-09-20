@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import { sndIsTypingPlaying, sndPlayQuestion, sndPlayTyping, sndStopTyping } from '../audio'
+import { sndIsThinkingPlaying, sndIsTypingPlaying, sndPlayQuestion, sndPlayThinking, sndPlayTyping, sndStopTyping } from '../audio'
 import { ttsSpeaking, ttsStop } from '../voice/tts'
 
 export interface QuestionOption {
@@ -24,6 +24,7 @@ export const questionDialog = writable<QuestionDialogState>({
 let pendingResolve: ((value: string) => void) | null = null
 let wasSpeaking = false
 let wasTypingPlaying = false
+let wasThinkingPlaying = false
 
 export async function askQuestion(
     question: string,
@@ -38,9 +39,10 @@ export async function askQuestion(
             ttsStop()
         }
 
-        // Pause typing audio if currently playing
+        // Pause typing/thinking audio if currently playing
         wasTypingPlaying = sndIsTypingPlaying()
-        if (wasTypingPlaying) {
+        wasThinkingPlaying = sndIsThinkingPlaying()
+        if (wasTypingPlaying || wasThinkingPlaying) {
             sndStopTyping()
         }
 
@@ -67,13 +69,16 @@ export function submitAnswer(answer: string) {
         pendingResolve(answer)
         pendingResolve = null
     }
-    // Resume typing audio if it was playing before
-    if (wasTypingPlaying) {
+    // Resume typing/thinking audio if it was playing before
+    if (wasThinkingPlaying) {
+        sndPlayThinking()
+    } else if (wasTypingPlaying) {
         sndPlayTyping()
     }
     // Note: We don't resume TTS here as user submitted an answer
     wasSpeaking = false
     wasTypingPlaying = false
+    wasThinkingPlaying = false
 }
 
 export function closeQuestionDialog() {
@@ -87,11 +92,14 @@ export function closeQuestionDialog() {
         pendingResolve('')
         pendingResolve = null
     }
-    // Resume typing audio if it was playing before
-    if (wasTypingPlaying) {
+    // Resume typing/thinking audio if it was playing before
+    if (wasThinkingPlaying) {
+        sndPlayThinking()
+    } else if (wasTypingPlaying) {
         sndPlayTyping()
     }
     // Note: We don't resume TTS here as dialog was cancelled
     wasSpeaking = false
     wasTypingPlaying = false
+    wasThinkingPlaying = false
 }

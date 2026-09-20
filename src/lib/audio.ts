@@ -13,6 +13,11 @@ audioTyping.loop = true
 audioTyping.preload = "auto"
 audioTyping.volume = 0.5
 
+const audioThinking = new Audio("assets/audio/thinking.mp3")
+audioThinking.loop = true
+audioThinking.preload = "auto"
+audioThinking.volume = 0.5
+
 const audioQuestion = new Audio("assets/audio/question.wav")
 audioQuestion.preload = "auto"
 
@@ -52,10 +57,32 @@ export function sndPlayTyping() {
 export function sndStopTyping() {
     audioTyping.pause()
     audioTyping.currentTime = 0
+    audioThinking.pause()
+    audioThinking.currentTime = 0
 }
 
 export function sndIsTypingPlaying() {
     return !audioTyping.paused
+}
+
+export function sndPlayThinking() {
+    if (!get(appState).soundEnabled) return
+    if (!audioThinking.paused) return
+    // Stop processing audio if it's playing, then start thinking audio
+    if (!audioTyping.paused) {
+        audioTyping.pause()
+        audioTyping.currentTime = 0
+    }
+    audioThinking.play()
+}
+
+export function sndStopThinking() {
+    audioThinking.pause()
+    audioThinking.currentTime = 0
+}
+
+export function sndIsThinkingPlaying() {
+    return !audioThinking.paused
 }
 // New tone function
 let sharedAudioCtx: AudioContext | undefined

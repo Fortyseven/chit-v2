@@ -1,5 +1,5 @@
 import { get, Writable, writable } from "svelte/store"
-import { sndPlayResponse, sndPlayTyping, sndStopTyping } from "../audio"
+import { sndPlayResponse, sndPlayThinking, sndPlayTyping, sndStopThinking, sndStopTyping } from "../audio"
 import {
     chatAppendStreamingPending,
     chatFind,
@@ -14,9 +14,9 @@ import { toastError } from "../toast"
 import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
 import { stripJsonFences } from "./LLMDriver"
-import type { RouterModelInfo, RouterSlotInfo } from "./routerModels"
 import { QuoteTTSDetector } from "./quoteTTSDetection"
 import { QwenToolDetector } from "./qwenToolDetection"
+import type { RouterModelInfo, RouterSlotInfo } from "./routerModels"
 import { ThinkingDetector } from "./thinkingDetection"
 
 /**
@@ -414,6 +414,7 @@ export class OpenAIDriver implements LLMDriver {
             let hasToolCalls = false
             let isQwenFormat = false
             let assistantMessage = ""
+            let wasThinking = false
 
             while (true) {
                 const { value, done } = await reader.read()
@@ -495,6 +496,17 @@ export class OpenAIDriver implements LLMDriver {
                         // Process chunk through thinking detector (only if no tool calls)
                         if (!hasToolCalls) {
                             const result = thinkingDetector.processChunk(delta)
+
+                            // Switch audio based on thinking state
+                            if (result.isThinking !== wasThinking) {
+                                wasThinking = result.isThinking
+                                if (wasThinking) {
+                                    sndPlayThinking()
+                                } else {
+                                    sndStopThinking()
+                                    sndPlayTyping()
+                                }
+                            }
 
                             // Skip marker tags
                             if (result.shouldSkipChunk) continue
