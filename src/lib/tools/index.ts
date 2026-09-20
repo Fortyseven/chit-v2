@@ -3,6 +3,7 @@
 
 import type { ToolDefinition } from './types';
 import { getMCPTools } from '../mcp/mcpManager';
+import { appState } from '../appState/appState';
 
 // Import individual tools here
 import { calculatorTool } from './calculator';
@@ -23,8 +24,17 @@ export const tools: ToolDefinition[] = [
     // sayTool
 ];
 
+/**
+ * Whether a tool is enabled by the user in the config panel.
+ * Tools are enabled by default; disabling is opt-in via appState.
+ */
+export function isToolEnabled(name: string): boolean {
+    return !appState.value.disabledTools.includes(name)
+}
+
 export function getAllTools(): ToolDefinition[] {
-    return [...tools, ...getMCPTools()]
+    const enabledBuiltIns = tools.filter(tool => isToolEnabled(tool.name))
+    return [...enabledBuiltIns, ...getMCPTools()]
 }
 
 export function getToolByName(name: string): ToolDefinition | undefined {

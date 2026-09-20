@@ -24,6 +24,8 @@ export interface AppState {
     openaiApiKey: string
     mediaServerUrl: string
     mcpServers: MCPServerConfig[]
+    // Names of built-in tools the user has disabled (empty = all enabled)
+    disabledTools: string[]
 }
 
 export const appStateDefaults: AppState = {
@@ -44,6 +46,7 @@ export const appStateDefaults: AppState = {
     openaiApiKey: "",
     mediaServerUrl: "",
     mcpServers: [],
+    disabledTools: [],
 }
 
 export const appState = writable<AppState>({
