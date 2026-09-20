@@ -9,8 +9,6 @@
 - Install deps: `npm install`
 - Dev server: `npm run dev`
 - Production build: `npm run build`
-- Preview build: `npm run preview`
-- Lint: Use Prettier (no explicit lint script)
 
 ## Code Style Guidelines
 - **Formatting:** 4 spaces, no tabs/semicolons, LF endings, trim trailing whitespace, no final newline
