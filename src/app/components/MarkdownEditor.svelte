@@ -2,12 +2,6 @@
     // @ts-ignore
     import { isRPMode } from "$lib/modes/modeUtils"
     import {
-        extractBboxBlocks,
-        injectBboxBlocks,
-        renderBboxBlocksInContainer,
-        type BoundingBoxEntry,
-    } from "$lib/text/bboxRenderer"
-    import {
         extractMermaidBlocks,
         injectMermaidBlocks,
         renderMermaidBlocksInContainer,
@@ -35,7 +29,6 @@
     export let index: number
     export let onUpdatedContent = (index: number, content: string) => {}
     export let renderHtml = false
-    export let sourceImage: string | null = null
 
     export const open = function () {
         editorOpen = true
@@ -91,9 +84,6 @@
     let lastContent = ""
     let lastProcessed = ""
     let lastMarkdownStr = ""
-    let lastBboxBlocks: BoundingBoxEntry[][] = []
-    let lastSourceImage: string | null = null
-    let mounted = false
 
     // Mermaid viewer state
     let mermaidViewerOpen = false
@@ -108,47 +98,24 @@
         })
     }
 
-    // Re-render bbox blocks when source image becomes available after mount
-    // Use tick() to wait for Svelte to update the DOM before querying elements
-    $: if (mounted && containerEl && sourceImage && lastBboxBlocks.length > 0) {
-        tick().then(() => {
-            renderBboxBlocksInContainer(
-                containerEl,
-                sourceImage,
-                lastBboxBlocks,
-            )
-        })
-    }
-
     // Compute processed content, only show blank content
     // message when content is truly empty
     // Process content to wrap quoted sections before markdown render
     $: {
         const processed = isRPMode() ? wrapQuotesStreaming(content) : content
-        // Re-render if content changed OR if sourceImage changed (for bbox overlay)
         const contentChanged =
             content !== lastContent || processed !== lastProcessed
-        const sourceImageChanged = sourceImage !== lastSourceImage
-        const shouldRerender =
-            contentChanged || (sourceImageChanged && lastBboxBlocks.length > 0)
-        if (shouldRerender) {
+        if (contentChanged) {
             lastContent = content
             lastProcessed = processed
-            lastSourceImage = sourceImage
-            // Always re-process full pipeline (needed when sourceImage changes
-            // since we can't re-inject into already-rendered HTML)
             const { content: withoutSvg, svgBlocks } =
                 extractSvgBlocks(processed)
             const { content: withoutMermaid, mermaidBlocks } =
                 extractMermaidBlocks(withoutSvg)
-            const { content: withoutBbox, bboxBlocks } =
-                extractBboxBlocks(withoutMermaid)
-            lastBboxBlocks = bboxBlocks
-            const rendered = md.render(withoutBbox).trim()
+            const rendered = md.render(withoutMermaid).trim()
             let result = injectSvgBlocks(rendered, svgBlocks)
             // Mermaid blocks are injected with loading placeholders, then rendered async
             result = injectMermaidBlocks(result, mermaidBlocks)
-            result = injectBboxBlocks(result, bboxBlocks, sourceImage)
             lastMarkdownStr = result
             // Async render mermaid diagrams
             if (mermaidBlocks.length > 0) {
@@ -206,7 +173,6 @@
     }
 
     onMount(() => {
-        mounted = true
         // Add event listeners for copy buttons after the component is mounted
         function setupCopyButtons() {
             if (!containerEl) return
@@ -311,105 +277,6 @@
                         .replace(/&quot;/g, '"')
 
                     svgToPngClipboard(decoded, button)
-                })
-            })
-        }
-
-        function setupBboxCopyButtons() {
-            if (!containerEl) return
-            const copyBtns = containerEl.querySelectorAll(
-                ".bbox-copy-button:not([data-bbox-bound])",
-            )
-            copyBtns.forEach((button) => {
-                button.setAttribute("data-bbox-bound", "1")
-                button.addEventListener("click", () => {
-                    const wrapper = button.closest(".bbox-block-wrapper")
-                    const dataUrl = wrapper?.getAttribute("data-annotated-url")
-                    if (!dataUrl) return
-
-                    // Convert data URL to blob and copy to clipboard
-                    fetch(dataUrl)
-                        .then((res) => res.blob())
-                        .then((blob) => {
-                            navigator.clipboard
-                                .write([
-                                    new ClipboardItem({ "image/png": blob }),
-                                ])
-                                .then(() => {
-                                    const originalText = button.textContent
-                                    button.textContent = "✓ Copied"
-                                    button.classList.add("copied")
-                                    setTimeout(() => {
-                                        button.textContent = originalText
-                                        button.classList.remove("copied")
-                                    }, 2000)
-                                })
-                                .catch((err) => {
-                                    console.error(
-                                        "Failed to copy bbox image:",
-                                        err,
-                                    )
-                                })
-                        })
-                        .catch((err) => {
-                            console.error("Failed to fetch bbox image:", err)
-                        })
-                })
-            })
-        }
-
-        function setupBboxDownloadButtons() {
-            if (!containerEl) return
-            const downloadBtns = containerEl.querySelectorAll(
-                ".bbox-download-button:not([data-bbox-bound])",
-            )
-            downloadBtns.forEach((button) => {
-                button.setAttribute("data-bbox-bound", "1")
-                button.addEventListener("click", () => {
-                    const wrapper = button.closest(".bbox-block-wrapper")
-                    const dataUrl = wrapper?.getAttribute("data-annotated-url")
-                    if (!dataUrl) return
-
-                    const a = document.createElement("a")
-                    a.href = dataUrl
-                    a.download = `annotated-image-${Date.now()}.png`
-                    a.click()
-                })
-            })
-        }
-
-        function setupBboxToggleButtons() {
-            if (!containerEl) return
-            const toggleBtns = containerEl.querySelectorAll(
-                ".bbox-toggle-button:not([data-bbox-bound])",
-            )
-            toggleBtns.forEach((button) => {
-                button.setAttribute("data-bbox-bound", "1")
-                button.addEventListener("click", () => {
-                    const wrapper = button.closest(".bbox-block-wrapper")
-                    if (!wrapper) return
-                    const contentEl = wrapper.querySelector(
-                        ".bbox-block-content",
-                    )
-                    const rawJsonEl = wrapper.querySelector(".bbox-raw-json")
-                    if (!contentEl || !rawJsonEl) return
-
-                    const isShowingJson = rawJsonEl.style.display !== "none"
-                    if (isShowingJson) {
-                        // Switch back to image
-                        contentEl.style.display = ""
-                        rawJsonEl.style.display = "none"
-                        button.textContent = "📄 Show JSON"
-                    } else {
-                        // Show raw JSON
-                        const jsonStr = rawJsonEl.getAttribute("data-json")
-                        if (jsonStr) {
-                            rawJsonEl.innerHTML = `<pre>${jsonStr}</pre>`
-                        }
-                        contentEl.style.display = "none"
-                        rawJsonEl.style.display = ""
-                        button.textContent = "🖼️ Show Image"
-                    }
                 })
             })
         }
@@ -697,19 +564,7 @@
         setupQuoteClickHandlers()
         setupSvgCopyButtons()
         setupSvgPngCopyButtons()
-        setupBboxCopyButtons()
-        setupBboxDownloadButtons()
-        setupBboxToggleButtons()
         setupMermaidButtons()
-
-        // Render bbox blocks asynchronously after initial setup
-        if (sourceImage && lastBboxBlocks.length > 0 && containerEl) {
-            renderBboxBlocksInContainer(
-                containerEl,
-                sourceImage,
-                lastBboxBlocks,
-            )
-        }
 
         // Set up a mutation observer scoped to this component's container
         const observer = new MutationObserver(() => {
@@ -717,9 +572,6 @@
             setupQuoteClickHandlers()
             setupSvgCopyButtons()
             setupSvgPngCopyButtons()
-            setupBboxCopyButtons()
-            setupBboxDownloadButtons()
-            setupBboxToggleButtons()
             setupMermaidButtons()
         })
         observer.observe(containerEl, { childList: true, subtree: true })
@@ -898,96 +750,6 @@
 
             &:active {
                 background-color: rgba(255, 255, 255, 0.22);
-            }
-        }
-
-        :global(.bbox-block-wrapper) {
-            position: relative;
-            margin: 1em 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius-standard);
-            overflow: hidden;
-            background-color: var(--color-background-darkest);
-        }
-
-        :global(.bbox-block-toolbar) {
-            display: flex;
-            justify-content: flex-end;
-            gap: 4px;
-            padding: 4px 8px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        :global(.bbox-copy-button),
-        :global(.bbox-download-button),
-        :global(.bbox-toggle-button) {
-            font-size: 12px;
-            padding: 2px 8px;
-            cursor: pointer;
-            opacity: 0.6;
-            transition: opacity 0.2s ease;
-            color: var(--color-text);
-            border-radius: 3px;
-            background-color: rgba(255, 255, 255, 0.08);
-
-            &:hover {
-                opacity: 1;
-            }
-
-            &.copied {
-                background-color: rgba(50, 205, 50, 0.3);
-                opacity: 1;
-            }
-        }
-
-        :global(.bbox-block-content) {
-            display: flex;
-            justify-content: center;
-            padding: 1em;
-            overflow-x: auto;
-
-            :global(.bbox-annotated-image) {
-                max-width: 100%;
-                height: auto;
-                border-radius: 4px;
-            }
-        }
-
-        :global(.bbox-loading) {
-            color: var(--color-text);
-            opacity: 0.5;
-            padding: 2em;
-            text-align: center;
-        }
-
-        :global(.bbox-no-image) {
-            color: var(--color-text);
-            opacity: 0.6;
-            padding: 2em;
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.03);
-            border-radius: 4px;
-            margin: 1em;
-        }
-
-        :global(.bbox-error) {
-            color: #ff6b6b;
-            padding: 2em;
-            text-align: center;
-        }
-
-        :global(.bbox-raw-json) {
-            padding: 1em;
-            background-color: rgba(0, 0, 0, 0.3);
-
-            :global(pre) {
-                margin: 0;
-                font-family: monospace;
-                font-size: 12px;
-                white-space: pre-wrap;
-                word-break: break-all;
-                color: var(--color-text);
             }
         }
 

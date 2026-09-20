@@ -4,12 +4,7 @@
         chatForkAtMessage,
         chatRunInference,
     } from "$lib/chatSession/chatActions"
-    import {
-        ChatMediaType,
-        getMediaBlob,
-    } from "$lib/chatSession/chatAttachments"
     import { currentChat } from "$lib/chatSession/chatSession"
-    import { memoizeBlobUrl } from "$lib/memoizeBlob"
     import toast from "$lib/toast"
     import {
         ttsSpeak,
@@ -49,62 +44,6 @@
     $: thinkingOpenStore = createThinkingBlockStore(stateKey)
 
     $: messageText = typeof content === "string" ? content : content.content
-
-    // Source image URL for bbox rendering
-    let sourceImageUrl: string | null = null
-
-    // Resolve source image URL from the most recent user message with an image
-    async function resolveSourceImage(
-        msgIndex: number,
-    ): Promise<string | null> {
-        if (inprogress) return null // No source image during streaming
-        const messages = $currentChat?.messages || []
-        // Search backwards from current message for the most recent user message with an image
-        for (let i = msgIndex - 1; i >= 0; i--) {
-            const msg = messages[i]
-            if (
-                msg.role === "user" &&
-                msg.media?.some((m) => m.type === ChatMediaType.IMAGE)
-            ) {
-                // Find the first image media item
-                const imageMedia = msg.media.find(
-                    (m) => m.type === ChatMediaType.IMAGE,
-                )
-                if (imageMedia) {
-                    try {
-                        // Handle string data directly
-                        if (
-                            typeof imageMedia.data === "string" &&
-                            imageMedia.data
-                        ) {
-                            return imageMedia.data
-                        }
-                        // Handle Blob data
-                        if (imageMedia.data instanceof Blob) {
-                            return memoizeBlobUrl(imageMedia.data) || null
-                        }
-                        // Handle IndexedDB-stored data (async)
-                        if (imageMedia.isStored && imageMedia.blobId) {
-                            const blob = await getMediaBlob(imageMedia)
-                            if (blob instanceof Blob) {
-                                return memoizeBlobUrl(blob) || null
-                            }
-                        }
-                    } catch (err) {
-                        console.warn("Failed to resolve source image:", err)
-                    }
-                }
-            }
-        }
-        return null
-    }
-
-    // Update source image when index changes
-    $: if (!inprogress) {
-        resolveSourceImage(index).then((url) => {
-            sourceImageUrl = url
-        })
-    }
 
     function handleThinkToggle() {
         thinkingOpenStore.set(!$thinkingOpenStore)
@@ -213,7 +152,6 @@
                 {index}
                 bind:editorOpen={openEditor}
                 {onUpdatedContent}
-                sourceImage={sourceImageUrl}
             />
         {/if}
     </div>
@@ -249,7 +187,6 @@
             bind:editorOpen={openEditor}
             {onUpdatedContent}
             {renderHtml}
-            sourceImage={sourceImageUrl}
         />
     </div>
     <div class="mini-toolbar">
