@@ -11,6 +11,7 @@ import { calculatorTool } from './calculator';
 import { askQuestionsTool } from './ask-questions';
 import { timeTool } from './time';
 import { generateImageTool } from './generate-image';
+import { drawOverlayTool } from './draw-overlay';
 
 export const tools: ToolDefinition[] = [
     // echoTool,
@@ -18,6 +19,7 @@ export const tools: ToolDefinition[] = [
     calculatorTool,
     askQuestionsTool,
     generateImageTool,
+    drawOverlayTool,
     // sayTool
 ];
 
