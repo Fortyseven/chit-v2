@@ -1,6 +1,7 @@
 // Tool registry: aggregates all tool modules
 // Each tool exports: name, description, parameters, handler
 
+import { get } from 'svelte/store';
 import type { ToolDefinition } from './types';
 import { getMCPTools } from '../mcp/mcpManager';
 import { appState } from '../appState/appState';
@@ -29,7 +30,7 @@ export const tools: ToolDefinition[] = [
  * Tools are enabled by default; disabling is opt-in via appState.
  */
 export function isToolEnabled(name: string): boolean {
-    return !appState.value.disabledTools.includes(name)
+    return !get(appState).disabledTools.includes(name)
 }
 
 export function getAllTools(): ToolDefinition[] {
