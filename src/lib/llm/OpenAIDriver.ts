@@ -369,7 +369,10 @@ export class OpenAIDriver implements LLMDriver {
                 messages: oaiMessages,
                 temperature: config.temp ?? DEFAULT_TEMPERATURE,
                 stream: config.stream ?? true,
-                chat_template_kwargs: { enable_thinking: config.enable_thinking },
+                chat_template_kwargs: {
+                    enable_thinking: config.enable_thinking,
+                    ...(config.enable_thinking && config.reasoning_effort && config.reasoning_effort !== "none" && { reasoning_effort: config.reasoning_effort }),
+                },
                 // "none" means: don't send reasoning_effort, use the model default
                 ...(config.enable_thinking && config.reasoning_effort && config.reasoning_effort !== "none" && { reasoning_effort: config.reasoning_effort }),
                 // Wire key is thinking_token_budget (vLLM parameter name)
