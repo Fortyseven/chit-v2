@@ -1,4 +1,4 @@
-import { Movie } from "svelte-google-materialdesign-icons";
+import { Movie } from "svelte-google-materialdesign-icons"
 
 export default {
     name: "LTX-2 Video Prompt",

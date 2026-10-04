@@ -1,10 +1,7 @@
 <script lang="ts">
     import { currentChat } from "$lib/chatSession/chatSession"
     import { streamingState } from "$lib/chatSession/streamingState"
-    import {
-        routerSlotStatus,
-        slotPolledModel,
-    } from "$lib/llm/routerModels"
+    import { routerSlotStatus, slotPolledModel } from "$lib/llm/routerModels"
     import { Refresh } from "svelte-google-materialdesign-icons"
 
     let time = NaN

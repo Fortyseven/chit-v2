@@ -1,9 +1,9 @@
 /* Adapted from: https://github.com/malvarezcastillo/txt2plotter/blob/main/modules/prompt_engineer.py */
 
-import { Line_style } from "svelte-google-materialdesign-icons";
+import { Line_style } from "svelte-google-materialdesign-icons"
 
 export default {
-    name: 'Line Art Prompt',
+    name: "Line Art Prompt",
     icon: Line_style,
     temperature: 1.0,
     prompt: `You rewrite user prompts for AI art image generation,
@@ -34,5 +34,5 @@ triangular facets and sharp angular planes, black ink on white paper,
 technical illustration style with clean precise lines,
 symmetrical front view, high contrast monochrome"
 
-Output ONLY the rewritten prompt.`
-};
+Output ONLY the rewritten prompt.`,
+}

@@ -31,15 +31,18 @@
         return bits.join(" ")
     })()
 
-    $: statusLabel = ({
-        loading: "loading…",
-        loaded: "loaded",
-        sleeping: "asleep",
-        downloading: "downloading…",
-        downloaded: "downloaded",
-        unloaded: "not loaded",
-        failed: "failed",
-    } as Record<string, string>)[selectedStatus] ?? ""
+    $: statusLabel =
+        (
+            {
+                loading: "loading…",
+                loaded: "loaded",
+                sleeping: "asleep",
+                downloading: "downloading…",
+                downloaded: "downloaded",
+                unloaded: "not loaded",
+                failed: "failed",
+            } as Record<string, string>
+        )[selectedStatus] ?? ""
 
     $: statusKind =
         selectedStatus === "loaded"

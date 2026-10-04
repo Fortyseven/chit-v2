@@ -316,8 +316,9 @@
                         button.classList.remove("active")
                     } else {
                         // Show raw mermaid source (disables the rendered view)
-                        const diagram =
-                            wrapper.getAttribute("data-mermaid-diagram")
+                        const diagram = wrapper.getAttribute(
+                            "data-mermaid-diagram",
+                        )
                         const decoded = (diagram || "")
                             .replace(/&amp;/g, "&")
                             .replace(/&lt;/g, "<")

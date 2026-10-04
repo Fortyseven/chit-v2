@@ -12,7 +12,9 @@
             await $llm.unloadAllModels()
             toast("Unloaded all models")
         } catch (e) {
-            toastError(e instanceof Error ? e.message : "Failed to unload models")
+            toastError(
+                e instanceof Error ? e.message : "Failed to unload models",
+            )
         } finally {
             unloading = false
         }

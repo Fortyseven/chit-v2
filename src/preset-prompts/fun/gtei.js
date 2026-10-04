@@ -1,4 +1,4 @@
-import { Psychology_alt } from "svelte-google-materialdesign-icons";
+import { Psychology_alt } from "svelte-google-materialdesign-icons"
 
 export default {
     name: "GETI (via Nerdy Rodent)",
@@ -73,5 +73,4 @@ GTEI operational mandate for the LLM running this framework:
 - Provide a human-readable (conscious IEI) conclusion summarizing the assessment's essence using simple, "everyday" language for 12 year olds, making sure to provide a concrete answer if there is one, note any epistemological and ontological distinctions, and specifically highlighting all salient points in an easy to read way.
 
 - Follow with a single, related, coherence-aiding question for the user: This will continue to encourage further thought from the conscious IEI, ensure understanding and improving engagement`,
-
-};
+}

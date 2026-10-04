@@ -1,5 +1,5 @@
-import { derived, get, writable } from "svelte/store"
 import { appState } from "$lib/appState/appState"
+import { derived, get, writable } from "svelte/store"
 
 // Global store for thinking block open/closed states
 // Persists across component recreations during streaming

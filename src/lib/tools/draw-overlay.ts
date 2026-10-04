@@ -2,6 +2,7 @@
 // and lines/arrows over an image in the latest user message, then attaches
 // the annotated image to the assistant's message — so it is visible inline
 // in the reply and in the chat's media list.
+import { chatFind } from "../chatSession/chatActions"
 import {
     ChatMediaType,
     createMediaAttachment,
@@ -9,7 +10,6 @@ import {
     type MediaAttachment,
 } from "../chatSession/chatAttachments"
 import { addStreamingMedia } from "../chatSession/streamingState"
-import { chatFind } from "../chatSession/chatActions"
 import type { ToolDefinition } from "./types"
 
 // Distinct, high-contrast colors cycled per box index

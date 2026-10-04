@@ -10,12 +10,11 @@
     import ConfirmationDialog from "./app/UI/ConfirmationDialog.svelte"
     import QuestionDialog from "./app/UI/QuestionDialog.svelte"
 
-    import "./lib/appState/appStateStorage"
-    import "./lib/audio"
+    import { onMount } from "svelte"
     import { get } from "svelte/store"
     import { appState } from "./lib/appState/appState"
-    import { initMCPServers } from "./lib/mcp/mcpManager"
-    import { onMount } from "svelte"
+    import "./lib/appState/appStateStorage"
+    import "./lib/audio"
     import { chatCompactConversation } from "./lib/chatSession/chatActions"
     import { AppMode, currentChatMode } from "./lib/chatSession/chatSession"
     import "./lib/chatSession/chatStorage"
@@ -23,6 +22,7 @@
         closeCompactConversationDialog,
         compactConversationDialog,
     } from "./lib/chatSession/compactConversationDialog"
+    import { initMCPServers } from "./lib/mcp/mcpManager"
 
     onMount(() => {
         initMCPServers(get(appState).mcpServers)

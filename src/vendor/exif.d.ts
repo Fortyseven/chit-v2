@@ -6,5 +6,5 @@ interface EXIFStatic {
     readFromBinaryFile(file: any): any;
 }
 
-declare var EXIF : EXIFStatic;
+declare var EXIF: EXIFStatic;
 export = EXIF;

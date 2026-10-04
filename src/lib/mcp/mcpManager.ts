@@ -1,5 +1,5 @@
-import { get, writable } from 'svelte/store'
 import type { Client } from '@modelcontextprotocol/sdk/client'
+import { get, writable } from 'svelte/store'
 import type { ToolDefinition } from '../tools/types'
 import type { MCPServerConfig } from './types'
 

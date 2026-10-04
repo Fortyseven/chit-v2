@@ -100,8 +100,8 @@
                 <label>
                     <span>Context</span>
                     <span class="desc"
-                        >Context window in tokens. Values under 1024 are read
-                        as thousands (e.g. 8 → 8192). Auto-set from the loaded
+                        >Context window in tokens. Values under 1024 are read as
+                        thousands (e.g. 8 → 8192). Auto-set from the loaded
                         model on first use
                     </span>
                     <input
@@ -175,7 +175,8 @@
                 <label>
                     <span>Thinking Token Budget</span>
                     <span class="desc"
-                        >Max tokens the model may spend reasoning (vllm, thinking models only). Untested — may not work</span
+                        >Max tokens the model may spend reasoning (vllm,
+                        thinking models only). Untested — may not work</span
                     >
                     <input
                         type="number"

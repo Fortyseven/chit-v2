@@ -25,7 +25,10 @@
             authToken: newToken.trim() || undefined,
             enabled: true,
         }
-        appState.update((s) => ({ ...s, mcpServers: [...s.mcpServers, config] }))
+        appState.update((s) => ({
+            ...s,
+            mcpServers: [...s.mcpServers, config],
+        }))
         newName = ""
         newUrl = ""
         newToken = ""
@@ -38,14 +41,18 @@
             ...s,
             mcpServers: s.mcpServers.filter((c) => c.id !== id),
         }))
-        mcpServersStore.update((servers) => servers.filter((s) => s.config.id !== id))
+        mcpServersStore.update((servers) =>
+            servers.filter((s) => s.config.id !== id),
+        )
     }
 
     async function toggleEnabled(config: MCPServerConfig) {
         const updated = { ...config, enabled: !config.enabled }
         appState.update((s) => ({
             ...s,
-            mcpServers: s.mcpServers.map((c) => (c.id === config.id ? updated : c)),
+            mcpServers: s.mcpServers.map((c) =>
+                c.id === config.id ? updated : c,
+            ),
         }))
         if (updated.enabled) {
             await connectServer(updated)
@@ -68,7 +75,10 @@
             <p class="empty">No MCP servers configured.</p>
         {:else}
             {#each $mcpServersStore as entry (entry.config.id)}
-                <div class="server-entry" class:disabled={!entry.config.enabled}>
+                <div
+                    class="server-entry"
+                    class:disabled={!entry.config.enabled}
+                >
                     <div class="server-row">
                         <div class="server-info">
                             <span class="server-name">{entry.config.name}</span>
@@ -83,7 +93,9 @@
                                 {entry.status}
                             </span>
                             {#if entry.status === "connected"}
-                                <span class="tool-count">{entry.tools.length} tools</span>
+                                <span class="tool-count"
+                                    >{entry.tools.length} tools</span
+                                >
                             {/if}
                         </div>
                         <div class="server-actions">
@@ -91,7 +103,9 @@
                                 class="toggle-btn"
                                 class:active={entry.config.enabled}
                                 on:click={() => toggleEnabled(entry.config)}
-                                title={entry.config.enabled ? "Disable" : "Enable"}
+                                title={entry.config.enabled
+                                    ? "Disable"
+                                    : "Enable"}
                             >
                                 {entry.config.enabled ? "On" : "Off"}
                             </button>
@@ -111,8 +125,8 @@
                             <button
                                 class="remove-btn"
                                 on:click={() => removeServer(entry.config.id)}
-                                title="Remove server"
-                            >✕</button>
+                                title="Remove server">✕</button
+                            >
                         </div>
                     </div>
                     {#if expandedId === entry.config.id && entry.tools.length > 0}
@@ -121,7 +135,9 @@
                                 <div class="tool-item">
                                     <span class="tool-name">{tool.name}</span>
                                     {#if tool.description}
-                                        <span class="tool-desc">{tool.description}</span>
+                                        <span class="tool-desc"
+                                            >{tool.description}</span
+                                        >
                                     {/if}
                                 </div>
                             {/each}
@@ -171,7 +187,11 @@
                 </label>
             </div>
         </div>
-        <button class="add-btn" on:click={addServer} disabled={!newName.trim() || !newUrl.trim()}>
+        <button
+            class="add-btn"
+            on:click={addServer}
+            disabled={!newName.trim() || !newUrl.trim()}
+        >
             Add Server
         </button>
     </div>

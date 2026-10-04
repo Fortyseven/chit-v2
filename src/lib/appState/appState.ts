@@ -1,6 +1,6 @@
 import { derived, writable } from "svelte/store"
-import type { MCPServerConfig } from "../mcp/types"
 import type { ReasoningEffort } from "../chatSession/chatSession"
+import type { MCPServerConfig } from "../mcp/types"
 
 // export const DEFAULT_BP_ENDPOINT = "http://localhost:12434"
 export const DEFAULT_BP_ENDPOINT = ""

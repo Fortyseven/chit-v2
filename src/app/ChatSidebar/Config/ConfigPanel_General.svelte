@@ -36,7 +36,6 @@
             <input type="checkbox" bind:checked={$appState.resizeImages} />
         </label>
     </div>
-
 </div>
 
 <!-- --------------------------------------------- -->
@@ -135,12 +134,15 @@
         </label>
     </div>
     <div class="field">
-        <label title="Show thinking blocks expanded by default instead of collapsed.">
+        <label
+            title="Show thinking blocks expanded by default instead of collapsed."
+        >
             THNK blocks open by default
             <input
                 type="checkbox"
                 checked={$appState.thinkBlockOpenByDefault}
-                on:change={(e) => appStateSetThinkBlockOpenByDefault(e.target.checked)}
+                on:change={(e) =>
+                    appStateSetThinkBlockOpenByDefault(e.target.checked)}
             />
         </label>
     </div>

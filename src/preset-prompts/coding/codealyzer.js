@@ -3,10 +3,10 @@
 //     prompt: `Summarize the following text. Provide a brief summary of the text, including the main points and key details. Do not include any personal opinions or interpretations. Only use the information provided in the text. Do not invent information. Strive for accuracy using ONLY the information provided. The summary should be concise and to the point.`,
 // };
 
-import { Code } from "svelte-google-materialdesign-icons";
+import { Code } from "svelte-google-materialdesign-icons"
 
 export default {
-    name: 'Codealyzer',
+    name: "Codealyzer",
     temperature: 0.2,
     icon: Code,
     prompt: `Your objective is to identify potentially malicious behavior in the provided source code. Focus specifically on overt suspicious activities rather than basic coding errors or inefficiencies.
@@ -31,8 +31,8 @@ export default {
 ### Important Guidelines:
 - Base your analysis strictly on the provided code. Avoid opinions, interpretations, or inferred context.
 - Ensure accuracy by referencing only the code given. Do not invent information or make assumptions.
-`
-};
+`,
+}
 
 // export default {
 //     name: '👨‍💻 Codealyzer',

@@ -87,7 +87,8 @@
     function onGlobalKeypress(ev: KeyboardEvent) {
         // Enter/Space on the armed button itself confirms the clear
         const isConfirm =
-            (ev.key === "Enter" || ev.key === " ") && clearBtnContains(ev.target)
+            (ev.key === "Enter" || ev.key === " ") &&
+            clearBtnContains(ev.target)
         if (clearArmed && !isConfirm) {
             clearArmed = false
         }

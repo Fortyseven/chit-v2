@@ -1,7 +1,7 @@
-import { Palette } from "svelte-google-materialdesign-icons";
+import { Palette } from "svelte-google-materialdesign-icons"
 
 export default {
-    name: 'Image Gen Art Prompt',
+    name: "Image Gen Art Prompt",
     temperature: 1.0,
     icon: Palette,
     prompt: `You will be provided with a fragment of text or an image; either individual key words, or a brief description.
@@ -21,5 +21,5 @@ You are to imagine a fuller, more visually descriptive T5 prompt suitable for SD
 - Consider potential visual symbolism, metaphors, or allegories that could enhance the image's meaning and impact, and include them in both prompts when relevant.
 - For character-focused images, emphasize personality traits and emotions through visual cues such as facial expressions, body language, and clothing choices, ensuring consistency between the T5 and CLIP prompts.
 - Maintain grammatically positive statements throughout both prompts, focusing on what the image should include rather than what it should not, some AI art generators may struggle with interpreting negative statements accurately.
-- Do not use markdown, only return the new prompt in plaintext.`
-};
+- Do not use markdown, only return the new prompt in plaintext.`,
+}

@@ -1,4 +1,4 @@
-import { Create } from "svelte-google-materialdesign-icons";
+import { Create } from "svelte-google-materialdesign-icons"
 
 export default {
     name: "LLM Prompt Creator",

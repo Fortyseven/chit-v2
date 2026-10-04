@@ -1,5 +1,5 @@
-import { appState } from "./appState"
 import type { ReasoningEffort } from "../chatSession/chatSession"
+import { appState } from "./appState"
 
 export function appStateSetActiveChatId(id: string | string) {
     appState.update((state) => ({ ...state, activeChatId: id }))
@@ -50,4 +50,3 @@ export function appStateSetOpenAIKey(key: string) {
 export function appStateSetMediaServerUrl(url: string) {
     appState.update((state) => ({ ...state, mediaServerUrl: url }))
 }
-

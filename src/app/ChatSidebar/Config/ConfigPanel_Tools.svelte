@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { tools } from "$lib/tools/index"
     import { appState } from "$lib/appState/appState"
+    import { tools } from "$lib/tools/index"
 
     function isDisabled(name: string): boolean {
         return $appState.disabledTools.includes(name)
@@ -18,8 +18,8 @@
 
 <div class="tools-panel">
     <p class="hint">
-        Tools the model can use in all chats. Disabled tools are not sent to the model. MCP tools
-        are managed in the MCP tab.
+        Tools the model can use in all chats. Disabled tools are not sent to the
+        model. MCP tools are managed in the MCP tab.
     </p>
 
     <div class="tool-list">

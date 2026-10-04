@@ -122,51 +122,56 @@
             <h3>Sub-Prompts</h3>
             <p class="hint">
                 Optional. Enabled sub-prompts fill &lcub;&lcub;N&rcub;&rcub;
-                slots in the system prompt; any without a slot are appended
-                in order.
+                slots in the system prompt; any without a slot are appended in
+                order.
             </p>
             {#if $currentChat && $currentChat.subPrompts.length}
                 <div class="subprompt-grid">
-                {#each $currentChat.subPrompts as sp, i (sp.id)}
-                    <div class="subprompt-card">
-                        <div class="subprompt-header">
-                            <span class="subprompt-label">Sub-Prompt {i + 1}</span>
-                            <label class="subprompt-toggle">
-                                <input
-                                    type="checkbox"
-                                    checked={sp.enabled}
-                                    onchange={(ev) =>
-                                        chatToggleSubPrompt(
+                    {#each $currentChat.subPrompts as sp, i (sp.id)}
+                        <div class="subprompt-card">
+                            <div class="subprompt-header">
+                                <span class="subprompt-label"
+                                    >Sub-Prompt {i + 1}</span
+                                >
+                                <label class="subprompt-toggle">
+                                    <input
+                                        type="checkbox"
+                                        checked={sp.enabled}
+                                        onchange={(ev) =>
+                                            chatToggleSubPrompt(
+                                                $currentChat.id,
+                                                sp.id,
+                                                ev.target.checked,
+                                            )}
+                                    />
+                                    enabled
+                                </label>
+                                <button
+                                    class="subprompt-delete"
+                                    title="Delete sub-prompt"
+                                    onclick={() =>
+                                        chatRemoveSubPrompt(
                                             $currentChat.id,
                                             sp.id,
-                                            ev.target.checked
                                         )}
-                                />
-                                enabled
-                            </label>
-                            <button
-                                class="subprompt-delete"
-                                title="Delete sub-prompt"
-                                onclick={() =>
-                                    chatRemoveSubPrompt($currentChat.id, sp.id)}
-                            >
-                                <svelte:component this={Delete} size="20" />
-                            </button>
+                                >
+                                    <svelte:component this={Delete} size="20" />
+                                </button>
+                            </div>
+                            <textarea
+                                placeholder="Sub-prompt text..."
+                                rows="4"
+                                class="subprompt-textarea"
+                                value={sp.text}
+                                oninput={(ev) =>
+                                    chatUpdateSubPromptText(
+                                        $currentChat.id,
+                                        sp.id,
+                                        ev.target.value,
+                                    )}
+                            ></textarea>
                         </div>
-                        <textarea
-                            placeholder="Sub-prompt text..."
-                            rows="4"
-                            class="subprompt-textarea"
-                            value={sp.text}
-                            oninput={(ev) =>
-                                chatUpdateSubPromptText(
-                                    $currentChat.id,
-                                    sp.id,
-                                    ev.target.value
-                                )}
-                        ></textarea>
-                    </div>
-                {/each}
+                    {/each}
                 </div>
             {:else}
                 <p class="empty">No sub-prompts.</p>

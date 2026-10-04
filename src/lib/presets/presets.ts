@@ -211,16 +211,16 @@ function _doParsePreset(content: string, filename: string = "") {
     }
 
     if (filename.endsWith(".json")) {
-        ;({ prompt: sprompt, model, settings } = _legacyLoadJSON(content))
+        ; ({ prompt: sprompt, model, settings } = _legacyLoadJSON(content))
     } else if (filename.endsWith(".txt")) {
         // this is intended to only load a system prompt; this isn't
         // really a typical use case, but it is supported because it's
         // super simple and why the fuck not?
         sprompt = content
     } else if (filename.endsWith(".yml") || filename.endsWith(".md")) {
-        ;({ prompt: sprompt, model, settings } = _loadMD(content))
+        ; ({ prompt: sprompt, model, settings } = _loadMD(content))
     } else if (filename.endsWith(".yml") || filename.endsWith(".yaml")) {
-        ;({ prompt: sprompt, model, settings } = _loadYAML(content))
+        ; ({ prompt: sprompt, model, settings } = _loadYAML(content))
     } else {
         console.error("Unsupported file type")
         toast("Unsupported file type: " + filename)

@@ -2,18 +2,18 @@
 // Each tool exports: name, description, parameters, handler
 
 import { get } from 'svelte/store';
-import type { ToolDefinition } from './types';
-import { getMCPTools } from '../mcp/mcpManager';
 import { appState } from '../appState/appState';
+import { getMCPTools } from '../mcp/mcpManager';
+import type { ToolDefinition } from './types';
 
 // Import individual tools here
 import { calculatorTool } from './calculator';
 // import { echoTool } from './__echo';
 // import { sayTool } from './say';
 import { askQuestionsTool } from './ask-questions';
-import { timeTool } from './time';
-import { generateImageTool } from './generate-image';
 import { drawOverlayTool } from './draw-overlay';
+import { generateImageTool } from './generate-image';
+import { timeTool } from './time';
 
 export const tools: ToolDefinition[] = [
     // echoTool,

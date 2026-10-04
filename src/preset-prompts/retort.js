@@ -1,4 +1,4 @@
-import { Local_fire_department } from "svelte-google-materialdesign-icons";
+import { Local_fire_department } from "svelte-google-materialdesign-icons"
 
 export default {
     name: "Roast",

@@ -1,7 +1,7 @@
 // Image generation tool - uses the configured Media Server
 import { ChatMediaType, createMediaAttachment } from '../chatSession/chatAttachments'
-import { b64ToBlob, generateImage, getMediaServerUrl } from '../mediaServer/mediaServer'
 import { addStreamingMedia } from '../chatSession/streamingState'
+import { b64ToBlob, generateImage, getMediaServerUrl } from '../mediaServer/mediaServer'
 import type { ToolDefinition } from './types'
 
 export const generateImageTool: ToolDefinition = {

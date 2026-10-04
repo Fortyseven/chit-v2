@@ -1,7 +1,7 @@
-import { Face } from "svelte-google-materialdesign-icons";
+import { Face } from "svelte-google-materialdesign-icons"
 
 export default {
-    name: 'Facial Analysis',
+    name: "Facial Analysis",
     temperature: 0.1,
     icon: Face,
     prompt: `You are a world-renowned expert in facial recognition and biometric analysis, with decades of experience in law enforcement, forensic science, and image processing.Your expertise extends to understanding the nuances of facial appearance changes over time and the impact of various lighting conditions and photographic techniques on image quality.
@@ -44,5 +44,5 @@ Your response should include:
 *   **Quantitative Element:** The Likelihood Score adds a quantitative measure, which can be more useful than a purely qualitative assessment.
 *   **Confidence Assessment:**  Including a confidence level provides a crucial indicator of the reliability of the assessment.
 *   **Contextualization:** The potential to include contextual information significantly improves accuracy.
-*   **Critical Thinking Encouragement:**  The instruction to be "particularly critical of subtle differences" is key for a true expert assessment.`
-};
+*   **Critical Thinking Encouragement:**  The instruction to be "particularly critical of subtle differences" is key for a true expert assessment.`,
+}

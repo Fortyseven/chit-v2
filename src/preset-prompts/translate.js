@@ -1,7 +1,7 @@
-import { Translate } from "svelte-google-materialdesign-icons";
+import { Translate } from "svelte-google-materialdesign-icons"
 
 export default {
-    name: 'Translate to English',
+    name: "Translate to English",
     temperature: 0.2,
     icon: Translate,
     prompt: `# Role Definition
@@ -28,5 +28,5 @@ You are an expert professional translator with verified proficiency in most glob
   "I cannot confidently translate this text."
 - **Do not use asterisks, markdown, or formatting in the translation itself.**
 - **Do not add any text beyond the specified Markdown structure.**
-`
-};
+`,
+}

@@ -48,7 +48,6 @@
     $: $thinking = $currentChat?.settings?.enable_thinking ?? true
     $: $reasoningEffort = $currentChat?.settings?.reasoning_effort ?? "medium"
     $: $toolsEnabled = $currentChat?.toolsEnabled ?? false
-
 </script>
 
 <div id="ChatInferenceSettings">

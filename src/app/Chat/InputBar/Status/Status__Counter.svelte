@@ -26,12 +26,7 @@
     $: {
         const chatId = $currentChat?.id
         const model = $currentChat?.model_name
-        if (
-            $chatInProgress &&
-            chatId &&
-            model &&
-            $llmDriver?.getRouterSlots
-        ) {
+        if ($chatInProgress && chatId && model && $llmDriver?.getRouterSlots) {
             if (pollingChatId !== chatId) {
                 pollingChatId = chatId
                 void startSlotPolling($llmDriver as RouterDriver, model)
@@ -42,13 +37,14 @@
         }
     }
 
-    $: contextLimit = serverFill?.ctxTokens || $currentChat?.settings?.num_ctx || 0
+    $: contextLimit =
+        serverFill?.ctxTokens || $currentChat?.settings?.num_ctx || 0
     $: systemPromptLength = estimateTokens(
         ($currentChat?.systemPrompt?.length || 0) +
             ($currentChat?.subPrompts?.reduce(
                 (acc, sp) => acc + (sp.enabled ? sp.text.length : 0),
-                0
-            ) || 0)
+                0,
+            ) || 0),
     )
     $: conversationLength = estimateTokens(
         $currentChat?.messages?.reduce((acc, message) => {
@@ -59,7 +55,9 @@
     $: inputTokens = estimateTokens(inputLength)
     // Prefer the server's real context occupancy over the client estimate
     $: fullChatLength =
-        serverFill !== null ? serverFill.usedTokens : systemPromptLength + conversationLength + inputTokens
+        serverFill !== null
+            ? serverFill.usedTokens
+            : systemPromptLength + conversationLength + inputTokens
     $: overflow = fullChatLength >= contextLimit
 
     $: title =

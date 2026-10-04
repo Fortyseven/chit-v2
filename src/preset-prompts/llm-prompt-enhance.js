@@ -1,4 +1,4 @@
-import { Auto_awesome } from "svelte-google-materialdesign-icons";
+import { Auto_awesome } from "svelte-google-materialdesign-icons"
 
 export default {
     name: "LLM Prompt Enhancer",

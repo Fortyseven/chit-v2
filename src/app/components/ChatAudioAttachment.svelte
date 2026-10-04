@@ -4,8 +4,8 @@
         getMediaBlob,
     } from "$lib/chatSession/chatAttachments"
     import { memoizeBlobUrl } from "$lib/memoizeBlob"
-    import { Audiotrack } from "svelte-google-materialdesign-icons"
     import { onMount } from "svelte"
+    import { Audiotrack } from "svelte-google-materialdesign-icons"
 
     export let media: MediaAttachment
 
@@ -57,7 +57,9 @@
             <div class="audio-info">
                 <Audiotrack size="24" />
                 <div class="audio-meta">
-                    <span class="audio-filename">{media.filename || "Audio file"}</span>
+                    <span class="audio-filename"
+                        >{media.filename || "Audio file"}</span
+                    >
                     {#if duration}
                         <span class="audio-duration">{duration}</span>
                     {/if}
