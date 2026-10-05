@@ -105,18 +105,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.debug1 {
-    border: 1px solid red !important;
-}
-
-.debug2 {
-    border: 1px solid blue !important;
-}
-
-.debug3 {
-    border: 1px solid green !important;
-}
-
 body {
     margin: 0;
     display: flex;
@@ -129,12 +117,6 @@ body {
     display: contents;
 }
 
-.background-grid {
-    background-color: #f0f;
-    background-image: linear-gradient(#222 1px, transparent 1px),
-        linear-gradient(90deg, #222 1px, transparent 1px);
-    background-size: 1rem 1rem;
-}
 
 .response.markdown {
     overflow-x: unset;
@@ -422,18 +404,5 @@ button {
         padding: 0.25em 0.5em;
         font-size: 0.8em;
         font-weight: unset;
-    }
-
-    &.trans {
-        background-color: transparent;
-        padding: unset;
-        padding-inline: 0.25rem;
-        color: var(--color-accent);
-        margin-inline: 0.25rem;
-        line-height: 1em;
-    }
-
-    &.trans:hover {
-        background-color: #fff1;
     }
 }
