@@ -8,8 +8,7 @@ import type { ToolDefinition } from './types';
 
 // Import individual tools here
 import { calculatorTool } from './calculator';
-// import { echoTool } from './__echo';
-// import { sayTool } from './say';
+// import { echoTool } from './__echo'; -- example
 import { askQuestionsTool } from './ask-questions';
 import { drawOverlayTool } from './draw-overlay';
 import { generateImageTool } from './generate-image';
