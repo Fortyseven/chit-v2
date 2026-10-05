@@ -109,7 +109,7 @@ The project structure follows Svelte conventions:
     - `/text` — Text normalization and token estimation
     - `/templating` — System and user variable templating
   - `/preset-prompts` — Predefined system prompt presets
-  - `/vendor` — Vendored third-party scripts (EXIF.js, FileSaver, highlight.js)
+  - `/vendor` — Vendored third-party scripts (EXIF.js, highlight.js)
 - `/public` — Static assets (favicon, manifest, syntax highlighting CSS)
 
 ----
