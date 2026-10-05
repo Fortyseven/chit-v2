@@ -223,7 +223,6 @@
                     background-color: #111;
                     color: var(--color-accent);
                     font-family: monospace;
-                    /* box-sizing: border-box; */
                 }
 
                 textarea {
@@ -234,19 +233,15 @@
                     background-color: #111;
                     color: var(--color-accent);
                     resize: vertical;
-                    /* box-sizing: border-box; */
                     font-family: monospace;
                 }
 
                 input[type="checkbox"],
-                select,
-                button,
-                input[type="range"] {
+                select {
                     margin-right: 0.5rem;
                 }
-                select,
-                button,
-                input[type="range"] {
+
+                select {
                     width: 100%;
                     padding: 0.4rem;
                     border-radius: var(--border-radius-standard);
@@ -255,14 +250,11 @@
                     color: var(--color-accent);
                     font-family: monospace;
                 }
-                input[type="range"] {
-                    padding: 0;
-                }
-                .small-value {
-                    font-size: 0.75rem;
-                    opacity: 0.7;
-                }
             }
         }
+    }
+    hr {
+        border: 1px solid var(--color-accent);
+        opacity: 0.25;
     }
 </style>
