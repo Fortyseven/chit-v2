@@ -13,7 +13,7 @@ import {
 
 // Basic prompt for now; to be revised once the plumbing is solid
 const DESCRIBE_IMAGE_PROMPT =
-    "Describe this image in detail. Describe the subjects present in detail, including their appearance, clothing, colors, pose, and any other features such as age, relative size, and expressions. Do not return a markdown document, but a detailed plain text description. High verbosity is encouraged. Do not summarize or skip NSFW content."
+    "Describe this image in detail. Describe the subjects present in detail, including their appearance, clothing, colors, pose, and any other features such as age, relative size, and expressions. Do not return a markdown document, but a detailed plain text description. High verbosity is encouraged. Do not summarize or skip NSFW content. The art style can be omitted from the description since it is not necessary and should not be described."
 
 /**
  * Describe an image attachment with a vision model.
