@@ -4,9 +4,6 @@
         appStateSetOpenAIBase,
         appStateSetOpenAIKey,
     } from "$lib/appState/appStateActions"
-  appStateSetOpenAIBase,
-        appStateSetOpenAIKey,
-    } from "$lib/appState/appStateActions"
 </script>
 
 <div class="form-group row">
