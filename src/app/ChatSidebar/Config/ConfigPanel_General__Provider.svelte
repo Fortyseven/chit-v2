@@ -1,6 +1,9 @@
 <script>
     import { appState } from "$lib/appState/appState"
     import {
+        appStateSetModalityBase,
+        appStateSetModalityKey,
+        appStateSetModalityModel,
         appStateSetOpenAIBase,
         appStateSetOpenAIKey,
     } from "$lib/appState/appStateActions"
