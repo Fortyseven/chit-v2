@@ -80,8 +80,6 @@ interface Message {
 
 ### 5. Streaming Process
 1. User submits message → added to chat messages
-2. `chatInProgressWithId()` tracks active streaming
-3. `chatGetStreamingPending()` provides real-time content
 4. Stream completes → final message replaces pending content
 
 ### 6. Message Updates

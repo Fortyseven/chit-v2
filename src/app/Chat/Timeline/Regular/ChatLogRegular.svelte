@@ -8,6 +8,11 @@
     import { chats, currentChat } from "$lib/chatSession/chatSession"
     import { setPendingInputText } from "$lib/chatSession/rewindInput"
     import { streamingState } from "$lib/chatSession/streamingState"
+    import {
+        findRouterModel,
+        modelSupportsModality,
+        routerModelInfos,
+    } from "$lib/llm/routerModels"
     import AsyncMediaImage from "../../../components/AsyncMediaImage.svelte"
     import ChatAudioAttachment from "../../../components/ChatAudioAttachment.svelte"
     import ChatLogRegular_Assistant from "./ChatLogRegular_Assistant.svelte"
@@ -65,6 +70,15 @@
         return false
     }
 
+    // Warn on stored attachments the current model can't consume: they stay
+    // displayed, but are skipped in the outgoing LLM payload (see
+    // LLMInterface.chatUpdateSession).
+    $: mediaModelInfo = $currentChat
+        ? findRouterModel($routerModelInfos, $currentChat.model_name)
+        : undefined
+    $: canSendMediaImages = modelSupportsModality(mediaModelInfo, "image")
+    $: canSendMediaAudio = modelSupportsModality(mediaModelInfo, "audio")
+
     // Tool call message handling
     let toolCallExpanded: Record<string, boolean> = {}
 
@@ -97,6 +111,7 @@
                                         altText="Media Attachment"
                                         maxWidth={256}
                                         maxHeight={256}
+                                        showWarning={!canSendMediaImages}
                                     />
                                 </div>
                             {/if}

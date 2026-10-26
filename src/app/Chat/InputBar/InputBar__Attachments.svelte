@@ -11,9 +11,9 @@
         routerModelInfos,
     } from "$lib/llm/routerModels"
     import { memoizeBlobUrl } from "$lib/memoizeBlob"
-    import { toastError } from "$lib/toast"
     import { loadFile } from "$lib/utils"
     import AsyncMediaImage from "../../components/AsyncMediaImage.svelte"
+    import MediaWarningBadge from "../../components/MediaWarningBadge.svelte"
 
     // Multimodal gating: hide image/audio attachment when the selected
     // model can't consume it (fails open when the router can't report).
@@ -145,8 +145,10 @@
             ".yaml",
             ".toml",
         ]
-        if (canAttachImage) extensions.push(".jpg", ".png", ".webp", ".gif")
-        if (canAttachAudio) extensions.push(".wav", ".mp3")
+        // Media file types are always offered; if the model can't consume
+        // them, the attachment is flagged and skipped at send time.
+        extensions.push(".jpg", ".png", ".webp", ".gif")
+        extensions.push(".wav", ".mp3")
 
         let loadedFile = await loadFile(extensions)
 
@@ -157,14 +159,6 @@
 
             if (file && type) {
                 console.debug("File type: ", type)
-                if (type.startsWith("image/") && !canAttachImage) {
-                    toastError("The selected model can't read images")
-                    return
-                }
-                if (type.startsWith("audio/") && !canAttachAudio) {
-                    toastError("The selected model can't read audio")
-                    return
-                }
                 if (type.startsWith("text/") && inputBoxEl) {
                     chatAddPastedMedia(
                         $currentChat?.id,
@@ -228,10 +222,18 @@
                         <!-- svelte-ignore a11y_missing_attribute -->
                         {#if media.data instanceof Blob}
                             <!-- Legacy in-memory blob -->
-                            <img
-                                src={memoizeBlobUrl(media.data)}
-                                class="btn-image-attach"
-                            />
+                            <div class="media-image-wrap">
+                                <img
+                                    src={memoizeBlobUrl(media.data)}
+                                    class="btn-image-attach"
+                                />
+                                {#if !canAttachImage}
+                                    <MediaWarningBadge
+                                        placement="corner"
+                                        warningMessage="Model can't read images — it will not be sent to the model"
+                                    />
+                                {/if}
+                            </div>
                         {:else if media.isStored && media.blobId}
                             <!-- IndexedDB stored blob -->
                             <AsyncMediaImage
@@ -240,6 +242,7 @@
                                 altText="Attached Image"
                                 maxWidth={256}
                                 maxHeight={256}
+                                showWarning={!canAttachImage}
                             />
                         {:else}
                             <!-- Fallback for invalid media -->
@@ -267,18 +270,28 @@
                         <div class="btn-text-attach">{media.data}</div>
                     </Pill>
                 {:else if media.type === ChatMediaType.AUDIO}
-                    <Pill
-                        text={media.filename || "Audio"}
-                        dismissible
-                        color="var(--color-accent-complement-darker)"
-                        textColor="white"
-                        on:dismiss={async () => {
-                            await chatClearPastedMedia(
-                                $currentChat?.id,
-                                media.id,
-                            )
-                        }}
-                    />
+                    <div class="audio-pill-wrap">
+                        <Pill
+                            text={media.filename || "Audio"}
+                            dismissible
+                            color="var(--color-accent-complement-darker)"
+                            textColor="white"
+                            on:dismiss={async () => {
+                                await chatClearPastedMedia(
+                                    $currentChat?.id,
+                                    media.id,
+                                )
+                            }}
+                        />
+                        {#if !canAttachAudio}
+                            <MediaWarningBadge
+                                placement="corner"
+                                top={2}
+                                right={30}
+                                warningMessage="Model can't read audio — it will not be sent to the model"
+                            />
+                        {/if}
+                    </div>
                 {:else}
                     <Pill
                         text={media.filename ||
@@ -360,6 +373,17 @@
             color: var(--color-error, #cc0000);
             font-size: 0.8em;
             padding: 4px;
+        }
+
+        .media-image-wrap {
+            position: relative;
+            display: inline-block;
+            line-height: 0;
+        }
+
+        .audio-pill-wrap {
+            position: relative;
+            width: 100%;
         }
     }
 </style>

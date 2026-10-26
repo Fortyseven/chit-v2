@@ -721,15 +721,6 @@ export function chatLength(chatId: string = "") {
 }
 
 //--------------------------------------------------------------
-export function chatGetStreamingPendingThoughts(chatId: string = "") {
-    return get(streamingState).thinking_buffer
-}
-//--------------------------------------------------------------
-export function chatGetStreamingPending(chatId: string = "") {
-    return get(streamingState).response_buffer
-}
-
-//--------------------------------------------------------------
 /**
  * Check if we should scroll during streaming based on token batching.
  * Returns true when enough tokens have accumulated since last scroll.
@@ -889,12 +880,6 @@ export function chatAbort() {
         const chatId = getActiveChatId()
         chatSetWasAborted(chatId, true)
     }
-}
-
-//--------------------------------------------------------------
-export function chatInProgressWithId(chatId: string = ""): Boolean {
-    const ss = get(streamingState)
-    return ss.thinking_buffer.length + ss.response_buffer.length > 0
 }
 
 //--------------------------------------------------------------

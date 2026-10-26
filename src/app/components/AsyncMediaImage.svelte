@@ -6,12 +6,19 @@
     import { memoizeBlobUrl } from "$lib/memoizeBlob"
     import { onMount } from "svelte"
 
+    import MediaWarningBadge from "./MediaWarningBadge.svelte"
+
     export let media: MediaAttachment
     export let cssClass: string = ""
     export let altText: string = "Media Attachment"
     export let onClick: ((blob: Blob) => void) | undefined = undefined
     export let maxWidth: number | string | undefined = undefined
     export let maxHeight: number | string | undefined = undefined
+    /**
+     * Show the "not sent" warning badge when the selected model can't
+     * consume this media (it stays attached, but is skipped in the payload).
+     */
+    export let showWarning: boolean = false
 
     let imageUrl: string | null = null
     let loading = true
@@ -72,18 +79,26 @@
         <span>Failed to load media</span>
     </div>
 {:else if imageUrl}
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <img
-        src={imageUrl}
-        class={cssClass}
-        alt={altText}
-        style="
-            {maxWidth ? `max-width: ${maxWidth};` : ''}
-            {maxHeight ? `max-height: ${maxHeight};` : ''}
-        "
-        on:click={handleClick}
-    />
+    <div class="media-image-wrap">
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <img
+            src={imageUrl}
+            class={cssClass}
+            alt={altText}
+            style="
+                {maxWidth ? `max-width: ${maxWidth};` : ''}
+                {maxHeight ? `max-height: ${maxHeight};` : ''}
+            "
+            on:click={handleClick}
+        />
+        {#if showWarning}
+            <MediaWarningBadge
+                placement="corner"
+                warningMessage="Model can't read images — it will not be sent to the model"
+            />
+        {/if}
+    </div>
 {/if}
 
 <style>
@@ -109,5 +124,16 @@
     .media-error span {
         font-size: 12px;
         opacity: 0.7;
+    }
+
+    .media-image-wrap {
+        position: relative;
+        display: inline-block;
+        line-height: 0;
+    }
+
+    .media-image-wrap img {
+        display: block;
+        max-width: 100%;
     }
 </style>

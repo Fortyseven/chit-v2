@@ -42,5 +42,5 @@ export function setCurrentMode(mode: AppMode): void {
 }
 
 // Re-export for convenience
-export { chatSetCurrentMode } from "../chatSession/chatActions"
-export { AppMode, currentChatMode } from "../chatSession/chatSession"
+// export { chatSetCurrentMode } from "../chatSession/chatActions"
+// export { AppMode, currentChatMode } from "../chatSession/chatSession"

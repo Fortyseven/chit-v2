@@ -46,31 +46,3 @@ export function wrapQuotesStreaming(input: string): string {
     }
     return out
 }
-
-/**
- * Incremental chunk processor variant. Maintains external mutable state so
- * caller can feed streaming chunks without re-walking the entire buffer.
- * Measurement patterns like 6'10" or 40°12'30" are left unchanged.
- */
-export function wrapQuotesChunk(
-    chunk: string,
-    state: { inQuote: boolean }
-): { output: string; inQuote: boolean } {
-    if (!chunk) return { output: "", inQuote: state.inQuote }
-    let out = ""
-    for (let i = 0; i < chunk.length; i++) {
-        const ch = chunk[i]
-        if (ch === '"' && !isMeasurementQuote(chunk, i)) {
-            if (state.inQuote) {
-                out += '</span>"'
-                state.inQuote = false
-            } else {
-                out += '"<span class="quote">'
-                state.inQuote = true
-            }
-        } else {
-            out += ch
-        }
-    }
-    return { output: out, inQuote: state.inQuote }
-}

@@ -311,23 +311,7 @@
         &.markdown.html {
             background-color: #fff;
             color: #000;
-
-            .rendered-content table > tbody > tr > td {
-                .markdown-editor .rendered-content {
-                    font-family:
-                        system-ui,
-                        -apple-system,
-                        BlinkMacSystemFont,
-                        "Segoe UI",
-                        Roboto,
-                        Oxygen,
-                        Ubuntu,
-                        Cantarell,
-                        "Open Sans",
-                        "Helvetica Neue",
-                        sans-serif;
-                }
-            }
+            border: 4px solid #f0f !important;
         }
 
         .message-controls {

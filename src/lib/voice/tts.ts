@@ -197,14 +197,6 @@ export function setOpenAITtsConfig(endpoint: string, apiKey: string = "") {
     }
 }
 
-export function getOpenAITtsConfig() {
-    const settings = get(voiceSettings)
-    return {
-        endpoint: settings.openaiTtsEndpoint,
-        apiKey: settings.openaiTtsApiKey,
-    }
-}
-
 // Initialize OpenAI engine if config exists on startup
 if (typeof window !== "undefined") {
     const unsubscribe = voiceSettings.subscribe((settings) => {

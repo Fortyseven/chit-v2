@@ -7,7 +7,14 @@
     import { onMount } from "svelte"
     import { Audiotrack } from "svelte-google-materialdesign-icons"
 
+    import MediaWarningBadge from "./MediaWarningBadge.svelte"
+
     export let media: MediaAttachment
+    /**
+     * Show the "not sent" warning badge when the selected model can't
+     * consume this media (it stays attached, but is skipped in the payload).
+     */
+    export let showWarning: boolean = false
 
     let audioUrl: string | null = null
     let duration: string = ""
@@ -72,10 +79,17 @@
             ></audio>
         </div>
     {/if}
+    {#if showWarning}
+        <MediaWarningBadge
+            placement="corner"
+            warningMessage="Model can't read audio — it will not be sent to the model"
+        />
+    {/if}
 </div>
 
 <style lang="scss">
     .audio-attachment {
+        position: relative;
         width: 100%;
         max-width: 480px;
         margin-block-start: 1em;

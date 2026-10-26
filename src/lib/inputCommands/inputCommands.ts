@@ -86,6 +86,3 @@ export async function handleCommand(args: string): Promise<CommandResult> {
         )
     }
 }
-export function getCommandList() {
-    return Object.keys(COMMANDS)
-}

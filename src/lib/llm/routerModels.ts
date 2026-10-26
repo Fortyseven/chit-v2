@@ -120,14 +120,6 @@ export function formatParams(n?: number): string {
     return `${n}`
 }
 
-/** 4930000000 -> "4.9GB" (file size in bytes). */
-export function formatBytes(n?: number): string {
-    if (!n || n <= 0) return ""
-    if (n >= 1e9) return `${trimZero((n / 1e9).toFixed(1))}GB`
-    if (n >= 1e6) return `${trimZero((n / 1e6).toFixed(0))}MB`
-    return `${n}B`
-}
-
 /** 4096 -> "4k", 131072 -> "128k" (context token counts). */
 export function formatCtx(n?: number): string {
     if (!n || n <= 0) return ""

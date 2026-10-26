@@ -18,6 +18,9 @@ import { convertBlobToBase64 as convertFileToBase64 } from "../utils"
 import type { GenericMessage, LLMDriver } from "./LLMDriver"
 import { OpenAIDriver } from "./OpenAIDriver"
 import {
+    findRouterModel,
+    modelSupportsModality,
+    routerModelInfos,
     startRouterMonitor,
     stopRouterMonitor,
 } from "./routerModels"
@@ -179,6 +182,16 @@ export class LLMInterface {
             }
         }
 
+        // Modality gate: media the selected model can't consume stays in the
+        // chat/timeline but is skipped in the outgoing payload (router
+        // backends only; unknown info fails open — modelSupportsModality).
+        const selectedModelInfo = findRouterModel(
+            get(routerModelInfos),
+            chat_session.model_name as string
+        )
+        const canSendImages = modelSupportsModality(selectedModelInfo, "image")
+        const canSendAudio = modelSupportsModality(selectedModelInfo, "audio")
+
         for (let i = 0; i < chat_session.messages.length; i++) {
             const message = chat_session.messages[i]
             // Skip tool call info - it's for display only, not for LLM
@@ -198,7 +211,7 @@ export class LLMInterface {
             if (message.media && message.media.length > 0) {
                 for (const media of message.media) {
                     if (media.type == ChatMediaType.IMAGE) {
-                        if (isLatestUserMessage) {
+                        if (isLatestUserMessage && canSendImages) {
                             try {
                                 // Get the actual blob data (from IndexedDB or in-memory)
                                 const blobData = await getMediaBlob(media)
@@ -219,12 +232,12 @@ export class LLMInterface {
                                     error
                                 )
                             }
-                        } else {
+                        } else if (!isLatestUserMessage) {
                             // Historical image — just note it was there
                             msg += "\n[image attached]"
                         }
                     } else if (media.type == ChatMediaType.AUDIO) {
-                        if (isLatestUserMessage) {
+                        if (isLatestUserMessage && canSendAudio) {
                             try {
                                 const blobData = await getMediaBlob(media)
                                 if (blobData instanceof Blob) {
@@ -256,7 +269,7 @@ export class LLMInterface {
                                     error
                                 )
                             }
-                        } else {
+                        } else if (!isLatestUserMessage) {
                             // Historical audio — just note it was there
                             msg += "\n[audio attached]"
                         }

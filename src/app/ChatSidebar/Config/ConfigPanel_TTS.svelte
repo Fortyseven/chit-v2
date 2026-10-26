@@ -318,24 +318,6 @@
 {/if}
 
 <style>
-    .tabs {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-        button {
-            background: #111;
-            color: var(--color-accent);
-            border: 1px solid #444;
-            padding: 0.5rem 0.75rem;
-            cursor: pointer;
-            border-radius: var(--border-radius-standard);
-            font-weight: 600;
-        }
-        button.active {
-            background: var(--color-background-lighter);
-            border-color: var(--color-accent);
-        }
-    }
     .form-group {
         * {
             box-sizing: border-box !important;
