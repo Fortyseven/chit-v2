@@ -52,6 +52,13 @@ export interface LLMDriver {
         config: ChatConfig
     ): Promise<string>
 
+    /** One-shot, non-streaming plain-text completion (no tools, no chat state). */
+    completeText(
+        messages: GenericMessage[],
+        model: string,
+        config?: ChatConfig
+    ): Promise<string>
+
     kind(): "openai"
 
     /** Unload all currently loaded models (router-mode servers only). */

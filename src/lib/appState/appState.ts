@@ -22,6 +22,14 @@ export interface AppState {
     // NEW: OpenAI-compatible
     openaiApiBase: string
     openaiApiKey: string
+    // Optional auxiliary OpenAI-compatible endpoint reserved for special
+    // modality features; normal calls always use the endpoint above
+    modalityApiBase: string
+    modalityApiKey: string
+    // Model name sent to the modality endpoint
+    modalityModel: string
+    // Skip the modality endpoint when the chat's model can read images itself
+    modalityUsePrimary: boolean
     mediaServerUrl: string
     mcpServers: MCPServerConfig[]
     // Names of built-in tools the user has disabled (empty = all enabled)
@@ -44,6 +52,10 @@ export const appStateDefaults: AppState = {
     resizeImages: true,
     openaiApiBase: "",
     openaiApiKey: "",
+    modalityApiBase: "",
+    modalityApiKey: "",
+    modalityModel: "",
+    modalityUsePrimary: true,
     mediaServerUrl: "",
     mcpServers: [],
     disabledTools: [],

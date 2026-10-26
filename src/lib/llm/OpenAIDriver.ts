@@ -162,6 +162,50 @@ export class OpenAIDriver implements LLMDriver {
         return JSON.parse(stripJsonFences(data.choices?.[0]?.message?.content))
     }
 
+    async completeText(
+        messages: GenericMessage[],
+        model: string,
+        config: ChatConfig = {}
+    ): Promise<string> {
+        const oaiMessages = messages.map((m) => {
+            if (!m.images || m.images.length === 0) {
+                return { role: m.role, content: m.content }
+            }
+            return {
+                role: m.role,
+                content: [
+                    { type: "text", text: m.content },
+                    ...m.images.map((img64) => ({
+                        type: "image_url",
+                        image_url: { url: `data:image/png;base64,${img64}` },
+                    })),
+                ],
+            }
+        })
+
+        const res = await fetch(`${this.baseURL}/chat/completions`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.apiKey}`,
+            },
+            body: JSON.stringify({
+                model,
+                messages: oaiMessages,
+                temperature: config.temp ?? DEFAULT_TEMPERATURE,
+                stream: false,
+                chat_template_kwargs: { enable_thinking: false },
+            }),
+        })
+
+        if (!res.ok) {
+            throw new Error(describeHttpError(res.status, await res.text()))
+        }
+
+        const data = await res.json()
+        return (data.choices?.[0]?.message?.content ?? "").trim()
+    }
+
     async refreshModels() {
         try {
             const res = await fetch(`${this.baseURL}/models`, {

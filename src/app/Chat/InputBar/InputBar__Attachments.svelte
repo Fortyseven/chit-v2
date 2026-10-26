@@ -3,6 +3,7 @@
         chatAddPastedMedia,
         chatClearPastedMedia,
         ChatMediaType,
+        type MediaAttachment,
     } from "$lib/chatSession/chatAttachments"
     import { currentChat } from "$lib/chatSession/chatSession"
     import {
@@ -10,7 +11,11 @@
         modelSupportsModality,
         routerModelInfos,
     } from "$lib/llm/routerModels"
+    import { describeImage } from "$lib/llm/describeImage"
     import { memoizeBlobUrl } from "$lib/memoizeBlob"
+    import { appState } from "$lib/appState/appState"
+    import { toastError } from "$lib/toast"
+    import { Visibility } from "svelte-google-materialdesign-icons"
     import { loadFile } from "$lib/utils"
     import AsyncMediaImage from "../../components/AsyncMediaImage.svelte"
     import MediaWarningBadge from "../../components/MediaWarningBadge.svelte"
@@ -22,6 +27,38 @@
         : undefined
     $: canAttachImage = modelSupportsModality(selectedInfo, "image")
     $: canAttachAudio = modelSupportsModality(selectedInfo, "audio")
+
+    // Describe-image button: needs a configured modality endpoint
+    $: canDescribe = !!$appState.modalityApiBase.trim()
+    let describingIds = new Set<string>()
+
+    /**
+     * Describe an image attachment and append the result to the input box.
+     * @param {MediaAttachment} media - The image attachment to describe
+     */
+    async function onDescribeImage(media: MediaAttachment) {
+        if (describingIds.has(media.id)) return
+        describingIds = new Set(describingIds).add(media.id)
+        try {
+            const description = await describeImage(
+                media,
+                $currentChat?.model_name as string,
+            )
+            if (inputBoxEl) {
+                inputBoxEl.value += `${inputBoxEl.value ? "\n\n" : ""}${description}`
+                inputBoxEl.dispatchEvent(new Event("input", { bubbles: true }))
+                inputBoxEl.focus()
+            }
+        } catch (error) {
+            console.error("Describe image failed:", error)
+            toastError(
+                `Describe image failed: ${error instanceof Error ? error.message : error}`,
+            )
+        } finally {
+            describingIds.delete(media.id)
+            describingIds = new Set(describingIds)
+        }
+    }
 
     import { EXIF } from "../../../vendor/exif"
     import Pill from "../../UI/Pill/Pill.svelte"
@@ -219,6 +256,7 @@
                             )
                         }}
                     >
+                        <div class="describe-wrap">
                         <!-- svelte-ignore a11y_missing_attribute -->
                         {#if media.data instanceof Blob}
                             <!-- Legacy in-memory blob -->
@@ -248,6 +286,19 @@
                             <!-- Fallback for invalid media -->
                             <span class="media-error">Invalid media</span>
                         {/if}
+                        {#if canDescribe}
+                            <button
+                                class="btn-describe"
+                                title="Describe this image"
+                                aria-label="Describe this image"
+                                disabled={describingIds.has(media.id)}
+                                class:busy={describingIds.has(media.id)}
+                                onclick={() => onDescribeImage(media)}
+                            >
+                                <Visibility size={16} color="white" />
+                            </button>
+                        {/if}
+                        </div>
                     </Pill>
                 {:else if media.type === ChatMediaType.TEXT}
                     <Pill
@@ -367,6 +418,30 @@
             font-family: monospace;
             font-size: 0.9em;
             filter: blur(0.25);
+        }
+
+        .describe-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-describe {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            display: inline-flex;
+            padding: 2px;
+            border-radius: 50%;
+            background-color: var(--color-accent-tertiary);
+            line-height: 0;
+            cursor: pointer;
+            &:hover {
+                background-color: var(--color-accent-tertiary-lighter);
+            }
+            &.busy {
+                opacity: 0.6;
+                cursor: progress;
+            }
         }
 
         .media-error {

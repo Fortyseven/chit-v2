@@ -35,6 +35,15 @@ export function appStateSetOpenAIBase(base: string) {
 export function appStateSetOpenAIKey(key: string) {
     appState.update((state) => ({ ...state, openaiApiKey: key }))
 }
+export function appStateSetModalityBase(base: string) {
+    appState.update((state) => ({ ...state, modalityApiBase: base }))
+}
+export function appStateSetModalityKey(key: string) {
+    appState.update((state) => ({ ...state, modalityApiKey: key }))
+}
+export function appStateSetModalityModel(model: string) {
+    appState.update((state) => ({ ...state, modalityModel: model }))
+}
 export function appStateSetMediaServerUrl(url: string) {
     appState.update((state) => ({ ...state, mediaServerUrl: url }))
 }
