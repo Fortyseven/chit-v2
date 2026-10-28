@@ -82,7 +82,6 @@
 
     // Memoization for markdown rendering (prevent re-parsing unchanged content)
     let lastContent = ""
-    let lastProcessed = ""
     let lastMarkdownStr = ""
 
     // Mermaid viewer state
@@ -102,17 +101,18 @@
     // message when content is truly empty
     // Process content to wrap quoted sections before markdown render
     $: {
-        const processed = isRPMode() ? wrapQuotesStreaming(content) : content
-        const contentChanged =
-            content !== lastContent || processed !== lastProcessed
+        const contentChanged = content !== lastContent
         if (contentChanged) {
             lastContent = content
-            lastProcessed = processed
-            const { content: withoutSvg, svgBlocks } =
-                extractSvgBlocks(processed)
+            // Extract SVG/mermaid from the raw text first: quote wrapping would
+            // otherwise inject <span>s into their attribute quotes and break them.
+            const { content: withoutSvg, svgBlocks } = extractSvgBlocks(content)
             const { content: withoutMermaid, mermaidBlocks } =
                 extractMermaidBlocks(withoutSvg)
-            const rendered = md.render(withoutMermaid).trim()
+            const processed = isRPMode()
+                ? wrapQuotesStreaming(withoutMermaid)
+                : withoutMermaid
+            const rendered = md.render(processed).trim()
             let result = injectSvgBlocks(rendered, svgBlocks)
             // Mermaid blocks are injected with loading placeholders, then rendered async
             result = injectMermaidBlocks(result, mermaidBlocks)
