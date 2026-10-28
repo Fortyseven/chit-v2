@@ -593,7 +593,7 @@
             on:keydown={handleKeyDown}
         >
             {#if content}
-                {@html content}
+                {content}
             {:else}
                 <span class="placeholder">_[blank content]_</span>
             {/if}

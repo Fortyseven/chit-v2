@@ -58,6 +58,7 @@ export function extractSvgBlocks(content: string): {
     svgBlocks: string[]
 } {
     const svgBlocks: string[] = []
+    content = content.replace(/\r\n?/g, "\n")
 
     const placeholder = (svg: string): string => {
         const index = svgBlocks.length
