@@ -1,7 +1,7 @@
 import cmdArtPrompt from "./cmdArtPrompt"
 import cmdTools from "./cmdTools"
 import cmdRPStats from "./rp/cmdRPStats"
-
+import cmdRPSVG from "./rp/cmdRPSVG"
 export interface CommandResult {
     result: string
     passToInput: boolean
@@ -21,6 +21,10 @@ const COMMANDS: CommandList = {
     art: {
         description: "Generate a prompt based on the current conversation.",
         action: cmdArtPrompt,
+    },
+    svg: {
+        description: "Macro for prompting that generates an SVG drawing of the current moment in an RP session.",
+        action: cmdRPSVG,
     },
     stats: {
         description:
