@@ -1,7 +1,9 @@
 import cmdArtPrompt from "./cmdArtPrompt"
 import cmdTools from "./cmdTools"
+import cmdRPPose from "./rp/cmdRPPose"
 import cmdRPStats from "./rp/cmdRPStats"
 import cmdRPSVG from "./rp/cmdRPSVG"
+
 export interface CommandResult {
     result: string
     passToInput: boolean
@@ -23,12 +25,16 @@ const COMMANDS: CommandList = {
         action: cmdArtPrompt,
     },
     svg: {
-        description: "Macro for prompting that generates an SVG drawing of the current moment in an RP session.",
+        description: "RP macro for prompting that generates an SVG drawing of the current moment of a session.",
         action: cmdRPSVG,
+    },
+    pose: {
+        description: "RP macro for prompting that generates character pose descriptions.",
+        action: cmdRPPose,
     },
     stats: {
         description:
-            "Macro for prompting that generates stats for characters in an RP session.",
+            "RP macro for prompting that generates stats for characters in a session.",
         action: cmdRPStats,
     },
     tools: {
