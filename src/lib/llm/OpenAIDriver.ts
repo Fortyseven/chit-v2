@@ -14,6 +14,7 @@ import { toastError } from "../toast"
 import { clearQuoteQueue, queueQuote } from "../voice/quoteTTS"
 import type { ChatConfig, GenericMessage, LLMDriver } from "./LLMDriver"
 import { stripJsonFences } from "./LLMDriver"
+import { llmDebugLogFinish, llmDebugLogStart } from "./llmDebugLog"
 import { QuoteTTSDetector } from "./quoteTTSDetection"
 import { QwenToolDetector } from "./qwenToolDetection"
 import type { RouterModelInfo, RouterSlotInfo } from "./routerModels"
@@ -142,24 +143,45 @@ export class OpenAIDriver implements LLMDriver {
             chat_template_kwargs: { enable_thinking: false }
         }
 
-        const res = await fetch(`${this.baseURL}/chat/completions`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.apiKey}`,
-            },
-            body: JSON.stringify(body),
+        const debugId = llmDebugLogStart({
+            kind: "chatFormatted",
+            model,
+            request: body,
         })
 
-        if (!res.ok) {
-            const errBody = await res.text()
-            throw new Error(describeHttpError(res.status, errBody))
+        try {
+            const res = await fetch(`${this.baseURL}/chat/completions`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.apiKey}`,
+                },
+                body: JSON.stringify(body),
+            })
+
+            if (!res.ok) {
+                const errBody = await res.text()
+                throw new Error(describeHttpError(res.status, errBody))
+            }
+
+            const data = await res.json()
+
+            // OpenAI returns choices[0].message.content as valid JSON
+            const parsed = JSON.parse(
+                stripJsonFences(data.choices?.[0]?.message?.content)
+            )
+            llmDebugLogFinish(debugId, {
+                status: "ok",
+                content: JSON.stringify(parsed, null, 2),
+            })
+            return parsed
+        } catch (e) {
+            llmDebugLogFinish(debugId, {
+                status: "error",
+                error: e instanceof Error ? e.message : String(e),
+            })
+            throw e
         }
-
-        const data = await res.json()
-
-        // OpenAI returns choices[0].message.content as valid JSON
-        return JSON.parse(stripJsonFences(data.choices?.[0]?.message?.content))
     }
 
     async completeText(
@@ -183,27 +205,45 @@ export class OpenAIDriver implements LLMDriver {
             }
         })
 
-        const res = await fetch(`${this.baseURL}/chat/completions`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.apiKey}`,
-            },
-            body: JSON.stringify({
-                model,
-                messages: oaiMessages,
-                temperature: config.temp ?? DEFAULT_TEMPERATURE,
-                stream: false,
-                chat_template_kwargs: { enable_thinking: false },
-            }),
-        })
-
-        if (!res.ok) {
-            throw new Error(describeHttpError(res.status, await res.text()))
+        const body: any = {
+            model,
+            messages: oaiMessages,
+            temperature: config.temp ?? DEFAULT_TEMPERATURE,
+            stream: false,
+            chat_template_kwargs: { enable_thinking: false },
         }
 
-        const data = await res.json()
-        return (data.choices?.[0]?.message?.content ?? "").trim()
+        const debugId = llmDebugLogStart({
+            kind: "completeText",
+            model,
+            request: body,
+        })
+
+        try {
+            const res = await fetch(`${this.baseURL}/chat/completions`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${this.apiKey}`,
+                },
+                body: JSON.stringify(body),
+            })
+
+            if (!res.ok) {
+                throw new Error(describeHttpError(res.status, await res.text()))
+            }
+
+            const data = await res.json()
+            const text = (data.choices?.[0]?.message?.content ?? "").trim()
+            llmDebugLogFinish(debugId, { status: "ok", content: text })
+            return text
+        } catch (e) {
+            llmDebugLogFinish(debugId, {
+                status: "error",
+                error: e instanceof Error ? e.message : String(e),
+            })
+            throw e
+        }
     }
 
     async refreshModels() {
@@ -351,6 +391,11 @@ export class OpenAIDriver implements LLMDriver {
         chatSetWasAborted(chatId, false)
         this.currentController = new AbortController()
         const controller = this.currentController
+        // Debug: ids of recorded exchanges for this turn (initial call plus
+        // any tool follow-up calls), filled in from the final session state
+        let debugIds: string[] = []
+        let debugError: string | undefined
+        let debugAborted = false
         try {
             // Check if tools are enabled for this chat
             const chat = chatFind(chatId)
@@ -392,7 +437,9 @@ export class OpenAIDriver implements LLMDriver {
             let toolDefinitions: any[] | undefined = undefined
             if (toolsEnabled) {
                 const { getAllTools } = await import('../tools/index')
-                const allTools = getAllTools()
+                // Pass the chatId so RP tracking tools are only offered
+                // while tracking is active for this chat
+                const allTools = getAllTools(chatId)
                 toolDefinitions = allTools.map(tool => ({
                     type: "function",
                     function: {
@@ -401,7 +448,7 @@ export class OpenAIDriver implements LLMDriver {
                         parameters: {
                             type: "object",
                             properties: tool.parameters,
-                            required: Object.keys(tool.parameters)
+                            required: tool.required ?? Object.keys(tool.parameters)
                         }
                     }
                 }))
@@ -433,6 +480,16 @@ export class OpenAIDriver implements LLMDriver {
                 requestBody.tools = toolDefinitions
                 requestBody.tool_choice = "auto"
             }
+
+            debugIds.push(
+                llmDebugLogStart({
+                    chatId,
+                    kind: "chat",
+                    label: "chat · initial",
+                    model,
+                    request: requestBody,
+                })
+            )
 
             const res = await fetch(`${this.baseURL}/chat/completions`, {
                 method: "POST",
@@ -711,6 +768,16 @@ export class OpenAIDriver implements LLMDriver {
                     ...(config.seed !== undefined && { seed: config.seed }),
                 }
 
+                debugIds.push(
+                    llmDebugLogStart({
+                        chatId,
+                        kind: "chat",
+                        label: "chat · tool follow-up",
+                        model,
+                        request: followUpBody,
+                    })
+                )
+
                 // Make second API call with tool results
                 const followUpRes = await fetch(`${this.baseURL}/chat/completions`, {
                     method: "POST",
@@ -809,6 +876,8 @@ export class OpenAIDriver implements LLMDriver {
                 toastError(e instanceof Error ? e.message : String(e))
             }
             console.error("OpenAI chat error:", e)
+            debugAborted = e instanceof DOMException && e.name === "AbortError"
+            debugError = e instanceof Error ? e.message : String(e)
         } finally {
             this.currentController = null
             chatPromoteStreamingPending(chatId)
@@ -816,6 +885,39 @@ export class OpenAIDriver implements LLMDriver {
             sndStopTyping()
             sndPlayResponse()
             chatFinish(chatId)
+
+            // Debug: fill in the response side from the final session state
+            // (what's actually in the session after this turn)
+            if (debugIds.length > 0) {
+                const finalChat = chatFind(chatId)
+                const lastMessage = finalChat?.messages[
+                    finalChat.messages.length - 1
+                ]
+                let toolCalls: any[] | undefined
+                if (lastMessage?.tool_call_info) {
+                    try {
+                        toolCalls = JSON.parse(lastMessage.tool_call_info)
+                    } catch {
+                        toolCalls = undefined
+                    }
+                }
+                for (const debugId of debugIds) {
+                    llmDebugLogFinish(debugId, {
+                        status: debugAborted
+                            ? "aborted"
+                            : debugError
+                              ? "error"
+                              : "ok",
+                        error: debugError,
+                        content:
+                            lastMessage?.role === "assistant"
+                                ? lastMessage.content
+                                : undefined,
+                        thoughts: lastMessage?.thoughts,
+                        toolCalls,
+                    })
+                }
+            }
         }
     }
 }

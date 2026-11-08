@@ -14,6 +14,7 @@ import {
     applySystemVariables,
     applyUserVariables,
 } from "../templating/templating"
+import { buildRPTrackingPrompt } from "../rp/prompt"
 import { convertBlobToBase64 as convertFileToBase64 } from "../utils"
 import type { GenericMessage, LLMDriver } from "./LLMDriver"
 import { OpenAIDriver } from "./OpenAIDriver"
@@ -160,11 +161,26 @@ export class LLMInterface {
                 "EXTERNAL CONTEXT END\n"
         }
 
+        // RP story tracking: protocol block plus the live state block
+        // ("" unless RP mode, tools enabled, and the per-chat toggles allow)
+        const rp_tracking_prompt = buildRPTrackingPrompt(chat_session)
+
         const messages: GenericMessage[] = []
         if (processed_final_sprompt) {
             messages.push({
                 role: "system",
-                content: [processed_final_sprompt, backpack_context].join("\n"),
+                content: [
+                    processed_final_sprompt,
+                    backpack_context,
+                    rp_tracking_prompt,
+                ].filter(Boolean).join("\n"),
+            })
+        } else if (rp_tracking_prompt) {
+            // No user system prompt, but tracking is active: still send the
+            // protocol so the tools get used
+            messages.push({
+                role: "system",
+                content: rp_tracking_prompt,
             })
         }
 

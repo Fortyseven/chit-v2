@@ -65,6 +65,32 @@ export function chatSetArtUseImage(chatId: string = "", enabled: boolean) {
         })
     )
 }
+
+//--------------------------------------------------------------
+/**
+ * Patch the per-chat RP story tracking settings. Unset fields fall back
+ * to defaults (tracking on, state injection on) via DEFAULT_RP_TRACKING.
+ */
+export function chatSetRPTracking(
+    chatId: string = "",
+    patch: Partial<RPTrackingSettings>
+) {
+    chatId = getActiveChatId(chatId)
+    chats.update(($chats) =>
+        $chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    rpTracking: {
+                        ...(chat.rpTracking ?? DEFAULT_RP_TRACKING),
+                        ...patch,
+                    },
+                }
+            }
+            return chat
+        })
+    )
+}
 import { get, writable } from "svelte/store"
 import { z } from "zod"
 import general_prompt from "../../preset-prompts/general.js"
@@ -78,6 +104,7 @@ import {
 } from "../templating/templating"
 import { normalizeCharacters } from "../text/charNormalization"
 import { estimateTokens } from "../text/tokenEstimate"
+import { DEFAULT_RP_TRACKING, type RPTrackingSettings } from "../rp/types"
 import { MediaAttachment } from "./chatAttachments"
 import { mediaStorage } from "./mediaStorage"
 
@@ -800,6 +827,12 @@ export async function chatPromoteStreamingPending(chatId: string = "") {
                 // Add tool-generated media (e.g. generated images)
                 if (ss.media_buffer && ss.media_buffer.length > 0) {
                     message.media = ss.media_buffer
+                }
+
+                // Attach the RP story state committed by tool calls this
+                // turn (rides with the message, so rewinds restore it)
+                if (ss.rp_state) {
+                    message.rp_state = ss.rp_state
                 }
 
                 return {

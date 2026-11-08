@@ -27,7 +27,11 @@
         voiceSettings,
     } from "$lib/voice/tts"
     import { onMount } from "svelte"
+    import { Settings } from "svelte-google-materialdesign-icons"
+    import { rpSettingsDialogOpen } from "$lib/appState/rpSettingsDialogState"
     import AsyncMediaImage from "../components/AsyncMediaImage.svelte"
+    import RPSettingsDialog from "./RPSettingsDialog.svelte"
+    import RPStatePanel from "./RPStatePanel.svelte"
 
     $: currentMode = $currentChatMode
     $: hasMediaServer = getMediaServerUrl().length > 0
@@ -255,7 +259,14 @@
         <div class="mode-badge">
             <span class="mode-icon">🎭</span>
             <span class="mode-text">RP Mode</span>
+            <button
+                class="settings-btn"
+                title="RP story tracking settings"
+                on:click={() => ($rpSettingsDialogOpen = true)}>
+                <Settings size="1em" color="var(--color-accent-complement-lighter)" />
+            </button>
         </div>
+        <RPStatePanel />
         {#if $voiceSettings.enabled}
             <div class="speech-accordion">
                 <button
@@ -398,6 +409,7 @@
                 </div>
             </div>
         {/if}
+        <RPSettingsDialog />
     </div>
 {/if}
 
@@ -405,6 +417,24 @@
     .rp-mode-panel {
         transition: all 0.2s ease;
         color: var(--color-accent-complement-lighter);
+    }
+
+    .settings-btn {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: var(--border-radius-standard);
+        padding: 0.15em 0.3em;
+        cursor: pointer;
+        opacity: 0.7;
+
+        &:hover {
+            opacity: 1;
+            border-color: var(--color-accent);
+        }
     }
 
     .speech-accordion {

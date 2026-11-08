@@ -9,8 +9,9 @@
     import AppFramework from "./app/UI/AppFramework/AppFramework.svelte"
     import ConfirmationDialog from "./app/UI/ConfirmationDialog.svelte"
     import QuestionDialog from "./app/UI/QuestionDialog.svelte"
+    import LLMDebugPanel from "./app/Debug/LLMDebugPanel.svelte"
 
-    import { onMount } from "svelte"
+    import { onMount, onDestroy } from "svelte"
     import { get } from "svelte/store"
     import { appState } from "./lib/appState/appState"
     import "./lib/appState/appStateStorage"
@@ -22,10 +23,30 @@
         closeCompactConversationDialog,
         compactConversationDialog,
     } from "./lib/chatSession/compactConversationDialog"
+    import { llmDebugTogglePanel } from "./lib/llm/llmDebugLog"
     import { initMCPServers } from "./lib/mcp/mcpManager"
+
+    /** Global ALT+C shortcut: toggle the LLM debug panel. */
+    function onGlobalKeydown(ev) {
+        if (
+            ev.altKey &&
+            !ev.ctrlKey &&
+            !ev.shiftKey &&
+            !ev.metaKey &&
+            ev.code === "KeyC"
+        ) {
+            ev.preventDefault()
+            llmDebugTogglePanel()
+        }
+    }
 
     onMount(() => {
         initMCPServers(get(appState).mcpServers)
+        window.addEventListener("keydown", onGlobalKeydown)
+    })
+
+    onDestroy(() => {
+        window.removeEventListener("keydown", onGlobalKeydown)
     })
 
     const toastOptions = {
@@ -79,6 +100,7 @@
     onCancel={closeCompactConversationDialog}
 />
 <QuestionDialog />
+<LLMDebugPanel />
 <SvelteToast options={toastOptions} />
 
 <style lang="scss">

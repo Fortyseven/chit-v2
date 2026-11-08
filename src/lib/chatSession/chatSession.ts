@@ -1,5 +1,6 @@
 import { derived, writable, type Readable } from "svelte/store"
 import { appState } from "../appState/appState"
+import type { RPState, RPTrackingSettings } from "../rp/types"
 import { MediaAttachment } from "./chatAttachments"
 
 export enum AppMode {
@@ -15,6 +16,13 @@ export interface Message {
     timestamp?: Date
     media?: MediaAttachment[]
     tool_call_info?: string // Tool call/result info for display only, not sent to LLM
+    /**
+     * RP story tracking: the full tracked state committed by this
+     * assistant turn. Current state is derived by scanning backward for
+     * the most recent message carrying one, so rewinding (a tail slice
+     * of messages) restores state automatically.
+     */
+    rp_state?: RPState
 }
 
 export type ReasoningEffort = "none" | "low" | "medium" | "high" | "xhigh"
@@ -85,6 +93,7 @@ export interface ChatSession {
     currentMode: AppMode
     toolCallMessagesVisible?: boolean // Per-chat toggle for tool call message visibility
     toolsEnabled?: boolean // Per-chat toggle to enable/disable tool calling
+    rpTracking?: RPTrackingSettings // Per-chat RP story tracking settings
     artUseImage?: boolean // Per-chat toggle: include media image in the art generation call
     ttsSettings?: ChatTTSSettings // Per-chat TTS overrides (voice, rate, pitch)
     scrollTop?: number // Persisted scroll position for restoring on session switch
